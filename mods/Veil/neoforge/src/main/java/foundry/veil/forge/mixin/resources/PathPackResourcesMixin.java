@@ -1,7 +1,6 @@
 package foundry.veil.forge.mixin.resources;
 
 import com.mojang.datafixers.util.Pair;
-import cpw.mods.niofs.union.UnionFileSystem;
 import foundry.veil.Veil;
 import foundry.veil.ext.PackResourcesExtension;
 import foundry.veil.forge.impl.ForgePackHooks;
@@ -62,23 +61,7 @@ public abstract class PathPackResourcesMixin implements PackResources, PackResou
                         ResourceLocation name = ResourceLocation.tryBuild(namespace, path);
 
                         if (name != null) {
-                            Path buildPath;
-                            Path packPath = assetPath;
-                            Path filePath = file;
-                            Path modResourcePath = null;
-
-                            // We have to do this hack so we can *actually* get access to the real files, not the forge wrapper
-                            if (fileSystem instanceof UnionFileSystem unionFs && Files.isDirectory(unionFs.getPrimaryPath())) {
-                                Path primaryPath = unionFs.getPrimaryPath();
-                                Path buildDir = primaryPath.getParent().getParent().getParent();
-                                buildPath = buildDir.resolve("resources").resolve(primaryPath.getFileName());
-
-                                packPath = buildPath.getFileSystem().getPath(packPath.toString());
-                                filePath = buildPath.resolve(file.toString());
-                                modResourcePath = PackResourcesExtension.findDevPath(buildPath, filePath);
-                            }
-
-                            consumer.accept(type, name, packPath, filePath, modResourcePath);
+                            consumer.accept(type, name, assetPath, file, null);
                         }
 
                         return FileVisitResult.CONTINUE;
