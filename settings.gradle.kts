@@ -15,6 +15,7 @@ addMods {
     addMod(
         filePath = "./mods/Create",
         includeTransitive = false,
+        excludeAsset = true,
         modProjects = listOf(
             modProject(
                 dependencyNotations = listOf("com.simibubi.create:create-1.21.1"),
@@ -59,6 +60,7 @@ addMods {
     addMod(
         filePath = "./mods/create-new-age",
         includeTransitive = false,
+        excludeAsset = true,
         modProjects = listOf(
             modProject(
                 dependencyNotations = listOf("org.antarcticgardens.cna:create-new-age"),
@@ -84,6 +86,7 @@ addMods {
     addMod(
         filePath = "./mods/NatureSpiritForge",
         includeTransitive = false,
+        excludeAsset = true,
         modProjects = listOf(
             modProject(
                 dependencyNotations = listOf("net.hibiscus:natures_spirit"),
@@ -221,6 +224,7 @@ addMods {
     addMod(
         filePath = "./mods/Simulated-Project",
         includeTransitive = false,
+        excludeAsset = true,
         modProjects = listOf(
             modProject(
                 dependencyNotations = listOf("dev.simulated_team.simulated:create-aeronautics-bundled-1.21.1"),

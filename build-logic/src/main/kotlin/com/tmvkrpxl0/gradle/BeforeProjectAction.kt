@@ -6,6 +6,7 @@ import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.add
@@ -30,7 +31,14 @@ class BeforeProjectAction(
             val nonTransitive = project.configurations.create("nonTransitive") {
                 isTransitive = false
             }
-            val createModJars = project.tasks.register<Jar>("createModJars")
+
+            val jarDestination = project.file("createdModJars")
+            val clearModJars = project.tasks.register<Delete>("clearModJars") {
+                delete(jarDestination)
+            }
+            val createModJars = project.tasks.register("createModJars") {
+                dependsOn(clearModJars)
+            }
 
             mods.get().forEach { mod ->
                 val includeTransitive = mod.includeTransitive
@@ -80,10 +88,20 @@ class BeforeProjectAction(
                         }
 
                         val prepareJar = project.tasks.register<Jar>("${sourceSetName}prepareJar") {
-                            from(unzipped)
+                            from(unzipped) {
+                                if (excludeAssets) {
+                                    exclude("assets")
+                                    exclude("assets/*")
+                                    exclude("assets/**")
+                                    archiveClassifier.set("trimmed")
+                                }
+                            }
                             duplicatesStrategy = DuplicatesStrategy.WARN
+                            archiveBaseName.set(artifactId)
+                            destinationDirectory.set(jarDestination)
+
                             if (excludeAssets) {
-                                exclude("assets")
+                                archiveClassifier.set("trimmed")
                             }
                         }
 
