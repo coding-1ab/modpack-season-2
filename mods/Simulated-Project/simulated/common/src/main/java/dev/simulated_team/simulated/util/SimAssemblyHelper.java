@@ -127,6 +127,7 @@ public class SimAssemblyHelper {
         // if there's no blocks in the given sublevel, don't attempt to move the blocks
         if (!blocks.isEmpty()) {
             ((ServerLevelPlot) toDisassemble.getPlot()).kickAllEntities();
+            toDisassemble.markRemoved();
             SubLevelAssemblyHelper.moveBlocks((ServerLevel) level, transform, blocks);
         }
 
