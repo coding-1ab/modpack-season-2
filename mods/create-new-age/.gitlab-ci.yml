@@ -9,7 +9,7 @@ before_script:
 # Could run test here but we currently have no test cases
 merge-request:
   stage: deploy
-  script: ./gradle build
+  script: ./gradlew build
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
   tags:
