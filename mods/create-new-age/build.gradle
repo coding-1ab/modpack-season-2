@@ -1,6 +1,6 @@
 plugins {
     id "maven-publish"
-    id "dev.architectury.loom" version "1.9-SNAPSHOT" apply false
+    id "dev.architectury.loom" version "1.13-SNAPSHOT" apply false
     id "me.modmuss50.mod-publish-plugin" version "1.1.0"
     id "dev.ithundxr.silk" version "1.0.1"
 }
@@ -17,7 +17,9 @@ subprojects {
     apply plugin: "me.modmuss50.mod-publish-plugin"
     apply plugin: "dev.ithundxr.silk"
 
-    archivesBaseName = "create-new-age"
+    base {
+        archivesName = "create-new-age"
+    }
 
     repositories {
         mavenLocal()
@@ -70,17 +72,7 @@ subprojects {
             }
         }
     }
-    
-    if (project.name != "common") {
-        processResources {
-            from(project(":common").sourceSets.main.resources)
-            
-            filesMatching(["fabric.mod.json", "META-INF/mods.toml", "assets/**/*.json"]) {
-                expand(project.properties)
-            }
-        }
-    }
-    
+
     loom {
         accessWidenerPath = project(":common").file("src/main/resources/create_new_age-common.accesswidener")
     }
@@ -106,7 +98,7 @@ subprojects {
     publishing {
         publications {
             maven(MavenPublication) {
-                artifactId = project.archivesBaseName + "-${project.name}-${rootProject.minecraftVersion}"
+                artifactId = base.archivesName.get() + "-${project.name}-${rootProject.minecraftVersion}"
                 if (!System.getenv("RELEASE").asBoolean())
                     version = "${rootProject.modVersion}-build.${System.getenv("GIT_SHA")}+${project.name}-mc${rootProject.minecraftVersion}"
                 from components.java
