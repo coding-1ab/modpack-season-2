@@ -108,7 +108,10 @@ public class SteamVentBlockEntity extends SmartBlockEntity implements BlockEntit
         final FluidTankBlockEntity fluidTank = this.source.get();
 
         if (fluidTank != null) {
-            this.efficiency = Mth.clamp(fluidTank.boiler.getEngineEfficiency(fluidTank.getTotalTankSize()), 0, 1);
+            final FluidTankBlockEntity controller = fluidTank.getControllerBE();
+            if (controller != null) {
+                this.efficiency = Mth.clamp(controller.boiler.getEngineEfficiency(controller.getTotalTankSize()), 0, 1);
+            }
         } else {
             this.efficiency = 0;
         }
@@ -209,21 +212,24 @@ public class SteamVentBlockEntity extends SmartBlockEntity implements BlockEntit
     }
 
     protected void syncSignal() {
-        final FluidTankBlockEntity ftbe = this.source.get();
-        if (ftbe != null) {
-            int maxSignal = 0;
-            final List<SteamVentBlockEntity> ventList = new ArrayList<>();
-            for (int x = 0; x < ftbe.getWidth(); x++) {
-                for (int z = 0; z < ftbe.getWidth(); z++) {
-                    if (this.level.getBlockEntity(ftbe.getBlockPos().offset(x, ftbe.getHeight(), z)) instanceof final SteamVentBlockEntity vent) {
-                        ventList.add(vent);
-                        maxSignal = Math.max(maxSignal, vent.rawSignalStrength);
+        final FluidTankBlockEntity fluidTank = this.source.get();
+        if (fluidTank != null) {
+            final FluidTankBlockEntity controller = fluidTank.getControllerBE();
+            if (controller != null) {
+                int maxSignal = 0;
+                final List<SteamVentBlockEntity> ventList = new ArrayList<>();
+                for (int x = 0; x < controller.getWidth(); x++) {
+                    for (int z = 0; z < controller.getWidth(); z++) {
+                        if (this.level.getBlockEntity(controller.getBlockPos().offset(x, controller.getHeight(), z)) instanceof final SteamVentBlockEntity vent) {
+                            ventList.add(vent);
+                            maxSignal = Math.max(maxSignal, vent.rawSignalStrength);
+                        }
                     }
                 }
-            }
 
-            for (final SteamVentBlockEntity vent : ventList) {
-                vent.updateSignal(maxSignal);
+                for (final SteamVentBlockEntity vent : ventList) {
+                    vent.updateSignal(maxSignal);
+                }
             }
         }
     }
@@ -237,7 +243,7 @@ public class SteamVentBlockEntity extends SmartBlockEntity implements BlockEntit
 
             final BlockEntity be = this.level.getBlockEntity(check);
             if (be instanceof final FluidTankBlockEntity fluidTank) {
-                this.source = new WeakReference<>(fluidTank.getControllerBE());
+                this.source = new WeakReference<>(fluidTank);
             }
         }
     }
