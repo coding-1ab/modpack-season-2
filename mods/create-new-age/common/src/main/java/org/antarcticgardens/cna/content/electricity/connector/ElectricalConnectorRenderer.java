@@ -1,20 +1,17 @@
 package org.antarcticgardens.cna.content.electricity.connector;
 
+import com.google.common.collect.Streams;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.createmod.catnip.data.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -24,19 +21,10 @@ import org.antarcticgardens.cna.CreateNewAge;
 import org.antarcticgardens.cna.config.CNAConfig;
 import org.antarcticgardens.cna.content.electricity.wire.ElectricWireItem;
 import org.antarcticgardens.cna.content.electricity.wire.WireType;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
+
+import java.util.stream.Stream;
 
 public class ElectricalConnectorRenderer implements BlockEntityRenderer<AbstractElectricalConnector> {
-    public ElectricalConnectorRenderer(BlockEntityRendererProvider.Context context) {
-        super();
-    }
-
-    public static HitResult pickBlockFromPos(Level world, Vec3 pos, Vec3 dir, double distance) {
-        Vec3 vec33 = pos.add(dir.x * distance, dir.y * distance, dir.z * distance);
-        return world.clip(new ClipContext(pos, vec33, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, Minecraft.getInstance().player));
-    }
-
     @Override
     public void render(AbstractElectricalConnector blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
         renderAllConnections(blockEntity, poseStack, buffer);
@@ -44,26 +32,18 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Abstract
     }
 
     public void renderAllConnections(AbstractElectricalConnector blockEntity, PoseStack poseStack, MultiBufferSource buffer) {
-        blockEntity.getConnectorPositions().entrySet().stream().forEach(e ->
-                renderConnection(blockEntity.getBlockPos(), e.getKey(), e.getValue(), poseStack, buffer, blockEntity.getLevel()));
+        blockEntity.getConnectorPositions().forEach((key, value) ->
+                renderConnection(blockEntity.getBlockPos(), key, value, poseStack, buffer, blockEntity.getLevel())
+        );
     }
 
     //Makes sure that only one of the two connectors renders the wire
-    public boolean shouldRenderConnection(BlockPos pos, BlockPos endPos){
-        if(pos.getX() < endPos.getX()){
-            return true;
-        }else if(pos.getX() == endPos.getX()) {
-            if(pos.getY() < endPos.getY()){
-                return true;
-            }else if(pos.getY() == endPos.getY() && pos.getZ() < endPos.getZ()) {
-                return true;
-            }
-        }
-        return false;
+    public boolean shouldRenderConnection(BlockPos pos, BlockPos endPos) {
+        return pos.compareTo(endPos) < 0;
     }
 
-    public void renderConnection(BlockPos pos, BlockPos endPos, WireType wireType, PoseStack poseStack, MultiBufferSource buffer, Level level){
-        if(!shouldRenderConnection(pos, endPos)){
+    public void renderConnection(BlockPos pos, BlockPos endPos, WireType wireType, PoseStack poseStack, MultiBufferSource buffer, Level level) {
+        if (!shouldRenderConnection(pos, endPos)) {
             return;
         }
 
@@ -72,138 +52,115 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Abstract
         var originConnectorPreCast = level.getBlockEntity(pos);
         var endConnectorPreCast = level.getBlockEntity(endPos);
         if (!(originConnectorPreCast instanceof AbstractElectricalConnector originConnector) ||
-                !(endConnectorPreCast instanceof AbstractElectricalConnector endConnector)) {return;}
+                !(endConnectorPreCast instanceof AbstractElectricalConnector endConnector)) {
+            return;
+        }
 
         var originPoint = originConnector.getConnectionPoint().add(Vec3.atLowerCornerOf(pos));
         var endPoint = endConnector.getConnectionPoint().add(Vec3.atLowerCornerOf(endPos));
 
-        double distance = pos.getCenter().distanceTo(endPoint);
-        int sections = (int) Math.ceil(distance * CNAConfig.getClient().wireSectionsPerMeter.get());
-        Vector3f direction = endPoint.subtract(originPoint).normalize().toVector3f();
-
-        Wire wire = new Wire(direction, (float) distance, sections);
+        Wire wire = new Wire(
+                originPoint.toVector3f(),
+                endPoint.toVector3f(),
+                CNAConfig.getClient().wireSectionsPerMeter.get(),
+                CNAConfig.getClient().wireThickness.get().floatValue()
+        );
         VertexConsumer consumer = buffer.getBuffer(CNARenderTypes.wire(texture));
 
         poseStack.pushPose();
-        var midPoint = originConnector.getConnectionPoint();
-        poseStack.translate(midPoint.x(), midPoint.y(), midPoint.z());
-        poseStack.mulPose(new Matrix4f().rotateTowards(wire.getDirection(), wire.getUp()));
 
-        for (int i = 0; i < wire.getSections().size(); i++) {
-            Pair<WireSection, Float> pair = wire.getSections().get(i);
-
-            float sectionOffset = wire.getSectionLength() * i;
-            Vector3f lightPos = pos.getCenter().toVector3f()
-                    .add(wire.getDirection().mul(sectionOffset))
-                    .add(wire.getUp().mul(pair.getSecond()));
-            BlockPos lightBlockPos = BlockPos.containing(new Vec3(lightPos));
-            int block = level.getBrightness(LightLayer.BLOCK, lightBlockPos);
-            int sky = level.getBrightness(LightLayer.SKY, lightBlockPos);
-
-            pair.getFirst().render(consumer, poseStack, LightTexture.pack(block, sky), pair.getSecond());
-
-            poseStack.translate(0.0f, 0.0f, wire.getSectionLength());
-        }
+        wire.render(consumer, poseStack, level);
 
         poseStack.popPose();
     }
 
     public void renderHand(AbstractElectricalConnector blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource buffer) {
-        LocalPlayer player = Minecraft.getInstance().player;
-        if (player != null && Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
-            ItemStack itemInHand = player.getMainHandItem();
+        Minecraft minecraft = Minecraft.getInstance();
+        LocalPlayer player = minecraft.player;
+        if (player == null) {
+            return;
+        }
 
-            if (!(itemInHand.getItem() instanceof ElectricWireItem))
-                itemInHand = player.getOffhandItem();
+        Level level = player.level();
+        if (!minecraft.options.getCameraType().isFirstPerson()) {
+            return;
+        }
 
-            if (itemInHand.getItem() instanceof ElectricWireItem wireItem) {
-                var midPoint = blockEntity.getConnectionPoint();
-                BlockPos bound = wireItem.getBoundConnector(itemInHand);
+        ItemStack itemStack = player.getMainHandItem();
 
-                if (bound != null && bound.equals(blockEntity.getBlockPos())) {
-                    Vec3 eyePos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
-                    Vec3 endPos = eyePos.add(player.getViewVector(partialTick).normalize().scale(2.0f));
+        if (!(itemStack.getItem() instanceof ElectricWireItem)) {
+            itemStack = player.getOffhandItem();
+        }
 
-                    HitResult hit = pickBlockFromPos(blockEntity.getLevel(), eyePos,
-                            player.getViewVector(partialTick), Minecraft.getInstance().player.blockInteractionRange());
+        if (!(itemStack.getItem() instanceof ElectricWireItem wireItem)) {
+            return;
+        }
 
-                    if (hit instanceof BlockHitResult blockHit) {
-                        Vec3 vec = eyePos.add(blockHit.getLocation().subtract(eyePos).scale(0.9f));
+        BlockPos bound = wireItem.getBoundConnector(itemStack);
 
-                        if (eyePos.distanceTo(endPos) > eyePos.distanceTo(vec))
-                            endPos = vec;
-                    }
+        if (bound == null || !bound.equals(blockEntity.getBlockPos())) {
+            return;
+        }
 
-                    BlockPos pos = blockEntity.getBlockPos();
+        Vec3 eyePos = minecraft.gameRenderer.getMainCamera().getPosition();
+        Vec3 viewVector = player.getViewVector(partialTick);
+        Vec3 wireEnd = eyePos.add(viewVector.scale(player.blockInteractionRange()));
+        var wireStart = blockEntity.getConnectionPoint().add(Vec3.atLowerCornerOf(bound));
 
-                    Vector3f to = new Vector3f(
-                            (float) (endPos.x - pos.getX() - midPoint.x),
-                            (float) (endPos.y - pos.getY() - midPoint.y),
-                            (float) (endPos.z - pos.getZ() - midPoint.z)
-                    );
+        HitResult lookingAt = minecraft.hitResult;
 
-                    var originPoint = blockEntity.getConnectionPoint().add(Vec3.atLowerCornerOf(bound));
+        if (lookingAt instanceof BlockHitResult blockHit) {
+            BlockPos lookedAtPos = blockHit.getBlockPos();
+            BlockEntity lookedBlockEntity = level.getBlockEntity(lookedAtPos);
+            boolean snapped = false;
 
-                    double distance = endPos.distanceTo(originPoint);
-                    int maxDistance = CNAConfig.getServer().maxWireLength.get();
-
-                    if (distance > maxDistance * 2)
+            if (lookedBlockEntity != null) {
+                if (lookedBlockEntity == blockEntity) {
+                    return;
+                }
+                if (lookedBlockEntity instanceof AbstractElectricalConnector otherConnector) {
+                    if (otherConnector.isConnected(blockEntity.getBlockPos())) {
                         return;
-
-                    if (Minecraft.getInstance().gameMode != null && hit instanceof BlockHitResult blockHit) {
-                        if (blockEntity.getLevel().getBlockEntity(blockHit.getBlockPos()) instanceof AbstractElectricalConnector connector) {
-                            if (connector.isConnected(blockEntity.getBlockPos()))
-                                return;
-
-                            var point = connector.getConnectionPoint();
-
-                            to = new Vector3f(
-                                    blockHit.getBlockPos().getX() - pos.getX() + (float)point.x() - (float)midPoint.x(),
-                                    blockHit.getBlockPos().getY() - pos.getY() + (float)point.y() - (float)midPoint.y(),
-                                    blockHit.getBlockPos().getZ() - pos.getZ() + (float)point.z() - (float)midPoint.z()
-                            );
-
-                            distance = connector.getBlockPos().getCenter().distanceTo(blockEntity.getBlockPos().getCenter());
-                        }
                     }
 
-                    ResourceLocation texture = wireItem.getWireType().getTextureLocation();
-
-                    if (distance >= maxDistance) {
-                        texture = ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, "textures/wire/red.png");
-                    }
-
-                    int sections = (int) Math.ceil(distance * CNAConfig.getClient().wireSectionsPerMeter.get());
-
-                    Vector3f direction = new Vector3f(to).normalize();
-
-                    Wire wire = new Wire(direction, (float) distance, sections);
-                    VertexConsumer consumer = buffer.getBuffer(CNARenderTypes.wire(texture));
-
-                    poseStack.pushPose();
-                    poseStack.translate(midPoint.x(), midPoint.y(), midPoint.z());
-                    poseStack.mulPose(new Matrix4f().rotateTowards(wire.getDirection(), wire.getUp()));
-
-                    for (int i = 0; i < wire.getSections().size(); i++) {
-                        Pair<WireSection, Float> pair = wire.getSections().get(i);
-
-                        float sectionOffset = wire.getSectionLength() * i;
-                        Vector3f lightPos = blockEntity.getBlockPos().getCenter().toVector3f()
-                                .add(wire.getDirection().mul(sectionOffset))
-                                .add(wire.getUp().mul(pair.getSecond()));
-                        BlockPos lightBlockPos = BlockPos.containing(new Vec3(lightPos));
-                        int block = blockEntity.getLevel().getBrightness(LightLayer.BLOCK, lightBlockPos);
-                        int sky = blockEntity.getLevel().getBrightness(LightLayer.SKY, lightBlockPos);
-
-                        pair.getFirst().render(consumer, poseStack, LightTexture.pack(block, sky), pair.getSecond());
-
-                        poseStack.translate(0.0f, 0.0f, wire.getSectionLength());
-                    }
-
-                    poseStack.popPose();
+                    wireEnd = otherConnector.getConnectionPoint().add(Vec3.atLowerCornerOf(lookedAtPos));
+                    snapped = true;
                 }
             }
+
+            if (!snapped) {
+                Vec3 vec = blockHit.getLocation().subtract(viewVector.scale(0.1));
+
+                if (eyePos.distanceToSqr(wireEnd) > eyePos.distanceToSqr(vec))
+                    wireEnd = vec;
+            }
         }
+
+        ResourceLocation texture = wireItem.getWireType().getTextureLocation();
+        double distanceSqr = wireEnd.distanceToSqr(wireStart);
+        int maxDistance = CNAConfig.getServer().maxWireLength.get();
+
+        if (distanceSqr >= (maxDistance * maxDistance)) {
+            if (distanceSqr > (maxDistance * maxDistance) * 4) {
+                return;
+            }
+
+            texture = ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, "textures/wire/red.png");
+
+        }
+
+        Wire wire = new Wire(
+                wireStart.toVector3f(),
+                wireEnd.toVector3f(),
+                CNAConfig.getClient().wireSectionsPerMeter.get(),
+                CNAConfig.getClient().wireThickness.get().floatValue()
+        );
+        VertexConsumer consumer = buffer.getBuffer(CNARenderTypes.wire(texture));
+
+        poseStack.pushPose();
+        wire.render(consumer, poseStack, level);
+
+        poseStack.popPose();
     }
 
     @Override
@@ -213,6 +170,27 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Abstract
 
     @Override
     public AABB getRenderBoundingBox(AbstractElectricalConnector blockEntity) {
-        return AABB.INFINITE;
+        Stream<AbstractElectricalConnector> connectors = blockEntity.connectors.keySet().stream();
+        double[] coordinates = Streams.concat(connectors, Stream.of(blockEntity))
+                .map(AbstractElectricalConnector::getConnectionPoint)
+                .collect(() -> new double[]{
+                        Double.POSITIVE_INFINITY, // minX
+                        Double.POSITIVE_INFINITY, // minY
+                        Double.POSITIVE_INFINITY, // minZ
+                        Double.NEGATIVE_INFINITY, // maxX
+                        Double.NEGATIVE_INFINITY, // maxY
+                        Double.NEGATIVE_INFINITY, // maxZ
+                }, (acc, point) -> {
+                    acc[0] = Math.min(acc[0], point.x);
+                    acc[1] = Math.min(acc[1], point.y);
+                    acc[2] = Math.min(acc[2], point.z);
+                    acc[3] = Math.max(acc[3], point.x);
+                    acc[4] = Math.max(acc[4], point.y);
+                    acc[5] = Math.max(acc[5], point.z);
+                }, (a, b) -> {
+                });
+
+        AABB box = new AABB(coordinates[0], coordinates[1], coordinates[2], coordinates[3], coordinates[4], coordinates[5]);
+        return box.inflate(1.0);
     }
 }

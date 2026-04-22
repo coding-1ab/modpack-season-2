@@ -45,7 +45,7 @@ public class CNABlockEntityTypes {
     public static final BlockEntityEntry<ElectricalConnectorBlockEntity> ELECTRICAL_CONNECTOR = REGISTRATE
             .blockEntity("electrical_connector", ElectricalConnectorBlockEntity::new)
             .validBlocks(CNABlocks.ELECTRICAL_CONNECTOR)
-            .renderer(() -> ElectricalConnectorRenderer::new)
+            .renderer(() -> context -> new ElectricalConnectorRenderer())
             .register();
 
     public static final BlockEntityEntry<GeneratorCoilBlockEntity> GENERATOR_COIL = REGISTRATE
@@ -148,7 +148,7 @@ public class CNABlockEntityTypes {
     public static final BlockEntityEntry<StreetLightBlockEntity> STREET_LIGHT = REGISTRATE
             .blockEntity("street_light", StreetLightBlockEntity::new)
             .validBlocks(CNABlocks.STREET_LIGHT)
-            .renderer(() -> ElectricalConnectorRenderer::new)
+            .renderer(() -> context -> new ElectricalConnectorRenderer())
             .register();
 
     public static void load() {  }
