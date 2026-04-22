@@ -130,8 +130,10 @@ publishMods {
         def modrinthLink = "https://modrinth.com/mod/create-aeronautics"
         def curseForgeLink = "<https://www.curseforge.com/minecraft/mc-mods/create-aeronautics>"
 
+        setPlatforms(publishMods.platforms.modrinth)
+
         content = changelog.map {
-            "# Create Aeronautics release $project.version \n$it\n\nModrinth: $modrinthLink\nCurseForge: $curseForgeLink"
+            "# Create Aeronautics release $project.version \n$it\nModrinth: $modrinthLink\nCurseForge: $curseForgeLink"
         }
     }
 }
