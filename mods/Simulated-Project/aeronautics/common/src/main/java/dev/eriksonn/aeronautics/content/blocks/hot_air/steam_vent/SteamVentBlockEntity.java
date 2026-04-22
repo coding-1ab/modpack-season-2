@@ -23,6 +23,7 @@ import dev.eriksonn.aeronautics.index.AeroLiftingGasTypes;
 import dev.eriksonn.aeronautics.index.AeroSoundEvents;
 import dev.eriksonn.aeronautics.util.AeroSoundDistUtil;
 import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.data.Iterate;
 import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.client.Minecraft;
@@ -45,7 +46,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SteamVentBlockEntity extends SmartBlockEntity implements BlockEntityLiftingGasProvider, IHaveGoggleInformation {
     // Steam vents can only be placed on top of fluid tanks, so this is valid
@@ -190,7 +193,7 @@ public class SteamVentBlockEntity extends SmartBlockEntity implements BlockEntit
             }
 
             this.rawSignalStrength = newStrength;
-            this.syncSignal();
+            this.signalSync();
             return true;
         }
         return false;
@@ -211,27 +214,52 @@ public class SteamVentBlockEntity extends SmartBlockEntity implements BlockEntit
         }
     }
 
-    protected void syncSignal() {
+    public static boolean inTankBounds(final BlockPos pos, final FluidTankBlockEntity controller) {
+        final int minX = controller.getBlockPos().getX();
+        final int minZ = controller.getBlockPos().getZ();
+        final int maxX = minX + controller.getWidth();
+        final int maxZ = minZ + controller.getWidth();
+        return pos.getX() >= minX && pos.getX() < maxX &&
+                pos.getZ() >= minZ && pos.getZ() < maxZ;
+    }
+
+    public void signalSync() {
         final FluidTankBlockEntity fluidTank = this.source.get();
         if (fluidTank != null) {
             final FluidTankBlockEntity controller = fluidTank.getControllerBE();
             if (controller != null) {
-                int maxSignal = 0;
-                final List<SteamVentBlockEntity> ventList = new ArrayList<>();
-                for (int x = 0; x < controller.getWidth(); x++) {
-                    for (int z = 0; z < controller.getWidth(); z++) {
-                        if (this.level.getBlockEntity(controller.getBlockPos().offset(x, controller.getHeight(), z)) instanceof final SteamVentBlockEntity vent) {
-                            ventList.add(vent);
-                            maxSignal = Math.max(maxSignal, vent.rawSignalStrength);
-                        }
-                    }
-                }
+                final List<SteamVentBlockEntity> adjacent = new ArrayList<>();
+                adjacent.add(this);
+                final int maxRaw = this.searchSignalSync(controller, new HashSet<>(), adjacent);
 
-                for (final SteamVentBlockEntity vent : ventList) {
-                    vent.updateSignal(maxSignal);
+                for (final SteamVentBlockEntity steamVentBlockEntity : adjacent) {
+                    steamVentBlockEntity.updateSignal(maxRaw);
                 }
             }
         }
+    }
+
+    /**
+     * @param visited set of blocks to not recursively go over ad infinitum
+     * @param vents list to mutate of all vents connect adjacently
+     * @return maximum raw power from all future visited vents
+     */
+    protected int searchSignalSync(final FluidTankBlockEntity controller, final Set<BlockPos> visited, final List<SteamVentBlockEntity> vents) {
+        int maxRaw = this.rawSignalStrength;
+        final BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
+        for (final Direction dir : Iterate.horizontalDirections) {
+            mutablePos.setWithOffset(this.getBlockPos(), dir);
+            if (inTankBounds(mutablePos, controller)) {
+                if (!visited.contains(mutablePos)) {
+                    visited.add(mutablePos.immutable());
+                    if (this.level.getBlockEntity(mutablePos) instanceof final SteamVentBlockEntity vent) {
+                        vents.add(vent);
+                        maxRaw = Math.max(maxRaw, vent.searchSignalSync(controller, visited, vents));
+                    }
+                }
+            }
+        }
+        return maxRaw;
     }
 
     // Make sure we are getting the fluid tank from the middle steam vent be position
