@@ -16,11 +16,8 @@ boolean dev = System.getenv("RELEASE") == null || System.getenv("RELEASE") == "f
 String buildNumber = System.getenv("BUILD_NUMBER")
 String gitHash = calculateGitHash() + (hasUnstaged() ? "-modified" : "")
 
-base {
-    archivesName = "create-$minecraft_version"
-    group = "com.simibubi.create"
-    version = mod_version + (dev && buildNumber != null ? "-${buildNumber}" : "")
-}
+group = "com.simibubi.create"
+version = mod_version + (dev && buildNumber != null ? "-${buildNumber}" : "")
 
 println("Java: ${System.getProperty("java.version")}, JVM: ${System.getProperty("java.vm.version")} (${System.getProperty("java.vendor")}), Arch: ${System.getProperty("os.arch")}")
 
@@ -194,10 +191,8 @@ sourceSets.main {
 }
 
 jar {
-    String name = base.archivesName.get()
-
     from("LICENSE.md") {
-        rename { "${it}_$name" }
+        rename { "${it}_${project.name}" }
     }
 
     manifest.attributes([
@@ -249,7 +244,6 @@ neoForge.ideSyncTask(generateModMetadata)
 publishing {
     publications {
         register("mavenJava", MavenPublication) {
-            artifactId(base.archivesName.get())
             from(components.java)
 
             artifact(slimJar) {
