@@ -88,7 +88,6 @@ test {
 }
 
 publishMods {
-    dryRun = true
     def changelogFile = rootProject.file("changelog.md")
 
     type = STABLE
