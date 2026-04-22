@@ -102,6 +102,7 @@ publishMods {
     curseforge {
         accessToken = providers.environmentVariable("CURSEFORGE_API_KEY")
         projectId = "676721"
+        projectSlug = "create-aeronautics"
         minecraftVersions.add(minecraft_version)
 
         clientRequired = true
