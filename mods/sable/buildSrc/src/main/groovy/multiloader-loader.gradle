@@ -109,7 +109,7 @@ publishMods {
     }
 
     // We only want to send one message
-    if (isFabric) {
+    if (!isFabric) {
         discord {
             webhookUrl = providers.environmentVariable("DISCORD_WEBHOOK")
 
