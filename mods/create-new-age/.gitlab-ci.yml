@@ -5,6 +5,21 @@ before_script:
   - export GRADLE_USER_HOME
   - export GIT_SHA=$CI_COMMIT_SHORT_SHA
 
+merge-request:
+  stage: deploy
+  script: ./gradle build
+  tags:
+    - linux
+    - self-hosted
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    paths:
+      - build
+      - .gradle/
+      - common/build
+      - neoforge/build
+    policy: pull-push
+
 # Snapshot release only releases on the maven under
 # https://maven.idiotss.com/snapshots
 # Auto trigger on push. Caches the build and gradle paths
@@ -14,6 +29,8 @@ snapshot:
   tags:
     - linux
     - self-hosted
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
   cache:
     key: "$CI_COMMIT_REF_NAME"
     paths:
