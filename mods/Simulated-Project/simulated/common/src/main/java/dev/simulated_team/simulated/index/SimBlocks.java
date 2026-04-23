@@ -117,6 +117,7 @@ public class SimBlocks {
 
     public static final BlockEntry<SwivelBearingBlock> SWIVEL_BEARING =
             REGISTRATE.block("swivel_bearing", SwivelBearingBlock::new)
+                    .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
                     .initialProperties(SharedProperties::netheriteMetal)
                     .properties((properties -> properties.destroyTime(5f)))
                     .addLayer(() -> RenderType::cutoutMipped)
@@ -857,6 +858,7 @@ public class SimBlocks {
 
     public static final BlockEntry<SpringBlock> SPRING =
             REGISTRATE.block("spring", SpringBlock::new)
+                    .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
                     .transform(pickaxeOnly())
                     .initialProperties(SharedProperties::softMetal)
                     .blockstate((ctx, prov) -> prov.directionalBlock(ctx.getEntry(),
