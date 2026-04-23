@@ -7,6 +7,7 @@ import net.createmod.ponder.foundation.PonderScene;
 import net.createmod.ponder.foundation.ui.PonderUI;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.phys.Vec3;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,7 +20,9 @@ import java.util.List;
 
 @Mixin(PonderUI.class)
 public class PonderUIMixin {
-    @Shadow private List<PonderScene> scenes;
+    @Final
+    @Shadow
+    private List<PonderScene> scenes;
 
     @ModifyConstant(method = "renderScene", constant = @Constant(intValue = 0x66_000000, ordinal = 0))
     private int customShadowFade(final int constant, final GuiGraphics graphics, final int mouseX, final int mouseY, final int i, final float partialTicks) {
@@ -28,8 +31,8 @@ public class PonderUIMixin {
     }
 
     @Inject(method = "renderScene", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;translate(FFF)V", ordinal = 1, shift = At.Shift.AFTER))
-    private void shadowTranslate(final GuiGraphics graphics, final int mouseX, final int mouseY, final int i, final float partialTicks, final CallbackInfo ci, @Local final PoseStack ms) {
+    private void shadowTranslate(final GuiGraphics graphics, final int mouseX, final int mouseY, final int i, final float partialTicks, final CallbackInfo ci, @Local(name = "poseStack") final PoseStack poseStack) {
         final Vec3 offset = ((PonderSceneExtension)(this.scenes.get(i))).simulated$getShadowOffset(partialTicks);
-        ms.translate(offset.x, offset.y, offset.z);
+        poseStack.translate(offset.x, offset.y, offset.z);
     }
 }
