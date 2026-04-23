@@ -1,6 +1,5 @@
 package org.antarcticgardens.cna.content.electricity.connector;
 
-import com.google.common.collect.Streams;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
@@ -21,8 +20,7 @@ import org.antarcticgardens.cna.CreateNewAge;
 import org.antarcticgardens.cna.config.CNAConfig;
 import org.antarcticgardens.cna.content.electricity.wire.ElectricWireItem;
 import org.antarcticgardens.cna.content.electricity.wire.WireType;
-
-import java.util.stream.Stream;
+import org.jspecify.annotations.NonNull;
 
 public class ElectricalConnectorRenderer implements BlockEntityRenderer<AbstractElectricalConnector> {
     @Override
@@ -32,9 +30,14 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Abstract
     }
 
     public void renderAllConnections(AbstractElectricalConnector blockEntity, PoseStack poseStack, MultiBufferSource buffer) {
-        blockEntity.getConnectorPositions().forEach((key, value) ->
-                renderConnection(blockEntity.getBlockPos(), key, value, poseStack, buffer, blockEntity.getLevel())
-        );
+        blockEntity.getNetwork().getNeighbours(blockEntity).forEach(pair -> {
+            if (!(pair.getFirst() instanceof AbstractElectricalConnector connector)) {
+                return;
+            }
+
+            renderConnection(blockEntity.getBlockPos(), connector.getBlockPos(), pair.getSecond().type(), poseStack, buffer, blockEntity.getLevel());
+
+        });
     }
 
     //Makes sure that only one of the two connectors renders the wire
@@ -42,24 +45,31 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Abstract
         return pos.compareTo(endPos) < 0;
     }
 
-    public void renderConnection(BlockPos pos, BlockPos endPos, WireType wireType, PoseStack poseStack, MultiBufferSource buffer, Level level) {
-        if (!shouldRenderConnection(pos, endPos)) {
+    public void renderConnection(
+            BlockPos startPos,
+            BlockPos endPos,
+            WireType wireType,
+            PoseStack poseStack,
+            MultiBufferSource buffer,
+            Level level
+    ) {
+        if (!shouldRenderConnection(startPos, endPos)) {
             return;
         }
 
         ResourceLocation texture = wireType.getTextureLocation();
 
-        var originConnectorPreCast = level.getBlockEntity(pos);
+        var originConnectorPreCast = level.getBlockEntity(startPos);
         var endConnectorPreCast = level.getBlockEntity(endPos);
         if (!(originConnectorPreCast instanceof AbstractElectricalConnector originConnector) ||
                 !(endConnectorPreCast instanceof AbstractElectricalConnector endConnector)) {
             return;
         }
 
-        var originPoint = originConnector.getConnectionPoint().add(Vec3.atLowerCornerOf(pos));
+        var originPoint = originConnector.getConnectionPoint().add(Vec3.atLowerCornerOf(startPos));
         var endPoint = endConnector.getConnectionPoint().add(Vec3.atLowerCornerOf(endPos));
 
-        Wire wire = new Wire(
+        WireShape wireShape = new WireShape(
                 originPoint.toVector3f(),
                 endPoint.toVector3f(),
                 CNAConfig.getClient().wireSectionsPerMeter.get(),
@@ -69,7 +79,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Abstract
 
         poseStack.pushPose();
 
-        wire.render(consumer, poseStack, level);
+        wireShape.render(consumer, poseStack, level);
 
         poseStack.popPose();
     }
@@ -119,7 +129,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Abstract
                     return;
                 }
                 if (lookedBlockEntity instanceof AbstractElectricalConnector otherConnector) {
-                    if (otherConnector.isConnected(blockEntity.getBlockPos())) {
+                    if (otherConnector.isConnected(blockEntity)) {
                         return;
                     }
 
@@ -149,7 +159,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Abstract
 
         }
 
-        Wire wire = new Wire(
+        WireShape wireShape = new WireShape(
                 wireStart.toVector3f(),
                 wireEnd.toVector3f(),
                 CNAConfig.getClient().wireSectionsPerMeter.get(),
@@ -158,7 +168,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Abstract
         VertexConsumer consumer = buffer.getBuffer(CNARenderTypes.wire(texture));
 
         poseStack.pushPose();
-        wire.render(consumer, poseStack, level);
+        wireShape.render(consumer, poseStack, level);
 
         poseStack.popPose();
     }
@@ -169,28 +179,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Abstract
     }
 
     @Override
-    public AABB getRenderBoundingBox(AbstractElectricalConnector blockEntity) {
-        Stream<AbstractElectricalConnector> connectors = blockEntity.connectors.keySet().stream();
-        double[] coordinates = Streams.concat(connectors, Stream.of(blockEntity))
-                .map(AbstractElectricalConnector::getConnectionPoint)
-                .collect(() -> new double[]{
-                        Double.POSITIVE_INFINITY, // minX
-                        Double.POSITIVE_INFINITY, // minY
-                        Double.POSITIVE_INFINITY, // minZ
-                        Double.NEGATIVE_INFINITY, // maxX
-                        Double.NEGATIVE_INFINITY, // maxY
-                        Double.NEGATIVE_INFINITY, // maxZ
-                }, (acc, point) -> {
-                    acc[0] = Math.min(acc[0], point.x);
-                    acc[1] = Math.min(acc[1], point.y);
-                    acc[2] = Math.min(acc[2], point.z);
-                    acc[3] = Math.max(acc[3], point.x);
-                    acc[4] = Math.max(acc[4], point.y);
-                    acc[5] = Math.max(acc[5], point.z);
-                }, (a, b) -> {
-                });
-
-        AABB box = new AABB(coordinates[0], coordinates[1], coordinates[2], coordinates[3], coordinates[4], coordinates[5]);
-        return box.inflate(1.0);
+    public @NonNull AABB getRenderBoundingBox(AbstractElectricalConnector blockEntity) {
+        return blockEntity.getRenderBoundingBox();
     }
 }
