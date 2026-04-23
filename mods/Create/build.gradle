@@ -92,10 +92,6 @@ neoForge {
     }
 }
 
-configurations {
-    runtimeClasspath.extendsFrom localRuntime
-}
-
 repositories {
     maven { url = "https://maven.createmod.net" } // Ponder, Flywheel
     maven { url = "https://maven.ithundxr.dev/snapshots" } // Registrate
@@ -118,57 +114,70 @@ repositories {
     maven { url "https://chocolateminecraft.com/maven" } // Xaero
 }
 
+configurations {
+    localImplementation
+
+    runtimeClasspath.extendsFrom(localImplementation)
+    compileClasspath.extendsFrom(localImplementation)
+
+    runtimeClasspath.extendsFrom(localRuntimeOnly)
+    compileClasspath.extendsFrom(localCompileOnly)
+}
+
 dependencies {
+    // Required dependencies
     jarJar(implementation("com.tterrag.registrate:Registrate:$registrate_version"))
 
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-$minecraft_version:$flywheel_version")
-    runtimeOnly(jarJar("dev.engine-room.flywheel:flywheel-neoforge-$minecraft_version:$flywheel_version") {
+    jarJar(runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-$minecraft_version:$flywheel_version") {
         version {
             strictly "[${flywheel_version},2.0)"
             prefer flywheel_version
         }
     })
-    runtimeOnly("dev.engine-room.vanillin:vanillin-neoforge-$minecraft_version:$vanillin_version")
 
-    implementation(jarJar("net.createmod.ponder:ponder-neoforge:$ponder_version+mc$minecraft_version") {
+    jarJar(implementation("net.createmod.ponder:ponder-neoforge:$ponder_version+mc$minecraft_version") {
         version {
             strictly "[$ponder_version+mc$minecraft_version,)"
             prefer "$ponder_version+mc$minecraft_version"
         }
     })
 
+    // Local dependencies - not published to consumers
+    localRuntimeOnly("dev.engine-room.vanillin:vanillin-neoforge-$minecraft_version:$vanillin_version")
+
     //compileOnly("mezz.jei:jei-$minecraft_version-common-api:$jei_version")
     //compileOnly("mezz.jei:jei-$minecraft_version-neoforge-api:$jei_version")
-    implementation("mezz.jei:jei-$minecraft_version-neoforge:$jei_version")
+    localImplementation("mezz.jei:jei-$minecraft_version-neoforge:$jei_version")
 
-    compileOnly("top.theillusivec4.curios:curios-neoforge:$curios_version+$minecraft_version:api")
-    runtimeOnly("top.theillusivec4.curios:curios-neoforge:$curios_version+$minecraft_version")
+    localCompileOnly("top.theillusivec4.curios:curios-neoforge:$curios_version+$minecraft_version:api")
+    localRuntimeOnly("top.theillusivec4.curios:curios-neoforge:$curios_version+$minecraft_version")
 
-    compileOnly("maven.modrinth:sodium:mc$minecraft_version-$sodium_version-neoforge")
+    localCompileOnly("maven.modrinth:sodium:mc$minecraft_version-$sodium_version-neoforge")
 
     if (cc_tweaked_enable.toBoolean()) {
-        compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-core-api:$cc_tweaked_version")
-        compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-forge-api:$cc_tweaked_version")
-        runtimeOnly("cc.tweaked:cc-tweaked-$minecraft_version-forge:$cc_tweaked_version")
+        localCompileOnly("cc.tweaked:cc-tweaked-$minecraft_version-core-api:$cc_tweaked_version")
+        localCompileOnly("cc.tweaked:cc-tweaked-$minecraft_version-forge-api:$cc_tweaked_version")
+        localRuntimeOnly("cc.tweaked:cc-tweaked-$minecraft_version-forge:$cc_tweaked_version")
     }
 
-    compileOnly("maven.modrinth:farmers-delight:${farmers_delight_version}")
+    localCompileOnly("maven.modrinth:farmers-delight:${farmers_delight_version}")
     if (farmers_delight_enable.toBoolean()) {
-        implementation("maven.modrinth:farmers-delight:${farmers_delight_version}")
+        localImplementation("maven.modrinth:farmers-delight:${farmers_delight_version}")
     }
 
-    runtimeOnly("dev.architectury:architectury-neoforge:13d.0.8")
-    implementation("dev.ftb.mods:ftb-chunks-neoforge:2101.1.1")
-    implementation("dev.ftb.mods:ftb-teams-neoforge:2101.1.0")
-    implementation("dev.ftb.mods:ftb-library-neoforge:2101.1.3")
+    localRuntimeOnly("dev.architectury:architectury-neoforge:13d.0.8")
+    localImplementation("dev.ftb.mods:ftb-chunks-neoforge:2101.1.1")
+    localImplementation("dev.ftb.mods:ftb-teams-neoforge:2101.1.0")
+    localImplementation("dev.ftb.mods:ftb-library-neoforge:2101.1.3")
 
-    implementation("maven.modrinth:journeymap:1.21.1-6.0.0-beta.54+neoforge")
-    implementation("info.journeymap:journeymap-api-neoforge:2.0.0-1.21.1-20260205.200232-15") {
+    localImplementation("maven.modrinth:journeymap:1.21.1-6.0.0-beta.54+neoforge")
+    localImplementation("info.journeymap:journeymap-api-neoforge:2.0.0-1.21.1-20260205.200232-15") {
         exclude(group: "curse.maven") // Pulls in a old version of journey map which is for forge
     }
 
-    compileOnly("xaero.lib:xaerolib-neoforge-1.21:1.0.42")
-    compileOnly("curse.maven:xaeros-world-map-317780:7401095")
+    localCompileOnly("xaero.lib:xaerolib-neoforge-1.21:1.0.42")
+    localCompileOnly("curse.maven:xaeros-world-map-317780:7401095")
 }
 
 sourceSets.main {
@@ -207,15 +216,6 @@ tasks.named("sourcesJar", Jar) {
     ])
 }
 
-final slimJar = tasks.register("slimJar", Jar) {
-    archiveClassifier = "slim"
-    from(sourceSets.main.output)
-    manifest.attributes([
-        "MixinConfigs": "create.mixins.json",
-        "Git-Hash"    : gitHash
-    ])
-}
-
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
     var replaceProperties = [
         "mod_version"           : mod_version,
@@ -245,13 +245,8 @@ publishing {
     publications {
         register("mavenJava", MavenPublication) {
             from(components.java)
-
-            artifact(slimJar) {
-                classifier = "slim"
-            }
         }
     }
-
 
     repositories {
         if (project.hasProperty("mavenUsername") && project.hasProperty("mavenPassword") && project.hasProperty("mavenURL")) {
@@ -264,10 +259,6 @@ publishing {
                 }
                 url = URI.create(project.property("mavenURL") as String)
             }
-        }
-
-        if (project.hasProperty("mavendir")) {
-            maven { url mavendir }
         }
     }
 }
