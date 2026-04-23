@@ -67,10 +67,16 @@ public class OpticalSensorBlockEntity extends AbstractLaserBlockEntity implement
     }
 
     public float getHitBlockDistance() {
+        if (this.hitBlock.defaultBlockState().isAir()) {
+            return this.getLaserRange();
+        }
         final Vector3dc pos = Sable.HELPER.projectOutOfSubLevel(this.getLevel(), JOMLConversion.atCenterOf(this.getBlockPos()));
         final Vector3dc hitPos = Sable.HELPER.projectOutOfSubLevel(this.getLevel(), JOMLConversion.toJOML(this.laser.getBlockHitResult().getLocation()));
+        return (float) pos.distance(hitPos);
+    }
 
-        return this.hitBlock.defaultBlockState().isAir() ? 15 : (float) pos.distance(hitPos);
+    public boolean hasHit() {
+        return !this.hitBlock.defaultBlockState().isAir();
     }
 
     public OpticalSensorBlockEntity(final BlockEntityType<?> type, final BlockPos pos, final BlockState state) {
@@ -155,6 +161,12 @@ public class OpticalSensorBlockEntity extends AbstractLaserBlockEntity implement
 
     public float getLaserRange() {
         return this.range.getValue() + 1;
+    }
+
+    public void setRange(final int blocks) {
+        final int max = SimConfigService.INSTANCE.server().blocks.opticalSensorRange.get();
+        // getLaserRange = scroll.getValue() + 1, so translate the caller's "block reach" back to scroll units.
+        this.range.setValue(Math.clamp(blocks - 1, 1, max));
     }
 
     public float getRayDistance() {
