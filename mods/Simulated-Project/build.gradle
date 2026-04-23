@@ -33,22 +33,37 @@ subprojects {
         mavenLocal()
         mavenCentral()
 
-        maven {
-            url = "https://maven.ryanhcode.dev/releases"
-        }
-
-        maven {
-            url = "https://maven.ryanhcode.dev/private"
-
-            authentication {
-                basic(BasicAuthentication)
+        exclusiveContent { // Sable
+            forRepository {
+                maven {
+                    url = "https://maven.ryanhcode.dev/releases"
+                    name = "RyanHCode Maven"
+                }
             }
-
-            credentials {
-                username = System.getenv('local_maven_user') ?: project.findProperty('ryanhcodeMavenUser') ?: ''
-                password = System.getenv('local_maven_token') ?: project.findProperty('ryanhcodeMavenToken') ?: ''
+            filter {
+                includeGroup("dev.ryanhcode.sable")
+                includeGroup("dev.ryanhcode.sable-companion")
             }
         }
+
+        def ryanUsername = System.getenv('local_maven_user') ?: project.findProperty('ryanhcodeMavenUser') ?: ''
+        def ryanPassword = System.getenv('local_maven_token') ?: project.findProperty('ryanhcodeMavenToken') ?: ''
+
+        if (ryanUsername != '' && ryanPassword != '') {
+            maven {
+                url = "https://maven.ryanhcode.dev/private"
+
+                authentication {
+                    basic(BasicAuthentication)
+                }
+
+                credentials {
+                    username = ryanUsername
+                    password = ryanPassword
+                }
+            }
+        }
+
 
         maven { url = "https://maven.createmod.net" } // Create, Ponder, Flywheel
         maven { url = "https://mvn.devos.one/snapshots" } // Registrate
