@@ -62,62 +62,7 @@ public class DockingConnectorBlockEntity extends SmartBlockEntity implements Sim
     private MagnetBehaviour magnetBehaviour;
     private FixedConstraintHandle constraintHandle;
 
-    ConstraintSmoother constraintSmoother = null;
-
-    static class ConstraintSmoother
-    {
-        Vector3d initialRelativePosition = new Vector3d();
-        Quaterniond initialRelativeOrientation = new Quaterniond();
-        Quaterniond targetRelativeOrientation = new Quaterniond();
-        BlockPos otherConnectorPos;
-        ConstraintSmoother(final DockingConnectorBlockEntity otherConnector, final Quaterniondc targetOrientation, final Vector3dc relativePos, final Quaterniondc relativeOrientation)
-        {
-            this.initialRelativePosition.set(relativePos);
-            this.initialRelativeOrientation.set(relativeOrientation);
-            this.targetRelativeOrientation.set(targetOrientation);
-            this.otherConnectorPos = otherConnector.getBlockPos();
-        }
-        public void partialStep(final DockingConnectorBlockEntity connector)
-        {
-            final ServerSubLevelContainer container = SubLevelContainer.getContainer((ServerLevel) connector.level);
-            final SubLevelPhysicsSystem physicsSystem = container.physicsSystem();
-
-            final double partialPhysicsTick = physicsSystem.getPartialPhysicsTick();
-            final double physicsTime = connector.feet.getValue((float)partialPhysicsTick);
-
-
-            final double lerpFactor = Mth.clamp(physicsTime*physicsTime, 0.0, 1.0);
-
-            this.step(container,connector,lerpFactor);
-        }
-        public void step(final ServerSubLevelContainer container, final DockingConnectorBlockEntity connector, final double lerpFactor) {
-            final BlockPos pos = connector.getBlockPos();
-
-            if (connector.level.getBlockEntity(this.otherConnectorPos) instanceof final DockingConnectorBlockEntity other) {
-
-                final ServerSubLevel thisSubLevel = (ServerSubLevel) Sable.HELPER.getContaining(connector.level, pos);
-                final ServerSubLevel otherSubLevel = (ServerSubLevel) Sable.HELPER.getContaining(connector.level, this.otherConnectorPos);
-                assert thisSubLevel != null;
-
-                final Vector3d anchorPos = JOMLConversion.toJOML(connector.getTipPosition());
-                final Vector3d otherAnchorPos = JOMLConversion.toJOML(other.getTipPosition());
-
-
-                final double rotationLerpFactor = Mth.clamp(lerpFactor * 2.0, 0.0, 1.0);
-                if (connector.constraintHandle != null)
-                    connector.constraintHandle.remove();
-
-                otherAnchorPos.fma(1 - lerpFactor, this.initialRelativePosition);
-
-                final FixedConstraintConfiguration constraint = new FixedConstraintConfiguration(
-                        anchorPos,
-                        otherAnchorPos,
-                        this.initialRelativeOrientation.slerp(this.targetRelativeOrientation, rotationLerpFactor, new Quaterniond()));
-
-                connector.constraintHandle = container.physicsSystem().getPipeline().addConstraint(thisSubLevel, otherSubLevel, constraint);
-            }
-        }
-    }
+    private ConstraintSmoother constraintSmoother = null;
 
     public DockingConnectorBlockEntity(final BlockEntityType<?> type, final BlockPos pos, final BlockState state) {
         super(type, pos, state);
@@ -149,7 +94,7 @@ public class DockingConnectorBlockEntity extends SmartBlockEntity implements Sim
         if (otherConnector != null && this.constraintHandle == null && otherConnector.constraintHandle == null) {
 
             final MagnetMap<DockingConnectorBlockEntity> controller = DockingConnectorBlockEntity.MAGNET_CONTROLLER;
-            if(controller.getPair(this.level, this.getBlockPos(), this.otherConnectorPosition) == null) {
+            if (controller.getPair(this.level, this.getBlockPos(), this.otherConnectorPosition) == null) {
                 controller.tryAddPair(this.level, this.getBlockPos(), this.otherConnectorPosition, DockingConnectorPair::new);
                 final DockingConnectorPair pair = (DockingConnectorPair) controller.getPair(this.level, this.getBlockPos(), this.otherConnectorPosition);
 
@@ -212,7 +157,7 @@ public class DockingConnectorBlockEntity extends SmartBlockEntity implements Sim
         }
         final boolean previousExtended = this.isExtended();
         this.extension.tickChaser();
-        if(previousExtended != this.isExtended())
+        if (previousExtended != this.isExtended())
             this.level.setBlock(this.getBlockPos(), this.getBlockState().setValue(DockingConnectorBlock.EXTENDED, this.isExtended()), 6);
         final float previousFeetValue = this.feet.getValue();
         this.feet.updateChaseTarget(this.hasOtherConnector() || virtualLock ? 1 : 0);
@@ -241,10 +186,11 @@ public class DockingConnectorBlockEntity extends SmartBlockEntity implements Sim
             this.level.updateNeighborsAt(this.worldPosition, this.getBlockState().getBlock());
         }
     }
-    public void setVirtualLock(boolean lock)
-    {
+
+    public void setVirtualLock(boolean lock) {
         this.virtualLock = lock;
     }
+
     private void removeConstraint() {
         if (this.constraintHandle != null) {
             this.constraintHandle.remove();
@@ -268,24 +214,24 @@ public class DockingConnectorBlockEntity extends SmartBlockEntity implements Sim
         final SubLevelPhysicsSystem physicsSystem = container.physicsSystem();
 
         final double partialPhysicsTick = physicsSystem.getPartialPhysicsTick();
-        final double physicsTime = this.feet.getValue((float)partialPhysicsTick);
+        final double physicsTime = this.feet.getValue((float) partialPhysicsTick);
 
 
-        double lerpFactor = Mth.clamp(physicsTime*physicsTime, 0.0, 1.0);
+        double lerpFactor = Mth.clamp(physicsTime * physicsTime, 0.0, 1.0);
 
-        if(isLocked)
-            lerpFactor=1;
+        if (isLocked)
+            lerpFactor = 1;
 
         final double rotationLerpFactor = Mth.clamp(lerpFactor * 2.0, 0.0, 1.0);
-        if(this.constraintHandle != null)
+        if (this.constraintHandle != null)
             this.constraintHandle.remove();
 
-        otherAnchorPos.fma(1-lerpFactor,relativePos);
+        otherAnchorPos.fma(1 - lerpFactor, relativePos);
 
         final FixedConstraintConfiguration constraint = new FixedConstraintConfiguration(
                 anchorPos,
                 otherAnchorPos,
-                relativeOrientation.slerp(targetOrientation,rotationLerpFactor,new Quaterniond()));
+                relativeOrientation.slerp(targetOrientation, rotationLerpFactor, new Quaterniond()));
 
         this.constraintHandle = container.physicsSystem().getPipeline().addConstraint(thisSubLevel, otherSubLevel, constraint);
     }
@@ -417,10 +363,10 @@ public class DockingConnectorBlockEntity extends SmartBlockEntity implements Sim
 
         this.updateState();
 
-        if(this.state == DockingConnectorState.LOCKING) {
+        if (this.state == DockingConnectorState.LOCKING) {
 
             if (targetOrientation != null && this.constraintSmoother == null) {
-                this.constraintSmoother = new ConstraintSmoother(otherConnector, targetOrientation,relativePos,relativeOrientation);
+                this.constraintSmoother = new ConstraintSmoother(otherConnector, targetOrientation, relativePos, relativeOrientation);
             }
             if (isLocked) {
                 this.state = DockingConnectorState.LOCKED;
@@ -428,9 +374,9 @@ public class DockingConnectorBlockEntity extends SmartBlockEntity implements Sim
                 this.tank.connect(this.otherConnectorPosition, otherConnector.tank);
 
                 this.level.updateNeighborsAt(this.worldPosition, this.getBlockState().getBlock());
-                if(this.constraintSmoother != null) {
+                if (this.constraintSmoother != null) {
                     final ServerSubLevelContainer container = SubLevelContainer.getContainer((ServerLevel) this.level);
-                    this.constraintSmoother.step(container,this,1);
+                    this.constraintSmoother.step(container, this, 1);
                 }
                 this.constraintSmoother = null;
             }
@@ -462,7 +408,7 @@ public class DockingConnectorBlockEntity extends SmartBlockEntity implements Sim
     @Override
     public void sable$physicsTick(final ServerSubLevel subLevel, final RigidBodyHandle handle, final double timeStep) {
 
-        if(this.constraintSmoother != null)
+        if (this.constraintSmoother != null)
             this.constraintSmoother.partialStep(this);
     }
 
@@ -594,6 +540,65 @@ public class DockingConnectorBlockEntity extends SmartBlockEntity implements Sim
     @Override
     public void clearContent() {
         this.inventory.clearContent();
+    }
+
+    private record ConstraintSmoother(
+            BlockPos otherConnectorPos,
+            Quaterniond targetRelativeOrientation,
+            Vector3d initialRelativePosition,
+            Quaterniond initialRelativeOrientation) {
+
+        private ConstraintSmoother(
+                final DockingConnectorBlockEntity otherConnectorPos,
+                final Quaterniondc targetRelativeOrientation,
+                final Vector3dc initialRelativePosition,
+                final Quaterniondc initialRelativeOrientation) {
+            this(otherConnectorPos.getBlockPos(),
+                    new Quaterniond(targetRelativeOrientation),
+                    new Vector3d(initialRelativePosition),
+                    new Quaterniond(initialRelativeOrientation));
+        }
+
+        public void partialStep(final DockingConnectorBlockEntity connector) {
+            final ServerSubLevelContainer container = SubLevelContainer.getContainer((ServerLevel) connector.level);
+            final SubLevelPhysicsSystem physicsSystem = container.physicsSystem();
+
+            final double partialPhysicsTick = physicsSystem.getPartialPhysicsTick();
+            final double physicsTime = connector.feet.getValue((float) partialPhysicsTick);
+
+
+            final double lerpFactor = Mth.clamp(physicsTime * physicsTime, 0.0, 1.0);
+
+            this.step(container, connector, lerpFactor);
+        }
+
+        public void step(final ServerSubLevelContainer container, final DockingConnectorBlockEntity connector, final double lerpFactor) {
+            final BlockPos pos = connector.getBlockPos();
+
+            if (connector.level.getBlockEntity(this.otherConnectorPos) instanceof final DockingConnectorBlockEntity other) {
+
+                final ServerSubLevel thisSubLevel = (ServerSubLevel) Sable.HELPER.getContaining(connector.level, pos);
+                final ServerSubLevel otherSubLevel = (ServerSubLevel) Sable.HELPER.getContaining(connector.level, this.otherConnectorPos);
+                assert thisSubLevel != null;
+
+                final Vector3d anchorPos = JOMLConversion.toJOML(connector.getTipPosition());
+                final Vector3d otherAnchorPos = JOMLConversion.toJOML(other.getTipPosition());
+
+
+                final double rotationLerpFactor = Mth.clamp(lerpFactor * 2.0, 0.0, 1.0);
+                if (connector.constraintHandle != null)
+                    connector.constraintHandle.remove();
+
+                otherAnchorPos.fma(1 - lerpFactor, this.initialRelativePosition);
+
+                final FixedConstraintConfiguration constraint = new FixedConstraintConfiguration(
+                        anchorPos,
+                        otherAnchorPos,
+                        this.initialRelativeOrientation.slerp(this.targetRelativeOrientation, rotationLerpFactor, new Quaterniond()));
+
+                connector.constraintHandle = container.physicsSystem().getPipeline().addConstraint(thisSubLevel, otherSubLevel, constraint);
+            }
+        }
     }
 
     public enum DockingConnectorState {
