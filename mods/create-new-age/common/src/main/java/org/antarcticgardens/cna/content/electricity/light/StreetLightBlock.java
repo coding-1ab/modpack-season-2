@@ -6,6 +6,7 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -89,8 +90,8 @@ public class StreetLightBlock extends Block implements IBE<StreetLightBlockEntit
         if (newState.is(CNABlocks.STREET_LIGHT.get()))
             return;
 
-        if (level.getBlockEntity(pos) instanceof StreetLightBlockEntity connector) {
-            connector.remove(level);
+        if (level instanceof ServerLevel serverLevel && serverLevel.getBlockEntity(pos) instanceof StreetLightBlockEntity connector) {
+            connector.remove(serverLevel);
         }
 
         super.onRemove(state, level, pos, newState, movedByPiston);

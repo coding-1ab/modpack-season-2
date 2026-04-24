@@ -11,7 +11,7 @@ import org.antarcticgardens.cna.config.CNAConfig;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-public class Wire {
+public class WireShape {
     public static final float SAG_FACTOR = 0.9f;
     private static final Vector3f GLOBAL_UP = new Vector3f(0.0f, 1.0f, 0.0f);
 
@@ -22,7 +22,7 @@ public class Wire {
     private final float totalLength;
     private final float thickness;
 
-    public Wire(Vector3f start, Vector3f end, float sectionsPerMeter, float thickness) {
+    public WireShape(Vector3f start, Vector3f end, float sectionsPerMeter, float thickness) {
         this.start = start;
         Vector3f difference = end.sub(start);
         this.totalLength = difference.length();

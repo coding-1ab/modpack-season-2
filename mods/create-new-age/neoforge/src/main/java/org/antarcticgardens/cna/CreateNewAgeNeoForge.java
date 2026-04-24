@@ -1,6 +1,7 @@
 package org.antarcticgardens.cna;
 
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.EventPriority;
@@ -10,6 +11,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import org.antarcticgardens.cna.content.electricity.network.NetworkTicker;
 import org.antarcticgardens.cna.neoforge.compat.computercraft.NeoComputerCraftCompat;
@@ -23,7 +25,21 @@ import org.antarcticgardens.esl.neoforge.energy.E2FEnergyStorageAdapter;
 public class CreateNewAgeNeoForge extends CreateNewAge {
     public CreateNewAgeNeoForge(IEventBus eventBus, ModContainer modContainer) {
         this.initialize(new NeoForgePlatform(eventBus));
-        NeoForge.EVENT_BUS.addListener((LevelTickEvent.Pre e) -> NetworkTicker.tickWorld(e.getLevel()));
+        NeoForge.EVENT_BUS.addListener((LevelTickEvent.Pre e) -> {
+            if (e.getLevel() instanceof ServerLevel level) {
+                NetworkTicker.tickPre(level);
+            }
+        });
+        NeoForge.EVENT_BUS.addListener((LevelTickEvent.Post e) -> {
+            if (e.getLevel() instanceof ServerLevel level) {
+                NetworkTicker.tickPost(level);
+            }
+        });
+        NeoForge.EVENT_BUS.addListener((LevelEvent.Unload e) -> {
+            if (e.getLevel() instanceof ServerLevel level) {
+                NetworkTicker.onLevelUnload(level);
+            }
+        });
 
         eventBus.addListener(EventPriority.HIGHEST, CreateNewAgeDatagenNeoForge::gatherData);
         eventBus.addListener(NeoForgePlatform::registerDatapack);

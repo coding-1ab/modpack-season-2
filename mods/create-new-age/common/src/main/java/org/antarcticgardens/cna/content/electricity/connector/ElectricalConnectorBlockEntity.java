@@ -6,6 +6,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -13,16 +14,23 @@ import org.antarcticgardens.cna.CNABlockEntityTypes;
 import org.antarcticgardens.cna.content.electricity.network.ElectricalNetwork;
 import org.antarcticgardens.cna.content.electricity.network.NetworkEnergyStorage;
 import org.antarcticgardens.esl.energy.EnergyStorage;
+import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 
 public class ElectricalConnectorBlockEntity extends AbstractElectricalConnector implements IHaveGoggleInformation {
-    private final NetworkEnergyStorage storage;
+    private NetworkEnergyStorage storage = null;
 
-    public ElectricalConnectorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
+    public ElectricalConnectorBlockEntity(BlockEntityType<? extends ElectricalConnectorBlockEntity> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
-        storage = new NetworkEnergyStorage(this, null);
         EnergyStorage.registerForBlockEntity((blockEntity, direction) -> blockEntity.storage, CNABlockEntityTypes.ELECTRICAL_CONNECTOR.get());
+    }
+
+    @Override
+    public void setLevel(@NonNull Level level) {
+        super.setLevel(level);
+        Objects.requireNonNull(this.network);
+        this.storage = new NetworkEnergyStorage(this.network);
     }
 
     @Override
@@ -48,7 +56,7 @@ public class ElectricalConnectorBlockEntity extends AbstractElectricalConnector 
     }
 
     @Override
-    public void setNetwork(ElectricalNetwork network) {
+    public void setNetwork(@NonNull ElectricalNetwork network) {
         super.setNetwork(network);
         storage.setNetwork(network);
     }

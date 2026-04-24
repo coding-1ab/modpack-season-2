@@ -1,12 +1,7 @@
 package org.antarcticgardens.cna.content.electricity.network;
 
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import org.antarcticgardens.cna.content.electricity.connector.AbstractElectricalConnector;
-import org.antarcticgardens.esl.energy.EnergyStorage;
-import org.antarcticgardens.esl.transaction.SnapshotParticipant;
 import org.antarcticgardens.esl.transaction.TransactionContext;
-
-import java.util.Map;
+import org.jspecify.annotations.NonNull;
 
 public class SimpleNetworkEnergyStorage extends NetworkEnergyStorage {
     private long capacity;
@@ -18,8 +13,8 @@ public class SimpleNetworkEnergyStorage extends NetworkEnergyStorage {
 
     private Runnable finalCommitCallback = () -> {};
 
-    public SimpleNetworkEnergyStorage(AbstractElectricalConnector connector, ElectricalNetwork network, long capacity) {
-        super(connector, network);
+    public SimpleNetworkEnergyStorage(@NonNull ElectricalNetwork network, long capacity) {
+        super(network);
         if (capacity < 0) {
             throw new IllegalArgumentException("SimpleEnergyStorage capacity can't be negative");
         }
@@ -32,6 +27,7 @@ public class SimpleNetworkEnergyStorage extends NetworkEnergyStorage {
         return this;
     }
 
+    @SuppressWarnings("unused")
     public SimpleNetworkEnergyStorage setCapacity(long capacity) {
         this.capacity = capacity;
         stored = Math.min(stored, capacity);
@@ -39,6 +35,7 @@ public class SimpleNetworkEnergyStorage extends NetworkEnergyStorage {
         return this;
     }
 
+    @SuppressWarnings("unused")
     public SimpleNetworkEnergyStorage setSupportsInsertion(boolean supportsInsertion) {
         this.supportsInsertion = supportsInsertion;
         return this;
@@ -49,16 +46,19 @@ public class SimpleNetworkEnergyStorage extends NetworkEnergyStorage {
         return this;
     }
 
+    @SuppressWarnings("unused")
     public SimpleNetworkEnergyStorage setMaxExtract(long maxExtract) {
         this.maxExtract = maxExtract;
         return this;
     }
 
+    @SuppressWarnings("unused")
     public SimpleNetworkEnergyStorage setMaxInsert(long maxInsert) {
         this.maxInsert = maxInsert;
         return this;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public SimpleNetworkEnergyStorage setStoredEnergy(long amount) {
         stored = Math.max(0, Math.min(amount, capacity));
         return this;

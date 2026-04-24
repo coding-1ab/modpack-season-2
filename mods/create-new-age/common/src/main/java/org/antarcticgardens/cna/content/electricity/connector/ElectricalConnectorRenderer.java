@@ -180,6 +180,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Abstract
 
     @Override
     public @NonNull AABB getRenderBoundingBox(AbstractElectricalConnector blockEntity) {
-        return blockEntity.getRenderBoundingBox();
+        // return blockEntity.getRenderBoundingBox();
+        return AABB.INFINITE;
     }
 }

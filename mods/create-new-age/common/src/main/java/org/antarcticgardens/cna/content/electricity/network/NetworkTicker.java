@@ -1,6 +1,6 @@
 package org.antarcticgardens.cna.content.electricity.network;
 
-import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,32 +8,44 @@ import java.util.List;
 import java.util.Map;
 
 public class NetworkTicker {
-    private static final Map<Level, List<ElectricalNetwork>> networks = new HashMap<>();
+    private static final Map<ServerLevel, List<ElectricalNetwork>> networks = new HashMap<>();
 
-    public static void addNetwork(ElectricalNetwork network) {
-        if (network.getWorld() == null)
-            return;
-
-        List<ElectricalNetwork> networkList = networks.getOrDefault(network.getWorld(), new ArrayList<>());
+    public static void addNetwork(ServerLevel level, ElectricalNetwork network) {
+        List<ElectricalNetwork> networkList = networks.computeIfAbsent(level, (ignored) -> new ArrayList<>());
 
         if (!networkList.contains(network))
             networkList.add(network);
 
-        networks.put(network.getWorld(), networkList);
+        networks.put(level, networkList);
     }
 
     public static void removeNetwork(ElectricalNetwork network) {
-        if (!networks.containsKey(network.getWorld()))
-            return;
-
-        networks.get(network.getWorld()).remove(network);
+        networks.values().forEach(list -> list.remove(network));
     }
 
-    public static void tickWorld(Level world) {
-        if (!networks.containsKey(world))
-            return;
+    public static void onLevelUnload(ServerLevel unloaded) {
+        networks.remove(unloaded);
+    }
 
-        for (ElectricalNetwork network : networks.get(world))
-            network.tick();
+    public static void tickPre(ServerLevel world) {
+        List<ElectricalNetwork> networkList = networks.get(world);
+        if (networkList == null) {
+            return;
+        }
+        networkList.removeIf(ElectricalNetwork::isEmpty);
+
+        for (ElectricalNetwork network : networkList) {
+            network.tickPre();
+        }
+    }
+
+    public static void tickPost(ServerLevel level) {
+        List<ElectricalNetwork> networkList = networks.get(level);
+        if (networkList == null) {
+            return;
+        }
+
+        for (ElectricalNetwork network : networkList)
+            network.tickPost(level);
     }
 }

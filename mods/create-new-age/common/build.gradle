@@ -16,6 +16,6 @@ dependencies {
 //    modCompileOnly("net.fabricmc:fabric-loader:${project(":fabric").fabricLoaderVersion}")
 //    modCompileOnly("curse.maven:forge-config-api-port-fabric-547434:4583000")
 
-    compileOnly("com.google.code.findbugs:findbugs:3.0.1")
+    compileOnly("com.github.spotbugs:spotbugs:4.9.8")
     annotationProcessor(implementation("io.github.llamalad7:mixinextras-common:0.4.1"))
 }

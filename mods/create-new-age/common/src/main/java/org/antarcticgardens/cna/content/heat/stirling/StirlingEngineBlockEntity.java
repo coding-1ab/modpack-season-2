@@ -53,7 +53,7 @@ public class StirlingEngineBlockEntity extends GeneratingKineticBlockEntity impl
 
         CreateLang.translate("tooltip.create_new_age.using")
                 .style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
-        CreateLang.translate("tooltip.create_new_age.temperature.ps", StringFormatUtil.formatFloat(speed * 3.125f)) // 3.125 is is 50/16
+        CreateLang.translate("tooltip.create_new_age.temperature.ps", StringFormatUtil.formatFloat(speed * 3.125f)) // 3.125 is 50/16
                 .style(ChatFormatting.AQUA).forGoggles(tooltip, 2);
 
         return super.addToGoggleTooltip(tooltip, isPlayerSneaking);

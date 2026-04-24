@@ -5,34 +5,28 @@ import org.antarcticgardens.cna.content.electricity.connector.AbstractElectrical
 import org.antarcticgardens.esl.energy.EnergyStorage;
 import org.antarcticgardens.esl.transaction.SnapshotParticipant;
 import org.antarcticgardens.esl.transaction.TransactionContext;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Map;
 
 public class NetworkEnergyStorage extends SnapshotParticipant<Object> implements EnergyStorage {
-    private final AbstractElectricalConnector connector;
-    private ElectricalNetwork network;
+    private @NonNull ElectricalNetwork network;
 
-    public NetworkEnergyStorage(AbstractElectricalConnector connector, ElectricalNetwork network) {
-        this.connector = connector;
+    public NetworkEnergyStorage(@NonNull ElectricalNetwork network) {
         this.network = network;
     }
     
-    public ElectricalNetwork getNetwork() {
+    public @NonNull ElectricalNetwork getNetwork() {
         return network;
     }
     
-    public void setNetwork(ElectricalNetwork network) {
+    public void setNetwork(@NonNull ElectricalNetwork network) {
         this.network = network;
     }
 
     @Override
     public long insert(long maxAmount, TransactionContext txn) {
-        if (network == null)
-            return 0;
-
-        updateSnapshots(txn);
-        
-        return network.insert(connector, maxAmount, txn);
+        return 0;
     }
 
     @Override
@@ -52,18 +46,13 @@ public class NetworkEnergyStorage extends SnapshotParticipant<Object> implements
 
     @Override
     public Object createSnapshot() {
-        if (network == null)
-            return null;
-        
-        return new NetworkSnapshot(network);
+        return network.createSnapshot();
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public void restoreSnapshot(Object object) {
         if (object instanceof NetworkSnapshot snapshot) {
-            getNetwork().getPathManager().setConductivityContext(new NetworkPathConductivityContext(snapshot.getContext()));
-
             for (Map.Entry<AbstractElectricalConnector, Object> e : snapshot.getSnapshots().entrySet()) {
                 EnergyStorage storage = EnergyStorage.findForBlock(e.getKey().getLevel(), e.getKey().getSupportingBlockPos(),
                         e.getKey().getBlockState().getValue(BlockStateProperties.FACING));

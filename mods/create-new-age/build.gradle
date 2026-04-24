@@ -71,6 +71,10 @@ subprojects {
                 modRuntimeOnly("mezz.jei:jei-${rootProject.minecraftVersion}-${project.name}:${rootProject.jeiVersion}")
             }
         }
+
+        implementation(include("org.jgrapht:jgrapht-core:1.5.3"))
+        implementation(include("org.jheaps:jheaps:0.14"))
+        implementation(include("org.apfloat:apfloat:1.16.0"))
     }
 
     loom {

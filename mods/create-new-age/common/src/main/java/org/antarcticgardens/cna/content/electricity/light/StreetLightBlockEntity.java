@@ -12,6 +12,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -23,6 +24,7 @@ import org.antarcticgardens.cna.content.electricity.network.SimpleNetworkEnergyS
 import org.antarcticgardens.cna.util.RunnableUtil;
 import org.antarcticgardens.cna.util.StringFormatUtil;
 import org.antarcticgardens.esl.energy.EnergyStorage;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -32,10 +34,9 @@ public class StreetLightBlockEntity extends AbstractElectricalConnector implemen
     private long prvEnergy = -100000;
     public ScrollValueBehaviour lightLevelBehaviour;
 
-    public StreetLightBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
+    public StreetLightBlockEntity(BlockEntityType<? extends StreetLightBlockEntity> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
-
-        storage = new SimpleNetworkEnergyStorage(this, null, CNAConfig.getServer().streetLightCapacity.get())
+        storage = new SimpleNetworkEnergyStorage(network, CNAConfig.getServer().streetLightCapacity.get())
                 .onFinalCommit(RunnableUtil.createBlockEntityUpdater(this))
                 .setSupportsExtraction(false);
 
@@ -123,7 +124,7 @@ public class StreetLightBlockEntity extends AbstractElectricalConnector implemen
     }
 
     @Override
-    public void setNetwork(ElectricalNetwork network) {
+    public void setNetwork(@NonNull ElectricalNetwork network) {
         super.setNetwork(network);
         storage.setNetwork(network);
     }

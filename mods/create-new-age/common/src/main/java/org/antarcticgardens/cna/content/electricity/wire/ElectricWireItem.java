@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import org.antarcticgardens.cna.config.CNAConfig;
 import org.antarcticgardens.cna.content.electricity.connector.AbstractElectricalConnector;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -85,33 +86,47 @@ public class ElectricWireItem extends Item {
     }
 
     @Override
-    public InteractionResult useOn(UseOnContext context) {
+    public InteractionResult useOn(@NonNull UseOnContext context) {
+        Player player = context.getPlayer();
+        boolean shouldShowMessage = player != null;
+
         BlockEntity clickedEntity = context.getLevel().getBlockEntity(context.getClickedPos());
         BlockPos boundToPos = getBoundConnector(context.getItemInHand());
 
         if (clickedEntity instanceof AbstractElectricalConnector clickedConnector) {
             if (boundToPos == null) {
                 setBoundConnector(context.getItemInHand(), clickedConnector);
-                playBoundSound(context.getPlayer());
+                if (player != null) {
+                    playBoundSound(player);
+                }
                 return InteractionResult.SUCCESS;
             } else {
                 BlockPos clickedPos = clickedConnector.getBlockPos();
-                int maxLength = CNAConfig.getServer().maxWireLength.get();
-
-                if (boundToPos.equals(clickedPos)) {
-                    context.getPlayer().displayClientMessage(Component.translatable("item.create_new_age.wire.message.self_connect"), true);
-                    context.getItemInHand().remove(BOUND_TO);
-                    return InteractionResult.FAIL;
-                } else if (clickedPos.distSqr(boundToPos) > Mth.square(maxLength)) {
-                    context.getPlayer().displayClientMessage(Component.translatable("item.create_new_age.wire.message.too_far", maxLength), true);
-                    return InteractionResult.FAIL;
-                } else if (clickedConnector.isConnected(boundToPos)) {
-                    context.getPlayer().displayClientMessage(Component.translatable("item.create_new_age.wire.message.already_connected"), true);
-                    context.getItemInHand().remove(BOUND_TO);
+                BlockEntity boundToEntity = context.getLevel().getBlockEntity(boundToPos);
+                if (!(boundToEntity instanceof AbstractElectricalConnector boundConnector)) {
                     return InteractionResult.FAIL;
                 }
 
-                BlockEntity boundToEntity = context.getLevel().getBlockEntity(boundToPos);
+                int maxLength = CNAConfig.getServer().maxWireLength.get();
+
+                if (boundToPos.equals(clickedPos)) {
+                    if (shouldShowMessage) {
+                        player.displayClientMessage(Component.translatable("item.create_new_age.wire.message.self_connect"), true);
+                    }
+                    context.getItemInHand().remove(BOUND_TO);
+                    return InteractionResult.FAIL;
+                } else if (clickedPos.distSqr(boundToPos) > Mth.square(maxLength)) {
+                    if (shouldShowMessage) {
+                        player.displayClientMessage(Component.translatable("item.create_new_age.wire.message.too_far", maxLength), true);
+                    }
+                    return InteractionResult.FAIL;
+                } else if (clickedConnector.isConnected(boundConnector)) {
+                    if (shouldShowMessage) {
+                        player.displayClientMessage(Component.translatable("item.create_new_age.wire.message.already_connected"), true);
+                    }
+                    context.getItemInHand().remove(BOUND_TO);
+                    return InteractionResult.FAIL;
+                }
 
                 if (boundToEntity instanceof AbstractElectricalConnector boundToConnector) {
                     context.getItemInHand().remove(BOUND_TO);

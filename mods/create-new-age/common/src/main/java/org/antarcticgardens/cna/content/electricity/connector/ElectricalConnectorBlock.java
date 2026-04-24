@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
@@ -45,8 +46,8 @@ public class ElectricalConnectorBlock extends DirectionalBlock implements IBE<El
         if (newState.is(CNABlocks.ELECTRICAL_CONNECTOR.get()))
             return;
 
-        if (level.getBlockEntity(pos) instanceof ElectricalConnectorBlockEntity connector) {
-            connector.remove(level);
+        if (level.getBlockEntity(pos) instanceof ElectricalConnectorBlockEntity connector && level instanceof ServerLevel serverLevel) {
+            connector.remove(serverLevel);
         }
 
         super.onRemove(state, level, pos, newState, movedByPiston);
@@ -97,9 +98,6 @@ public class ElectricalConnectorBlock extends DirectionalBlock implements IBE<El
         if (!world.isClientSide()) {
             ElectricalConnectorMode nextMode = ElectricalConnectorMode.values()[(state.getValue(MODE).ordinal() + 1) % ElectricalConnectorMode.values().length];
             world.setBlock(context.getClickedPos(), state.setValue(MODE, nextMode), 1 | 2);
-            
-            if (world.getBlockEntity(context.getClickedPos()) instanceof ElectricalConnectorBlockEntity connector)
-                connector.getNetwork().updateConsumersAndSources();
             
             IWrenchable.playRotateSound(world, context.getClickedPos());
             

@@ -1,20 +1,24 @@
 package org.antarcticgardens.cna.content.electricity.network;
 
 import org.antarcticgardens.cna.content.electricity.connector.AbstractElectricalConnector;
+import org.antarcticgardens.cna.content.electricity.connector.IElectricityNode;
+import org.antarcticgardens.cna.content.electricity.wire.Wire;
 import org.antarcticgardens.esl.energy.EnergyStorage;
 import org.antarcticgardens.esl.transaction.SnapshotParticipant;
+import org.jgrapht.Graph;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class NetworkSnapshot {
     private final Map<AbstractElectricalConnector, Object> snapshots = new HashMap<>();
-    private final NetworkPathConductivityContext context;
-    
-    public NetworkSnapshot(ElectricalNetwork network) {
-        context = new NetworkPathConductivityContext(network.getPathManager().getConductivityContext());
-        
-        for (AbstractElectricalConnector connector : network.getNodes()) {
+
+    public NetworkSnapshot(Graph<IElectricityNode, Wire> network) {
+        for (IElectricityNode node : network.vertexSet()) {
+            if (!(node instanceof AbstractElectricalConnector connector)) {
+                return;
+            }
+
             EnergyStorage storage = EnergyStorage.findForBlock(connector.getLevel(), connector.getSupportingBlockPos(), 
                     connector.getFacing());
             
@@ -26,9 +30,5 @@ public class NetworkSnapshot {
     
     public Map<AbstractElectricalConnector, Object> getSnapshots() {
         return snapshots;
-    }
-    
-    public NetworkPathConductivityContext getContext() {
-        return context;
     }
 }
