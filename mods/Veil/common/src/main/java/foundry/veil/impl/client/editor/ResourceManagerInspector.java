@@ -1,5 +1,6 @@
 package foundry.veil.impl.client.editor;
 
+import foundry.imgui.api.ImGuiMC;
 import foundry.veil.VeilClient;
 import foundry.veil.api.client.editor.SingleWindowInspector;
 import foundry.veil.api.client.imgui.VeilImGuiUtil;
@@ -49,7 +50,7 @@ public class ResourceManagerInspector extends SingleWindowInspector {
         ImGui.inputTextWithHint("##search", SEARCH.getString(), this.searchText);
         ImGui.sameLine();
 
-        ImGui.pushFont(VeilRenderSystem.renderer().getEditorManager().getFont(VeilImGuiUtil.ICON_FONT, false, false));
+        ImGui.pushFont(ImGuiMC.getFont(VeilImGuiUtil.ICON_FONT, false, false));
 
         // Add button
         ImGui.beginDisabled();
@@ -149,7 +150,7 @@ public class ResourceManagerInspector extends SingleWindowInspector {
                         float startX = ImGui.getCursorScreenPosX();
                         ImGui.selectable("##" + resource.resourceInfo().location(), false, ImGuiSelectableFlags.AllowItemOverlap, ImGui.getContentRegionAvailX(), 22f);
 
-                        ImGui.setItemAllowOverlap();
+                        ImGui.setNextItemAllowOverlap();
                         ImGui.sameLine();
                         ImGui.setCursorScreenPos(startX, ImGui.getCursorScreenPosY());
                         VeilResourceRenderer.renderFilename(resource, true);
@@ -207,7 +208,7 @@ public class ResourceManagerInspector extends SingleWindowInspector {
                 float startX = ImGui.getCursorScreenPosX();
                 ImGui.selectable("##" + resource.resourceInfo().location(), false, ImGuiSelectableFlags.AllowItemOverlap, ImGui.getContentRegionAvailX(), cellHeight);
 
-                ImGui.setItemAllowOverlap();
+                ImGui.setNextItemAllowOverlap();
                 ImGui.sameLine();
 
                 ImVec2 selectableCursorScreenPos = ImGui.getCursorScreenPos();

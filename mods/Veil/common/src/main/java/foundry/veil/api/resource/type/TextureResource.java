@@ -1,5 +1,6 @@
 package foundry.veil.api.resource.type;
 
+import foundry.imgui.api.ImGuiMC;
 import foundry.veil.api.client.imgui.VeilImGuiUtil;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.compat.SodiumCompat;
@@ -40,22 +41,22 @@ public record TextureResource(VeilResourceInfo resourceInfo) implements VeilReso
     @Override
     public void render(boolean dragging, boolean fullName) {
         float size = ImGui.getTextLineHeight();
-        int texture = Minecraft.getInstance().getTextureManager().getTexture(this.resourceInfo.location()).getId();
+        AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(this.resourceInfo.location());
 
         ImGui.pushStyleColor(ImGuiCol.Text, this.resourceInfo.isStatic() ? 0xFFAAAAAA : 0xFFFFFFFF);
         if (dragging) {
-            ImGui.image(texture, size * 8, size * 8);
+            ImGuiMC.image(texture, size * 8, size * 8);
             VeilImGuiUtil.resourceLocation(this.resourceInfo().location());
         } else {
             ImGui.pushStyleVar(ImGuiStyleVar.ItemSpacing, 0, 0);
-            ImGui.setItemAllowOverlap();
-            ImGui.image(texture, size, size);
+            ImGui.setNextItemAllowOverlap();
+            ImGuiMC.image(texture, size, size);
             ImGui.sameLine();
             ImGui.popStyleVar();
 
             if (ImGui.isItemHovered()) {
                 ImGui.beginTooltip();
-                ImGui.image(texture, size * 16, size * 16);
+                ImGuiMC.image(texture, size * 16, size * 16);
                 ImGui.endTooltip();
             }
             ImGui.sameLine();

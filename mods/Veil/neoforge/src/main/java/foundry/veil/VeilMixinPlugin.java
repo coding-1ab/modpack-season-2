@@ -1,10 +1,7 @@
 package foundry.veil;
 
-import foundry.veil.impl.client.imgui.VeilImGuiImpl;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.fml.loading.FMLLoader;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -27,11 +24,6 @@ public class VeilMixinPlugin implements IMixinConfigPlugin {
         addModIncompatibility("affinity", "foundry.veil.mixin.performance.client.PerformanceRenderTargetMixin", "foundry.veil.mixin.performance.client.PerformanceLevelRendererMixin");
         addModIncompatibility("hdr_mod", "foundry.veil.mixin.performance.client.PerformanceRenderTargetMixin", "foundry.veil.mixin.performance.client.PerformanceLevelRendererMixin");
         addModIncompatibility("soulshade", "foundry.veil.mixin.performance.client.PerformanceRenderTargetMixin", "foundry.veil.mixin.performance.client.PerformanceLevelRendererMixin");
-        if (FMLLoader.getDist() == Dist.CLIENT) {
-            for (String mod : VeilImGuiImpl.INCOMPATIBLE_MODS) {
-                addModIncompatibility(mod, "foundry.veil.mixin.imgui");
-            }
-        }
     }
 
     private static void addModIncompatibility(String modId, String... mixinClasses) {

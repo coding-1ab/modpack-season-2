@@ -1,6 +1,8 @@
 package foundry.veil;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import foundry.imgui.api.ImGuiMC;
+import foundry.imgui.api.ImGuiMCEvents;
 import foundry.veil.api.client.editor.EditorManager;
 import foundry.veil.api.client.registry.*;
 import foundry.veil.api.client.render.VeilRenderSystem;
@@ -11,6 +13,8 @@ import foundry.veil.api.quasar.data.QuasarParticles;
 import foundry.veil.api.quasar.registry.EmitterShapeRegistry;
 import foundry.veil.api.quasar.registry.RenderStyleRegistry;
 import foundry.veil.impl.client.editor.*;
+import foundry.veil.impl.client.imgui.AdvancedFboImGuiAreaImpl;
+import foundry.veil.impl.client.imgui.VeilImGuiStylesheet;
 import foundry.veil.impl.client.render.dynamicbuffer.DynamicBufferManager;
 import foundry.veil.impl.client.render.dynamicbuffer.DynamicBufferShard;
 import foundry.veil.impl.flare.FlareManager;
@@ -46,6 +50,13 @@ public class VeilClient {
         VeilEventPlatform.INSTANCE.onVeilRendererAvailable(renderer -> {
             RESOURCE_MANAGER.addVeilLoaders(renderer);
             if (VeilRenderSystem.hasImGui()) {
+                // Load Veil Styles
+                try (ImGuiMC.ActiveContext context = ImGuiMC.withImGui()) {
+                    if (context != null) {
+                        VeilImGuiStylesheet.initStyles();
+                    }
+                }
+
                 EditorManager editorManager = renderer.getEditorManager();
 
                 // Example for devs
@@ -68,6 +79,17 @@ public class VeilClient {
 
         // This fixes moving transparent blocks drawing too early
         VeilEventPlatform.INSTANCE.onVeilRegisterFixedBuffers(registry -> registry.registerFixedBuffer(VeilRenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS, RenderType.translucentMovingBlock()));
+
+        if (VeilRenderSystem.hasImGui()) {
+            ImGuiMCEvents.INSTANCE.preRenderImGuiEvents(() -> {
+                AdvancedFboImGuiAreaImpl.begin();
+                VeilRenderSystem.renderer().getEditorManager().render();
+            });
+            ImGuiMCEvents.INSTANCE.postRenderImGuiEvents(() -> {
+                VeilRenderSystem.renderer().getEditorManager().renderLast();
+                AdvancedFboImGuiAreaImpl.end();
+            });
+        }
 
         RenderTypeShardRegistry.addGenericShard(renderType -> "main_target".equals(getOutputName(renderType)), new DynamicBufferShard(DynamicBufferManager.MAIN_WRAPPER, () -> Minecraft.getInstance().getMainRenderTarget()));
         RenderTypeShardRegistry.addGenericShard(renderType -> "translucent_target".equals(getOutputName(renderType)), new DynamicBufferShard("translucent", () -> Minecraft.getInstance().levelRenderer.getTranslucentTarget()));

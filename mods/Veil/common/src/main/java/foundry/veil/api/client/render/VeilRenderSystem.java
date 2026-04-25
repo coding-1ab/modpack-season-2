@@ -6,6 +6,7 @@ import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.VertexBuffer;
+import foundry.imgui.api.ImGuiMC;
 import foundry.veil.Veil;
 import foundry.veil.api.client.necromancer.render.NecromancerRenderer;
 import foundry.veil.api.client.render.dynamicbuffer.DynamicBufferType;
@@ -32,7 +33,6 @@ import foundry.veil.ext.LevelRendererExtension;
 import foundry.veil.ext.TextureManagerExtension;
 import foundry.veil.ext.VertexBufferExtension;
 import foundry.veil.impl.client.imgui.AdvancedFboImGuiAreaImpl;
-import foundry.veil.impl.client.imgui.VeilImGuiImpl;
 import foundry.veil.impl.client.necromancer.render.NecromancerRenderDispatcher;
 import foundry.veil.impl.client.render.dynamicbuffer.VanillaShaderCompiler;
 import foundry.veil.impl.client.render.light.VoxelShadowGrid;
@@ -43,6 +43,7 @@ import foundry.veil.impl.client.render.profiler.VeilRenderProfilerImpl;
 import foundry.veil.impl.client.render.shader.program.ShaderProgramImpl;
 import foundry.veil.mixin.pipeline.accessor.PipelineBufferSourceAccessor;
 import foundry.veil.platform.VeilEventPlatform;
+import foundry.veil.platform.VeilPlatform;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -257,7 +258,6 @@ public final class VeilRenderSystem {
     private static final Vector3f LIGHT1_DIRECTION = new Vector3f();
     private static final Vector3f CAMERA_BOB_OFFSET = new Vector3f();
 
-    private static boolean pendingFontRebuild;
     private static VeilRenderer renderer;
     private static GpuVendor gpuVendor;
     private static ResourceLocation shaderLocation;
@@ -1156,7 +1156,7 @@ public final class VeilRenderSystem {
      * @return Whether ImGui can be used
      */
     public static boolean hasImGui() {
-        return VeilImGuiImpl.get() instanceof VeilImGuiImpl;
+        return Veil.platform().isModLoaded("imguimc") && ImGuiMC.isImguiLoaded();
     }
 
     /**
@@ -1215,7 +1215,6 @@ public final class VeilRenderSystem {
 
         Window window = client.getWindow();
         renderer = new VeilRenderer(resourceManager, window);
-        VeilImGuiImpl.init(window.getWindow());
         screenQuadVao = directStateAccessSupported() ? glCreateVertexArrays() : glGenVertexArrays();
         VeilDebug.get().objectLabel(GL_VERTEX_ARRAY, screenQuadVao, "Screen Quad Vertex Array");
         emptySamplers = MemoryUtil.memCallocInt(maxCombinedTextureUnits());
@@ -1223,11 +1222,7 @@ public final class VeilRenderSystem {
 
     @ApiStatus.Internal
     public static void beginFrame() {
-        if (pendingFontRebuild) {
-            pendingFontRebuild = false;
-            renderer.getEditorManager().rebuildFonts();
-        }
-        VeilImGuiImpl.get().beginFrame();
+//        VeilImGuiImpl.get().beginFrame();
 
         SHADER_BUFFER_CACHE.bind();
     }
@@ -1235,7 +1230,7 @@ public final class VeilRenderSystem {
     @ApiStatus.Internal
     public static void endFrame() {
         AdvancedFboImGuiAreaImpl.end();
-        VeilImGuiImpl.get().endFrame();
+//        VeilImGuiImpl.get().endFrame();
 
         if (Veil.platform().hasErrors()) {
             return;
@@ -1253,11 +1248,6 @@ public final class VeilRenderSystem {
         VanillaShaderCompiler.clear();
 
         VeilDebug.MESSAGE_ID.set(0);
-    }
-
-    @ApiStatus.Internal
-    public static void rebuildFonts() {
-        pendingFontRebuild = true;
     }
 
     @ApiStatus.Internal
@@ -1279,9 +1269,9 @@ public final class VeilRenderSystem {
 
     @ApiStatus.Internal
     public static void close() {
-        if (VeilImGuiImpl.get() instanceof NativeResource resource) {
-            resource.free();
-        }
+//        if (VeilImGuiImpl.get() instanceof NativeResource resource) {
+//            resource.free();
+//        }
         if (renderer != null) {
             renderer.free();
         }

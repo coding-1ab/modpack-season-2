@@ -85,12 +85,12 @@ public class ResourceOverrideEditor implements ResourceFileEditor<VeilResource<?
                     Veil.LOGGER.error("Failed to copy file: {}", info.location(), e);
                 }
             }
-            ImGui.setItemAllowOverlap();
+            ImGui.setNextItemAllowOverlap();
             ImGui.sameLine();
 
             ImGui.text(writePath.toString());
 
-            ImGui.setItemAllowOverlap();
+            ImGui.setNextItemAllowOverlap();
         }
 
         if (this.options.isEmpty()) {

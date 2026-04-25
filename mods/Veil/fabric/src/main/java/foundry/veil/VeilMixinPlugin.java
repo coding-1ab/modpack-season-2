@@ -1,10 +1,7 @@
 package foundry.veil;
 
-import foundry.veil.impl.client.imgui.VeilImGuiImpl;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.loader.api.FabricLoader;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -26,11 +23,6 @@ public class VeilMixinPlugin implements IMixinConfigPlugin {
     static {
         addModIncompatibility("affinity", "foundry.veil.mixin.performance.client.PerformanceRenderTargetMixin");
         addModIncompatibility("hdr_mod", "foundry.veil.mixin.performance.client.PerformanceRenderTargetMixin");
-        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-            for (String mod : VeilImGuiImpl.INCOMPATIBLE_MODS) {
-                addModIncompatibility(mod, "foundry.veil.mixin.imgui");
-            }
-        }
     }
 
     private static void addModIncompatibility(String modId, String... mixinClasses) {

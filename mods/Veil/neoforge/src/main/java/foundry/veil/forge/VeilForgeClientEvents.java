@@ -13,7 +13,6 @@ import foundry.veil.api.quasar.particle.ParticleSystemManager;
 import foundry.veil.forge.event.ForgeFreeNativeResourcesEvent;
 import foundry.veil.impl.ClientEnumArgument;
 import foundry.veil.impl.client.VeilClientSchedulerImpl;
-import foundry.veil.impl.client.imgui.VeilImGuiImpl;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ResourceLocationArgument;

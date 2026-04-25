@@ -73,7 +73,7 @@ public class PipelineStatisticsViewer implements Inspector {
         Map<String, VeilRenderProfilerImpl.ResultField> map = this.history.get(this.historyIndex);
 
         for (VeilRenderProfilerImpl.ResultField field : fields) {
-            String label = path.isBlank() ? field.name() : (path.replaceAll("\u001e", ".") + "." + field.name());
+            String label = path.isBlank() ? field.name() : (path.replace("\u001e", ".") + "." + field.name());
             if (ImGui.collapsingHeader(field.name())) {
                 ImGui.pushID(label);
                 ImGui.indent();
@@ -84,7 +84,7 @@ public class PipelineStatisticsViewer implements Inspector {
                     RenderProfilerCounter[] statistics = field.statistics();
                     long[] values = new long[HISTORY_LENGTH];
                     for (RenderProfilerCounter statistic : statistics) {
-                        if (ImPlot.beginPlot(statistic.name(), ImGui.getContentRegionAvailX(), 150, ImPlotFlags.NoFrame | ImPlotFlags.NoChild | ImPlotFlags.NoMouseText | ImPlotFlags.NoLegend)) {
+                        if (ImPlot.beginPlot(statistic.name(), ImGui.getContentRegionAvailX(), 150, ImPlotFlags.NoFrame | ImPlotFlags.NoMouseText | ImPlotFlags.NoLegend)) {
                             long max = 0;
                             for (int j = 0; j < HISTORY_LENGTH; j++) {
                                 VeilRenderProfilerImpl.ResultField past = this.getHistory(HISTORY_LENGTH - j - 1).get(label);

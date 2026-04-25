@@ -1,5 +1,6 @@
 package foundry.veil.api.client.editor;
 
+import foundry.imgui.api.ImGuiMC;
 import foundry.veil.Veil;
 import foundry.veil.VeilClient;
 import foundry.veil.api.resource.VeilEditorEnvironment;
@@ -7,6 +8,7 @@ import foundry.veil.api.resource.VeilResource;
 import foundry.veil.api.resource.VeilResourceManager;
 import foundry.veil.api.resource.editor.ResourceFileEditor;
 import foundry.veil.api.util.CompositeReloadListener;
+import foundry.veil.impl.client.imgui.VeilImGuiStylesheet;
 import imgui.ImFont;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
@@ -37,30 +39,15 @@ public class EditorManager implements VeilEditorEnvironment, PreparableReloadLis
 
     private final Map<Inspector, ImBoolean> editors;
     private final Map<ResourceLocation, ResourceFileEditor<?>> resourceFileEditors;
-    private final ImGuiFontManager fonts;
     private boolean enabled;
 
     @ApiStatus.Internal
     public EditorManager(ReloadableResourceManager resourceManager) {
         this.editors = new TreeMap<>(Comparator.comparing(inspector -> inspector.getClass().getSimpleName()));
         this.resourceFileEditors = new Object2ObjectArrayMap<>();
-        this.fonts = new ImGuiFontManager();
         this.enabled = false;
 
         resourceManager.registerReloadListener(this);
-    }
-
-    @ApiStatus.Internal
-    public void rebuildFonts() {
-        this.fonts.rebuildFonts();
-    }
-
-    public ImFont getFont(ResourceLocation name, boolean bold, boolean italic) {
-        return this.fonts.getFont(name, bold, italic);
-    }
-
-    public ImFont getFont(boolean bold, boolean italic) {
-        return this.getFont(DEFAULT_FONT, bold, italic);
     }
 
     @ApiStatus.Internal
@@ -68,6 +55,8 @@ public class EditorManager implements VeilEditorEnvironment, PreparableReloadLis
         if (!this.enabled) {
             return;
         }
+
+        ImGui.pushFont(ImGuiMC.getFont(DEFAULT_FONT, false, false));
 
         if (ImGui.beginMainMenuBar()) {
             ImFont font = ImGui.getFont();
@@ -138,6 +127,8 @@ public class EditorManager implements VeilEditorEnvironment, PreparableReloadLis
 
             next.render();
         }
+
+        ImGui.popFont();
     }
 
     @ApiStatus.Internal
@@ -146,6 +137,8 @@ public class EditorManager implements VeilEditorEnvironment, PreparableReloadLis
             return;
         }
 
+        ImGui.pushFont(ImGuiMC.getFont(DEFAULT_FONT, false, false));
+
         for (Map.Entry<Inspector, ImBoolean> entry : this.editors.entrySet()) {
             Inspector inspector = entry.getKey();
             ImBoolean enabled = entry.getValue();
@@ -153,6 +146,8 @@ public class EditorManager implements VeilEditorEnvironment, PreparableReloadLis
                 inspector.renderLast();
             }
         }
+
+        ImGui.popFont();
     }
 
     @ApiStatus.Internal
@@ -186,9 +181,10 @@ public class EditorManager implements VeilEditorEnvironment, PreparableReloadLis
 
     /**
      * Checks all matching visible inspectors.
+     *
      * @param filter The filter for what visible inspector to check
-     * @since 2.0.0
      * @return Whether the filtered inspector is visible
+     * @since 2.0.0
      */
     public boolean isVisible(Predicate<Inspector> filter) {
         if (!this.enabled) {
@@ -237,7 +233,6 @@ public class EditorManager implements VeilEditorEnvironment, PreparableReloadLis
     @Override
     public @NotNull CompletableFuture<Void> reload(@NotNull PreparationBarrier preparationBarrier, @NotNull ResourceManager resourceManager, @NotNull ProfilerFiller prepareProfiler, @NotNull ProfilerFiller applyProfiler, @NotNull Executor backgroundExecutor, @NotNull Executor gameExecutor) {
         List<PreparableReloadListener> listeners = new ArrayList<>(this.editors.size());
-        listeners.add(this.fonts);
         for (Inspector inspector : this.editors.keySet()) {
             if (inspector instanceof PreparableReloadListener listener) {
                 listeners.add(listener);
@@ -247,6 +242,9 @@ public class EditorManager implements VeilEditorEnvironment, PreparableReloadLis
             if (editor instanceof PreparableReloadListener listener) {
                 listeners.add(listener);
             }
+        }
+        if (listeners.isEmpty()) {
+            return preparationBarrier.wait(null);
         }
         PreparableReloadListener listener = CompositeReloadListener.of(listeners.toArray(PreparableReloadListener[]::new));
         return listener.reload(preparationBarrier, resourceManager, prepareProfiler, applyProfiler, backgroundExecutor, gameExecutor);
