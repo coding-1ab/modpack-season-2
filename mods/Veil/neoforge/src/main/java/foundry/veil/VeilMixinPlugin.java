@@ -24,8 +24,9 @@ public class VeilMixinPlugin implements IMixinConfigPlugin {
     private final Map<String, Boolean> loadedMods = new HashMap<>();
 
     static {
-        addModIncompatibility("affinity", "foundry.veil.mixin.performance.client.PerformanceRenderTargetMixin");
-        addModIncompatibility("hdr_mod", "foundry.veil.mixin.performance.client.PerformanceRenderTargetMixin");
+        addModIncompatibility("affinity", "foundry.veil.mixin.performance.client.PerformanceRenderTargetMixin", "foundry.veil.mixin.performance.client.PerformanceLevelRendererMixin");
+        addModIncompatibility("hdr_mod", "foundry.veil.mixin.performance.client.PerformanceRenderTargetMixin", "foundry.veil.mixin.performance.client.PerformanceLevelRendererMixin");
+        addModIncompatibility("soulshade", "foundry.veil.mixin.performance.client.PerformanceRenderTargetMixin", "foundry.veil.mixin.performance.client.PerformanceLevelRendererMixin");
         if (FMLLoader.getDist() == Dist.CLIENT) {
             for (String mod : VeilImGuiImpl.INCOMPATIBLE_MODS) {
                 addModIncompatibility(mod, "foundry.veil.mixin.imgui");
