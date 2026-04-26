@@ -4,8 +4,13 @@ import imgui.ImGui;
 import imgui.ImGuiStyle;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiDir;
+import org.jetbrains.annotations.ApiStatus;
 
-public class VeilImGuiStylesheet {
+@ApiStatus.Internal
+public final class VeilImGuiStylesheet {
+
+    private VeilImGuiStylesheet() {
+    }
 
     public static void initStyles() {
         ImGuiStyle style = ImGui.getStyle();

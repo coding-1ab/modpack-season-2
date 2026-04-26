@@ -1,14 +1,15 @@
-package foundry.veil;
+package foundry.veil.impl;
 
+import foundry.veil.Veil;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
-import org.objectweb.asm.tree.ClassNode;
+import org.jetbrains.annotations.ApiStatus;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
-import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
 import java.util.*;
 
-public class VeilMixinPlugin implements IMixinConfigPlugin {
+@ApiStatus.Internal
+public abstract class VeilMixinPlugin implements IMixinConfigPlugin {
 
     private static final String PACKAGE_NAME = Veil.platform().getPlatformType().getMixinPackageName();
     private static final Set<String> COMPAT = Set.of(
@@ -50,11 +51,18 @@ public class VeilMixinPlugin implements IMixinConfigPlugin {
                 return Veil.SODIUM ? !mixinClassName.startsWith(compat + ".vanilla") : !mixinClassName.startsWith(compat + ".sodium");
             }
         }
+        if (mixinClassName.startsWith("foundry.veil.mixin.compat")) {
+            if (Veil.IRIS && SODIUM_WITHOUT_IRIS_COMPAT.contains(mixinClassName)) {
+                return false;
+            }
+            String[] parts = mixinClassName.split("\\.", 5);
+            return this.isModLoaded(parts[4]);
+        }
         if (mixinClassName.startsWith("foundry.veil." + PACKAGE_NAME + ".mixin.compat")) {
             if (Veil.IRIS && SODIUM_WITHOUT_IRIS_COMPAT.contains(mixinClassName)) {
                 return false;
             }
-            String[] parts = mixinClassName.split("\\.");
+            String[] parts = mixinClassName.split("\\.", 6);
             return this.isModLoaded(parts[5]);
         }
         for (Map.Entry<String, Set<String>> entry : INCOMPATIBLE_MIXINS.entrySet()) {
@@ -72,20 +80,5 @@ public class VeilMixinPlugin implements IMixinConfigPlugin {
     @Override
     public List<String> getMixins() {
         return null;
-    }
-
-    @Override
-    public void preApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
-    }
-
-    @Override
-    public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
-    }
-
-    // Hack to make sure mixin doesn't have a panic attack
-    public void preApply(String targetClassName, org.spongepowered.asm.lib.tree.ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
-    }
-
-    public void postApply(String targetClassName, org.spongepowered.asm.lib.tree.ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
     }
 }

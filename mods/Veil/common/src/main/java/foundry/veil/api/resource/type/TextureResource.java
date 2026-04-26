@@ -1,6 +1,7 @@
 package foundry.veil.api.resource.type;
 
 import foundry.imgui.api.ImGuiMC;
+import foundry.imgui.api.ImGuiTextureProvider;
 import foundry.veil.api.client.imgui.VeilImGuiUtil;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.compat.SodiumCompat;
@@ -41,7 +42,7 @@ public record TextureResource(VeilResourceInfo resourceInfo) implements VeilReso
     @Override
     public void render(boolean dragging, boolean fullName) {
         float size = ImGui.getTextLineHeight();
-        AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(this.resourceInfo.location());
+        ImGuiTextureProvider texture = ImGuiMC.getTexture(Minecraft.getInstance().getTextureManager().getTexture(this.resourceInfo.location()));
 
         ImGui.pushStyleColor(ImGuiCol.Text, this.resourceInfo.isStatic() ? 0xFFAAAAAA : 0xFFFFFFFF);
         if (dragging) {

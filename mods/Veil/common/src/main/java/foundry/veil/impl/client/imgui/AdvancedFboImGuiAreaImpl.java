@@ -8,10 +8,13 @@ import java.util.List;
 import java.util.ListIterator;
 
 @ApiStatus.Internal
-public class AdvancedFboImGuiAreaImpl {
+public final class AdvancedFboImGuiAreaImpl {
 
     private static final List<AdvancedFbo> FBO_STACK = new ArrayList<>();
     private static int pointer;
+
+    private AdvancedFboImGuiAreaImpl() {
+    }
 
     public static AdvancedFbo allocate(int width, int height) {
         if (pointer >= FBO_STACK.size()) {

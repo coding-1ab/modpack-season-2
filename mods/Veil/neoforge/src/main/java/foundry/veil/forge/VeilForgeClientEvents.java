@@ -13,6 +13,7 @@ import foundry.veil.api.quasar.particle.ParticleSystemManager;
 import foundry.veil.forge.event.ForgeFreeNativeResourcesEvent;
 import foundry.veil.impl.ClientEnumArgument;
 import foundry.veil.impl.client.VeilClientSchedulerImpl;
+import foundry.veil.impl.client.imgui.VeilImGuiCompat;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
@@ -35,7 +36,7 @@ import java.util.Locale;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 
 @ApiStatus.Internal
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.GAME, modid = Veil.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Veil.MODID, value = Dist.CLIENT)
 public class VeilForgeClientEvents {
 
     @SubscribeEvent
@@ -45,7 +46,14 @@ public class VeilForgeClientEvents {
 
     @SubscribeEvent
     public static void keyPressed(InputEvent.Key event) {
-        if (event.getAction() == GLFW_PRESS && VeilClient.EDITOR_KEY.matches(event.getKey(), event.getScanCode())) {
+        if (VeilClient.IMGUIMC_LOADED && event.getAction() == GLFW_PRESS && VeilImGuiCompat.EDITOR_KEY.matches(event.getKey(), event.getScanCode())) {
+            VeilRenderSystem.renderer().getEditorManager().toggle();
+        }
+    }
+
+    @SubscribeEvent
+    public static void mousePressed(InputEvent.MouseButton.Pre event) {
+        if (VeilClient.IMGUIMC_LOADED && event.getAction() == GLFW_PRESS && VeilImGuiCompat.EDITOR_KEY.matchesMouse(event.getButton())) {
             VeilRenderSystem.renderer().getEditorManager().toggle();
         }
     }
@@ -107,13 +115,6 @@ public class VeilForgeClientEvents {
                             }))
                     ));
             dispatcher.register(debugBuilder);
-        }
-    }
-
-    @SubscribeEvent
-    public static void mousePressed(InputEvent.MouseButton.Pre event) {
-        if (event.getAction() == GLFW_PRESS && VeilClient.EDITOR_KEY.matchesMouse(event.getButton())) {
-            VeilRenderSystem.renderer().getEditorManager().toggle();
         }
     }
 

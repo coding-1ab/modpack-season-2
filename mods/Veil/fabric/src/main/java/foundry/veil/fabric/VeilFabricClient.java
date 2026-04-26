@@ -13,6 +13,7 @@ import foundry.veil.fabric.util.FabricReloadListener;
 import foundry.veil.impl.ClientEnumArgument;
 import foundry.veil.impl.VeilBuiltinPacks;
 import foundry.veil.impl.VeilReloadListeners;
+import foundry.veil.impl.client.imgui.VeilImGuiCompat;
 import foundry.veil.impl.client.render.shader.VeilVanillaShaders;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
@@ -44,7 +45,9 @@ public class VeilFabricClient implements ClientModInitializer {
         VeilClient.init();
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> client.execute(VeilRenderSystem.renderer().getLightRenderer()::free));
 
-        KeyBindingHelper.registerKeyBinding(VeilClient.EDITOR_KEY);
+        if (VeilClient.IMGUIMC_LOADED) {
+            KeyBindingHelper.registerKeyBinding(VeilImGuiCompat.EDITOR_KEY);
+        }
 
         // Register test resource pack
         ModContainer container = FabricLoader.getInstance().getModContainer(Veil.MODID).orElseThrow();

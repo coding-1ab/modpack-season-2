@@ -68,8 +68,7 @@ public class VanillaShaderCompiler {
                         try (Reader reader = resourceManager.openAsReader(resourcelocation)) {
                             return IOUtils.toString(reader);
                         } catch (IOException e) {
-                            Veil.LOGGER.error("Could not open GLSL import {}: {}", resourcelocation, e.getMessage());
-                            return "#error " + e.getMessage();
+                            throw new RuntimeException("Could not open GLSL import " + resourcelocation, e);
                         }
                     }
                 };
@@ -82,7 +81,7 @@ public class VanillaShaderCompiler {
                     VeilRenderSystem.renderer().getDynamicBufferManger().markRecompiled(shader);
                 });
             } catch (Throwable t) {
-                Veil.LOGGER.error("Couldn't load vanilla shader from {}", path, t);
+                Veil.LOGGER.error("Couldn't load vanilla shader from {}, skipping", path, t);
             }
         }
         VanillaShaderProcessor.free();

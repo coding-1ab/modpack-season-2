@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import foundry.imgui.api.ImGuiMC;
 import foundry.veil.Veil;
+import foundry.veil.VeilClient;
 import foundry.veil.api.client.necromancer.render.NecromancerRenderer;
 import foundry.veil.api.client.render.dynamicbuffer.DynamicBufferType;
 import foundry.veil.api.client.render.ext.VeilDebug;
@@ -1156,7 +1157,7 @@ public final class VeilRenderSystem {
      * @return Whether ImGui can be used
      */
     public static boolean hasImGui() {
-        return Veil.platform().isModLoaded("imguimc") && ImGuiMC.isImguiLoaded();
+        return VeilClient.IMGUIMC_LOADED && ImGuiMC.isImguiLoaded();
     }
 
     /**

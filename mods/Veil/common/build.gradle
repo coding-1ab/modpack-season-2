@@ -27,7 +27,6 @@ dependencies {
     api "io.github.ocelot:glsl-processor:${glsl_processor_version}"
 
     compileOnly "foundry.imguimc:imguimc-common-${minecraft_version}:$imguimc_version"
-    interfaceInjectionData "foundry.imguimc:imguimc-common-${minecraft_version}:$imguimc_version"
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testImplementation 'org.joml:joml:1.10.5'

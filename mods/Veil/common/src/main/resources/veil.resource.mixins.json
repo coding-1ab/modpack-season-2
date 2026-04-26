@@ -4,7 +4,7 @@
   "package": "foundry.veil.mixin.resource",
   "compatibilityLevel": "JAVA_21",
   "refmap": "${mod_id}.refmap.json",
-  "plugin": "foundry.veil.VeilMixinPlugin",
+  "plugin": "foundry.veil.VeilMixinPluginImpl",
   "mixins": [
     "ResourceVanillaPackResourcesMixin"
   ],

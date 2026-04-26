@@ -1,18 +1,15 @@
 package foundry.veil.forge;
 
-import com.google.common.collect.ImmutableList;
 import foundry.veil.Veil;
 import foundry.veil.VeilClient;
 import foundry.veil.api.client.render.VeilRenderSystem;
-import foundry.veil.api.client.render.rendertype.VeilRenderType;
-import foundry.veil.forge.event.ForgeVeilRegisterBlockLayersEvent;
 import foundry.veil.forge.event.ForgeVeilRegisterFixedBuffersEvent;
 import foundry.veil.forge.event.ForgeVeilRendererAvailableEvent;
 import foundry.veil.forge.impl.ForgeRenderTypeStageHandler;
 import foundry.veil.impl.VeilBuiltinPacks;
 import foundry.veil.impl.VeilReloadListeners;
+import foundry.veil.impl.client.imgui.VeilImGuiCompat;
 import foundry.veil.impl.client.render.shader.VeilVanillaShaders;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -50,7 +47,9 @@ public class VeilForgeClient {
     }
 
     private static void registerKeys(RegisterKeyMappingsEvent event) {
-        event.register(VeilClient.EDITOR_KEY);
+        if (VeilClient.IMGUIMC_LOADED) {
+            event.register(VeilImGuiCompat.EDITOR_KEY);
+        }
     }
 
     private static void registerShaders(RegisterShadersEvent event) {

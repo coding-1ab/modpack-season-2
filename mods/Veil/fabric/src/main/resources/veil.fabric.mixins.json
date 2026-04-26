@@ -4,15 +4,15 @@
   "package": "foundry.veil.fabric.mixin",
   "compatibilityLevel": "JAVA_21",
   "refmap": "${mod_id}.refmap.json",
-  "plugin": "foundry.veil.VeilMixinPlugin",
+  "plugin": "foundry.veil.VeilMixinPluginImpl",
   "mixins": [
     "resource.ModNioResourcePackMixin",
     "resource.PathPackResourcesMixin"
   ],
   "client": [
-    "client.KeyboardHandlerMixin",
+    "compat.imguimc.KeyboardHandlerMixin",
     "client.MinecraftMixin",
-    "client.MouseHandlerMixin",
+    "compat.imguimc.MouseHandlerMixin",
     "client.RenderBuffersMixin",
     "client.RenderTypeMixin",
     "client.debug.vanilla.DebugLevelRendererMixin",
