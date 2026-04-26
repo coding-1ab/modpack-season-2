@@ -27,32 +27,12 @@ public record DynamicBuffersChange(int previouslyEnabledBuffersMask, int enabled
      * Creates a new array containing all dynamic buffers that are now enabled.
      * <br>
      * The returned values are in the correct attachment order starting at attachment 1.
-     * Attachment 0 will always be the regular vanilla minecraft framebuffer attachment.
+     * Attachment 0 will always be the regular vanilla Minecraft framebuffer attachment.
      *
      * @return a new array containing all dynamic buffers that are now enabled
      */
     public DynamicBufferType[] getEnabledBuffers() {
         return DynamicBufferType.decode(this.enabledBuffersMask);
-    }
-
-    /**
-     * @return a mask representing the enabled state of every dynamic buffer
-     * @deprecated Use {@link #enabledBuffersMask()} instead
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "4.0.0")
-    @Deprecated
-    public int getPreviouslyEnabledBuffersMask() {
-        return this.previouslyEnabledBuffersMask;
-    }
-
-    /**
-     * @return a mask representing the previous enabled state of every dynamic buffer
-     * @deprecated Use {@link #enabledBuffersMask()} instead
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "4.0.0")
-    @Deprecated
-    public int getEnabledBuffersMask() {
-        return this.enabledBuffersMask;
     }
 
     /**

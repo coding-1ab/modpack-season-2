@@ -334,32 +334,6 @@ public final class VeilRenderSystem {
      * Binds the specified texture ids to sequential texture units and invalidates the GLStateManager.
      *
      * @param first    The first unit to bind to
-     * @param textures The textures to bind
-     * @deprecated Use {@link #bindTextures(int, IntBuffer, IntBuffer)} instead
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "4.0.0")
-    @Deprecated
-    public static void bindTextures(int first, IntBuffer textures) {
-        VeilMultiBind.get().bindTextures(first, textures);
-    }
-
-    /**
-     * Binds the specified texture ids to sequential texture units and invalidates the GLStateManager.
-     *
-     * @param first    The first unit to bind to
-     * @param textures The textures to bind
-     * @deprecated Use {@link #bindTextures(int, int[], int[])} instead
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "4.0.0")
-    @Deprecated
-    public static void bindTextures(int first, int... textures) {
-        VeilMultiBind.get().bindTextures(first, textures);
-    }
-
-    /**
-     * Binds the specified texture ids to sequential texture units and invalidates the GLStateManager.
-     *
-     * @param first    The first unit to bind to
      * @param targets  The texture targets
      * @param textures The textures to bind
      * @since 3.6.0

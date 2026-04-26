@@ -3,9 +3,7 @@ package foundry.veil.api.client.render.post;
 import com.mojang.serialization.Codec;
 import foundry.veil.api.client.registry.PostPipelineStageRegistry;
 import foundry.veil.api.client.render.VeilRenderSystem;
-import foundry.veil.api.client.render.ext.VeilMultiBind;
 import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
-import foundry.veil.api.client.render.shader.program.MutableUniformAccess;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
 import foundry.veil.api.client.render.shader.program.TextureUniformAccess;
 import foundry.veil.api.client.render.shader.program.UniformAccess;
@@ -23,7 +21,7 @@ import org.lwjgl.system.NativeResource;
  *
  * @author Ocelot
  */
-public interface PostPipeline extends MutableUniformAccess, NativeResource {
+public interface PostPipeline extends UniformAccess, NativeResource {
 
     Codec<PostPipeline> CODEC = PostPipelineStageRegistry.REGISTRY.byNameCodec().dispatch(PostPipeline::getType, PostPipelineStageRegistry.PipelineType::codec);
 
@@ -103,20 +101,6 @@ public interface PostPipeline extends MutableUniformAccess, NativeResource {
      */
     @ApiStatus.NonExtendable
     interface Context extends ShaderTextureSource.Context {
-
-        /**
-         * Binds a named sampler id. All samplers can be applied with {@link #applySamplers(TextureUniformAccess)} for adding them to shaders.
-         *
-         * @param name      The name of the sampler
-         * @param textureId The id of the texture to bind
-         * @param samplerId The id of the sampler to bind
-         * @deprecated Ise {@link #setTexture(CharSequence, int, int, int)} instead
-         */
-        @ApiStatus.ScheduledForRemoval(inVersion = "4.0.0")
-        @Deprecated
-        default void setSampler(CharSequence name, int textureId, int samplerId) {
-            this.setTexture(name, VeilMultiBind.getTarget(textureId), textureId, samplerId);
-        }
 
         /**
          * Binds a named sampler id. All samplers can be applied with {@link #applySamplers(TextureUniformAccess)} for adding them to shaders.
