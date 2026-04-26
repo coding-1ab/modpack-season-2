@@ -8,8 +8,8 @@ import net.minecraft.world.level.block.FireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.FluidState;
-import org.example.com.tmvkrpxl0.modpack.Blocks;
-import org.example.com.tmvkrpxl0.modpack.Fluids;
+import com.tmvkrpxl0.modpack.Blocks;
+import com.tmvkrpxl0.modpack.Fluids;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(FireBlock.class)

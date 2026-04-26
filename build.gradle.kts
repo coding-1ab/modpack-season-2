@@ -176,8 +176,16 @@ repositories {
     }
     maven("https://maven.idiotss.com/releases/") // ESL
 
-    maven("https://maven.ryanhcode.dev/releases") { // Sable
-        name = "RyanHCode Maven"
+    exclusiveContent { // Sable
+        forRepository {
+            maven("https://maven.ryanhcode.dev/releases") {
+                name = "RyanHCode Maven"
+            }
+        }
+        filter {
+            includeGroup("dev.ryanhcode.sable")
+            includeGroup("dev.ryanhcode.sable-companion")
+        }
     }
 }
 
@@ -212,10 +220,12 @@ dependencies {
     localRuntime("curse.maven:modernfix-790626:7917721")
     localRuntime("curse.maven:spark-361579:6225208")
     localRuntime("top.theillusivec4.curios:curios-neoforge:$curiosVersion+${minecraftVersion}")
-    localRuntime("maven.modrinth:sodium:mc${minecraftVersion}-$sodiumVersion-neoforge")
+    // localRuntime("maven.modrinth:sodium:mc${minecraftVersion}-$sodiumVersion-neoforge")
 
+    compileOnly("com.simibubi.create:create-1.21.1")
     compileOnly("com.mrh0.createaddition:createaddition")
     compileOnly("plus.dragons.createdragonsplus:create-dragons-plus")
+    compileOnly("plus.dragons.createenchantmentindustry:create-enchantment-industry")
     compileOnly("org.appliedenergistics:appliedenergistics2")
     implementation("dev.ryanhcode.sable:sable-neoforge-${minecraftVersion}")
 

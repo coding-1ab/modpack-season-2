@@ -1,0 +1,13 @@
+{
+  "type": "create_dragons_plus:ending",
+  "ingredients": [
+    {
+      "item": "minecraft:armadillo_scute"
+    }
+  ],
+  "results": [
+    {
+      "id": "modpack_tweaks:shulker_shell_fragment"
+    }
+  ]
+}

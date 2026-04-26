@@ -1,10 +1,10 @@
-package org.example.com.tmvkrpxl0.modpack.data
+package com.tmvkrpxl0.modpack.data
 
 import net.minecraft.data.PackOutput
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider
 import net.neoforged.neoforge.common.data.ExistingFileHelper
-import org.example.com.tmvkrpxl0.modpack.ModPackTweaks
-import org.example.com.tmvkrpxl0.modpack.toResource
+import com.tmvkrpxl0.modpack.ModPackTweaks
+import com.tmvkrpxl0.modpack.toResource
 
 class ItemModels(output: PackOutput, existingFileHelper: ExistingFileHelper) :
     ItemModelProvider(output, ModPackTweaks.ID, existingFileHelper) {

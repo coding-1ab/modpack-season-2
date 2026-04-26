@@ -1,0 +1,20 @@
+{
+  "type": "create:mixing",
+  "heat_requirement": "heated",
+  "ingredients": [
+    {
+      "item": "ae2:ender_dust"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 250,
+      "fluid": "createaddition:seed_oil"
+    }
+  ],
+  "results": [
+    {
+      "amount": 250,
+      "id": "modpack_tweaks:ender_fuel"
+    }
+  ]
+}

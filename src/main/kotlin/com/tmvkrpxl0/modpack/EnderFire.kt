@@ -1,4 +1,4 @@
-package org.example.com.tmvkrpxl0.modpack
+package com.tmvkrpxl0.modpack
 
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos

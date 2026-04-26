@@ -1,4 +1,4 @@
-package org.example.com.tmvkrpxl0.modpack
+package com.tmvkrpxl0.modpack
 
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.sounds.SoundEvent

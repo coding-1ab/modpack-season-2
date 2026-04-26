@@ -1,12 +1,12 @@
-package org.example.com.tmvkrpxl0.modpack.data.language
+package com.tmvkrpxl0.modpack.data.language
 
 import net.minecraft.data.PackOutput
 import net.neoforged.neoforge.common.data.LanguageProvider
 import net.neoforged.neoforge.fluids.FluidType
-import org.example.com.tmvkrpxl0.modpack.Blocks
-import org.example.com.tmvkrpxl0.modpack.Fluids
-import org.example.com.tmvkrpxl0.modpack.Items
-import org.example.com.tmvkrpxl0.modpack.ModPackTweaks
+import com.tmvkrpxl0.modpack.Blocks
+import com.tmvkrpxl0.modpack.Fluids
+import com.tmvkrpxl0.modpack.Items
+import com.tmvkrpxl0.modpack.ModPackTweaks
 
 class English(output: PackOutput) : LanguageProvider(output, ModPackTweaks.ID, "en_us") {
     override fun addTranslations() {

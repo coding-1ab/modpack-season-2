@@ -1,4 +1,4 @@
-package org.example.com.tmvkrpxl0.modpack.client
+package com.tmvkrpxl0.modpack.client
 
 import net.minecraft.client.Minecraft
 import net.minecraft.sounds.SoundEvents
@@ -7,7 +7,7 @@ import net.minecraft.util.Mth
 import net.neoforged.neoforge.client.event.ClientTickEvent
 import net.neoforged.neoforge.client.event.ViewportEvent
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent
-import org.example.com.tmvkrpxl0.modpack.Fluids
+import com.tmvkrpxl0.modpack.Fluids
 
 fun registerClientExtensions(event: RegisterClientExtensionsEvent) {
     event.registerFluidType(EnderFuelExtension, Fluids.ENDER_FUEL_TYPE)

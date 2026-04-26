@@ -1,0 +1,27 @@
+{
+  "type": "create:compacting",
+  "heat_requirement": "heated",
+  "ingredients": [
+    [
+      {
+        "item": "modpack_tweaks:shulker_shell_fragment"
+      },
+      {
+        "item": "modpack_tweaks:shulker_shell_fragment"
+      },
+      {
+        "item": "modpack_tweaks:shulker_shell_fragment"
+      }
+    ],
+    {
+      "type": "neoforge:single",
+      "amount": 100,
+      "fluid": "create_enchantment_industry:experience"
+    }
+  ],
+  "results": [
+    {
+      "id": "minecraft:shulker_shell"
+    }
+  ]
+}

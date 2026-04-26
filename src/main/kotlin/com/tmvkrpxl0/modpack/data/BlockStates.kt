@@ -1,4 +1,4 @@
-package org.example.com.tmvkrpxl0.modpack.data
+package com.tmvkrpxl0.modpack.data
 
 import net.minecraft.data.PackOutput
 import net.minecraft.world.level.block.Block
@@ -7,10 +7,10 @@ import net.neoforged.neoforge.client.model.generators.BlockModelBuilder
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel
 import net.neoforged.neoforge.common.data.ExistingFileHelper
-import org.example.com.tmvkrpxl0.modpack.Blocks
-import org.example.com.tmvkrpxl0.modpack.Blocks.ENDER_FIRE
-import org.example.com.tmvkrpxl0.modpack.EnderFire
-import org.example.com.tmvkrpxl0.modpack.ModPackTweaks
+import com.tmvkrpxl0.modpack.Blocks
+import com.tmvkrpxl0.modpack.Blocks.ENDER_FIRE
+import com.tmvkrpxl0.modpack.EnderFire
+import com.tmvkrpxl0.modpack.ModPackTweaks
 
 class BlockStates(output: PackOutput, helper: ExistingFileHelper) :
     BlockStateProvider(output, ModPackTweaks.ID, helper) {

@@ -1,10 +1,10 @@
-package org.example.com.tmvkrpxl0.modpack
+package com.tmvkrpxl0.modpack
 
 import net.minecraft.resources.ResourceLocation
 import net.neoforged.fml.common.Mod
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import org.example.com.tmvkrpxl0.modpack.data.gatherData
+import com.tmvkrpxl0.modpack.data.gatherData
 import thedarkcolour.kotlinforforge.neoforge.forge.MOD_BUS
 
 @Mod(ModPackTweaks.ID)

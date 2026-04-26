@@ -1,4 +1,4 @@
-package org.example.com.tmvkrpxl0.modpack.client
+package com.tmvkrpxl0.modpack.client
 
 import com.mojang.blaze3d.shaders.FogShape
 import com.mojang.blaze3d.systems.RenderSystem

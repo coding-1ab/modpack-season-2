@@ -1,8 +1,8 @@
-package org.example.com.tmvkrpxl0.modpack.client
+package com.tmvkrpxl0.modpack.client
 
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.fml.common.Mod
-import org.example.com.tmvkrpxl0.modpack.ModPackTweaks
+import com.tmvkrpxl0.modpack.ModPackTweaks
 import thedarkcolour.kotlinforforge.neoforge.forge.FORGE_BUS
 import thedarkcolour.kotlinforforge.neoforge.forge.MOD_BUS
 

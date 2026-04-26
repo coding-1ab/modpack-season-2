@@ -1,4 +1,4 @@
-package org.example.com.tmvkrpxl0.modpack
+package com.tmvkrpxl0.modpack
 
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
