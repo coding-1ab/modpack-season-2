@@ -28,8 +28,6 @@ public class VeilClient {
     private static final VeilClientPlatform PLATFORM = ServiceLoader.load(VeilClientPlatform.class).findFirst().orElseThrow(() -> new RuntimeException("Veil expected client platform implementation"));
     private static final VeilResourceManagerImpl RESOURCE_MANAGER = new VeilResourceManagerImpl();
 
-    public static final boolean IMGUIMC_LOADED = Veil.platform().isModLoaded("imguimc");
-
     public static void init() {
         VeilRenderSystem.bootstrap();
         QuasarParticleHandler.init();
@@ -45,7 +43,7 @@ public class VeilClient {
 //            glEnable(GL_DEPTH_CLAMP); // TODO add config option
         });
 
-        if (IMGUIMC_LOADED) {
+        if (Veil.IMGUIMC) {
             VeilImGuiCompat.load();
         }
 

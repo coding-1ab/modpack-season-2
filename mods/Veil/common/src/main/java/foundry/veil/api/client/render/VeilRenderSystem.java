@@ -8,7 +8,6 @@ import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import foundry.imgui.api.ImGuiMC;
 import foundry.veil.Veil;
-import foundry.veil.VeilClient;
 import foundry.veil.api.client.necromancer.render.NecromancerRenderer;
 import foundry.veil.api.client.render.dynamicbuffer.DynamicBufferType;
 import foundry.veil.api.client.render.ext.VeilDebug;
@@ -44,7 +43,6 @@ import foundry.veil.impl.client.render.profiler.VeilRenderProfilerImpl;
 import foundry.veil.impl.client.render.shader.program.ShaderProgramImpl;
 import foundry.veil.mixin.pipeline.accessor.PipelineBufferSourceAccessor;
 import foundry.veil.platform.VeilEventPlatform;
-import foundry.veil.platform.VeilPlatform;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -60,7 +58,6 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.MemoryUtil;
-import org.lwjgl.system.NativeResource;
 
 import java.lang.Math;
 import java.nio.IntBuffer;
@@ -1131,7 +1128,7 @@ public final class VeilRenderSystem {
      * @return Whether ImGui can be used
      */
     public static boolean hasImGui() {
-        return VeilClient.IMGUIMC_LOADED && ImGuiMC.isImguiLoaded();
+        return Veil.IMGUIMC && ImGuiMC.isImguiLoaded();
     }
 
     /**

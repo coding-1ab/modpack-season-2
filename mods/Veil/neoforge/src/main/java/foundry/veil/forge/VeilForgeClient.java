@@ -39,7 +39,7 @@ public class VeilForgeClient {
     }
 
     private static void registerKeys(RegisterKeyMappingsEvent event) {
-        if (VeilClient.IMGUIMC_LOADED) {
+        if (Veil.IMGUIMC) {
             event.register(VeilImGuiCompat.EDITOR_KEY);
         }
     }

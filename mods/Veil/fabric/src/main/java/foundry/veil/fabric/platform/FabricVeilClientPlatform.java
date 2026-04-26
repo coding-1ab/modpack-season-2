@@ -6,6 +6,7 @@ import foundry.veil.api.client.render.shader.ShaderManager;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
 import foundry.veil.api.event.VeilAddShaderPreProcessorsEvent;
 import foundry.veil.api.event.VeilRegisterGlobalControllersEvent;
+import foundry.veil.api.event.VeilRegisterInspectorsEvent;
 import foundry.veil.fabric.event.*;
 import foundry.veil.platform.VeilClientPlatform;
 import net.minecraft.resources.ResourceLocation;
@@ -33,6 +34,16 @@ public class FabricVeilClientPlatform implements VeilClientPlatform {
     }
 
     @Override
+    public void onRegisterGlobalControllers(VeilRegisterGlobalControllersEvent.Registry registry) {
+        FabricVeilRegisterGlobalControllersEvent.EVENT.invoker().onRegisterGlobalControllers(registry);
+    }
+
+    @Override
+    public void onRegisterInspectors(VeilRegisterInspectorsEvent.Registry registry) {
+        FabricVeilRegisterInspectorsEvent.EVENT.invoker().onRegisterInspectors(registry);
+    }
+
+    @Override
     public void onVeilCompileShaders(ShaderManager shaderManager, Map<ResourceLocation, ShaderProgram> updatedPrograms) {
         FabricVeilShaderCompileEvent.EVENT.invoker().onVeilCompileShaders(shaderManager, updatedPrograms);
     }
@@ -40,10 +51,5 @@ public class FabricVeilClientPlatform implements VeilClientPlatform {
     @Override
     public void onVeilDynamicBuffersChanged(DynamicBuffersChange change) {
         FabricVeilDynamicBuffersChangedEvent.EVENT.invoker().onVeilDynamicBuffersChanged(change);
-    }
-
-    @Override
-    public void onRegisterGlobalControllers(VeilRegisterGlobalControllersEvent.Registry registry) {
-        FabricVeilRegisterGlobalControllersEvent.EVENT.invoker().onRegisterGlobalControllers(registry);
     }
 }

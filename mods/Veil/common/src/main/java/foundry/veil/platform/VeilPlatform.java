@@ -1,5 +1,8 @@
 package foundry.veil.platform;
 
+import net.minecraft.network.PacketListener;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+
 /**
  * Manages common platform-specific features.
  */
@@ -34,6 +37,16 @@ public interface VeilPlatform {
      * @return Whether the mod loader has errors and cannot load
      */
     boolean hasErrors();
+
+    /**
+     * Checks if the specified packet listener has the requested payload.
+     *
+     * @param listener The listener to check
+     * @param type     The payload to test for
+     * @return Whether the packet can be sent on that channel
+     * @since 4.0.0
+     */
+    boolean hasChannel(PacketListener listener, CustomPacketPayload.Type<?> type);
 
     enum PlatformType {
         NEOFORGE("NeoForge", "forge"),

@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 @ApiStatus.Internal
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.GAME, modid = Veil.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Veil.MODID, value = Dist.CLIENT)
 public class ForgeRenderTypeStageHandler {
 
     private static final Map<RenderLevelStageEvent.Stage, Set<RenderType>> STAGE_RENDER_TYPES = new HashMap<>();

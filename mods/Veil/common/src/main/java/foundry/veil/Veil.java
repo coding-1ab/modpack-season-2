@@ -1,7 +1,7 @@
 package foundry.veil;
 
-import foundry.imgui.api.ImGuiMC;
 import foundry.veil.api.molang.VeilMolang;
+import foundry.veil.impl.network.VeilPacketSender;
 import foundry.veil.platform.VeilPlatform;
 import gg.moonflower.molangcompiler.api.MolangCompiler;
 import net.minecraft.resources.ResourceLocation;
@@ -23,6 +23,7 @@ public class Veil {
 
     public static final boolean SODIUM = PLATFORM.isModLoaded("sodium");
     public static final boolean IRIS = PLATFORM.isModLoaded("iris");
+    public static final boolean IMGUIMC = PLATFORM.isModLoaded("imguimc");
 
     static {
         DEBUG = System.getProperty("veil.debug") != null;
@@ -36,6 +37,7 @@ public class Veil {
             LOGGER.info("Veil Debug Enabled");
         }
         VeilMolang.set(MolangCompiler.create(MolangCompiler.DEFAULT_FLAGS, Veil.class.getClassLoader()));
+        VeilPacketSender.init();
     }
 
     public static ResourceLocation veilPath(String path) {

@@ -1,9 +1,12 @@
 package foundry.veil.forge.platform;
 
 import foundry.veil.platform.VeilPlatform;
+import net.minecraft.network.PacketListener;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.fml.ModLoader;
 import net.neoforged.fml.loading.FMLConfig;
 import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.neoforge.common.extensions.ICommonPacketListener;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
@@ -36,5 +39,10 @@ public class NeoForgeVeilPlatform implements VeilPlatform {
     @Override
     public boolean hasErrors() {
         return ModLoader.hasErrors();
+    }
+
+    @Override
+    public boolean hasChannel(PacketListener listener, CustomPacketPayload.Type<?> type) {
+        return listener instanceof ICommonPacketListener impl && impl.hasChannel(type);
     }
 }

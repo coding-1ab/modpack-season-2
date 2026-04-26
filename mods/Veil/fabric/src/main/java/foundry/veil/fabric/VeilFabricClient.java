@@ -14,6 +14,7 @@ import foundry.veil.impl.ClientEnumArgument;
 import foundry.veil.impl.VeilReloadListeners;
 import foundry.veil.impl.client.imgui.VeilImGuiCompat;
 import foundry.veil.impl.client.render.shader.VeilVanillaShaders;
+import foundry.veil.impl.network.VeilClientServerFlags;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -39,9 +40,12 @@ public class VeilFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         VeilClient.init();
-        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> client.execute(VeilRenderSystem.renderer().getLightRenderer()::free));
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> client.execute(() -> {
+            VeilRenderSystem.renderer().getLightRenderer().free();
+            VeilClientServerFlags.onDisconnect();
+        }));
 
-        if (VeilClient.IMGUIMC_LOADED) {
+        if (Veil.IMGUIMC) {
             KeyBindingHelper.registerKeyBinding(VeilImGuiCompat.EDITOR_KEY);
         }
 
@@ -71,7 +75,7 @@ public class VeilFabricClient implements ClientModInitializer {
 
             if (Veil.platform().isDevelopmentEnvironment()) {
                 ResourceLocation bufferId = Veil.veilPath("forced");
-                LiteralArgumentBuilder<FabricClientCommandSource> debugBuilder = LiteralArgumentBuilder.literal("veil");
+                LiteralArgumentBuilder<FabricClientCommandSource> debugBuilder = LiteralArgumentBuilder.literal("veilc");
                 debugBuilder.then(ClientCommandManager.literal("buffers")
                         .then(ClientCommandManager.literal("enable")
                                 .then(ClientCommandManager.argument("buffer", ClientEnumArgument.enumArgument(DynamicBufferType.class)).executes(ctx -> {

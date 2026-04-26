@@ -57,7 +57,21 @@ public interface VeilPacketManager {
      * @param handler The handler method for the packet on the client
      * @param <T>     The type of packet to register
      */
-    <T extends CustomPacketPayload> void registerClientbound(CustomPacketPayload.Type<T> id, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, PacketHandler<ClientPacketContext, T> handler);
+    default <T extends CustomPacketPayload> void registerClientbound(CustomPacketPayload.Type<T> id, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, PacketHandler<ClientPacketContext, T> handler) {
+        this.registerClientbound(id, codec, handler, false);
+    }
+
+    /**
+     * Registers a new packet from the client to the server.
+     *
+     * @param id       The id of the packet
+     * @param codec    The codec for encoding and decoding the packet
+     * @param handler  The handler method for the packet on the client
+     * @param <T>      The type of packet to register
+     * @param optional Whether a handler for this packet needs to exist on the client
+     * @since 4.0.0
+     */
+    <T extends CustomPacketPayload> void registerClientbound(CustomPacketPayload.Type<T> id, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, PacketHandler<ClientPacketContext, T> handler, boolean optional);
 
     /**
      * Registers a new packet from the server to the client.
@@ -67,7 +81,21 @@ public interface VeilPacketManager {
      * @param handler The handler method for the packet on the server
      * @param <T>     The type of packet to register
      */
-    <T extends CustomPacketPayload> void registerServerbound(CustomPacketPayload.Type<T> id, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, PacketHandler<ServerPacketContext, T> handler);
+    default <T extends CustomPacketPayload> void registerServerbound(CustomPacketPayload.Type<T> id, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, PacketHandler<ServerPacketContext, T> handler) {
+        this.registerServerbound(id, codec, handler, false);
+    }
+
+    /**
+     * Registers a new packet from the server to the client.
+     *
+     * @param id       The id of the packet
+     * @param codec    The codec for encoding and decoding the packet
+     * @param handler  The handler method for the packet on the server
+     * @param <T>      The type of packet to register
+     * @param optional Whether a handler for this packet needs to exist on the server
+     * @since 4.0.0
+     */
+    <T extends CustomPacketPayload> void registerServerbound(CustomPacketPayload.Type<T> id, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, PacketHandler<ServerPacketContext, T> handler, boolean optional);
 
     /**
      * @return A sink to send packets to the server
@@ -80,7 +108,7 @@ public interface VeilPacketManager {
      * @return A sink to send packets to the specified player
      */
     static PacketSink player(ServerPlayer player) {
-        return packet -> player.connection.send(packet);
+        return (PacketSink) player;
     }
 
     /**
@@ -90,7 +118,7 @@ public interface VeilPacketManager {
      * @return A sink to send packets to all players in the dimension
      */
     static PacketSink level(ServerLevel level) {
-        return packet -> level.getServer().getPlayerList().broadcastAll(packet, level.dimension());
+        return (PacketSink) level;
     }
 
     /**
@@ -115,7 +143,7 @@ public interface VeilPacketManager {
      * @return A sink to send packets to all players
      */
     static PacketSink all(MinecraftServer server) {
-        return packet -> server.getPlayerList().broadcastAll(packet);
+        return (PacketSink) server;
     }
 
     /**
@@ -126,13 +154,11 @@ public interface VeilPacketManager {
      * @throws IllegalArgumentException if the entity is not in a server world
      */
     static PacketSink tracking(Entity entity) {
-        return packet -> {
-            if (!(entity.level().getChunkSource() instanceof ServerChunkCache chunkCache)) {
-                throw new IllegalStateException("Cannot send clientbound payloads on the client");
-            }
+        if (!(entity.level().getChunkSource() instanceof ServerChunkCache chunkCache)) {
+            throw new IllegalStateException("Cannot send clientbound payloads on the client");
+        }
 
-            chunkCache.broadcast(entity, packet);
-        };
+        return packet -> chunkCache.broadcast(entity, packet);
     }
 
     /**
@@ -143,13 +169,11 @@ public interface VeilPacketManager {
      * @throws IllegalArgumentException if the entity is not in a server world
      */
     static PacketSink trackingAndSelf(Entity entity) {
-        return packet -> {
-            if (!(entity.level().getChunkSource() instanceof ServerChunkCache chunkCache)) {
-                throw new IllegalStateException("Cannot send clientbound payloads on the client");
-            }
+        if (!(entity.level().getChunkSource() instanceof ServerChunkCache chunkCache)) {
+            throw new IllegalStateException("Cannot send clientbound payloads on the client");
+        }
 
-            chunkCache.broadcastAndSend(entity, packet);
-        };
+        return packet -> chunkCache.broadcastAndSend(entity, packet);
     }
 
     /**
