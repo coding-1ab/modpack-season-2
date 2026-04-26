@@ -75,6 +75,7 @@ publishMods {
         serverRequired = false
 
         optional "sodium"
+        optional "imguimc"
 
         if (isNeoforge) {
             incompatible "embeddium"
@@ -106,6 +107,7 @@ publishMods {
         minecraftVersions.add(minecraft_version)
 
         optional "sodium"
+        optional "imguimc"
 
         if (isNeoforge) {
             incompatible "embeddium"
