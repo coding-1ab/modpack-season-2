@@ -61,6 +61,17 @@ repositories {
         name = 'BlameJared'
         url = 'https://maven.blamejared.com'
     }
+    exclusiveContent { // ImGuiMC
+        forRepository {
+            maven {
+                url = "https://maven.ryanhcode.dev/releases"
+                name = "RyanHCode Maven"
+            }
+        }
+        filter {
+            includeGroup("foundry.imguimc")
+        }
+    }
 }
 
 // Declare capabilities on the outgoing configurations.
