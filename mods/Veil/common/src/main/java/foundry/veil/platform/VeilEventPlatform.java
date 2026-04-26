@@ -25,6 +25,10 @@ public interface VeilEventPlatform {
 
     void onVeilRegisterFixedBuffers(VeilRegisterFixedBuffersEvent event);
 
+    void onVeilRegisterGlobalControllers(VeilRegisterGlobalControllersEvent event);
+
+    void onVeilRegisterInspectors(VeilRegisterInspectorsEvent event);
+
     void onVeilRendererAvailable(VeilRendererAvailableEvent event);
 
     void onVeilRenderLevelStage(VeilRenderLevelStageEvent event);
@@ -32,7 +36,5 @@ public interface VeilEventPlatform {
     void onVeilShaderCompile(VeilShaderCompileEvent event);
 
     void onVeilDynamicBuffersChanged(VeilDynamicBuffersChangedEvent event);
-
-    void onVeilRegisterGlobalControllers(VeilRegisterGlobalControllersEvent event);
 
 }

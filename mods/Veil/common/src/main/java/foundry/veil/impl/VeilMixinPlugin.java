@@ -51,18 +51,11 @@ public abstract class VeilMixinPlugin implements IMixinConfigPlugin {
                 return Veil.SODIUM ? !mixinClassName.startsWith(compat + ".vanilla") : !mixinClassName.startsWith(compat + ".sodium");
             }
         }
-        if (mixinClassName.startsWith("foundry.veil.mixin.compat")) {
-            if (Veil.IRIS && SODIUM_WITHOUT_IRIS_COMPAT.contains(mixinClassName)) {
-                return false;
-            }
-            String[] parts = mixinClassName.split("\\.", 5);
-            return this.isModLoaded(parts[4]);
-        }
         if (mixinClassName.startsWith("foundry.veil." + PACKAGE_NAME + ".mixin.compat")) {
             if (Veil.IRIS && SODIUM_WITHOUT_IRIS_COMPAT.contains(mixinClassName)) {
                 return false;
             }
-            String[] parts = mixinClassName.split("\\.", 6);
+            String[] parts = mixinClassName.split("\\.", 7);
             return this.isModLoaded(parts[5]);
         }
         for (Map.Entry<String, Set<String>> entry : INCOMPATIBLE_MIXINS.entrySet()) {

@@ -13,7 +13,7 @@ import net.neoforged.fml.event.IModBusEvent;
  * @see ControllerManager
  * @since 2.5.0
  */
-public class ForgeVeilRegisterGlobalControllersEvent extends Event implements IModBusEvent {
+public class ForgeVeilRegisterGlobalControllersEvent extends Event implements IModBusEvent, VeilRegisterGlobalControllersEvent.Registry {
 
     private final VeilRegisterGlobalControllersEvent.Registry registry;
 
@@ -21,12 +21,8 @@ public class ForgeVeilRegisterGlobalControllersEvent extends Event implements IM
         this.registry = registry;
     }
 
-    /**
-     * Registers the specified global controller to the {@link ControllerManager}.
-     *
-     * @param globalController The global controller to register.
-     */
-    public void register(GlobalController globalController) {
+    @Override
+    public void registerGlobalController(GlobalController globalController) {
         this.registry.registerGlobalController(globalController);
     }
 }

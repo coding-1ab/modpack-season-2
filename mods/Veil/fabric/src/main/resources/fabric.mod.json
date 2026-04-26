@@ -37,10 +37,12 @@
     }
   },
   "mixins": [
+    "${mod_id}.command.mixins.json",
     "${mod_id}.debug.mixins.json",
     "${mod_id}.dynamicbuffer.mixins.json",
     "${mod_id}.fix.mixins.json",
     "${mod_id}.framebuffer.mixins.json",
+    "${mod_id}.network.mixins.json",
     "${mod_id}.necromancer.mixins.json",
     "${mod_id}.performance.mixins.json",
     "${mod_id}.perspective.mixins.json",

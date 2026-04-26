@@ -24,6 +24,7 @@ import org.joml.Matrix4f;
 
 import java.util.Map;
 
+@SuppressWarnings({"Convert2MethodRef", "RedundantCast"})
 @ApiStatus.Internal
 public class NeoForgeVeilEventPlatform implements VeilEventPlatform {
 
@@ -70,7 +71,6 @@ public class NeoForgeVeilEventPlatform implements VeilEventPlatform {
     }
 
     // This is needed for types to line up
-    @SuppressWarnings("RedundantCast")
     @Override
     public void onVeilRegisterBlockLayers(VeilRegisterBlockLayersEvent event) {
         this.getModBus().<ForgeVeilRegisterBlockLayersEvent>addListener(forgeEvent -> event.onRegisterBlockLayers((VeilRegisterBlockLayersEvent.Registry) forgeEvent));
@@ -89,6 +89,16 @@ public class NeoForgeVeilEventPlatform implements VeilEventPlatform {
                 forgeEvent.register(forgeStage, renderType);
             }
         }));
+    }
+
+    @Override
+    public void onVeilRegisterGlobalControllers(VeilRegisterGlobalControllersEvent event) {
+        this.getModBus().<ForgeVeilRegisterGlobalControllersEvent>addListener(forgeEvent -> event.onRegisterGlobalControllers((VeilRegisterGlobalControllersEvent.Registry) forgeEvent));
+    }
+
+    @Override
+    public void onVeilRegisterInspectors(VeilRegisterInspectorsEvent event) {
+        this.getModBus().<ForgeVeilRegisterInspectorsEvent>addListener(forgeEvent -> event.onRegisterInspectors((VeilRegisterInspectorsEvent.Registry) forgeEvent));
     }
 
     @Override
@@ -125,11 +135,6 @@ public class NeoForgeVeilEventPlatform implements VeilEventPlatform {
     @Override
     public void onVeilDynamicBuffersChanged(VeilDynamicBuffersChangedEvent event) {
         this.getModBus().<ForgeVeilDynamicBuffersChangedEvent>addListener(forgeEvent -> event.onVeilDynamicBuffersChanged(forgeEvent.getChange()));
-    }
-
-    @Override
-    public void onVeilRegisterGlobalControllers(VeilRegisterGlobalControllersEvent event) {
-        this.getModBus().<ForgeVeilRegisterGlobalControllersEvent>addListener(forgeEvent -> event.onRegisterGlobalControllers(forgeEvent::register));
     }
 
     public static @Nullable RenderLevelStageEvent.Stage getForgeStage(VeilRenderLevelStageEvent.Stage stage) {

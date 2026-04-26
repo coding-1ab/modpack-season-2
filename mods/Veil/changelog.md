@@ -6,3 +6,8 @@
 - Remove unused legacy shaders
 - When vanilla shaders fail to locate an import, the shader is now skipped. This prevents the shader from being placed
   in an invalid state when Veil is installed
+- Add support for optional packet channels
+- Add `/veil post_processing <target> add <pipeline> [priority]`, `/veil post_processing <target> remove <pipeline>`,
+  and `/veil post_processing <target> clear` commands. They can only be sent if Veil is installed on the server and
+  client, otherwise clients will not be sent packets.
+- Add `VeilRegisterInspectorsEvent` to register ImGui inspectors
