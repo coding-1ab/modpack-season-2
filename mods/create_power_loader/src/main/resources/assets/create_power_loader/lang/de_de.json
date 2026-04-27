@@ -7,9 +7,9 @@
   "block.create_power_loader.empty_brass_chunk_loader": "Leerer Messing-Chunk-Lader",
   "block.create_power_loader.brass_chunk_loader": "Messing-Chunk-Lader",
   "create_power_loader.brass_chunk_loader.loading_range": "Chunk-Ladebereich",
-  "create_power_loader.brass_chunk_loader.load_1x1": "1x1 Quadrat",
-  "create_power_loader.brass_chunk_loader.load_3x3": "3x3 Quadrat",
-  "create_power_loader.brass_chunk_loader.load_5x5": "5x5 Quadrat",
+  "create_power_loader.brass_chunk_loader.load_1x1": "1×1 Quadrat",
+  "create_power_loader.brass_chunk_loader.load_3x3": "3×3 Quadrat",
+  "create_power_loader.brass_chunk_loader.load_5x5": "5×5 Quadrat",
 
   "create_power_loader.ponder.empty_chunk_loader_basic.header": "Verwendung von leeren Chunk-Ladern",
   "create_power_loader.ponder.empty_chunk_loader_basic.text_1": "Rechtsklicke ein Ghast mit einem leeren Chunk-Lader um ihn einzufangen",
@@ -38,7 +38,7 @@
 
   "create_power_loader.ponder.brass_chunk_loader_contraptions.header": "Chunks um bewegliche Vorrichtungen laden",
   "create_power_loader.ponder.brass_chunk_loader_contraptions.text_1": "Messing-Chunk-Lader funktionieren auch auf beweglichen Vorrichtungen",
-  "create_power_loader.ponder.brass_chunk_loader_contraptions.text_2": "Sie laden einen 3x3 chunk Bereich um die Vorrichtung herum",
+  "create_power_loader.ponder.brass_chunk_loader_contraptions.text_2": "Sie laden einen 3×3 chunk Bereich um die Vorrichtung herum",
   "create_power_loader.ponder.brass_chunk_loader_contraptions.text_3": "Auf beweglichen Vorrichtungen benötigen sie keine Rotationsenergie, um zu funktionieren",
   "create_power_loader.ponder.brass_chunk_loader_contraptions.text_4": "Sie funktionieren auch auf stationären Vorrichtungen",
 
@@ -46,6 +46,6 @@
   "create_power_loader.ponder.brass_chunk_loader_station.text_1": "Messing-Chunk-Lader können an Bahnhöfen angebracht werden",
   "create_power_loader.ponder.brass_chunk_loader_station.text_2": "Platzier den Chunk-Lader in der richtigen Richtung neben Bahnhöfen",
   "create_power_loader.ponder.brass_chunk_loader_station.text_3": "Sie benötigen keine Rotationsenergie, sind aber normalerweise inaktiv",
-  "create_power_loader.ponder.brass_chunk_loader_station.text_4": "Wenn ein Zug am Bahnhof ankommt, wird ein Bereich von 3x3 um den Chunk-Lader herum geladen",
+  "create_power_loader.ponder.brass_chunk_loader_station.text_4": "Wenn ein Zug am Bahnhof ankommt, wird ein Bereich von 3×3 um den Chunk-Lader herum geladen",
   "create_power_loader.ponder.brass_chunk_loader_station.text_5": "Wenn der Zug den Bahnhof verlässt, werden die Chunks wieder entladen"
 }

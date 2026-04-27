@@ -7,9 +7,9 @@
   "block.create_power_loader.empty_brass_chunk_loader": "Üres sárgaréz chunk töltő",
   "block.create_power_loader.brass_chunk_loader": "Sárgaréz chunk töltő",
   "create_power_loader.brass_chunk_loader.loading_range": "Chunk töltési távolság",
-  "create.create_power_loader.brass_chunk_loader.load_1x1": "1x1 négyzet",
-  "create.create_power_loader.brass_chunk_loader.load_3x3": "3x3 négyzet",
-  "create.create_power_loader.brass_chunk_loader.load_5x5": "5x5 négyzet",
+  "create_power_loader.brass_chunk_loader.load_1x1": "1×1 négyzet",
+  "create_power_loader.brass_chunk_loader.load_3x3": "3×3 négyzet",
+  "create_power_loader.brass_chunk_loader.load_5x5": "5×5 négyzet",
 
   "create_power_loader.ponder.empty_chunk_loader_basic.header": "Üres chunk töltők használata",
   "create_power_loader.ponder.empty_chunk_loader_basic.text_1": "Jobb kattintás egy Ghastre egy üres chunk töltővel, hogy elkapd",
@@ -38,7 +38,7 @@
 
   "create_power_loader.ponder.brass_chunk_loader_contraptions.header": "Chunkok betöltése mozgó szerkezetek körül",
   "create_power_loader.ponder.brass_chunk_loader_contraptions.text_1": "Sárgaréz chunk töltők működnek mozgó szerkezeteken is",
-  "create_power_loader.ponder.brass_chunk_loader_contraptions.text_2": "Betöltve tartanak egy 3x3 területet a szerkezet körül",
+  "create_power_loader.ponder.brass_chunk_loader_contraptions.text_2": "Betöltve tartanak egy 3×3 területet a szerkezet körül",
   "create_power_loader.ponder.brass_chunk_loader_contraptions.text_3": "Ha össze vannak szerelve, nem igényelnek forgási erőt a működéshez",
   "create_power_loader.ponder.brass_chunk_loader_contraptions.text_4": "Működnek álló szerkezeteken is",
 
@@ -46,6 +46,6 @@
   "create_power_loader.ponder.brass_chunk_loader_station.text_1": "Sárgaréz chunk töltők csatlakozhatnak a vasútállomásokhoz",
   "create_power_loader.ponder.brass_chunk_loader_station.text_2": "Helyezd őket a vasútállomások mellé a megfelelő irányba",
   "create_power_loader.ponder.brass_chunk_loader_station.text_3": "Nincs szükség forgási erőre, de normál esetben inaktívak",
-  "create_power_loader.ponder.brass_chunk_loader_station.text_4": "Ha a vonat megérkezik az állomásra, a chunk töltő egy 3x3 területet tölt be",
+  "create_power_loader.ponder.brass_chunk_loader_station.text_4": "Ha a vonat megérkezik az állomásra, a chunk töltő egy 3×3 területet tölt be",
   "create_power_loader.ponder.brass_chunk_loader_station.text_5": "Ha a vonat elhagyja, a terület újra felszabadul"
 }
