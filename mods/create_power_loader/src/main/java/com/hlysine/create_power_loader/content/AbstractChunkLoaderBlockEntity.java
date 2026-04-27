@@ -6,6 +6,7 @@ import com.hlysine.create_power_loader.content.trains.StationChunkLoader;
 import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.trains.station.StationBlockEntity;
+import dev.ryanhcode.sable.companion.SableCompanion;
 import net.createmod.catnip.data.Pair;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
@@ -67,7 +68,7 @@ public abstract class AbstractChunkLoaderBlockEntity extends KineticBlockEntity 
 
     @Override
     public @Nullable Pair<ResourceLocation, BlockPos> getLocation() {
-        return Pair.of(getLevel().dimension().location(), getBlockPos());
+        return Pair.of(getLevel().dimension().location(), getRealBlockPos());
     }
 
     public void updateAttachedStation(StationBlockEntity be) {
@@ -150,22 +151,22 @@ public abstract class AbstractChunkLoaderBlockEntity extends KineticBlockEntity 
 
     private boolean needsUpdate() {
         if (lastBlockPos == null) return true;
-        return !lastBlockPos.equals(getBlockPos()) || lastEnabled != canLoadChunks() || lastRange != getLoadingRange() || chunkUnloadCooldown > 0;
+        return !lastBlockPos.equals(getRealBlockPos()) || lastEnabled != canLoadChunks() || lastRange != getLoadingRange() || chunkUnloadCooldown > 0;
     }
 
     protected void updateForcedChunks() {
         boolean resetStates = true;
         if (canLoadChunks()) {
-            ChunkLoadManager.updateForcedChunks(level.getServer(), new LoadedChunkPos(getLevel(), getBlockPos()), getBlockPos(), getLoadingRange(), forcedChunks);
+            ChunkLoadManager.updateForcedChunks(level.getServer(), new LoadedChunkPos(getLevel(), getRealBlockPos()), getRealBlockPos(), getLoadingRange(), forcedChunks);
         } else if (chunkUnloadCooldown >= CPLConfigs.server().getFor(type).unloadGracePeriod.get()) {
-            unforceAllChunks(level.getServer(), getBlockPos(), forcedChunks);
+            unforceAllChunks(level.getServer(), getRealBlockPos(), forcedChunks);
         } else {
             chunkUnloadCooldown += CPLConfigs.server().getFor(type).chunkUpdateInterval.get();
             resetStates = false;
         }
         if (resetStates) {
             chunkUnloadCooldown = 0;
-            lastBlockPos = getBlockPos().immutable();
+            lastBlockPos = getRealBlockPos().immutable();
             lastEnabled = canLoadChunks();
             lastRange = getLoadingRange();
         }
@@ -196,7 +197,7 @@ public abstract class AbstractChunkLoaderBlockEntity extends KineticBlockEntity 
         super.destroy();
         boolean server = (!level.isClientSide || isVirtual()) && (level instanceof ServerLevel);
         if (server)
-            unforceAllChunks(level.getServer(), getBlockPos(), forcedChunks);
+            unforceAllChunks(level.getServer(), getRealBlockPos(), forcedChunks);
         updateAttachedStation(null);
         removeFromManager();
     }
@@ -206,7 +207,7 @@ public abstract class AbstractChunkLoaderBlockEntity extends KineticBlockEntity 
         super.remove();
         boolean server = (!level.isClientSide || isVirtual()) && (level instanceof ServerLevel);
         if (server)
-            unforceAllChunks(level.getServer(), getBlockPos(), forcedChunks);
+            unforceAllChunks(level.getServer(), getRealBlockPos(), forcedChunks);
         updateAttachedStation(null);
         removeFromManager();
     }
@@ -248,5 +249,12 @@ public abstract class AbstractChunkLoaderBlockEntity extends KineticBlockEntity 
 
         Vec3 motion = normal.scale(speed);
         level.addParticle(ParticleTypes.PORTAL, v2.x, v2.y, v2.z, motion.x, motion.y, motion.z);
+    }
+
+    protected BlockPos getRealBlockPos() {
+        if (SableCompanion.INSTANCE.getContaining(getLevel(), getBlockPos().getCenter()) != null) {
+            return BlockPos.containing(SableCompanion.INSTANCE.projectOutOfSubLevel(getLevel(), getBlockPos().getCenter()));
+        }
+        return getBlockPos();
     }
 }

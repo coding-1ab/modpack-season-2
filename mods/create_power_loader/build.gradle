@@ -141,6 +141,11 @@ repositories {
     maven {
         url = "https://mvn.devos.one/releases/"
     }
+    maven {
+        // Sable + Create: Aeronautics
+        name = "RyanHCode Maven"
+        url = "https://maven.ryanhcode.dev/releases"
+    }
 
     // If you have mod jar dependencies in ./libs, you can declare them as a repository like so.
     // See https://docs.gradle.org/current/userguide/declaring_repositories.html#sub:flat_dir_resolver
@@ -154,7 +159,7 @@ dependencies {
     implementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") {
         transitive = false
     }
-    implementation("net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:${ponder_version}")
+    implementation("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
     implementation("dev.engine-room.flywheel:flywheel-neoforge-${flywheel_minecraft_version}:${flywheel_version}")
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${flywheel_minecraft_version}:${flywheel_version}")
     implementation("com.tterrag.registrate:Registrate:${registrate_version}")
@@ -163,6 +168,16 @@ dependencies {
     compileOnly("mezz.jei:jei-${jei_minecraft_version}-neoforge-api:${jei_version}")
     // at runtime, use the full JEI jar for Forge
     runtimeOnly("mezz.jei:jei-${jei_minecraft_version}-neoforge:${jei_version}")
+    // Sable compatibility
+    runtimeOnly("dev.ryanhcode.sable:sable-neoforge-${minecraft_version}:${sable_version}")
+    runtimeOnly("dev.simulated_team.simulated:simulated-neoforge-${minecraft_version}:${simulated_version}") {
+        transitive = false
+    }
+    jarJar(api("dev.ryanhcode.sable-companion:sable-companion-common-${minecraft_version}:[${sable_companion_version},)")) {
+        version {
+            prefer sable_companion_version
+        }
+    }
 
     // references to other mods to debug compatibility
 //    implementation ("curse.maven:create-steam-n-rails-688231:5331300")
