@@ -1,10 +1,10 @@
 # Veil: Advanced Rendering for Minecraft 🖼️✨
 
-[![Veil 1.21.1](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fmaven.blamejared.com%2Ffoundry%2Fveil%2Fveil-common-1.21.1%2Fmaven-metadata.xml&label=Veil%201.21.1)](https://maven.blamejared.com/foundry/veil/veil-common-1.21.1/)
+[![Veil 1.21.1](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fmaven.blamejared.com%2Ffoundry%2Fveil%2Fveil-common-1.21.1%2Fmaven-metadata.xml&logo=apachemaven&logoColor=%23C71A36&label=Veil%201.21.1)](https://maven.blamejared.com/foundry/veil/veil-common-1.21.1/)
 [![Modrinth](https://img.shields.io/modrinth/v/3KUWeVhG?logo=modrinth&logoColor=%2300AF5C&label=Modrinth&link=https%253A%252F%252Fmodrinth.com%252Fmod%252Fveil)](https://modrinth.com/mod/veil)
 [![CurseForge](https://img.shields.io/curseforge/v/1517006?logo=curseforge&logoColor=%23F16436&label=Curseforge&link=https%3A%2F%2Fwww.curseforge.com%2Fminecraft%2Fmc-mods%2Fveil-lib)](https://www.curseforge.com/minecraft/mc-mods/veil-lib)
 [![Javadoc](https://img.shields.io/badge/javadoc-latest-blue)](https://foundrymc.github.io/Veil/)
-[![Discord](https://img.shields.io/discord/1022254439836430386.svg?label=Discord&color=blue)](https://discord.com/invite/2aqTX9QWKU)
+[![Discord](https://img.shields.io/discord/1022254439836430386.svg?logo=discord&logoColor=%235865F2&label=Discord&color=blue)](https://discord.com/invite/2aqTX9QWKU)
 
 Veil is a sophisticated collection of tools and utilities designed to facilitate advanced rendering for Minecraft mod
 developers. Our goal is to enable more modern game-engine level content in Java Minecraft, pushing the boundaries of
