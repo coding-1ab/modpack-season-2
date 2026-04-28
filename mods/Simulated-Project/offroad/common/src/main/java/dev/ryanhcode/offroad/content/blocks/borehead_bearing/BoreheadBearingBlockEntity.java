@@ -85,7 +85,6 @@ public class BoreheadBearingBlockEntity extends MechanicalBearingBlockEntity imp
      * The amount of rock cutter clientside
      */
     private int clientRockCutters = 0;
-    private int clientBlockAmount = 0;
     /**
      * States whether the contraption associated with this borehead bearing is initialized
      */
@@ -192,7 +191,7 @@ public class BoreheadBearingBlockEntity extends MechanicalBearingBlockEntity imp
                     for (int z = TEMP_BOUNDING_BOX_INT.minZ(); z <= TEMP_BOUNDING_BOX_INT.maxZ(); z++) {
                         for (int y = TEMP_BOUNDING_BOX_INT.minY(); y <= TEMP_BOUNDING_BOX_INT.maxY(); y++) {
 
-                            double r = 1;
+                            final double r = 1;
                             TEMP_POSITION.set(x + 0.5, y + 0.5, z + 0.5).sub(pos, TEMP_POSITION);
                             TEMP_POSITION.absolute(localPoint).sub(searchRadius, searchRadius, searchRadius, localPoint).add(r, r, r);
                             final double boxSDF = localPoint.max(IMMUT_ZERO, TEMP_POSITION).length() +
@@ -204,7 +203,7 @@ public class BoreheadBearingBlockEntity extends MechanicalBearingBlockEntity imp
                             TEMP_CURSOR.set(x, y, z);
 
                             final BlockState state = this.accelerator.getBlockState(TEMP_CURSOR);
-                            if (BlockBreakingKineticBlockEntity.isBreakable(state, state.getDestroySpeed(this.accelerator, TEMP_CURSOR))) {
+                            if (BlockBreakingKineticBlockEntity.isBreakable(state, state.getDestroySpeed(this.accelerator, TEMP_CURSOR)) && !state.getCollisionShape(this.accelerator, TEMP_CURSOR).isEmpty()) {
                                 final BlockPos cursor = TEMP_CURSOR.immutable();
                                 MultiMiningServerManager.addOrRefreshPos(this.level, cursor, this);
                                 this.visitedPositions.add(cursor);
@@ -595,9 +594,6 @@ public class BoreheadBearingBlockEntity extends MechanicalBearingBlockEntity imp
     protected void read(final CompoundTag compound, final HolderLookup.Provider registries, final boolean clientPacket) {
         super.read(compound, registries, clientPacket);
         this.setRotationSpeed(compound.getFloat("RotationSpeed"));
-        if (clientPacket) {
-            this.clientBlockAmount = compound.getInt("BlockBreakingAmount");
-        }
 
         this.disassemblySlowdown = compound.getBoolean("DisassemblySlowdown");
         if (this.disassemblySlowdown) {
