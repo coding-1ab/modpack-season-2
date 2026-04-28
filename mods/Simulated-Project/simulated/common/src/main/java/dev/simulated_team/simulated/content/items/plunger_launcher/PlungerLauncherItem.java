@@ -20,6 +20,7 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -96,6 +97,7 @@ public class PlungerLauncherItem extends Item implements CustomArmPoseItem {
                 reloadCooldown = true;
             }
 
+            player.awardStat(Stats.ITEM_USED.get(heldStack.getItem()));
             // send shoot packet
             VeilPacketManager.player((ServerPlayer) player).sendPacket(new PlungerLauncherShootPacket(interactionHand));
             // todo: send to all tracking players for playing (to be implemented) external animation
