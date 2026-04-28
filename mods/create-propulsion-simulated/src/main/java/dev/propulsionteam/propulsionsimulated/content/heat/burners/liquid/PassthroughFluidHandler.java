@@ -1,6 +1,10 @@
 package dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid;
 
+<<<<<<< HEAD
 import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterFuelRegistry;
+=======
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterFuelManager;
+>>>>>>> e8bb33badb65c4431e5c2251e9956708ba1cc7f3
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

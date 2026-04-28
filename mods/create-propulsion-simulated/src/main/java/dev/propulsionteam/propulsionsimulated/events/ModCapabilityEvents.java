@@ -3,7 +3,11 @@ package dev.propulsionteam.propulsionsimulated.events;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.LiquidBurnerBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.PassthroughFluidHandler;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
+<<<<<<< HEAD
 import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterBlockEntity;
+=======
+import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
+>>>>>>> e8bb33badb65c4431e5c2251e9956708ba1cc7f3
 import net.minecraft.core.Direction;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;

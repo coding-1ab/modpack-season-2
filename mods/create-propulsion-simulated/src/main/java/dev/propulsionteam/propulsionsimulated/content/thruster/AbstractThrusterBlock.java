@@ -1,4 +1,11 @@
 package dev.propulsionteam.propulsionsimulated.content.thruster;
+<<<<<<< HEAD
+=======
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import dev.propulsionteam.propulsionsimulated.registries.PropulsionShapes;
+>>>>>>> e8bb33badb65c4431e5c2251e9956708ba1cc7f3
 
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;

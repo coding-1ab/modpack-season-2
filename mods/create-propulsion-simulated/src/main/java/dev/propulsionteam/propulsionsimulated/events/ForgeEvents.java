@@ -4,6 +4,10 @@ import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
 import dev.propulsionteam.propulsionsimulated.network.PropulsionPackets;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionCommands;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionFluids;
+<<<<<<< HEAD
+=======
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterFuelManager;
+>>>>>>> e8bb33badb65c4431e5c2251e9956708ba1cc7f3
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

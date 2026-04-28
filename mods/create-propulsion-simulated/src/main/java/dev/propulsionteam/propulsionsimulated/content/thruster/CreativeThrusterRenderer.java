@@ -1,4 +1,8 @@
+<<<<<<< HEAD:src/main/java/dev/propulsionteam/propulsionsimulated/content/thruster/CreativeThrusterRenderer.java
 package dev.propulsionteam.propulsionsimulated.content.thruster;
+=======
+package dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster;
+>>>>>>> e8bb33badb65c4431e5c2251e9956708ba1cc7f3:src/main/java/dev/propulsionteam/propulsionsimulated/content/thruster/creative_thruster/CreativeThrusterRenderer.java
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

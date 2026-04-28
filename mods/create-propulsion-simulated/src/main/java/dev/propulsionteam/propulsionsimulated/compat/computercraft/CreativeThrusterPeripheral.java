@@ -1,6 +1,11 @@
 package dev.propulsionteam.propulsionsimulated.compat.computercraft;
 
+<<<<<<< HEAD
 import dev.propulsionteam.propulsionsimulated.content.thruster.CreativeThrusterBlockEntity;
+=======
+import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterBlockEntity;
+>>>>>>> e8bb33badb65c4431e5c2251e9956708ba1cc7f3
 import com.simibubi.create.compat.computercraft.implementation.peripherals.SyncedPeripheral;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;

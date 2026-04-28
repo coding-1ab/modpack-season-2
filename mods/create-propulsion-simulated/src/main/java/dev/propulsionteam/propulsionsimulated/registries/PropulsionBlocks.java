@@ -6,9 +6,14 @@ import dev.propulsionteam.propulsionsimulated.content.heat.burners.solid.SolidBu
 import dev.propulsionteam.propulsionsimulated.content.heat.engine.StirlingEngineBlock;
 import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionBlock;
 import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterBlock;
+<<<<<<< HEAD
 import dev.propulsionteam.propulsionsimulated.content.thruster.CreativeThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.IonThrusterBlock;
+=======
+import dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterBlock;
+import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlock;
+>>>>>>> e8bb33badb65c4431e5c2251e9956708ba1cc7f3
 import dev.propulsionteam.propulsionsimulated.content.wing.CopycatWingBlock;
 import dev.propulsionteam.propulsionsimulated.content.wing.CopycatWingItem;
 import dev.propulsionteam.propulsionsimulated.content.wing.WingBlock;

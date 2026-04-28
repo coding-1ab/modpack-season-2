@@ -12,7 +12,12 @@ import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
 
+<<<<<<< HEAD
 import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterBlockEntity;
+=======
+import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
+>>>>>>> e8bb33badb65c4431e5c2251e9956708ba1cc7f3
 import com.simibubi.create.compat.computercraft.implementation.peripherals.SyncedPeripheral;
 
 public class ThrusterPeripheral extends SyncedPeripheral<ThrusterBlockEntity> {

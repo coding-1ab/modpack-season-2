@@ -8,7 +8,11 @@ import dev.propulsionteam.propulsionsimulated.content.heat.burners.AbstractBurne
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.BurnerDamager;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import dev.propulsionteam.propulsionsimulated.content.thruster.FluidThrusterProperties;
+<<<<<<< HEAD
 import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterFuelRegistry;
+=======
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterFuelManager;
+>>>>>>> e8bb33badb65c4431e5c2251e9956708ba1cc7f3
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
