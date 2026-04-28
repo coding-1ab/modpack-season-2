@@ -1,8 +1,8 @@
-package dev.propulsionteam.propulsionsimulated.heat.burners.liquid;
+package dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid;
 
 import java.util.function.Consumer;
 
-import dev.propulsionteam.propulsionsimulated.heat.burners.AbstractBurnerBlock;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.AbstractBurnerBlock;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionPartialModels;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -79,3 +79,4 @@ public class LiquidBurnerVisual extends AbstractBlockEntityVisual<LiquidBurnerBl
     @Override
     public void collectCrumblingInstances(Consumer<Instance> consumer) { consumer.accept(fan); }
 }
+

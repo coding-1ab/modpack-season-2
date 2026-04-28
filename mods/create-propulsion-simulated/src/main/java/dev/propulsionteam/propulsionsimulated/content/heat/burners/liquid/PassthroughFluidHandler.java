@@ -1,6 +1,6 @@
-package dev.propulsionteam.propulsionsimulated.heat.burners.liquid;
+package dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid;
 
-import dev.propulsionteam.propulsionsimulated.thruster.ThrusterFuelManager;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterFuelRegistry;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,7 +20,7 @@ public class PassthroughFluidHandler implements IFluidHandler {
 
     private boolean isFuel(FluidStack stack) {
         if (stack.isEmpty()) return false;
-        return ThrusterFuelManager.getProperties(stack.getFluid()) != null;
+        return ThrusterFuelRegistry.isFuel(stack);
     }
 
     @Override
@@ -84,3 +84,5 @@ public class PassthroughFluidHandler implements IFluidHandler {
         return blockEntity.tank.getPrimaryHandler().isFluidValid(tankIndex, stack); 
     }
 }
+
+

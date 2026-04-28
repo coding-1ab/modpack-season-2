@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.heat;
+package dev.propulsionteam.propulsionsimulated.content.heat;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 
 public class HeatMapper {
@@ -29,3 +29,4 @@ public class HeatMapper {
         return HeatLevelString.COLD;
     }
 }
+

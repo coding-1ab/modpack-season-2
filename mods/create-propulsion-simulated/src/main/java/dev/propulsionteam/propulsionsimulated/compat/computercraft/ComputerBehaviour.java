@@ -5,11 +5,11 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.function.Function;
 
-import dev.propulsionteam.propulsionsimulated.heat.engine.StirlingEngineBlockEntity;
-import dev.propulsionteam.propulsionsimulated.redstone_transmission.RedstoneTransmissionBlockEntity;
-import dev.propulsionteam.propulsionsimulated.tilt_adapter.TiltAdapterBlockEntity;
-import dev.propulsionteam.propulsionsimulated.thruster.creative_thruster.CreativeThrusterBlockEntity;
-import dev.propulsionteam.propulsionsimulated.thruster.thruster.ThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.heat.engine.StirlingEngineBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.CreativeThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterBlockEntity;
 import com.simibubi.create.compat.computercraft.AbstractComputerBehaviour;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 
@@ -60,3 +60,6 @@ public class ComputerBehaviour extends AbstractComputerBehaviour {
         peripheral = null;
     }
 }
+
+
+

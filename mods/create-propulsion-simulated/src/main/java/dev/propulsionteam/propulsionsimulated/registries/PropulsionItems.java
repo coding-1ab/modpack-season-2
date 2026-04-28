@@ -13,6 +13,9 @@ public class PropulsionItems {
 
     public static final DeferredHolder<Item, BurnableItem> PINE_RESIN =
         ITEMS.register("pine_resin", () -> new BurnableItem(new Item.Properties(), 1200));
+    
+    public static final DeferredHolder<Item, Item> TURPENTINE_BUCKET =
+        ITEMS.register("turpentine_bucket", () -> new net.minecraft.world.item.BucketItem(PropulsionFluids.TURPENTINE.get(), new Item.Properties().craftRemainder(net.minecraft.world.item.Items.BUCKET).stacksTo(1)));
 
     public static void register(IEventBus modBus) {
         ITEMS.register(modBus);

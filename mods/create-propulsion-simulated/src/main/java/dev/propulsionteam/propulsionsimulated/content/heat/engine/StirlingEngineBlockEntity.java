@@ -1,11 +1,11 @@
-package dev.propulsionteam.propulsionsimulated.heat.engine;
+package dev.propulsionteam.propulsionsimulated.content.heat.engine;
 
 import java.util.List;
 
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import dev.propulsionteam.propulsionsimulated.compat.PropulsionCompatibility;
 import dev.propulsionteam.propulsionsimulated.compat.computercraft.ComputerBehaviour;
-import dev.propulsionteam.propulsionsimulated.heat.IHeatConsumer;
+import dev.propulsionteam.propulsionsimulated.content.heat.IHeatConsumer;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import com.simibubi.create.compat.computercraft.AbstractComputerBehaviour;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
@@ -215,3 +215,4 @@ public class StirlingEngineBlockEntity extends GeneratingKineticBlockEntity impl
         }
     }
 }
+

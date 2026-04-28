@@ -1,9 +1,9 @@
 package dev.propulsionteam.propulsionsimulated.ponder;
 
-import dev.propulsionteam.propulsionsimulated.heat.burners.AbstractBurnerBlock;
-import dev.propulsionteam.propulsionsimulated.heat.burners.liquid.LiquidBurnerBlockEntity;
-import dev.propulsionteam.propulsionsimulated.heat.burners.solid.SolidBurnerBlock;
-import dev.propulsionteam.propulsionsimulated.heat.burners.solid.SolidBurnerBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.AbstractBurnerBlock;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.LiquidBurnerBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.solid.SolidBurnerBlock;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.solid.SolidBurnerBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 
@@ -157,3 +157,4 @@ public class StirlingEngineScene {
         scene.markAsFinished();
     }
 }
+

@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.heat.engine;
+package dev.propulsionteam.propulsionsimulated.content.heat.engine;
 
 import dev.propulsionteam.propulsionsimulated.utility.value_boxes.DualRowValueBehaviour;
 import com.google.common.collect.ImmutableList;
@@ -82,3 +82,4 @@ public class StirlingScrollValueBehaviour extends DualRowValueBehaviour {
             .component();
     }
 }
+

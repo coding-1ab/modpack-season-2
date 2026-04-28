@@ -1,8 +1,9 @@
-package dev.propulsionteam.propulsionsimulated.heat.burners.solid;
+package dev.propulsionteam.propulsionsimulated.content.heat.burners.solid;
 
 import javax.annotation.Nonnull;
 
-import dev.propulsionteam.propulsionsimulated.heat.burners.AbstractBurnerBlock;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.AbstractBurnerBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.AbstractBurnerBlock;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import dev.propulsionteam.propulsionsimulated.utility.burners.BurnerFuelBehaviour;
 import com.mojang.serialization.MapCodec;
@@ -36,6 +37,16 @@ public class SolidBurnerBlock extends AbstractBurnerBlock {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any()
             .setValue(LIT, false));
+    }
+
+    @Override
+    public Class<AbstractBurnerBlockEntity> getBlockEntityClass() {
+        return AbstractBurnerBlockEntity.class;
+    }
+
+    @Override
+    public BlockEntityType<? extends AbstractBurnerBlockEntity> getBlockEntityType() {
+        return PropulsionBlockEntities.SOLID_BURNER_BLOCK_ENTITY.get();
     }
 
     @Override
@@ -151,3 +162,4 @@ public class SolidBurnerBlock extends AbstractBurnerBlock {
         return Block.CODEC.xmap(props -> (SolidBurnerBlock) this, block -> (SolidBurnerBlock) block);
     }
 }
+

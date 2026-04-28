@@ -1,14 +1,14 @@
-package dev.propulsionteam.propulsionsimulated.heat.burners.liquid;
+package dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid;
 
 import java.util.List;
 
 
-import dev.propulsionteam.propulsionsimulated.heat.burners.AbstractBurnerBlock;
-import dev.propulsionteam.propulsionsimulated.heat.burners.AbstractBurnerBlockEntity;
-import dev.propulsionteam.propulsionsimulated.heat.burners.BurnerDamager;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.AbstractBurnerBlock;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.AbstractBurnerBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.BurnerDamager;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
-import dev.propulsionteam.propulsionsimulated.thruster.FluidThrusterProperties;
-import dev.propulsionteam.propulsionsimulated.thruster.ThrusterFuelManager;
+import dev.propulsionteam.propulsionsimulated.content.thruster.FluidThrusterProperties;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterFuelRegistry;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
@@ -26,8 +26,13 @@ import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 
 public class LiquidBurnerBlockEntity extends AbstractBurnerBlockEntity {
     protected SmartFluidTankBehaviour tank;
@@ -73,14 +78,14 @@ public class LiquidBurnerBlockEntity extends AbstractBurnerBlockEntity {
         if (tank.isEmpty()) return false;
         FluidStack fluid = tank.getPrimaryHandler().getFluidInTank(0);
         if (fluid.getAmount() < FUEL_CONSUMPTION_MB) return false;
-        return ThrusterFuelManager.getProperties(fluid.getFluid()) != null;
+        return ThrusterFuelRegistry.getProperties(fluid).isPresent();
     }
 
     private boolean isConnectedToConsumer() {
         Level level = getLevel();
         if (level == null) return false;
         BlockPos posAbove = worldPosition.above();
-        return level.getBlockEntity(posAbove) instanceof dev.propulsionteam.propulsionsimulated.heat.IHeatConsumer;
+        return level.getBlockEntity(posAbove) instanceof dev.propulsionteam.propulsionsimulated.content.heat.IHeatConsumer;
     }
 
     public boolean isFanSpinning() {
@@ -155,13 +160,14 @@ public class LiquidBurnerBlockEntity extends AbstractBurnerBlockEntity {
         FluidStack fluidInTank = tank.getPrimaryHandler().getFluidInTank(0);
         if (fluidInTank.getAmount() < FUEL_CONSUMPTION_MB) return false;
 
-        FluidThrusterProperties fuelProperties = ThrusterFuelManager.getProperties(fluidInTank.getFluid());
-        if (fuelProperties == null) return false;
+        var fuelPropsOpt = ThrusterFuelRegistry.getProperties(fluidInTank);
+        if (fuelPropsOpt.isEmpty()) return false;
+        FluidThrusterProperties fuelProperties = fuelPropsOpt.get();
 
-        float multiplier = fuelProperties.consumptionMultiplier;
+        float multiplier = fuelProperties.consumptionMultiplier();
         if (multiplier <= 0) multiplier = 1;
         
-        float fluidEfficiency = ThrusterFuelManager.getEfficiency(fluidInTank.getFluid());
+        float fluidEfficiency = (float) fuelProperties.thrustMultiplier();
         if (fluidEfficiency <= 0) fluidEfficiency = 1;
 
         int duration = (int) ((BASE_BURN_DURATION / multiplier) * fluidEfficiency);
@@ -174,6 +180,51 @@ public class LiquidBurnerBlockEntity extends AbstractBurnerBlockEntity {
             return true;
         }
         return false;
+    }
+
+    public boolean tryConsumeFuelBucket(final Player player,
+                                        final InteractionHand hand,
+                                        final ItemStack heldStack) {
+        if (this.tank == null) {
+            return false;
+        }
+        final IFluidHandlerItem itemFluidHandler = heldStack.getCapability(Capabilities.FluidHandler.ITEM);
+        if (itemFluidHandler == null || itemFluidHandler.getTanks() <= 0) {
+            return false;
+        }
+
+        final FluidStack contained = itemFluidHandler.getFluidInTank(0);
+        if (ThrusterFuelRegistry.getProperties(contained).isEmpty()) {
+            return false;
+        }
+
+        final int MB_PER_BUCKET = 1000;
+        final FluidStack simulatedDrain = itemFluidHandler.drain(MB_PER_BUCKET, IFluidHandler.FluidAction.SIMULATE);
+        if (simulatedDrain.isEmpty() || ThrusterFuelRegistry.getProperties(simulatedDrain).isEmpty()) {
+            return false;
+        }
+
+        final int accepted = this.tank.getPrimaryHandler().fill(simulatedDrain, IFluidHandler.FluidAction.SIMULATE);
+        if (accepted <= 0) {
+            return false;
+        }
+
+        if (this.level == null || this.level.isClientSide()) {
+            return true;
+        }
+
+        final FluidStack drained = itemFluidHandler.drain(accepted, IFluidHandler.FluidAction.EXECUTE);
+        if (drained.isEmpty()) {
+            return false;
+        }
+        this.tank.getPrimaryHandler().fill(drained, IFluidHandler.FluidAction.EXECUTE);
+
+        if (!player.getAbilities().instabuild) {
+            player.setItemInHand(hand, itemFluidHandler.getContainer());
+        }
+
+        this.notifyUpdate();
+        return true;
     }
 
     private void updateBlockState() {
@@ -232,3 +283,4 @@ public class LiquidBurnerBlockEntity extends AbstractBurnerBlockEntity {
         burnEfficiency = tag.contains("burnEfficiency") ? tag.getFloat("burnEfficiency") : 1.0f;
     }
 }
+

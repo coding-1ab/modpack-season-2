@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.redstone_transmission;
+package dev.propulsionteam.propulsionsimulated.content.redstone_transmission;
 
 import dev.propulsionteam.propulsionsimulated.compat.PropulsionCompatibility;
 import dev.propulsionteam.propulsionsimulated.compat.computercraft.ComputerBehaviour;
@@ -32,7 +32,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-import static dev.propulsionteam.propulsionsimulated.redstone_transmission.RedstoneTransmissionBlock.HORIZONTAL_FACING;
+import static dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionBlock.HORIZONTAL_FACING;
 import static com.simibubi.create.content.kinetics.base.RotatedPillarKineticBlock.AXIS;
 
 public class RedstoneTransmissionBlockEntity extends SplitShaftBlockEntity {
@@ -310,3 +310,5 @@ public class RedstoneTransmissionBlockEntity extends SplitShaftBlockEntity {
         }
     }
 }
+
+

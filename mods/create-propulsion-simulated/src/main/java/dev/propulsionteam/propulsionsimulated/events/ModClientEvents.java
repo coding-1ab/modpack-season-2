@@ -1,18 +1,18 @@
 package dev.propulsionteam.propulsionsimulated.events;
 
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
-import dev.propulsionteam.propulsionsimulated.heat.burners.liquid.LiquidBurnerRenderer;
-import dev.propulsionteam.propulsionsimulated.heat.burners.liquid.LiquidBurnerVisual;
-import dev.propulsionteam.propulsionsimulated.heat.engine.StirlingEngineRenderer;
-import dev.propulsionteam.propulsionsimulated.heat.engine.StirlingEngineVisual;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.LiquidBurnerRenderer;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.LiquidBurnerVisual;
+import dev.propulsionteam.propulsionsimulated.content.heat.engine.StirlingEngineRenderer;
+import dev.propulsionteam.propulsionsimulated.content.heat.engine.StirlingEngineVisual;
 import dev.propulsionteam.propulsionsimulated.ponder.DeltaPonderPlugin;
-import dev.propulsionteam.propulsionsimulated.redstone_transmission.RedstoneTransmissionRenderer;
-import dev.propulsionteam.propulsionsimulated.redstone_transmission.RedstoneTransmissionVisual;
+import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionRenderer;
+import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionVisual;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionInstanceTypes;
-import dev.propulsionteam.propulsionsimulated.tilt_adapter.TiltAdapterRenderer;
-import dev.propulsionteam.propulsionsimulated.thruster.creative_thruster.CreativeThrusterRenderer;
-import dev.propulsionteam.propulsionsimulated.thruster.creative_thruster.CreativeThrusterVisual;
+import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterRenderer;
+import dev.propulsionteam.propulsionsimulated.content.thruster.CreativeThrusterRenderer;
+import dev.propulsionteam.propulsionsimulated.content.thruster.CreativeThrusterVisual;
 
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import dev.engine_room.flywheel.lib.visualization.SimpleBlockEntityVisualizer;
@@ -74,3 +74,5 @@ public class ModClientEvents {
         event.registerBlockEntityRenderer(PropulsionBlockEntities.TILT_ADAPTER_BLOCK_ENTITY.get(), TiltAdapterRenderer::new);
     }
 }
+
+

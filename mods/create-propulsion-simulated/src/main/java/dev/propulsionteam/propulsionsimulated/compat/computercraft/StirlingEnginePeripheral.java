@@ -1,7 +1,7 @@
 package dev.propulsionteam.propulsionsimulated.compat.computercraft;
 
-import dev.propulsionteam.propulsionsimulated.heat.engine.StirlingEngineBlockEntity;
-import dev.propulsionteam.propulsionsimulated.heat.engine.StirlingScrollValueBehaviour;
+import dev.propulsionteam.propulsionsimulated.content.heat.engine.StirlingEngineBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.heat.engine.StirlingScrollValueBehaviour;
 import com.simibubi.create.compat.computercraft.implementation.peripherals.SyncedPeripheral;
 
 import dan200.computercraft.api.lua.LuaFunction;
@@ -38,3 +38,4 @@ public class StirlingEnginePeripheral extends SyncedPeripheral<StirlingEngineBlo
         blockEntity.setComputerActive(active);
     }
 }
+

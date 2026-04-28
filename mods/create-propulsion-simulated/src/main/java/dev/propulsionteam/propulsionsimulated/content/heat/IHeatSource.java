@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.heat;
+package dev.propulsionteam.propulsionsimulated.content.heat;
 
 public interface IHeatSource {
     float extractHeat(float amount, boolean simulate);
@@ -12,3 +12,4 @@ public interface IHeatSource {
     //Should be constant
     float getExpectedHeatProduction();
 }
+

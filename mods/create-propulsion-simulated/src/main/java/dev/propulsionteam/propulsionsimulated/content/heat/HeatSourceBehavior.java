@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.heat;
+package dev.propulsionteam.propulsionsimulated.content.heat;
 
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
@@ -38,3 +38,4 @@ public class HeatSourceBehavior extends BlockEntityBehaviour {
     }
 
 }
+

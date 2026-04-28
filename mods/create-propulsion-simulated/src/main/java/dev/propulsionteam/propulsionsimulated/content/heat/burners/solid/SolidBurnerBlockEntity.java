@@ -1,13 +1,13 @@
-package dev.propulsionteam.propulsionsimulated.heat.burners.solid;
+package dev.propulsionteam.propulsionsimulated.content.heat.burners.solid;
 
 import java.util.List;
 
 import com.simibubi.create.foundation.utility.CreateLang;
 import net.createmod.catnip.lang.LangBuilder;
 
-import dev.propulsionteam.propulsionsimulated.heat.burners.AbstractBurnerBlock;
-import dev.propulsionteam.propulsionsimulated.heat.burners.AbstractBurnerBlockEntity;
-import dev.propulsionteam.propulsionsimulated.heat.burners.BurnerDamager;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.AbstractBurnerBlock;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.AbstractBurnerBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.BurnerDamager;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import dev.propulsionteam.propulsionsimulated.utility.burners.BurnerFuelBehaviour;
 import dev.propulsionteam.propulsionsimulated.utility.burners.IBurner;

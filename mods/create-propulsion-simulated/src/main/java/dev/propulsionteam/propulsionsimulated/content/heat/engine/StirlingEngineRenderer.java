@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.heat.engine;
+package dev.propulsionteam.propulsionsimulated.content.heat.engine;
 
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.render.CachedBuffers;
@@ -120,3 +120,4 @@ public class StirlingEngineRenderer extends KineticBlockEntityRenderer<StirlingE
         return calculateExtensions(time, crankRadius, conrodLength, revolutionPeriod, new float[] { 0.0f, (float)Math.PI, 2.0f * (float)Math.PI, 3.0f * (float)Math.PI });
     }
 }
+

@@ -1,7 +1,7 @@
 package dev.propulsionteam.propulsionsimulated.mixin;
 
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
-import dev.propulsionteam.propulsionsimulated.heat.burners.AbstractBurnerBlock;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.AbstractBurnerBlock;
 import com.simibubi.create.content.processing.basin.BasinBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 
@@ -22,3 +22,4 @@ public class BasinBlockEntityMixin {
         }
     }
 }
+

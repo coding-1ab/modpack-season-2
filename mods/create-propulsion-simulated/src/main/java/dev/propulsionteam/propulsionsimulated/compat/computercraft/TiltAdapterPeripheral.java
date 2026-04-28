@@ -1,6 +1,6 @@
 package dev.propulsionteam.propulsionsimulated.compat.computercraft;
 
-import dev.propulsionteam.propulsionsimulated.tilt_adapter.TiltAdapterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterBlockEntity;
 import com.simibubi.create.compat.computercraft.implementation.peripherals.SyncedPeripheral;
 
 import dan200.computercraft.api.lua.LuaFunction;
@@ -30,3 +30,4 @@ public class TiltAdapterPeripheral extends SyncedPeripheral<TiltAdapterBlockEnti
         blockEntity.setComputerTargetAngle((float) angle);
     }
 }
+

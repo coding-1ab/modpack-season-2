@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.heat.burners;
+package dev.propulsionteam.propulsionsimulated.content.heat.burners;
 
 import java.util.List;
 
@@ -6,11 +6,11 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 import com.simibubi.create.foundation.utility.CreateLang;
 
-import dev.propulsionteam.propulsionsimulated.heat.HeatMapper;
-import dev.propulsionteam.propulsionsimulated.heat.HeatSourceBehavior;
-import dev.propulsionteam.propulsionsimulated.heat.IHeatConsumer;
-import dev.propulsionteam.propulsionsimulated.heat.IHeatSource;
-import dev.propulsionteam.propulsionsimulated.heat.HeatMapper.HeatLevelString;
+import dev.propulsionteam.propulsionsimulated.content.heat.HeatMapper;
+import dev.propulsionteam.propulsionsimulated.content.heat.HeatSourceBehavior;
+import dev.propulsionteam.propulsionsimulated.content.heat.IHeatConsumer;
+import dev.propulsionteam.propulsionsimulated.content.heat.IHeatSource;
+import dev.propulsionteam.propulsionsimulated.content.heat.HeatMapper.HeatLevelString;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 
@@ -183,3 +183,4 @@ public abstract class AbstractBurnerBlockEntity extends SmartBlockEntity impleme
         isPowered = tag.getBoolean("isPowered");
     }
 }
+

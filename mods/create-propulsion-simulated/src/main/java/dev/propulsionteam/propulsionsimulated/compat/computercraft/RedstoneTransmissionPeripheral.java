@@ -1,7 +1,7 @@
 package dev.propulsionteam.propulsionsimulated.compat.computercraft;
 
-import dev.propulsionteam.propulsionsimulated.redstone_transmission.RedstoneTransmissionBlockEntity;
-import dev.propulsionteam.propulsionsimulated.redstone_transmission.RedstoneTransmissionBlockEntity.TransmissionMode;
+import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionBlockEntity.TransmissionMode;
 import com.simibubi.create.compat.computercraft.implementation.peripherals.SyncedPeripheral;
 
 import dan200.computercraft.api.lua.LuaException;
@@ -47,3 +47,4 @@ public class RedstoneTransmissionPeripheral extends SyncedPeripheral<RedstoneTra
         blockEntity.setShiftFromPeripheral(level);
     }
 }
+

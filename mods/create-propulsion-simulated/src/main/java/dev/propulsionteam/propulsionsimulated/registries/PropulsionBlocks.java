@@ -1,16 +1,17 @@
 package dev.propulsionteam.propulsionsimulated.registries;
 
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
-import dev.propulsionteam.propulsionsimulated.heat.burners.liquid.LiquidBurnerBlock;
-import dev.propulsionteam.propulsionsimulated.heat.burners.solid.SolidBurnerBlock;
-import dev.propulsionteam.propulsionsimulated.heat.engine.StirlingEngineBlock;
-import dev.propulsionteam.propulsionsimulated.redstone_transmission.RedstoneTransmissionBlock;
-import dev.propulsionteam.propulsionsimulated.tilt_adapter.TiltAdapterBlock;
-import dev.propulsionteam.propulsionsimulated.thruster.creative_thruster.CreativeThrusterBlock;
-import dev.propulsionteam.propulsionsimulated.thruster.thruster.ThrusterBlock;
-import dev.propulsionteam.propulsionsimulated.wing.CopycatWingBlock;
-import dev.propulsionteam.propulsionsimulated.wing.CopycatWingItem;
-import dev.propulsionteam.propulsionsimulated.wing.WingBlock;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.LiquidBurnerBlock;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.solid.SolidBurnerBlock;
+import dev.propulsionteam.propulsionsimulated.content.heat.engine.StirlingEngineBlock;
+import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionBlock;
+import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterBlock;
+import dev.propulsionteam.propulsionsimulated.content.thruster.CreativeThrusterBlock;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterBlock;
+import dev.propulsionteam.propulsionsimulated.content.thruster.IonThrusterBlock;
+import dev.propulsionteam.propulsionsimulated.content.wing.CopycatWingBlock;
+import dev.propulsionteam.propulsionsimulated.content.wing.CopycatWingItem;
+import dev.propulsionteam.propulsionsimulated.content.wing.WingBlock;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -21,14 +22,17 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.MapColor;
 
 public class PropulsionBlocks {
-    private static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(CreatePropulsion.ID);
-    private static final DeferredRegister.Items BLOCK_ITEMS = DeferredRegister.createItems(CreatePropulsion.ID);
+    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(CreatePropulsion.ID);
+    public static final DeferredRegister.Items BLOCK_ITEMS = DeferredRegister.createItems(CreatePropulsion.ID);
 
     public static final DeferredBlock<ThrusterBlock> THRUSTER_BLOCK = BLOCKS.register("thruster",
         () -> new ThrusterBlock(Block.Properties.of().mapColor(MapColor.METAL).requiresCorrectToolForDrops()
             .sound(SoundType.METAL).strength(5.5f, 4.0f).noOcclusion()));
     public static final DeferredBlock<CreativeThrusterBlock> CREATIVE_THRUSTER_BLOCK = BLOCKS.register("creative_thruster",
         () -> new CreativeThrusterBlock(Block.Properties.of().mapColor(MapColor.METAL)
+            .sound(SoundType.METAL).strength(5.5f, 4.0f).noOcclusion()));
+    public static final DeferredBlock<IonThrusterBlock> ION_THRUSTER_BLOCK = BLOCKS.register("ion_thruster",
+        () -> new IonThrusterBlock(Block.Properties.of().mapColor(MapColor.METAL)
             .sound(SoundType.METAL).strength(5.5f, 4.0f).noOcclusion()));
     public static final DeferredBlock<RedstoneTransmissionBlock> REDSTONE_TRANSMISSION_BLOCK = BLOCKS.register("redstone_transmission",
         () -> new RedstoneTransmissionBlock(Block.Properties.of().mapColor(MapColor.PODZOL)
@@ -62,6 +66,7 @@ public class PropulsionBlocks {
     static {
         registerDefaultBlockItem("thruster", THRUSTER_BLOCK);
         registerDefaultBlockItem("creative_thruster", CREATIVE_THRUSTER_BLOCK);
+        registerDefaultBlockItem("ion_thruster", ION_THRUSTER_BLOCK);
         registerDefaultBlockItem("redstone_transmission", REDSTONE_TRANSMISSION_BLOCK);
         registerDefaultBlockItem("solid_burner", SOLID_BURNER);
         registerDefaultBlockItem("liquid_burner", LIQUID_BURNER);
@@ -86,3 +91,5 @@ public class PropulsionBlocks {
         BLOCK_ITEMS.register(modBus);
     }
 }
+
+

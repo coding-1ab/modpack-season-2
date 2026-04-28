@@ -1,6 +1,6 @@
-package dev.propulsionteam.propulsionsimulated.redstone_transmission;
+package dev.propulsionteam.propulsionsimulated.content.redstone_transmission;
 
-import dev.propulsionteam.propulsionsimulated.redstone_transmission.RedstoneTransmissionBlockEntity.TransmissionMode;
+import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionBlockEntity.TransmissionMode;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionPartialModels;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllPartialModels;
@@ -20,7 +20,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
-import static dev.propulsionteam.propulsionsimulated.redstone_transmission.RedstoneTransmissionBlock.HORIZONTAL_FACING;
+import static dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionBlock.HORIZONTAL_FACING;
 import static com.simibubi.create.content.kinetics.base.RotatedPillarKineticBlock.AXIS;
 
 public class RedstoneTransmissionRenderer extends KineticBlockEntityRenderer<RedstoneTransmissionBlockEntity> {
@@ -102,3 +102,5 @@ public class RedstoneTransmissionRenderer extends KineticBlockEntityRenderer<Red
         return be.getSpeed() * ((float) be.get_current_shift() / RedstoneTransmissionBlockEntity.MAX_VALUE);
     }
 }
+
+

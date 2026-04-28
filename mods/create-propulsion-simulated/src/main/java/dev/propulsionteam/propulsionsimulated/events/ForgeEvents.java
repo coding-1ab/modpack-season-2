@@ -2,10 +2,8 @@ package dev.propulsionteam.propulsionsimulated.events;
 
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
 import dev.propulsionteam.propulsionsimulated.network.PropulsionPackets;
-import dev.propulsionteam.propulsionsimulated.network.SyncThrusterFuelsPacket;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionCommands;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionFluids;
-import dev.propulsionteam.propulsionsimulated.thruster.ThrusterFuelManager;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -26,18 +24,6 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 @EventBusSubscriber(modid = CreatePropulsion.ID, bus = EventBusSubscriber.Bus.GAME)
 public class ForgeEvents {
 
-    @SubscribeEvent
-    public static void onAddReloadListeners(AddReloadListenerEvent event) {
-        event.addListener(new ThrusterFuelManager());
-    }
-
-    //Sync thruster fuels for goggles & particles on client side
-    @SubscribeEvent
-    public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        if(event.getEntity() instanceof ServerPlayer player)  {
-            PropulsionPackets.sendToPlayer(SyncThrusterFuelsPacket.create(ThrusterFuelManager.getFuelPropertiesMap(), ThrusterFuelManager.getRemovedFuelIds()), player);
-        }
-    }
 
     @SubscribeEvent
     public static void onCommandsRegister(RegisterCommandsEvent event) {

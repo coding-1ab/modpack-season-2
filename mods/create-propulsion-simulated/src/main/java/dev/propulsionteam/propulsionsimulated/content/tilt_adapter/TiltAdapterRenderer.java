@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.tilt_adapter;
+package dev.propulsionteam.propulsionsimulated.content.tilt_adapter;
 
 import org.joml.Quaternionf;
 import org.joml.Vector3f;

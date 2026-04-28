@@ -39,13 +39,15 @@ public class PropulsionCreativeTab {
                 //From 0.1
                 output.accept(PropulsionBlocks.THRUSTER_BLOCK.get());
                 output.accept(PropulsionBlocks.CREATIVE_THRUSTER_BLOCK.get());
+                output.accept(PropulsionBlocks.ION_THRUSTER_BLOCK.get());
                 //From 0.2
                 output.accept(PropulsionBlocks.REDSTONE_TRANSMISSION_BLOCK.get());
                 //From 0.2 (items)
-                output.accept(PropulsionFluids.TURPENTINE.getBucket().get());
+                output.accept(PropulsionItems.TURPENTINE_BUCKET.get());
                 output.accept(PropulsionItems.PINE_RESIN.get());
                 //From 0.2.2
                 output.accept(PropulsionBlocks.WING_BLOCK.get());
+                output.accept(PropulsionBlocks.TEMPERED_WING_BLOCK.get());
                 output.accept(PropulsionBlocks.COPYCAT_WING.get());
                 //From 0.3
                 output.accept(PropulsionBlocks.SOLID_BURNER.get());

@@ -1,8 +1,9 @@
-package dev.propulsionteam.propulsionsimulated.heat.burners.liquid;
+package dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid;
 
 import javax.annotation.Nonnull;
 
-import dev.propulsionteam.propulsionsimulated.heat.burners.AbstractBurnerBlock;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.AbstractBurnerBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.AbstractBurnerBlock;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntityTicker;
 
@@ -25,6 +26,16 @@ public class LiquidBurnerBlock extends AbstractBurnerBlock {
     public LiquidBurnerBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+    }
+
+    @Override
+    public Class<AbstractBurnerBlockEntity> getBlockEntityClass() {
+        return AbstractBurnerBlockEntity.class;
+    }
+
+    @Override
+    public BlockEntityType<? extends AbstractBurnerBlockEntity> getBlockEntityType() {
+        return PropulsionBlockEntities.LIQUID_BURNER_BLOCK_ENTITY.get();
     }
 
     @Override

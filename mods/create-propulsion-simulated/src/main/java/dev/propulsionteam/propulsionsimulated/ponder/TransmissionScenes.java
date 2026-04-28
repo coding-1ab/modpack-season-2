@@ -1,6 +1,6 @@
 package dev.propulsionteam.propulsionsimulated.ponder;
 
-import dev.propulsionteam.propulsionsimulated.redstone_transmission.RedstoneTransmissionBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionBlockEntity;
 import com.simibubi.create.content.redstone.analogLever.AnalogLeverBlockEntity;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuilder;
@@ -203,3 +203,4 @@ public class TransmissionScenes {
         scene.idle(40);
     }
 }
+

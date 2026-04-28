@@ -12,8 +12,7 @@ import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
 
-import dev.propulsionteam.propulsionsimulated.thruster.AbstractThrusterBlockEntity;
-import dev.propulsionteam.propulsionsimulated.thruster.thruster.ThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterBlockEntity;
 import com.simibubi.create.compat.computercraft.implementation.peripherals.SyncedPeripheral;
 
 public class ThrusterPeripheral extends SyncedPeripheral<ThrusterBlockEntity> {
@@ -30,38 +29,42 @@ public class ThrusterPeripheral extends SyncedPeripheral<ThrusterBlockEntity> {
 
     @LuaFunction
     public final int getObstruction() {
-        return blockEntity.getEmptyBlocks();
+        return blockEntity.getUnobstructedBlocks();
     }
 
     @LuaFunction(mainThread = true)
-    public final void setPower(double power) {
-        blockEntity.setDigitalInput((float)power);
+    public final void setPower(int redstonePower) {
+        blockEntity.setRedstonePower(redstonePower);
     }
 
     @LuaFunction(mainThread = true)
-    public final float getPower() {
-        return blockEntity.getPower();
+    public final double getPower() {
+        return blockEntity.getThrottle();
     }
 
-    //Get name of the current fuel
-    @LuaFunction(mainThread = true)
-    public final String getFuelName() {
-        if (blockEntity.fluidStack().isEmpty()) return "";
-        return blockEntity.fluidStack().getHoverName().getString();
+    @LuaFunction
+    public final double getCurrentThrustPN() {
+        return blockEntity.getCurrentThrust();
     }
 
-    //Get thrust multiplier of current fuel
-    @LuaFunction(mainThread = true)
-    public final float getFuelThrustMultiplier() {
-        if (!blockEntity.validFluid()) return 0;
-        return blockEntity.getFuelProperties(blockEntity.fluidStack().getFluid()).thrustMultiplier;
+    @LuaFunction
+    public final double getDisplayedThrustPN() {
+        return blockEntity.getDisplayedThrustPnForTooltip();
     }
 
-    //Get consumption multiplier of current fuel
+    @LuaFunction
+    public final double getAirflowMs() {
+        return blockEntity.getDisplayedAirflowMsForTooltip();
+    }
+
     @LuaFunction(mainThread = true)
-    public final float getFuelConsumptionMultiplier() {
-        if (!blockEntity.validFluid()) return 0;
-        return blockEntity.getFuelProperties(blockEntity.fluidStack().getFluid()).consumptionMultiplier;
+    public final int getFuelAmountMb() {
+        return blockEntity.getFuelAmountMb();
+    }
+
+    @LuaFunction(mainThread = true)
+    public final int getFuelCapacityMb() {
+        return blockEntity.getFuelCapacityMb();
     }
 
     //IFluidHandler methods passthrough
@@ -83,8 +86,8 @@ public class ThrusterPeripheral extends SyncedPeripheral<ThrusterBlockEntity> {
         return this.fluidMethods.pullFluid(handler, computer, fromName, limit, fluidName);
     }
 
-    private final IFluidHandler getHandler() throws LuaException {
-        IFluidHandler handler = blockEntity.tank.getPrimaryHandler();
+    private IFluidHandler getHandler() throws LuaException {
+        IFluidHandler handler = blockEntity.getFluidHandler(blockEntity.getFacing());
         if (handler == null) throw new LuaException("Fluid tank not available");
         return handler;
     }
@@ -102,13 +105,11 @@ public class ThrusterPeripheral extends SyncedPeripheral<ThrusterBlockEntity> {
     @Override
     public void attach(@NotNull IComputerAccess computer) {
         super.attach(computer);
-        blockEntity.setControlMode(AbstractThrusterBlockEntity.ControlMode.PERIPHERAL);
     }
 
     @Override
     public void detach(@NotNull IComputerAccess computer) {
         super.detach(computer);
-        blockEntity.setDigitalInput(0.0f); 
-        blockEntity.setControlMode(AbstractThrusterBlockEntity.ControlMode.NORMAL);
+        blockEntity.setRedstonePower(0);
     }
 }

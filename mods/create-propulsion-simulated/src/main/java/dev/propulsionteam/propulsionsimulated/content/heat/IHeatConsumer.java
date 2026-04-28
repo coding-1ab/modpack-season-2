@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.heat;
+package dev.propulsionteam.propulsionsimulated.content.heat;
 
 public interface IHeatConsumer {
     boolean isActive();
@@ -7,3 +7,4 @@ public interface IHeatConsumer {
     
     float consumeHeat(float maxAvailable, float expectedHeatOutput, boolean simulate);
 }
+

@@ -1,8 +1,8 @@
 package dev.propulsionteam.propulsionsimulated.ponder;
 
-import dev.propulsionteam.propulsionsimulated.heat.burners.AbstractBurnerBlock;
-import dev.propulsionteam.propulsionsimulated.heat.burners.liquid.LiquidBurnerBlockEntity;
-import dev.propulsionteam.propulsionsimulated.heat.burners.solid.SolidBurnerBlock;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.AbstractBurnerBlock;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.LiquidBurnerBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.solid.SolidBurnerBlock;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlocks;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionFluids;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
@@ -340,3 +340,4 @@ public class BurnerScenes {
     }
 
 }
+

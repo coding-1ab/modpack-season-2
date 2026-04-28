@@ -1,13 +1,14 @@
 package dev.propulsionteam.propulsionsimulated.registries;
 
-import dev.propulsionteam.propulsionsimulated.heat.burners.liquid.LiquidBurnerBlockEntity;
-import dev.propulsionteam.propulsionsimulated.heat.burners.solid.SolidBurnerBlockEntity;
-import dev.propulsionteam.propulsionsimulated.heat.engine.StirlingEngineBlockEntity;
-import dev.propulsionteam.propulsionsimulated.tilt_adapter.TiltAdapterBlockEntity;
-import dev.propulsionteam.propulsionsimulated.thruster.creative_thruster.CreativeThrusterBlockEntity;
-import dev.propulsionteam.propulsionsimulated.redstone_transmission.RedstoneTransmissionBlockEntity;
-import dev.propulsionteam.propulsionsimulated.thruster.thruster.ThrusterBlockEntity;
-import dev.propulsionteam.propulsionsimulated.wing.PropulsionCopycatWingBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.LiquidBurnerBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.solid.SolidBurnerBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.heat.engine.StirlingEngineBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.CreativeThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.IonThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.wing.PropulsionCopycatWingBlockEntity;
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
 
 import net.minecraft.core.registries.Registries;
@@ -22,36 +23,40 @@ public class PropulsionBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ThrusterBlockEntity>> THRUSTER_BLOCK_ENTITY =
         BLOCK_ENTITY_TYPES.register("thruster_block_entity",
-            () -> BlockEntityType.Builder.of(ThrusterBlockEntity::new, PropulsionBlocks.THRUSTER_BLOCK.get()).build(null));
+            () -> BlockEntityType.Builder.of((pos, state) -> new ThrusterBlockEntity(pos, state), PropulsionBlocks.THRUSTER_BLOCK.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CreativeThrusterBlockEntity>> CREATIVE_THRUSTER_BLOCK_ENTITY =
         BLOCK_ENTITY_TYPES.register("creative_thruster_block_entity",
-            () -> BlockEntityType.Builder.of(CreativeThrusterBlockEntity::new, PropulsionBlocks.CREATIVE_THRUSTER_BLOCK.get()).build(null));
+            () -> BlockEntityType.Builder.of((pos, state) -> new CreativeThrusterBlockEntity(pos, state), PropulsionBlocks.CREATIVE_THRUSTER_BLOCK.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<IonThrusterBlockEntity>> ION_THRUSTER_BLOCK_ENTITY =
+        BLOCK_ENTITY_TYPES.register("ion_thruster_block_entity",
+            () -> BlockEntityType.Builder.of((pos, state) -> new IonThrusterBlockEntity(pos, state), PropulsionBlocks.ION_THRUSTER_BLOCK.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RedstoneTransmissionBlockEntity>> REDSTONE_TRANSMISSION_BLOCK_ENTITY =
         BLOCK_ENTITY_TYPES.register("redstone_transmission_block_entity",
-            () -> BlockEntityType.Builder.of(RedstoneTransmissionBlockEntity::new, PropulsionBlocks.REDSTONE_TRANSMISSION_BLOCK.get()).build(null));
+            () -> BlockEntityType.Builder.of((pos, state) -> new RedstoneTransmissionBlockEntity(pos, state), PropulsionBlocks.REDSTONE_TRANSMISSION_BLOCK.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SolidBurnerBlockEntity>> SOLID_BURNER_BLOCK_ENTITY =
         BLOCK_ENTITY_TYPES.register("solid_burner_block_entity",
-            () -> BlockEntityType.Builder.of(SolidBurnerBlockEntity::new, PropulsionBlocks.SOLID_BURNER.get()).build(null));
+            () -> BlockEntityType.Builder.of((pos, state) -> new SolidBurnerBlockEntity(pos, state), PropulsionBlocks.SOLID_BURNER.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LiquidBurnerBlockEntity>> LIQUID_BURNER_BLOCK_ENTITY =
         BLOCK_ENTITY_TYPES.register("liquid_burner_block_entity",
-            () -> BlockEntityType.Builder.of(LiquidBurnerBlockEntity::new, PropulsionBlocks.LIQUID_BURNER.get()).build(null));
+            () -> BlockEntityType.Builder.of((pos, state) -> new LiquidBurnerBlockEntity(pos, state), PropulsionBlocks.LIQUID_BURNER.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<StirlingEngineBlockEntity>> STIRLING_ENGINE_BLOCK_ENTITY =
         BLOCK_ENTITY_TYPES.register("stirling_engine_block_entity",
-            () -> BlockEntityType.Builder.of(StirlingEngineBlockEntity::new, PropulsionBlocks.STIRLING_ENGINE_BLOCK.get()).build(null));
+            () -> BlockEntityType.Builder.of((pos, state) -> new StirlingEngineBlockEntity(pos, state), PropulsionBlocks.STIRLING_ENGINE_BLOCK.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TiltAdapterBlockEntity>> TILT_ADAPTER_BLOCK_ENTITY =
         BLOCK_ENTITY_TYPES.register("tilt_adapter_block_entity",
-            () -> BlockEntityType.Builder.of(TiltAdapterBlockEntity::new, PropulsionBlocks.TILT_ADAPTER_BLOCK.get()).build(null));
+            () -> BlockEntityType.Builder.of((pos, state) -> new TiltAdapterBlockEntity(pos, state), PropulsionBlocks.TILT_ADAPTER_BLOCK.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PropulsionCopycatWingBlockEntity>> COPYCAT_WING_BLOCK_ENTITY =
         BLOCK_ENTITY_TYPES.register("copycat_wing_block_entity",
             () -> BlockEntityType.Builder.of(
-                PropulsionCopycatWingBlockEntity::new,
+                (pos, state) -> new PropulsionCopycatWingBlockEntity(pos, state),
                 PropulsionBlocks.COPYCAT_WING.get(),
                 PropulsionBlocks.COPYCAT_WING_8.get(),
                 PropulsionBlocks.COPYCAT_WING_12.get()

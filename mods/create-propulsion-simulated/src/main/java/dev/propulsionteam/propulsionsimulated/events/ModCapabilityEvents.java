@@ -1,9 +1,9 @@
 package dev.propulsionteam.propulsionsimulated.events;
 
-import dev.propulsionteam.propulsionsimulated.heat.burners.liquid.LiquidBurnerBlockEntity;
-import dev.propulsionteam.propulsionsimulated.heat.burners.liquid.PassthroughFluidHandler;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.LiquidBurnerBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.PassthroughFluidHandler;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
-import dev.propulsionteam.propulsionsimulated.thruster.thruster.ThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterBlockEntity;
 import net.minecraft.core.Direction;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
@@ -22,16 +22,16 @@ public class ModCapabilityEvents {
             PropulsionBlockEntities.LIQUID_BURNER_BLOCK_ENTITY.get(),
             ModCapabilityEvents::getLiquidBurnerFluidHandler
         );
+
+        event.registerBlockEntity(
+            Capabilities.EnergyStorage.BLOCK,
+            PropulsionBlockEntities.ION_THRUSTER_BLOCK_ENTITY.get(),
+            (be, side) -> ((dev.propulsionteam.propulsionsimulated.content.thruster.IonThrusterBlockEntity)be).getEnergyHandler(side)
+        );
     }
 
     private static IFluidHandler getThrusterFluidHandler(ThrusterBlockEntity blockEntity, Direction side) {
-        if (blockEntity.tank == null) {
-            return null;
-        }
-        if (side != null && side != blockEntity.getFluidCapSide()) {
-            return null;
-        }
-        return blockEntity.tank.getPrimaryHandler();
+        return blockEntity.getFluidHandler(side);
     }
 
     private static IFluidHandler getLiquidBurnerFluidHandler(LiquidBurnerBlockEntity blockEntity, Direction side) {

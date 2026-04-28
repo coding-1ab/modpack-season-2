@@ -1,112 +1,130 @@
-package dev.propulsionteam.propulsionsimulated.thruster;
+package dev.propulsionteam.propulsionsimulated.content.thruster;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import dev.propulsionteam.propulsionsimulated.registries.PropulsionShapes;
-
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
+import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DirectionalBlock;
-import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-@SuppressWarnings("deprecation")
-public abstract class AbstractThrusterBlock extends DirectionalBlock implements EntityBlock {
+public abstract class AbstractThrusterBlock extends DirectionalBlock implements IBE<ThrusterBlockEntity>, IWrenchable {
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
 
-    protected AbstractThrusterBlock(Properties properties) {
+    protected AbstractThrusterBlock(final Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
     @Override
-    public VoxelShape getShape(@Nullable BlockState pState, @Nullable BlockGetter pLevel, @Nullable BlockPos pPos, @Nullable CollisionContext pContext) {
-        if (pState == null) {
-            return PropulsionShapes.THRUSTER.get(Direction.NORTH);
-        }
-        Direction direction = pState.getValue(FACING);
-        if (direction == Direction.UP || direction == Direction.DOWN) direction = direction.getOpposite();
-        return PropulsionShapes.THRUSTER.get(direction);
+    protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
+        super.createBlockStateDefinition(builder);
     }
 
     @Override
-    public BlockState getStateForPlacement(@Nonnull BlockPlaceContext context) {
-        Direction baseDirection = context.getNearestLookingDirection();
-        Direction placeDirection;
-        Player player = context.getPlayer();
+    public BlockState getStateForPlacement(final BlockPlaceContext context) {
+        final Direction baseDirection = context.getNearestLookingDirection();
+        final Player player = context.getPlayer();
+        final Direction placeDirection;
         if (player != null) {
             placeDirection = !player.isShiftKeyDown() ? baseDirection : baseDirection.getOpposite();
         } else {
             placeDirection = baseDirection.getOpposite();
         }
-
         return this.defaultBlockState().setValue(FACING, placeDirection);
     }
 
     @Override
-    protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
-    }
-
-    @Nullable
-    @Override
-    public abstract BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state);
-
-    @Nullable
-    @Override
-    public abstract <T extends BlockEntity> BlockEntityTicker<T> getTicker(@Nonnull Level level, @Nonnull BlockState state, @Nonnull BlockEntityType<T> type);
-
-    @Override
-    public void onPlace(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState oldState, boolean isMoving) {
-        super.onPlace(state, level, pos, oldState, isMoving);
-
-        if (!level.isClientSide()) {
-            doRedstoneCheck(level, state, pos);
-        }
-    }
-
-    @Override
-    public void onRemove(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState newState, boolean isMoving) {
-        super.onRemove(state, level, pos, newState, isMoving);
-    }
-
-    @Override
-    public void neighborChanged(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockPos fromPos, boolean isMoving) {
-        if (level.isClientSide()) return;
-        doRedstoneCheck(level, state, pos);
-    }
-
-    public void doRedstoneCheck(Level level, BlockState state, BlockPos pos) {
-        BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity instanceof AbstractThrusterBlockEntity thrusterBlockEntity) {
-            int newRedstonePower = level.getBestNeighborSignal(pos);
-            thrusterBlockEntity.setRedstoneInput(newRedstonePower);
-            thrusterBlockEntity.calculateObstruction(level, pos, state.getValue(FACING));
-        }
-    }
-
-    @Override
-    public BlockState rotate(@Nonnull BlockState state, @Nonnull Rotation rot) {
+    public BlockState rotate(final BlockState state, final Rotation rot) {
         return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
     }
 
     @Override
-    public BlockState mirror(@Nonnull BlockState state, @Nonnull Mirror mirrorIn) {
-        return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
+    public BlockState mirror(final BlockState state, final Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
+    }
+
+    @Override
+    public RenderShape getRenderShape(final BlockState state) {
+        return RenderShape.MODEL;
+    }
+
+    @Override
+    protected VoxelShape getCollisionShape(final BlockState state,
+                                           final BlockGetter level,
+                                           final BlockPos pos,
+                                           final CollisionContext context) {
+        return this.getShape(state, level, pos, context);
+    }
+
+    @Override
+    protected ItemInteractionResult useItemOn(final ItemStack stack,
+                                              final BlockState state,
+                                              final Level level,
+                                              final BlockPos pos,
+                                              final Player player,
+                                              final InteractionHand hand,
+                                              final BlockHitResult hitResult) {
+        return this.onBlockEntityUseItemOn(level, pos,
+                be -> be.tryConsumeFuelBucket(player, hand, stack)
+                        ? ItemInteractionResult.sidedSuccess(level.isClientSide())
+                        : ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION);
+    }
+
+    @Override
+    public void onPlace(final BlockState state,
+                        final Level level,
+                        final BlockPos pos,
+                        final BlockState oldState,
+                        final boolean movedByPiston) {
+        super.onPlace(state, level, pos, oldState, movedByPiston);
+        if (!level.isClientSide()) {
+            this.withBlockEntityDo(level, pos, be -> be.setRedstonePower(level.getBestNeighborSignal(pos)));
+        }
+    }
+
+    @Override
+    public void neighborChanged(final BlockState state,
+                                final Level level,
+                                final BlockPos pos,
+                                final Block neighborBlock,
+                                final BlockPos neighborPos,
+                                final boolean movedByPiston) {
+        super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
+        if (!level.isClientSide()) {
+            this.withBlockEntityDo(level, pos, be -> be.setRedstonePower(level.getBestNeighborSignal(pos)));
+        }
+    }
+
+    @Override
+    public void onRemove(final BlockState state,
+                         final Level level,
+                         final BlockPos pos,
+                         final BlockState newState,
+                         final boolean movedByPiston) {
+        IBE.onRemove(state, level, pos, newState);
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
+    public boolean isCreativeVariant() {
+        return false;
     }
 }
+

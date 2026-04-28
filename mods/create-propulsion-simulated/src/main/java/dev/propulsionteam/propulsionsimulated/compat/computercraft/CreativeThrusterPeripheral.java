@@ -1,7 +1,6 @@
 package dev.propulsionteam.propulsionsimulated.compat.computercraft;
 
-import dev.propulsionteam.propulsionsimulated.thruster.AbstractThrusterBlockEntity;
-import dev.propulsionteam.propulsionsimulated.thruster.creative_thruster.CreativeThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.CreativeThrusterBlockEntity;
 import com.simibubi.create.compat.computercraft.implementation.peripherals.SyncedPeripheral;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
@@ -21,17 +20,17 @@ public class CreativeThrusterPeripheral extends SyncedPeripheral<CreativeThruste
 
     @LuaFunction
     public final int getObstruction() {
-        return blockEntity.getEmptyBlocks();
+        return blockEntity.getUnobstructedBlocks();
     }
 
     @LuaFunction(mainThread = true)
-    public final void setPower(double power) {
-        blockEntity.setDigitalInput((float)power);
+    public final void setPower(int redstonePower) {
+        blockEntity.setRedstonePower(redstonePower);
     }
 
     @LuaFunction(mainThread = true)
-    public final float getPower() {
-        return blockEntity.getPower();
+    public final double getPower() {
+        return blockEntity.getThrottle();
     }
 
     @LuaFunction(mainThread = true)
@@ -45,8 +44,23 @@ public class CreativeThrusterPeripheral extends SyncedPeripheral<CreativeThruste
     }
 
     @LuaFunction
-    public final float getTargetThrustKN() {
-        return blockEntity.getTargetThrustNewtons() / 1000.0f;
+    public final float getTargetThrustPN() {
+        return blockEntity.getCreativeTargetThrust();
+    }
+
+    @LuaFunction
+    public final double getCurrentThrustPN() {
+        return blockEntity.getCurrentThrust();
+    }
+
+    @LuaFunction
+    public final double getDisplayedThrustPN() {
+        return blockEntity.getDisplayedThrustPnForTooltip();
+    }
+
+    @LuaFunction
+    public final double getAirflowMs() {
+        return blockEntity.getDisplayedAirflowMsForTooltip();
     }
 
     //Boilerplate
@@ -62,13 +76,11 @@ public class CreativeThrusterPeripheral extends SyncedPeripheral<CreativeThruste
     @Override
     public void attach(@NotNull IComputerAccess computer) {
         super.attach(computer);
-        blockEntity.setControlMode(AbstractThrusterBlockEntity.ControlMode.PERIPHERAL);
     }
 
     @Override
     public void detach(@NotNull IComputerAccess computer) {
         super.detach(computer);
-        blockEntity.setDigitalInput(0.0f); 
-        blockEntity.setControlMode(AbstractThrusterBlockEntity.ControlMode.NORMAL);
+        blockEntity.setRedstonePower(0);
     }
 }

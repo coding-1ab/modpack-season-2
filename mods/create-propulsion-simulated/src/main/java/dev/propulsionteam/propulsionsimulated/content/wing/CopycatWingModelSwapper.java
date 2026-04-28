@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.wing;
+package dev.propulsionteam.propulsionsimulated.content.wing;
 
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlocks;
@@ -30,3 +30,4 @@ public class CopycatWingModelSwapper {
         );
     }
 }
+
