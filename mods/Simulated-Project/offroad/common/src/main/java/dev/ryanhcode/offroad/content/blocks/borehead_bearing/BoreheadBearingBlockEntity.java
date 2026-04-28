@@ -11,9 +11,6 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.item.TooltipHelper;
 import com.simibubi.create.foundation.utility.ServerSpeedProvider;
 import com.simibubi.create.infrastructure.config.AllConfigs;
-import dev.simulated_team.simulated.api.BearingSlowdownController;
-import dev.simulated_team.simulated.multiloader.inventory.InventoryLoaderWrapper;
-import dev.simulated_team.simulated.multiloader.inventory.ItemInfoWrapper;
 import dev.ryanhcode.offroad.config.OffroadConfig;
 import dev.ryanhcode.offroad.content.blocks.rock_cutting_wheel.RockCuttingWheelBlock;
 import dev.ryanhcode.offroad.content.contraptions.borehead_contraption.BoreheadBearingContraption;
@@ -25,6 +22,9 @@ import dev.ryanhcode.offroad.handlers.server.MultiMiningSupplier;
 import dev.ryanhcode.sable.companion.math.BoundingBox3d;
 import dev.ryanhcode.sable.companion.math.BoundingBox3i;
 import dev.ryanhcode.sable.util.LevelAccelerator;
+import dev.simulated_team.simulated.api.BearingSlowdownController;
+import dev.simulated_team.simulated.multiloader.inventory.InventoryLoaderWrapper;
+import dev.simulated_team.simulated.multiloader.inventory.ItemInfoWrapper;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.createmod.catnip.lang.FontHelper;
@@ -260,7 +260,7 @@ public class BoreheadBearingBlockEntity extends MechanicalBearingBlockEntity imp
     @Override
     public void itemCallback(final ItemStack stack) {
         final BoreheadContraptionEntity bce = this.getContraptionEntity();
-        if (bce != null) {
+        if (!stack.isEmpty() && bce != null) {
             final BoreheadBearingContraption contraption = bce.getContraption();
             final BoreheadAttachedStorage attachedStorage = (BoreheadAttachedStorage) contraption.getStorage();
             attachedStorage.setInsertAllowed(true);
