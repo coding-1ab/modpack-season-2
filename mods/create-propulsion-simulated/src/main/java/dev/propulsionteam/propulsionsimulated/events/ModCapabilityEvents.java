@@ -1,9 +1,9 @@
 package dev.propulsionteam.propulsionsimulated.events;
 
-import dev.propulsionteam.propulsionsimulated.heat.burners.liquid.LiquidBurnerBlockEntity;
-import dev.propulsionteam.propulsionsimulated.heat.burners.liquid.PassthroughFluidHandler;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.LiquidBurnerBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.PassthroughFluidHandler;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
-import dev.propulsionteam.propulsionsimulated.thruster.thruster.ThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
 import net.minecraft.core.Direction;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;

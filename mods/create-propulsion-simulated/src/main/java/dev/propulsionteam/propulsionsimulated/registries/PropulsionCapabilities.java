@@ -1,7 +1,7 @@
 package dev.propulsionteam.propulsionsimulated.registries;
 
-import dev.propulsionteam.propulsionsimulated.heat.IHeatConsumer;
-import dev.propulsionteam.propulsionsimulated.heat.IHeatSource;
+import dev.propulsionteam.propulsionsimulated.content.heat.IHeatConsumer;
+import dev.propulsionteam.propulsionsimulated.content.heat.IHeatSource;
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
 
 import net.minecraft.core.Direction;

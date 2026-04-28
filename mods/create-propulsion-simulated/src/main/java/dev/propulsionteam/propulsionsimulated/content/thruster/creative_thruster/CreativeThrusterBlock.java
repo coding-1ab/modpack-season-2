@@ -1,11 +1,11 @@
-package dev.propulsionteam.propulsionsimulated.thruster.creative_thruster;
+package dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionShapes;
-import dev.propulsionteam.propulsionsimulated.thruster.AbstractThrusterBlock;
+import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlock;
 import com.mojang.serialization.MapCodec;
 
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntityTicker;

@@ -1,11 +1,11 @@
-package dev.propulsionteam.propulsionsimulated.thruster.creative_thruster;
+package dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster;
 
 import java.util.List;
 
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import dev.propulsionteam.propulsionsimulated.particles.plasma.PlasmaParticleData;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
-import dev.propulsionteam.propulsionsimulated.thruster.AbstractThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
 

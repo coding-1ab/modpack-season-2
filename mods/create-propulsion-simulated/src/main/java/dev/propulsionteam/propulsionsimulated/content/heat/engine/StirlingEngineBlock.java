@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.heat.engine;
+package dev.propulsionteam.propulsionsimulated.content.heat.engine;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

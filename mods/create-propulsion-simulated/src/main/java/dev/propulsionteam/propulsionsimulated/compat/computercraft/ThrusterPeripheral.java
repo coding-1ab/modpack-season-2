@@ -12,8 +12,8 @@ import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
 
-import dev.propulsionteam.propulsionsimulated.thruster.AbstractThrusterBlockEntity;
-import dev.propulsionteam.propulsionsimulated.thruster.thruster.ThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
 import com.simibubi.create.compat.computercraft.implementation.peripherals.SyncedPeripheral;
 
 public class ThrusterPeripheral extends SyncedPeripheral<ThrusterBlockEntity> {

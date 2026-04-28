@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.heat;
+package dev.propulsionteam.propulsionsimulated.content.heat;
 
 public interface IHeatConsumer {
     boolean isActive();

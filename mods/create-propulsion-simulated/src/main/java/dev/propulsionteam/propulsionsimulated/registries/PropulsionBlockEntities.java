@@ -1,13 +1,13 @@
 package dev.propulsionteam.propulsionsimulated.registries;
 
-import dev.propulsionteam.propulsionsimulated.heat.burners.liquid.LiquidBurnerBlockEntity;
-import dev.propulsionteam.propulsionsimulated.heat.burners.solid.SolidBurnerBlockEntity;
-import dev.propulsionteam.propulsionsimulated.heat.engine.StirlingEngineBlockEntity;
-import dev.propulsionteam.propulsionsimulated.tilt_adapter.TiltAdapterBlockEntity;
-import dev.propulsionteam.propulsionsimulated.thruster.creative_thruster.CreativeThrusterBlockEntity;
-import dev.propulsionteam.propulsionsimulated.redstone_transmission.RedstoneTransmissionBlockEntity;
-import dev.propulsionteam.propulsionsimulated.thruster.thruster.ThrusterBlockEntity;
-import dev.propulsionteam.propulsionsimulated.wing.PropulsionCopycatWingBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.LiquidBurnerBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.solid.SolidBurnerBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.heat.engine.StirlingEngineBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.wing.PropulsionCopycatWingBlockEntity;
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
 
 import net.minecraft.core.registries.Registries;

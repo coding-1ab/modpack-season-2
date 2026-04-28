@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.thruster.creative_thruster;
+package dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster;
 
 import java.util.function.Consumer;
 

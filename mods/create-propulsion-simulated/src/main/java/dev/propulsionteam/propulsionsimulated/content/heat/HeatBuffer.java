@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.heat;
+package dev.propulsionteam.propulsionsimulated.content.heat;
 
 import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.common.util.INBTSerializable;

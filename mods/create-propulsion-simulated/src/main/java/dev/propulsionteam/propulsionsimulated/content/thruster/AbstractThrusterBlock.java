@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.thruster;
+package dev.propulsionteam.propulsionsimulated.content.thruster;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

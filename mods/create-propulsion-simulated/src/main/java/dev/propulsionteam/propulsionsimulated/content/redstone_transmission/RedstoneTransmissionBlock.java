@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.redstone_transmission;
+package dev.propulsionteam.propulsionsimulated.content.redstone_transmission;
 
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import com.simibubi.create.content.kinetics.base.AbstractEncasedShaftBlock;

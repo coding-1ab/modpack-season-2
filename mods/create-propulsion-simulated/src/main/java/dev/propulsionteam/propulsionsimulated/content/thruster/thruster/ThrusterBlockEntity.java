@@ -1,10 +1,10 @@
-package dev.propulsionteam.propulsionsimulated.thruster.thruster;
+package dev.propulsionteam.propulsionsimulated.content.thruster.thruster;
 
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
-import dev.propulsionteam.propulsionsimulated.thruster.AbstractThrusterBlockEntity;
-import dev.propulsionteam.propulsionsimulated.thruster.FluidThrusterProperties;
-import dev.propulsionteam.propulsionsimulated.thruster.ThrusterFuelManager;
-import dev.propulsionteam.propulsionsimulated.thruster.ThrusterParticleType;
+import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.FluidThrusterProperties;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterFuelManager;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterParticleType;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;

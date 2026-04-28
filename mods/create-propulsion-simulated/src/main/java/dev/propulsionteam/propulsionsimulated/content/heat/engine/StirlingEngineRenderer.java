@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.heat.engine;
+package dev.propulsionteam.propulsionsimulated.content.heat.engine;
 
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.render.CachedBuffers;

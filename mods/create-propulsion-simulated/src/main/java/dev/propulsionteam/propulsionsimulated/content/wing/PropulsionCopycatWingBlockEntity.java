@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.wing;
+package dev.propulsionteam.propulsionsimulated.content.wing;
 
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import com.simibubi.create.content.decoration.copycat.CopycatBlockEntity;

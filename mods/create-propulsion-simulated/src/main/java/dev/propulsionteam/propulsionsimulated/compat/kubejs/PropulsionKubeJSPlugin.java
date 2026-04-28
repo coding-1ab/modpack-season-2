@@ -1,6 +1,6 @@
 package dev.propulsionteam.propulsionsimulated.compat.kubejs;
 
-import dev.propulsionteam.propulsionsimulated.thruster.ThrusterFuelManager;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterFuelManager;
 
 import dev.latvian.mods.kubejs.plugin.KubeJSPlugin;
 import dev.latvian.mods.kubejs.script.BindingRegistry;

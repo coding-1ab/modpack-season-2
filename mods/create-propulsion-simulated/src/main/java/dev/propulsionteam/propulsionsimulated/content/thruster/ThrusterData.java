@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.thruster;
+package dev.propulsionteam.propulsionsimulated.content.thruster;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import org.joml.Vector3d;

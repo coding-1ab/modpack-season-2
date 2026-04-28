@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.thruster;
+package dev.propulsionteam.propulsionsimulated.content.thruster;
 
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import dev.propulsionteam.propulsionsimulated.compat.PropulsionCompatibility;

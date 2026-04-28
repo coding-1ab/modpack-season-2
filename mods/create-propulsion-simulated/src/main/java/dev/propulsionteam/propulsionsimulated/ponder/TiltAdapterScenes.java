@@ -1,6 +1,6 @@
 package dev.propulsionteam.propulsionsimulated.ponder;
 
-import dev.propulsionteam.propulsionsimulated.tilt_adapter.TiltAdapterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterBlockEntity;
 import com.simibubi.create.content.redstone.analogLever.AnalogLeverBlockEntity;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 

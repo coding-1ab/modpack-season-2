@@ -1,8 +1,8 @@
-package dev.propulsionteam.propulsionsimulated.heat.burners.liquid;
+package dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid;
 
 import javax.annotation.Nonnull;
 
-import dev.propulsionteam.propulsionsimulated.heat.burners.AbstractBurnerBlock;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.AbstractBurnerBlock;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntityTicker;
 

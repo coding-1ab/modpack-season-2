@@ -1,7 +1,7 @@
-package dev.propulsionteam.propulsionsimulated.thruster.thruster;
+package dev.propulsionteam.propulsionsimulated.content.thruster.thruster;
 
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
-import dev.propulsionteam.propulsionsimulated.thruster.AbstractThrusterBlock;
+import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlock;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntityTicker;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;

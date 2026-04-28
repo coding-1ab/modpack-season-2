@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.thruster.creative_thruster;
+package dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster;
 
 import com.google.common.collect.ImmutableList;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;

@@ -7,7 +7,7 @@ import java.util.function.Function;
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlocks;
-import dev.propulsionteam.propulsionsimulated.thruster.thruster.ThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
 import com.simibubi.create.foundation.item.TooltipHelper;
 
 import net.createmod.catnip.lang.FontHelper.Palette;

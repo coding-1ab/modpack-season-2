@@ -1,14 +1,14 @@
-package dev.propulsionteam.propulsionsimulated.heat.burners.liquid;
+package dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid;
 
 import java.util.List;
 
 
-import dev.propulsionteam.propulsionsimulated.heat.burners.AbstractBurnerBlock;
-import dev.propulsionteam.propulsionsimulated.heat.burners.AbstractBurnerBlockEntity;
-import dev.propulsionteam.propulsionsimulated.heat.burners.BurnerDamager;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.AbstractBurnerBlock;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.AbstractBurnerBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.BurnerDamager;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
-import dev.propulsionteam.propulsionsimulated.thruster.FluidThrusterProperties;
-import dev.propulsionteam.propulsionsimulated.thruster.ThrusterFuelManager;
+import dev.propulsionteam.propulsionsimulated.content.thruster.FluidThrusterProperties;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterFuelManager;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
@@ -80,7 +80,7 @@ public class LiquidBurnerBlockEntity extends AbstractBurnerBlockEntity {
         Level level = getLevel();
         if (level == null) return false;
         BlockPos posAbove = worldPosition.above();
-        return level.getBlockEntity(posAbove) instanceof dev.propulsionteam.propulsionsimulated.heat.IHeatConsumer;
+        return level.getBlockEntity(posAbove) instanceof dev.propulsionteam.propulsionsimulated.content.heat.IHeatConsumer;
     }
 
     public boolean isFanSpinning() {

@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import dev.propulsionteam.propulsionsimulated.thruster.FluidThrusterProperties;
-import dev.propulsionteam.propulsionsimulated.thruster.ThrusterFuelManager;
+import dev.propulsionteam.propulsionsimulated.content.thruster.FluidThrusterProperties;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterFuelManager;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.registries.BuiltInRegistries;

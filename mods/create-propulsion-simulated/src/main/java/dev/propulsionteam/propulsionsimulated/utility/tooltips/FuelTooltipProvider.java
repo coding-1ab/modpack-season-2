@@ -2,8 +2,8 @@ package dev.propulsionteam.propulsionsimulated.utility.tooltips;
 
 import java.util.List;
 
-import dev.propulsionteam.propulsionsimulated.thruster.FluidThrusterProperties;
-import dev.propulsionteam.propulsionsimulated.thruster.ThrusterFuelManager;
+import dev.propulsionteam.propulsionsimulated.content.thruster.FluidThrusterProperties;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterFuelManager;
 import net.createmod.catnip.lang.FontHelper.Palette;
 
 import net.minecraft.network.chat.Component;

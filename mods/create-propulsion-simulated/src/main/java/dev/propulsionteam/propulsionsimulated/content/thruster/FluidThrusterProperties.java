@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.thruster;
+package dev.propulsionteam.propulsionsimulated.content.thruster;
 
 import java.util.ArrayList;
 import java.util.Collections;

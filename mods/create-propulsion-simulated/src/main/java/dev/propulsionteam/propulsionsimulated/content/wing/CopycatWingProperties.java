@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.wing;
+package dev.propulsionteam.propulsionsimulated.content.wing;
 
 import java.util.Map;
 

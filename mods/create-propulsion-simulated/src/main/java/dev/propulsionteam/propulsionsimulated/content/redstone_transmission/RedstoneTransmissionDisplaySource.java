@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.redstone_transmission;
+package dev.propulsionteam.propulsionsimulated.content.redstone_transmission;
 
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkContext;
 import com.simibubi.create.content.redstone.displayLink.source.SingleLineDisplaySource;

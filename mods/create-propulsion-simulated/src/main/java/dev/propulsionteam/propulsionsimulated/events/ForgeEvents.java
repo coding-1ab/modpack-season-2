@@ -5,7 +5,7 @@ import dev.propulsionteam.propulsionsimulated.network.PropulsionPackets;
 import dev.propulsionteam.propulsionsimulated.network.SyncThrusterFuelsPacket;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionCommands;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionFluids;
-import dev.propulsionteam.propulsionsimulated.thruster.ThrusterFuelManager;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterFuelManager;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

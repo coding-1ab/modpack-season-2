@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.heat.engine;
+package dev.propulsionteam.propulsionsimulated.content.heat.engine;
 
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.mojang.blaze3d.vertex.PoseStack;

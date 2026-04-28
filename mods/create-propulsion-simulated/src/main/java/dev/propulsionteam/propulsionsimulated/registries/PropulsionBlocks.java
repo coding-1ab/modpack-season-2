@@ -1,16 +1,16 @@
 package dev.propulsionteam.propulsionsimulated.registries;
 
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
-import dev.propulsionteam.propulsionsimulated.heat.burners.liquid.LiquidBurnerBlock;
-import dev.propulsionteam.propulsionsimulated.heat.burners.solid.SolidBurnerBlock;
-import dev.propulsionteam.propulsionsimulated.heat.engine.StirlingEngineBlock;
-import dev.propulsionteam.propulsionsimulated.redstone_transmission.RedstoneTransmissionBlock;
-import dev.propulsionteam.propulsionsimulated.tilt_adapter.TiltAdapterBlock;
-import dev.propulsionteam.propulsionsimulated.thruster.creative_thruster.CreativeThrusterBlock;
-import dev.propulsionteam.propulsionsimulated.thruster.thruster.ThrusterBlock;
-import dev.propulsionteam.propulsionsimulated.wing.CopycatWingBlock;
-import dev.propulsionteam.propulsionsimulated.wing.CopycatWingItem;
-import dev.propulsionteam.propulsionsimulated.wing.WingBlock;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.LiquidBurnerBlock;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.solid.SolidBurnerBlock;
+import dev.propulsionteam.propulsionsimulated.content.heat.engine.StirlingEngineBlock;
+import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionBlock;
+import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterBlock;
+import dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterBlock;
+import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlock;
+import dev.propulsionteam.propulsionsimulated.content.wing.CopycatWingBlock;
+import dev.propulsionteam.propulsionsimulated.content.wing.CopycatWingItem;
+import dev.propulsionteam.propulsionsimulated.content.wing.WingBlock;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;

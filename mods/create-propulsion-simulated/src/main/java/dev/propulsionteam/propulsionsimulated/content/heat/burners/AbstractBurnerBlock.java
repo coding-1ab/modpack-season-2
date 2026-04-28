@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.heat.burners;
+package dev.propulsionteam.propulsionsimulated.content.heat.burners;
 
 import javax.annotation.Nonnull;
 
