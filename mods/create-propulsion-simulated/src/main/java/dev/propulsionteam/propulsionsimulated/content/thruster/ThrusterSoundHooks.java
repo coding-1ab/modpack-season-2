@@ -1,6 +1,7 @@
 package dev.propulsionteam.propulsionsimulated.content.thruster;
 
 import java.lang.reflect.Method;
+import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
 
 public final class ThrusterSoundHooks {
     private ThrusterSoundHooks() {

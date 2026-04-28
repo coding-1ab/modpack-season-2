@@ -1,11 +1,8 @@
 package dev.propulsionteam.propulsionsimulated.content.thruster;
-<<<<<<< HEAD
-=======
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionShapes;
->>>>>>> e8bb33badb65c4431e5c2251e9956708ba1cc7f3
+import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
 
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
@@ -31,7 +28,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public abstract class AbstractThrusterBlock extends DirectionalBlock implements IBE<ThrusterBlockEntity>, IWrenchable {
+public abstract class AbstractThrusterBlock extends DirectionalBlock implements IBE<AbstractThrusterBlockEntity>, IWrenchable {
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
 
     protected AbstractThrusterBlock(final Properties properties) {
@@ -132,6 +129,10 @@ public abstract class AbstractThrusterBlock extends DirectionalBlock implements 
 
     public boolean isCreativeVariant() {
         return false;
+    }
+
+    public void doRedstoneCheck(Level level, BlockState state, BlockPos pos) {
+        this.withBlockEntityDo(level, pos, be -> be.setRedstonePower(level.getBestNeighborSignal(pos)));
     }
 }
 

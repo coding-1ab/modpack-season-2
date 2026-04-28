@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionShapes;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlock;
+import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity;
 import com.mojang.serialization.MapCodec;
 
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntityTicker;
@@ -30,6 +31,15 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class CreativeThrusterBlock extends AbstractThrusterBlock implements IWrenchable {
+    @Override
+    public Class<AbstractThrusterBlockEntity> getBlockEntityClass() {
+        return AbstractThrusterBlockEntity.class;
+    }
+
+    @Override
+    public BlockEntityType<? extends AbstractThrusterBlockEntity> getBlockEntityType() {
+        return PropulsionBlockEntities.CREATIVE_THRUSTER_BLOCK_ENTITY.get();
+    }
     public static final MapCodec<CreativeThrusterBlock> CODEC = simpleCodec(CreativeThrusterBlock::new);
     public static final DirectionProperty PLACEMENT_FACING = DirectionProperty.create("placement_facing", Direction.values());
 

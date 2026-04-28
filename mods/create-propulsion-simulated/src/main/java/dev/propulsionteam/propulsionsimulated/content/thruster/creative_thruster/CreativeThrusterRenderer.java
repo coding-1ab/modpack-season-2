@@ -1,16 +1,10 @@
-<<<<<<< HEAD:src/main/java/dev/propulsionteam/propulsionsimulated/content/thruster/CreativeThrusterRenderer.java
-package dev.propulsionteam.propulsionsimulated.content.thruster;
-=======
 package dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster;
->>>>>>> e8bb33badb65c4431e5c2251e9956708ba1cc7f3:src/main/java/dev/propulsionteam/propulsionsimulated/content/thruster/creative_thruster/CreativeThrusterRenderer.java
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionPartialModels;
-import dev.propulsionteam.propulsionsimulated.content.thruster.CreativeThrusterBlock;
-import dev.propulsionteam.propulsionsimulated.content.thruster.CreativeThrusterBlockEntity;
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;

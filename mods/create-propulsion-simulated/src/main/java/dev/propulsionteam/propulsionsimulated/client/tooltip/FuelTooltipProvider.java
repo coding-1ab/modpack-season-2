@@ -1,7 +1,7 @@
 package dev.propulsionteam.propulsionsimulated.client.tooltip;
 
 import dev.propulsionteam.propulsionsimulated.content.thruster.FluidThrusterProperties;
-import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterFuelRegistry;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterFuelManager;
 import net.createmod.catnip.lang.FontHelper.Palette;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
@@ -28,11 +28,10 @@ public final class FuelTooltipProvider implements ITooltipProvider {
             return;
         }
 
-        final var propertiesOpt = ThrusterFuelRegistry.getProperties(fluidStack);
-        if (propertiesOpt.isEmpty()) {
+        final FluidThrusterProperties properties = ThrusterFuelManager.getProperties(fluidStack.getFluid());
+        if (properties == null) {
             return;
         }
-        final FluidThrusterProperties properties = propertiesOpt.get();
         TooltipHandler.wrapShiftHoldText(tooltipList, "createpropulsion.tooltip.holdForRocketFuelSummary", () -> {
             final int thrustPercent = Math.round(properties.thrustMultiplier() * 100.0f);
             final Component thrustLine = Component.translatable("createpropulsion.tooltip.thrust")

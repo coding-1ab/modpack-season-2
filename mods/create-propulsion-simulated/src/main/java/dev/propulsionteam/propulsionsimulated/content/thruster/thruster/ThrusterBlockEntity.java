@@ -44,6 +44,10 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         behaviours.add(tank);
     }
 
+    public IFluidHandler getFluidHandler(Direction side) {
+        return tank.getPrimaryHandler();
+    }
+
     @Override
     public void updateThrust(BlockState currentBlockState) {
         float thrust = 0;
@@ -57,7 +61,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
 
             if (thrustPercentage > 0 && properties != null) {
                 int tick_rate = PropulsionConfig.THRUSTER_TICKS_PER_UPDATE.get();
-                int consumption = calculateFuelConsumption(currentPower, properties.consumptionMultiplier, tick_rate);
+                int consumption = calculateFuelConsumption(currentPower, properties.consumptionMultiplier(), tick_rate);
                 FluidStack drainedStack = tank.getPrimaryHandler().drain(consumption, IFluidHandler.FluidAction.EXECUTE);
                 int fuelConsumed = drainedStack.getAmount();
 
@@ -65,7 +69,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                     float consumptionRatio = (float) fuelConsumed / (float) consumption;
                     float thrustMultiplier = PropulsionConfig.THRUSTER_THRUST_MULTIPLIER.get().floatValue();
                     float fuelEfficiency = ThrusterFuelManager.getEfficiency(fluidStack().getFluid());
-                    thrust = BASE_MAX_THRUST * thrustMultiplier * thrustPercentage * properties.thrustMultiplier * fuelEfficiency * consumptionRatio;
+                    thrust = BASE_MAX_THRUST * thrustMultiplier * thrustPercentage * properties.thrustMultiplier() * fuelEfficiency * consumptionRatio;
                 }
             }
         }
@@ -79,12 +83,22 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     }
 
     @Override
-    protected boolean shouldEmitParticles() {
+    public boolean shouldEmitParticles() {
         if (!super.shouldEmitParticles()) {
             return false;
         }
         FluidThrusterProperties properties = getFuelProperties(fluidStack().getFluid());
-        return properties != null && properties.particleType != ThrusterParticleType.NONE;
+        return properties != null && properties.particleType() != ThrusterParticleType.NONE;
+    }
+
+    @Override
+    protected double getBaseThrust() {
+        return BASE_MAX_THRUST;
+    }
+
+    @Override
+    protected double getRawThrustCap() {
+        return BASE_MAX_THRUST;
     }
 
     public Direction getFluidCapSide() {
@@ -92,7 +106,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     }
 
     @Override
-    protected double getNozzleOffsetFromCenter() {
+    public double getNozzleOffsetFromCenter() {
         return 0.95;
     }
 
@@ -146,18 +160,18 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             return super.createParticleOptions();
         }
         FluidThrusterProperties resolvedProperties = properties;
-        if (properties.useFluidColor) {
+        if (properties.useFluidColor()) {
             int fluidColor = IClientFluidTypeExtensions.of(fluidStack().getFluid()).getTintColor(fluidStack()) & 0xFFFFFF;
             resolvedProperties = new FluidThrusterProperties(
-                properties.thrustMultiplier,
-                properties.consumptionMultiplier,
-                properties.particleType,
-                properties.overrideTextures,
+                properties.thrustMultiplier(),
+                properties.consumptionMultiplier(),
+                properties.particleType(),
+                properties.overrideTextures(),
                 fluidColor,
                 true
             );
         }
-        return resolvedProperties.particleType.createParticleOptions(resolvedProperties);
+        return resolvedProperties.particleType().createParticleOptions(resolvedProperties);
     }
 
     private int calculateFuelConsumption(float powerPercentage, float fluidPropertiesConsumptionMultiplier, int tick_rate) {

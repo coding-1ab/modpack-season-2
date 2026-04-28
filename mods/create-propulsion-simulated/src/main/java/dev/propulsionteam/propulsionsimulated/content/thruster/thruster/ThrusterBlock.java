@@ -2,6 +2,7 @@ package dev.propulsionteam.propulsionsimulated.content.thruster.thruster;
 
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlock;
+import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntityTicker;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -23,6 +24,11 @@ public class ThrusterBlock extends AbstractThrusterBlock {
     }
 
     @Override
+    public Class<AbstractThrusterBlockEntity> getBlockEntityClass() {
+        return AbstractThrusterBlockEntity.class;
+    }
+
+    @Override
     protected MapCodec<? extends DirectionalBlock> codec() {
         return CODEC;
     }
@@ -30,6 +36,11 @@ public class ThrusterBlock extends AbstractThrusterBlock {
     @Override
     public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         return new ThrusterBlockEntity(PropulsionBlockEntities.THRUSTER_BLOCK_ENTITY.get(), pos, state);
+    }
+
+    @Override
+    public BlockEntityType<? extends AbstractThrusterBlockEntity> getBlockEntityType() {
+        return PropulsionBlockEntities.THRUSTER_BLOCK_ENTITY.get();
     }
 
     @Nullable

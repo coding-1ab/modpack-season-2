@@ -4,6 +4,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.utility.CreateLang;
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
+import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
 import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -15,7 +16,9 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import java.util.List;
@@ -71,6 +74,44 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
 
     @Override
     public void addBehaviours(final List<BlockEntityBehaviour> behaviours) {
+        // No tank behaviour for Ion Thruster
+    }
+
+    @Override
+    public void updateThrust(BlockState currentBlockState) {
+        float thrust = 0;
+        float currentPower = getPower();
+
+        if (currentPower > 0 && energyStored > 0) {
+            float obstructionEffect = calculateObstructionEffect();
+            float thrustPercentage = Math.min(currentPower, obstructionEffect);
+
+            if (thrustPercentage > 0) {
+                int tick_rate = PropulsionConfig.THRUSTER_TICKS_PER_UPDATE.get();
+                float drainPerTick = (float) (thrustPercentage * PropulsionConfig.ION_THRUSTER_FE_PER_TICK_AT_FULL_THROTTLE.get());
+                int totalDrain = (int) Math.ceil(drainPerTick * tick_rate);
+                
+                int consumed = Math.min(energyStored, totalDrain);
+                if (consumed > 0) {
+                    energyStored -= consumed;
+                    float consumptionRatio = (float) consumed / (float) totalDrain;
+                    float thrustMultiplier = PropulsionConfig.THRUSTER_THRUST_MULTIPLIER.get().floatValue();
+                    thrust = (float) (ION_MAX_THRUST_PN * thrustMultiplier * thrustPercentage * consumptionRatio);
+                }
+            }
+        }
+        thrusterData.setThrust(thrust);
+        isThrustDirty = false;
+    }
+
+    @Override
+    public FluidStack fluidStack() {
+        return FluidStack.EMPTY;
+    }
+
+    @Override
+    public boolean validFluid() {
+        return true;
     }
 
     @Override
@@ -79,29 +120,13 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
     }
 
     @Override
-    protected boolean usesFuelTank() {
-        return false;
+    protected boolean isWorking() {
+        return energyStored > 0;
     }
 
     @Override
-    protected boolean requiresResourceForThrust() {
-        return true;
-    }
-
-    @Override
-    protected boolean tickResourceAndGetAvailability(final boolean powered, final double throttle) {
-        this.clampEnergyToCapacity();
-        if (!powered) {
-            this.energyDrainAccumulator = 0.0d;
-            return this.energyStored > 0;
-        }
-
-        this.energyDrainAccumulator += throttle * PropulsionConfig.ION_THRUSTER_FE_PER_TICK_AT_FULL_THROTTLE.get();
-        while (this.energyDrainAccumulator >= 1.0d && this.energyStored > 0) {
-            this.energyStored--;
-            this.energyDrainAccumulator -= 1.0d;
-        }
-        return this.energyStored > 0;
+    public boolean shouldEmitParticles() {
+        return getThrottle() > 0 && energyStored > 0;
     }
 
     @Override
@@ -124,6 +149,16 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
     @Override
     public boolean tryConsumeFuelBucket(final Player player, final InteractionHand hand, final ItemStack heldStack) {
         return false;
+    }
+
+    @Override
+    public int getFuelAmountMb() {
+        return 0;
+    }
+
+    @Override
+    public int getFuelCapacityMb() {
+        return 0;
     }
 
     @Override
@@ -163,8 +198,8 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
     }
 
     @Override
-    protected void addThrusterDetails(final List<Component> tooltip, final boolean isPlayerSneaking, final int unobstructed) {
-        super.addThrusterDetails(tooltip, isPlayerSneaking, unobstructed);
+    protected void addThrusterDetails(final List<Component> tooltip, final boolean isPlayerSneaking) {
+        super.addThrusterDetails(tooltip, isPlayerSneaking);
         CreateLang.builder()
                 .add(Component.translatable("createpropulsion.gui.goggles.thruster.energy_container"))
                 .style(ChatFormatting.WHITE)
@@ -197,4 +232,3 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
         this.energyStored = Math.clamp(this.energyStored, 0, this.getEnergyCapacity());
     }
 }
-

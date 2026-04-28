@@ -24,7 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
     private CreativeThrusterPowerScrollValueBehaviour powerBehaviour;
 
-    public enum PlumeType { PLASMA, PLUME, NONE }
+    public enum PlumeType { PLASMA, ION, PLUME, NONE }
     public PlumeType plumeType = PlumeType.PLASMA;
 
     public CreativeThrusterBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
@@ -64,6 +64,12 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
     protected boolean isWorking() { return true; }
 
     @Override
+    public boolean isCreative() { return true; }
+
+    @Override
+    public PlumeType getPlumeType() { return plumeType; }
+
+    @Override
     public void calculateObstruction(Level level, BlockPos pos, Direction forwardDirection) {
         this.emptyBlocks = OBSTRUCTION_LENGTH;
     }
@@ -81,12 +87,22 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
     }
 
     @Override
-    protected double getNozzleOffsetFromCenter() {
+    public double getNozzleOffsetFromCenter() {
         return 0.55;
     }
 
     @Override
-    protected boolean shouldEmitParticles() {
+    protected double getBaseThrust() {
+        return powerBehaviour.getTargetThrust();
+    }
+
+    @Override
+    protected double getRawThrustCap() {
+        return powerBehaviour.getTargetThrust();
+    }
+
+    @Override
+    public boolean shouldEmitParticles() {
         if (plumeType == PlumeType.NONE) return false;
 
         if (!isPowered()) return false; 
@@ -158,6 +174,10 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
     }
 
     public float getTargetThrustNewtons() {
+        return powerBehaviour.getTargetThrust();
+    }
+
+    public float getCreativeTargetThrust() {
         return powerBehaviour.getTargetThrust();
     }
 

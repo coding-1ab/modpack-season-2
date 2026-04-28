@@ -2,6 +2,7 @@ package dev.propulsionteam.propulsionsimulated.content.thruster;
 
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import net.minecraft.core.Direction;
+import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
 import org.joml.Vector3d;
 
 public final class ThrusterForceProvider {

@@ -2,6 +2,8 @@ package dev.propulsionteam.propulsionsimulated.content.thruster;
 
 import com.mojang.serialization.MapCodec;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
+import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -28,12 +30,12 @@ public class IonThrusterBlock extends AbstractThrusterBlock {
     }
 
     @Override
-    public Class<ThrusterBlockEntity> getBlockEntityClass() {
-        return ThrusterBlockEntity.class;
+    public Class<AbstractThrusterBlockEntity> getBlockEntityClass() {
+        return AbstractThrusterBlockEntity.class;
     }
 
     @Override
-    public BlockEntityType<? extends ThrusterBlockEntity> getBlockEntityType() {
+    public BlockEntityType<? extends AbstractThrusterBlockEntity> getBlockEntityType() {
         return PropulsionBlockEntities.ION_THRUSTER_BLOCK_ENTITY.get();
     }
 

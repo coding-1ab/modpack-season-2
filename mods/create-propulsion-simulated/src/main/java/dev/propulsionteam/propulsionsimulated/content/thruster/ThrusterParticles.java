@@ -4,6 +4,7 @@ import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import dev.propulsionteam.propulsionsimulated.particles.ParticleTypes;
 import dev.propulsionteam.propulsionsimulated.particles.plasma.PlasmaParticleData;
 import dev.propulsionteam.propulsionsimulated.particles.plume.PlumeParticleData;
+import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;

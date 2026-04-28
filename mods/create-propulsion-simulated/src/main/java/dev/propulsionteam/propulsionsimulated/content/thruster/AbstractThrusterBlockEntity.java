@@ -32,6 +32,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Math;
 import org.joml.Vector3d;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import java.util.List;
 
@@ -199,7 +200,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         isThrustDirty = true;
     }
 
-    protected boolean shouldEmitParticles() {
+    public boolean shouldEmitParticles() {
         return isPowered() && isWorking();
     }
 
@@ -208,7 +209,44 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     }
 
     protected void addSpecificGoggleInfo(List<Component> tooltip, boolean isPlayerSneaking) {}
+    
+    public Direction getFacing() {
+        BlockState state = getBlockState();
+        if (state.hasProperty(AbstractThrusterBlock.FACING)) {
+            return state.getValue(AbstractThrusterBlock.FACING);
+        }
+        return Direction.NORTH;
+    }
+
+    public float getCurrentThrust() {
+        return (float) thrusterData.getThrust();
+    }
+
+    public boolean isVisuallyActive() {
+        return getThrottle() > 0 && isWorking();
+    }
+
+    public int getUnobstructedBlocks() {
+        return emptyBlocks;
+    }
+
+    public double getDisplayedThrustPnForTooltip() {
+        return thrusterData.getThrust();
+    }
+
+    public double getDisplayedAirflowMsForTooltip() {
+        return getAirflow();
+    }
     protected float getFuelEfficiencyMultiplier() { return 1.0f; }
+    
+    public boolean isCreative() { return false; }
+    public boolean isIon() { return false; }
+    
+    public dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterBlockEntity.PlumeType getPlumeType() {
+        return dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterBlockEntity.PlumeType.NONE;
+    }
+    
+    public IFluidHandler getFluidHandler(Direction side) { return null; }
 
     protected boolean isPowered() {
         return getPower() > MathUtility.epsilon;
@@ -222,7 +260,26 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         return new PlumeParticleData();
     }
 
-    protected abstract double getNozzleOffsetFromCenter();
+    public abstract double getNozzleOffsetFromCenter();
+    protected abstract double getBaseThrust();
+    protected abstract double getRawThrustCap();
+
+    public float getThrottle() {
+        return getPower();
+    }
+
+    public void setRedstonePower(int power) {
+        setRedstoneInput(power);
+    }
+
+    public boolean tryConsumeFuelBucket(net.minecraft.world.entity.player.Player player, net.minecraft.world.InteractionHand hand, net.minecraft.world.item.ItemStack heldStack) {
+        return false;
+    }
+
+    public int getFuelAmountMb() { return 0; }
+    public int getFuelCapacityMb() { return 0; }
+    public boolean validFluid() { return false; }
+    public net.neoforged.neoforge.fluids.FluidStack fluidStack() { return net.neoforged.neoforge.fluids.FluidStack.EMPTY; }
 
     protected void playThrusterLoopSound(Level level, BlockPos pos) {
         if (soundTick > 0) {

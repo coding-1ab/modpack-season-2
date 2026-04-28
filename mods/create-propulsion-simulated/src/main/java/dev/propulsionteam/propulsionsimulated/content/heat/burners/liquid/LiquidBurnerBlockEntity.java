@@ -8,11 +8,7 @@ import dev.propulsionteam.propulsionsimulated.content.heat.burners.AbstractBurne
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.BurnerDamager;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import dev.propulsionteam.propulsionsimulated.content.thruster.FluidThrusterProperties;
-<<<<<<< HEAD
-import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterFuelRegistry;
-=======
 import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterFuelManager;
->>>>>>> e8bb33badb65c4431e5c2251e9956708ba1cc7f3
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
@@ -82,7 +78,7 @@ public class LiquidBurnerBlockEntity extends AbstractBurnerBlockEntity {
         if (tank.isEmpty()) return false;
         FluidStack fluid = tank.getPrimaryHandler().getFluidInTank(0);
         if (fluid.getAmount() < FUEL_CONSUMPTION_MB) return false;
-        return ThrusterFuelRegistry.getProperties(fluid).isPresent();
+        return ThrusterFuelManager.getProperties(fluid.getFluid()) != null;
     }
 
     private boolean isConnectedToConsumer() {
@@ -164,9 +160,8 @@ public class LiquidBurnerBlockEntity extends AbstractBurnerBlockEntity {
         FluidStack fluidInTank = tank.getPrimaryHandler().getFluidInTank(0);
         if (fluidInTank.getAmount() < FUEL_CONSUMPTION_MB) return false;
 
-        var fuelPropsOpt = ThrusterFuelRegistry.getProperties(fluidInTank);
-        if (fuelPropsOpt.isEmpty()) return false;
-        FluidThrusterProperties fuelProperties = fuelPropsOpt.get();
+        var fuelProperties = ThrusterFuelManager.getProperties(fluidInTank.getFluid());
+        if (fuelProperties == null) return false;
 
         float multiplier = fuelProperties.consumptionMultiplier();
         if (multiplier <= 0) multiplier = 1;
@@ -198,13 +193,13 @@ public class LiquidBurnerBlockEntity extends AbstractBurnerBlockEntity {
         }
 
         final FluidStack contained = itemFluidHandler.getFluidInTank(0);
-        if (ThrusterFuelRegistry.getProperties(contained).isEmpty()) {
+        if (ThrusterFuelManager.getProperties(contained.getFluid()) == null) {
             return false;
         }
 
         final int MB_PER_BUCKET = 1000;
         final FluidStack simulatedDrain = itemFluidHandler.drain(MB_PER_BUCKET, IFluidHandler.FluidAction.SIMULATE);
-        if (simulatedDrain.isEmpty() || ThrusterFuelRegistry.getProperties(simulatedDrain).isEmpty()) {
+        if (simulatedDrain.isEmpty() || ThrusterFuelManager.getProperties(simulatedDrain.getFluid()) == null) {
             return false;
         }
 
