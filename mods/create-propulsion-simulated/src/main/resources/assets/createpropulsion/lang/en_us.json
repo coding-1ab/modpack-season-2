@@ -93,5 +93,6 @@
     "createpropulsion.ponder.shared.redstone_transmission_direct.proportional_output":  "Output scales proportionally with received redstone strength.",
     "createpropulsion.redstone_transmission.control_mode.incremental":  "Incremental",
     "createpropulsion.ponder.tilt_adapter.header":  "Controlling Tilt with Redstone",
-    "createpropulsion.gui.goggles.creative_thruster.particle.plasma":  "Plasma"
+    "createpropulsion.gui.goggles.creative_thruster.particle.plasma":  "Plasma",
+    "createpropulsion.subtitle.thruster_loop":  "Thruster roaring"
 }

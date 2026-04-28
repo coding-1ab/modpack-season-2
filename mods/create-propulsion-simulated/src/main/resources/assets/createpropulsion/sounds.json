@@ -1,0 +1,11 @@
+{
+  "thruster_loop": {
+    "subtitle": "createpropulsion.subtitle.thruster_loop",
+    "sounds": [
+      {
+        "name": "createpropulsion:thruster_loop",
+        "stream": true
+      }
+    ]
+  }
+}

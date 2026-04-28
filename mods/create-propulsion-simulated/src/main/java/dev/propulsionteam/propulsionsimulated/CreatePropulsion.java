@@ -31,6 +31,7 @@ public class CreatePropulsion {
         PropulsionBlocks.register(modBus);
         PropulsionBlockEntities.register(modBus);
         PropulsionItems.register(modBus);
+        PropulsionSoundEvents.register(modBus);
         PropulsionFluids.register();
         PropulsionPartialModels.register();
         PropulsionCreativeTab.register(modBus);
