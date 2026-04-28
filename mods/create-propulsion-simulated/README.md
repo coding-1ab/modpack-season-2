@@ -1,8 +1,8 @@
 <p align="center">
-  <img width="300" height="300" src="https://github.com/SergeyFeduk/Create-Propulsion/blob/main/src/main/resources/icon.png">
+  <img width="300" height="300" src="https://github.com/Propulsion-Team/create-propulsion-simulated/blob/main/src/main/resources/icon.png">
 </p>
 
-<h1 align="center">Create: Propulsion - Sable Edition</h1>
+<h1 align="center">Create: Propulsion - Simulated Edition</h1>
 
 <p align="left">
   A Sable / Create Aeronautics focused fork of Create: Propulsion for NeoForge 1.21.1.
