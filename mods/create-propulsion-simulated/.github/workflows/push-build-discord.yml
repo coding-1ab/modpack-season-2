@@ -111,12 +111,11 @@ jobs:
           )
 
           payload = {
-            'content': '<@&1498285672543424559>',
             'embeds': [{
               'title':       f'Building mod from branch {branch}',
               'color':       2303786,
               'description': description,
-              'footer':      {'text': 'Create: Propulsion Sable - Nightly Build'},
+              'footer':      {'text': 'Create: Propulsion Simulated - Nightly Build'},
               'timestamp':   timestamp
             }]
           }
