@@ -3,6 +3,7 @@ package dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruste
 import java.util.List;
 
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
+import dev.propulsionteam.propulsionsimulated.particles.ion.IonParticleData;
 import dev.propulsionteam.propulsionsimulated.particles.plasma.PlasmaParticleData;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity;
@@ -131,27 +132,21 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
         if (plumeType == PlumeType.PLASMA) {
             return new PlasmaParticleData();
         }
+        if (plumeType == PlumeType.ION) {
+            return new IonParticleData();
+        }
         // Default is plume :P
         return super.createParticleOptions();
     }
 
     @Override
     protected void addThrusterDetails(List<Component> tooltip, boolean isPlayerSneaking) {
-        float maxThrustKN = powerBehaviour.getTargetThrust() / 1000.0f;
-        float currentPower = getPower();
-        int currentThrustKN = (int) Math.ceil(maxThrustKN * currentPower);
-
-        // "Thrust Output: 400/450 kN"
-        LangBuilder thrustBuilder = CreateLang.builder();
-        thrustBuilder.add(Component.translatable("createpropulsion.gui.goggles.thruster.thrust_output")).text(": ");
-        thrustBuilder.add(CreateLang.number(currentThrustKN).text(" / ").add(CreateLang.number(maxThrustKN))
-                .style(ChatFormatting.GRAY));
-        thrustBuilder.space().add(Component.translatable("createpropulsion.gui.goggles.thruster.unit_pn"));
-        thrustBuilder.forGoggles(tooltip);
+        super.addThrusterDetails(tooltip, isPlayerSneaking);
 
         // "Particle: Plasma"
         LangBuilder particleBuilder = CreateLang.builder()
-                .add(Component.translatable("createpropulsion.gui.goggles.creative_thruster.particle")).text(": ");
+                .add(Component.translatable("createpropulsion.gui.goggles.creative_thruster.particle")).text(": ")
+                .style(ChatFormatting.WHITE);
 
         switch (plumeType) {
             case PLASMA -> particleBuilder.add(CreateLang.builder()

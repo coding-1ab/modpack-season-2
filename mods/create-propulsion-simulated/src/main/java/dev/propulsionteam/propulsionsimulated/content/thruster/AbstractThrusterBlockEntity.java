@@ -33,6 +33,7 @@ import org.joml.Vector3d;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import java.util.List;
+import java.util.Locale;
 
 public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     implements IHaveGoggleInformation, BlockEntitySubLevelPropellerActor, BlockSubLevelAssemblyListener, BlockEntityPropeller {
@@ -418,6 +419,26 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         float totalEfficiency = obstructionEfficiency * fuelEfficiency;
         ChatFormatting totalEfficiencyColor = GoggleUtils.efficiencyColor(totalEfficiency);
         CreateLang.builder().add(Component.translatable("createpropulsion.gui.goggles.thruster.efficiency")).text(": ").add(CreateLang.number(totalEfficiency)).add(CreateLang.text("%")).style(totalEfficiencyColor).forGoggles(tooltip);
+
+        CreateLang.builder()
+                .add(Component.translatable("createpropulsion.gui.goggles.thruster.thrust_output"))
+                .style(ChatFormatting.WHITE)
+                .forGoggles(tooltip);
+
+        CreateLang.builder()
+                .add(Component.literal(" "))
+                .add(Component.translatable("createpropulsion.tooltip.thrust1"))
+                .add(Component.literal(String.format(Locale.ROOT, "%.2f", this.getDisplayedThrustPnForTooltip())).withStyle(ChatFormatting.AQUA))
+                .add(Component.literal(" pN").withStyle(ChatFormatting.GRAY))
+                .forGoggles(tooltip);
+
+        CreateLang.builder()
+                .add(Component.literal(" "))
+                .add(Component.translatable("createpropulsion.tooltip.airflow").withStyle(ChatFormatting.GRAY))
+                .add(Component.literal(String.format(Locale.ROOT, "%.2f", this.getDisplayedAirflowMsForTooltip())).withStyle(ChatFormatting.AQUA))
+                .add(Component.literal(" m/s").withStyle(ChatFormatting.GRAY))
+                .forGoggles(tooltip);
+
     }
 
 

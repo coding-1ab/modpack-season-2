@@ -3,11 +3,13 @@ package dev.propulsionteam.propulsionsimulated.content.thruster;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
+import dev.propulsionteam.propulsionsimulated.particles.ion.IonParticleData;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
 import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -120,6 +122,11 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
     }
 
     @Override
+    protected ParticleOptions createParticleOptions() {
+        return new IonParticleData();
+    }
+
+    @Override
     protected boolean isWorking() {
         return energyStored > 0;
     }
@@ -135,6 +142,9 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
     }
 
     public IEnergyStorage getEnergyHandler(final Direction side) {
+        if (side == null) {
+            return this.energyHandler;
+        }
         if (side != this.getEnergyInputSide()) {
             return null;
         }
@@ -153,12 +163,12 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
 
     @Override
     public int getFuelAmountMb() {
-        return 0;
+        return this.energyStored;
     }
 
     @Override
     public int getFuelCapacityMb() {
-        return 0;
+        return this.getEnergyCapacity();
     }
 
     @Override

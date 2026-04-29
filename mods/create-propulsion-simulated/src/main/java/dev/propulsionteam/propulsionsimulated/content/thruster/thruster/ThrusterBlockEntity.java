@@ -23,6 +23,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import java.util.List;
+import java.util.Locale;
 
 public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     public static final float BASE_FUEL_CONSUMPTION = 2;
@@ -131,7 +132,33 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         if (tank == null) {
             return;
         }
-        containedFluidTooltip(tooltip, isPlayerSneaking, tank.getPrimaryHandler());
+        addFluidContainerTooltip(tooltip, isPlayerSneaking, tank.getPrimaryHandler());
+    }
+
+    private void addFluidContainerTooltip(List<Component> tooltip, boolean isPlayerSneaking, IFluidHandler handler) {
+        if (handler == null || handler.getTanks() <= 0) {
+            return;
+        }
+        FluidStack fluid = handler.getFluidInTank(0);
+        if (fluid.isEmpty()) {
+            return;
+        }
+
+        int amount = fluid.getAmount();
+        int capacity = handler.getTankCapacity(0);
+
+        CreateLang.builder()
+                .add(Component.translatable("createpropulsion.gui.goggles.thruster.fluid_container"))
+                .style(ChatFormatting.WHITE)
+                .forGoggles(tooltip);
+
+        CreateLang.builder()
+                .add(Component.literal(" "))
+                .add(Component.literal(String.format(Locale.ROOT, "%d", amount)).withStyle(ChatFormatting.AQUA))
+                .add(Component.literal(" / ").withStyle(ChatFormatting.GRAY))
+                .add(Component.literal(String.format(Locale.ROOT, "%d", capacity)).withStyle(ChatFormatting.AQUA))
+                .add(Component.literal(" mB").withStyle(ChatFormatting.GRAY))
+                .forGoggles(tooltip);
     }
 
     @Override

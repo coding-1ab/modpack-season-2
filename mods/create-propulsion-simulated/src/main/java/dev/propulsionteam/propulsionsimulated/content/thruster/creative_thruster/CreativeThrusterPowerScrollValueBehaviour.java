@@ -28,7 +28,7 @@ public class CreativeThrusterPowerScrollValueBehaviour extends ScrollValueBehavi
 
     @Override
     public ValueSettingsBoard createBoard(Player player, BlockHitResult hitResult) {
-        ImmutableList<Component> row = ImmutableList.of(CreateLang.builder().text("kN").component());
+        ImmutableList<Component> row = ImmutableList.of(Component.translatable("createpropulsion.gui.goggles.thruster.unit_pn"));
         return new ValueSettingsBoard(label, TOTAL_STEPS - 1, 10, row, new ValueSettingsFormatter(this::formatBoardValue));
     }
 
@@ -51,7 +51,10 @@ public class CreativeThrusterPowerScrollValueBehaviour extends ScrollValueBehavi
     public MutableComponent formatBoardValue(ValueSettings settings) {
         int forceInNewtons = (settings.value() + 1) * FORCE_PER_STEP;
         int forceInKN = forceInNewtons / 1000;
-        return CreateLang.builder().add(CreateLang.number(forceInKN)).text(" kN").component();
+        return CreateLang.builder()
+            .add(CreateLang.number(forceInKN))
+            .add(Component.translatable("createpropulsion.gui.goggles.thruster.unit_pn"))
+            .component();
     }
 
     @Override
