@@ -45,6 +45,7 @@
 [submodule "mods/FarmersDelight"]
 	path = mods/FarmersDelight
 	url = https://github.com/coding-1ab/FarmersDelight.git
+	branch = 1.21
 [submodule "mods/iteminteractions"]
 	path = mods/iteminteractions
 	url = https://github.com/coding-1ab/iteminteractions.git
@@ -61,3 +62,4 @@
 [submodule "mods/Simulated-Project"]
 	path = mods/Simulated-Project
 	url = https://github.com/coding-1ab/Simulated-Project.git
+	branch = main
