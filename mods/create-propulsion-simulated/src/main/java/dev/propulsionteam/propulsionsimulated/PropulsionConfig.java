@@ -201,7 +201,7 @@ public class PropulsionConfig {
 
         SERVER_BUILDER.push("Tilt Adapter");
             TILT_ADAPTER_ANGLE_RANGE = SERVER_BUILDER.comment("Maximum absolute output angle in degrees, reached at full redstone differential.")
-                .defineInRange("Maximum angle range", 45.0, 0.0, 180.0);
+                .defineInRange("Maximum angle range", 90.0, 0.0, 180.0);
         SERVER_BUILDER.pop();
 
         SERVER_BUILDER.push("Burners");
