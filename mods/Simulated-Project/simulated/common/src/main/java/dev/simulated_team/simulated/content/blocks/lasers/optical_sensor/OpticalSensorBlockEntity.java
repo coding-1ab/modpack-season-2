@@ -56,8 +56,8 @@ public class OpticalSensorBlockEntity extends AbstractLaserBlockEntity implement
     public LaserBehaviour laser;
 
     private Block hitBlock = Blocks.AIR;
-    private float rayDistance = this.getLaserRange();
-    private float lastRayDistance = this.getLaserRange();
+    private float rayDistance = this.getRaycastLength();
+    private float lastRayDistance = this.getRaycastLength();
 
     private float opacity = 1;
 
@@ -67,7 +67,7 @@ public class OpticalSensorBlockEntity extends AbstractLaserBlockEntity implement
 
     public float getHitBlockDistance() {
         if (this.hitBlock.defaultBlockState().isAir()) {
-            return this.getLaserRange();
+            return this.getRaycastLength();
         }
         final Vector3dc pos = Sable.HELPER.projectOutOfSubLevel(this.getLevel(), JOMLConversion.atCenterOf(this.getBlockPos()));
         final Vector3dc hitPos = Sable.HELPER.projectOutOfSubLevel(this.getLevel(), JOMLConversion.toJOML(this.laser.getBlockHitResult().getLocation()));
@@ -90,7 +90,7 @@ public class OpticalSensorBlockEntity extends AbstractLaserBlockEntity implement
                 SimLang.translate("optical_sensor.max_length").component(), this, new RangeValueBoxTransform()
             ).between(1, maxRange));
         this.range.value = maxRange;
-        behaviours.add(this.laser = new LaserBehaviour(this, this::gatherStartAndEnd, this::getLaserRange));
+        behaviours.add(this.laser = new LaserBehaviour(this, this::gatherStartAndEnd, this::getRaycastLength));
     }
 
     @Override
@@ -158,14 +158,17 @@ public class OpticalSensorBlockEntity extends AbstractLaserBlockEntity implement
         return true;
     }
 
-    public float getLaserRange() {
-        return this.range.getValue() + 1;
+    public float getRaycastLength() {
+        return this.range.getValue() + 0.5f;
+    }
+
+    public int getRange() {
+        return this.range.getValue();
     }
 
     public void setRange(final int blocks) {
         final int max = SimConfigService.INSTANCE.server().blocks.opticalSensorRange.get();
-        // getLaserRange = scroll.getValue() + 1, so translate the caller's "block reach" back to scroll units.
-        this.range.setValue(Math.clamp(blocks - 1, 1, max));
+        this.range.setValue(Math.clamp(blocks, 1, max));
     }
 
     public float getRayDistance() {
