@@ -1,34 +1,54 @@
 package dev.propulsionteam.propulsionsimulated.content.thruster.thruster;
 
+import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
+import com.simibubi.create.foundation.utility.CreateLang;
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
+import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.FluidThrusterProperties;
 import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterFuelManager;
 import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterParticleType;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
-import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
-import com.simibubi.create.foundation.utility.CreateLang;
 import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import org.joml.Vector3d;
 
+import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import dev.ryanhcode.sable.Sable;
+import dev.propulsionteam.propulsionsimulated.utility.math.MathUtility;
 
 public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     public static final float BASE_FUEL_CONSUMPTION = 2;
     public static final int BASE_MAX_THRUST = 600000;
+    public static final int BASE_CAPACITY = 200;
+    public static final int MAX_WIDTH = 3;
+
     public SmartFluidTankBehaviour tank;
+
+    @Nullable
+    protected BlockPos controllerPos;
+    protected int width = 1;
+    protected boolean updateConnectivity = true;
 
     public ThrusterBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
@@ -41,28 +61,258 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         super.addBehaviours(behaviours);
-        tank = SmartFluidTankBehaviour.single(this, 200);
+        tank = SmartFluidTankBehaviour.single(this, BASE_CAPACITY);
         behaviours.add(tank);
+        tank.getPrimaryHandler().setValidator(stack -> ThrusterFuelManager.getProperties(stack.getFluid()) != null);
+    }
+
+    public boolean isMultiblock() {
+        return width > 1;
+    }
+
+    public boolean isController() {
+        return controllerPos == null;
+    }
+
+    @Nullable
+    public ThrusterBlockEntity getControllerBE() {
+        if (isController() || !hasLevel()) return this;
+        BlockEntity be = level.getBlockEntity(controllerPos);
+        return be instanceof ThrusterBlockEntity t ? t : null;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (level == null || level.isClientSide) return;
+        if (isController() && isMultiblock()) {
+            Direction facing = getBlockState().getValue(AbstractThrusterBlock.FACING);
+            if (!isValidFormedCube(worldPosition, width, facing)) {
+                disassembleMulti();
+                return;
+            }
+        }
+        if (updateConnectivity) {
+            updateConnectivity = false;
+            if (isController() && !isMultiblock()) {
+                tryAssemble();
+            }
+        }
+    }
+
+    protected void tryAssemble() {
+        Direction facing = getBlockState().getValue(AbstractThrusterBlock.FACING);
+        for (int size = MAX_WIDTH; size >= 2; size--) {
+            BlockPos origin = findCubeOrigin(size, facing);
+            if (origin != null) {
+                formMulti(origin, size, facing);
+                return;
+            }
+        }
+    }
+
+    @Nullable
+    protected BlockPos findCubeOrigin(int size, Direction facing) {
+        for (int dx = 0; dx < size; dx++) {
+            for (int dy = 0; dy < size; dy++) {
+                for (int dz = 0; dz < size; dz++) {
+                    BlockPos origin = worldPosition.offset(-dx, -dy, -dz);
+                    if (isValidCube(origin, size, facing)) return origin;
+                }
+            }
+        }
+        return null;
+    }
+
+    protected boolean isValidCube(BlockPos origin, int size, Direction facing) {
+        if (level == null) return false;
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
+                for (int z = 0; z < size; z++) {
+                    BlockPos pos = origin.offset(x, y, z);
+                    BlockState state = level.getBlockState(pos);
+                    if (!state.hasProperty(AbstractThrusterBlock.FACING)) return false;
+                    if (state.getValue(AbstractThrusterBlock.FACING) != facing) return false;
+                    BlockEntity be = level.getBlockEntity(pos);
+                    if (!(be instanceof ThrusterBlockEntity t)) return false;
+                    if (t.isMultiblock() && t.width >= size) return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    protected void formMulti(BlockPos origin, int size, Direction facing) {
+        if (level == null) return;
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
+                for (int z = 0; z < size; z++) {
+                    BlockEntity be = level.getBlockEntity(origin.offset(x, y, z));
+                    if (be instanceof ThrusterBlockEntity t && t.isMultiblock()) {
+                        ThrusterBlockEntity ctrl = t.getControllerBE();
+                        if (ctrl != null) ctrl.disassembleMulti();
+                    }
+                }
+            }
+        }
+
+        List<ThrusterBlockEntity> members = new ArrayList<>(size * size * size);
+        ThrusterBlockEntity controller = null;
+        FluidStack totalFuel = FluidStack.EMPTY;
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
+                for (int z = 0; z < size; z++) {
+                    BlockPos pos = origin.offset(x, y, z);
+                    BlockEntity be = level.getBlockEntity(pos);
+                    if (!(be instanceof ThrusterBlockEntity t)) return;
+                    members.add(t);
+                    if (pos.equals(origin)) controller = t;
+                    totalFuel = mergeFluid(totalFuel, t.tank.getPrimaryHandler().getFluid());
+                    t.tank.getPrimaryHandler().setFluid(FluidStack.EMPTY);
+                }
+            }
+        }
+        if (controller == null) return;
+
+        int newCap = BASE_CAPACITY * size * size * size;
+        controller.tank.getPrimaryHandler().setCapacity(newCap);
+        controller.tank.getPrimaryHandler().setFluid(trimToCapacity(totalFuel, newCap));
+
+        for (ThrusterBlockEntity t : members) {
+            t.controllerPos = (t == controller) ? null : origin;
+            t.width = size;
+            t.isThrustDirty = true;
+            BlockPos cellPos = t.getBlockPos();
+            BlockState liveState = level.getBlockState(cellPos);
+            if (liveState.getBlock() instanceof ThrusterBlock
+                && liveState.hasProperty(ThrusterBlock.MULTIBLOCK)
+                && !liveState.getValue(ThrusterBlock.MULTIBLOCK)) {
+                level.setBlock(cellPos, liveState.setValue(ThrusterBlock.MULTIBLOCK, true), Block.UPDATE_CLIENTS);
+            }
+            t.setChanged();
+            t.notifyUpdate();
+        }
+        controller.calculateObstruction(level, origin, facing);
+    }
+
+    public void disassembleMulti() {
+        if (!isController() || !isMultiblock() || level == null) return;
+        int size = width;
+        BlockPos origin = worldPosition;
+
+        FluidStack fuelPool = tank.getPrimaryHandler().getFluid().copy();
+        tank.getPrimaryHandler().setFluid(FluidStack.EMPTY);
+        tank.getPrimaryHandler().setCapacity(BASE_CAPACITY);
+
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
+                for (int z = 0; z < size; z++) {
+                    BlockPos pos = origin.offset(x, y, z);
+                    BlockEntity be = level.getBlockEntity(pos);
+                    if (!(be instanceof ThrusterBlockEntity t)) continue;
+                    if (!fuelPool.isEmpty()) {
+                        int take = Math.min(BASE_CAPACITY, fuelPool.getAmount());
+                        FluidStack slice = new FluidStack(fuelPool.getFluid(), take);
+                        t.tank.getPrimaryHandler().fill(slice, IFluidHandler.FluidAction.EXECUTE);
+                        fuelPool.shrink(take);
+                    }
+                    t.controllerPos = null;
+                    t.width = 1;
+                    t.updateConnectivity = true;
+                    t.isThrustDirty = true;
+                    t.thrusterData.setThrust(0);
+                    BlockState liveState = level.getBlockState(pos);
+                    if (liveState.getBlock() instanceof ThrusterBlock
+                        && liveState.hasProperty(ThrusterBlock.MULTIBLOCK)
+                        && liveState.getValue(ThrusterBlock.MULTIBLOCK)) {
+                        level.setBlock(pos, liveState.setValue(ThrusterBlock.MULTIBLOCK, false), Block.UPDATE_CLIENTS);
+                    }
+                    t.setChanged();
+                    t.notifyUpdate();
+                }
+            }
+        }
+    }
+
+    private static FluidStack mergeFluid(FluidStack pool, FluidStack addition) {
+        if (addition.isEmpty()) return pool;
+        if (pool.isEmpty()) return addition.copy();
+        if (FluidStack.isSameFluidSameComponents(pool, addition)) {
+            FluidStack out = pool.copy();
+            out.grow(addition.getAmount());
+            return out;
+        }
+        return pool;
+    }
+
+    private static FluidStack trimToCapacity(FluidStack stack, int cap) {
+        if (stack.isEmpty() || stack.getAmount() <= cap) return stack;
+        FluidStack out = stack.copy();
+        out.setAmount(cap);
+        return out;
     }
 
     public IFluidHandler getFluidHandler(Direction side) {
-        return tank.getPrimaryHandler();
+        ThrusterBlockEntity ctrl = isController() ? this : getControllerBE();
+        if (ctrl == null) return null;
+        if (!ctrl.isMultiblock()) {
+            return side == getFluidCapSide() ? tank.getPrimaryHandler() : null;
+        }
+        if (side == null) return ctrl.tank.getPrimaryHandler();
+        if (!isFrontLayerCell(ctrl, ctrl.getBlockState().getValue(AbstractThrusterBlock.FACING))) return null;
+        return side == ctrl.getBlockState().getValue(AbstractThrusterBlock.FACING).getOpposite() ? null : ctrl.tank.getPrimaryHandler();
+    }
+
+    @Override
+    public AABB getRenderBoundingBox() {
+        if (isController() && isMultiblock()) {
+            return new AABB(
+                worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
+                worldPosition.getX() + width, worldPosition.getY() + width, worldPosition.getZ() + width);
+        }
+        return super.getRenderBoundingBox();
+    }
+
+    private boolean isFrontLayerCell(ThrusterBlockEntity ctrl, Direction cubeFacing) {
+        BlockPos origin = ctrl.worldPosition;
+        int size = ctrl.width;
+        int rel;
+        switch (cubeFacing.getAxis()) {
+            case X -> rel = worldPosition.getX() - origin.getX();
+            case Y -> rel = worldPosition.getY() - origin.getY();
+            case Z -> rel = worldPosition.getZ() - origin.getZ();
+            default -> {
+                return false;
+            }
+        }
+        int frontIdx = cubeFacing.getAxisDirection() == Direction.AxisDirection.POSITIVE ? size - 1 : 0;
+        return rel == frontIdx;
     }
 
     @Override
     public void updateThrust(BlockState currentBlockState) {
+        if (!isController()) {
+            isThrustDirty = false;
+            return;
+        }
+        if (isMultiblock()) {
+            updateMultiThrust(currentBlockState);
+        } else {
+            updateSingleThrust(currentBlockState);
+        }
+    }
+
+    protected void updateSingleThrust(BlockState currentBlockState) {
         float thrust = 0;
         float currentPower = getPower();
-
-        //This thruster only works if it has valid fuel and power
         if (isWorking() && currentPower > 0) {
-            var properties = getFuelProperties(fluidStack().getFluid());
+            FluidThrusterProperties properties = getFuelProperties(fluidStack().getFluid());
             float obstructionEffect = calculateObstructionEffect();
             float thrustPercentage = Math.min(currentPower, obstructionEffect);
 
             if (thrustPercentage > 0 && properties != null) {
-                int tick_rate = PropulsionConfig.THRUSTER_TICKS_PER_UPDATE.get();
-                int consumption = calculateFuelConsumption(currentPower, properties.consumptionMultiplier(), tick_rate);
+                int tickRate = PropulsionConfig.THRUSTER_TICKS_PER_UPDATE.get();
+                int consumption = calculateFuelConsumption(currentPower, properties.consumptionMultiplier(), tickRate);
                 FluidStack drainedStack = tank.getPrimaryHandler().drain(consumption, IFluidHandler.FluidAction.EXECUTE);
                 int fuelConsumed = drainedStack.getAmount();
 
@@ -78,6 +328,194 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         isThrustDirty = false;
     }
 
+    protected void updateMultiThrust(BlockState currentBlockState) {
+        int n = width * width * width;
+        float totalThrust = 0;
+        float currentPower = getPower();
+
+        if (isWorking() && currentPower > 0) {
+            FluidThrusterProperties properties = getFuelProperties(fluidStack().getFluid());
+            float obstructionEffect = calculateObstructionEffect();
+            float thrustPercentage = Math.min(currentPower, obstructionEffect);
+            if (thrustPercentage > 0 && properties != null) {
+                int tickRate = PropulsionConfig.THRUSTER_TICKS_PER_UPDATE.get();
+                int baseConsumption = calculateFuelConsumption(currentPower, properties.consumptionMultiplier(), tickRate);
+                int fuelNeeded = (int) Math.ceil(baseConsumption * (double) n * getMultiblockFuelEfficiency(width));
+                FluidStack drained = tank.getPrimaryHandler().drain(fuelNeeded, IFluidHandler.FluidAction.EXECUTE);
+                int fuelConsumed = drained.getAmount();
+                if (fuelConsumed > 0) {
+                    float ratio = (float) fuelConsumed / (float) fuelNeeded;
+                    float thrustMultiplier = PropulsionConfig.THRUSTER_THRUST_MULTIPLIER.get().floatValue();
+                    float fuelEfficiency = ThrusterFuelManager.getEfficiency(fluidStack().getFluid());
+                    totalThrust = BASE_MAX_THRUST * thrustMultiplier * thrustPercentage * properties.thrustMultiplier() * fuelEfficiency * ratio * n;
+                }
+            }
+        }
+
+        float share = totalThrust / n;
+        BlockPos origin = worldPosition;
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < width; y++) {
+                for (int z = 0; z < width; z++) {
+                    BlockEntity be = level.getBlockEntity(origin.offset(x, y, z));
+                    if (be instanceof ThrusterBlockEntity t) {
+                        t.thrusterData.setThrust(share);
+                    }
+                }
+            }
+        }
+        isThrustDirty = false;
+    }
+
+    @Override
+    public void calculateObstruction(net.minecraft.world.level.Level lvl, BlockPos pos, Direction forwardDirection) {
+        if (!isController() && isMultiblock()) {
+            return;
+        }
+        if (isController() && isMultiblock()) {
+            runCubeObstructionScan(lvl);
+            return;
+        }
+        super.calculateObstruction(lvl, pos, forwardDirection);
+    }
+
+    private void runObstructionScan(net.minecraft.world.level.Level lvl, BlockPos pos, Direction forwardDirection) {
+        super.calculateObstruction(lvl, pos, forwardDirection);
+    }
+
+    private void runCubeObstructionScan(net.minecraft.world.level.Level lvl) {
+        Direction facing = getBlockState().getValue(AbstractThrusterBlock.FACING);
+        BlockPos origin = worldPosition;
+        boolean anyChanged = false;
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < width; y++) {
+                for (int z = 0; z < width; z++) {
+                    BlockPos cellPos = origin.offset(x, y, z);
+                    BlockEntity be = lvl.getBlockEntity(cellPos);
+                    if (!(be instanceof ThrusterBlockEntity t)) continue;
+                    if (!t.isOnNozzleFace()) continue;
+                    int prev = t.emptyBlocks;
+                    t.runObstructionScan(lvl, cellPos, facing);
+                    if (t.emptyBlocks != prev) {
+                        anyChanged = true;
+                        t.setChanged();
+                        BlockState bs = t.getBlockState();
+                        lvl.sendBlockUpdated(cellPos, bs, bs, Block.UPDATE_CLIENTS);
+                    }
+                }
+            }
+        }
+        if (anyChanged) {
+            isThrustDirty = true;
+        }
+    }
+
+    @Override
+    protected float calculateObstructionEffect() {
+        if (!isController() && isMultiblock()) {
+            ThrusterBlockEntity ctrl = getControllerBE();
+            return ctrl != null ? ctrl.calculateObstructionEffect() : 0f;
+        }
+        if (isController() && isMultiblock() && level != null) {
+            BlockPos origin = worldPosition;
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < width; y++) {
+                    for (int z = 0; z < width; z++) {
+                        BlockEntity be = level.getBlockEntity(origin.offset(x, y, z));
+                        if (be instanceof ThrusterBlockEntity t && t.isOnNozzleFace()) {
+                            if (t.emptyBlocks < OBSTRUCTION_LENGTH) {
+                                return 0f;
+                            }
+                        }
+                    }
+                }
+            }
+            return 1f;
+        }
+        return super.calculateObstructionEffect();
+    }
+
+    @Override
+    public int getEmptyBlocks() {
+        if (!isController() && isMultiblock()) {
+            ThrusterBlockEntity ctrl = getControllerBE();
+            return ctrl != null ? ctrl.getEmptyBlocks() : 0;
+        }
+        if (isController() && isMultiblock() && level != null) {
+            BlockPos origin = worldPosition;
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < width; y++) {
+                    for (int z = 0; z < width; z++) {
+                        BlockEntity be = level.getBlockEntity(origin.offset(x, y, z));
+                        if (be instanceof ThrusterBlockEntity t && t.isOnNozzleFace()) {
+                            if (t.emptyBlocks < OBSTRUCTION_LENGTH) {
+                                return 0;
+                            }
+                        }
+                    }
+                }
+            }
+            return OBSTRUCTION_LENGTH;
+        }
+        return super.getEmptyBlocks();
+    }
+
+    private static float getMultiblockFuelEfficiency(int cubeWidth) {
+        if (cubeWidth == 2) return 1.0f;
+        if (cubeWidth == 3) return 0.95f;
+        return 1.0f;
+    }
+
+    @Override
+    public float getPower() {
+        if (!isController() && isMultiblock()) {
+            ThrusterBlockEntity ctrl = getControllerBE();
+            return ctrl != null ? ctrl.getPower() : 0f;
+        }
+        if (controlMode == ControlMode.PERIPHERAL) {
+            return digitalInput;
+        }
+        if (isController() && isMultiblock()) {
+            return getAggregatedRedstone() / 15.0f;
+        }
+        return redstoneInput / 15.0f;
+    }
+
+    private int getAggregatedRedstone() {
+        int max = redstoneInput;
+        if (level == null) return max;
+        BlockPos origin = worldPosition;
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < width; y++) {
+                for (int z = 0; z < width; z++) {
+                    if (x == 0 && y == 0 && z == 0) continue;
+                    BlockEntity be = level.getBlockEntity(origin.offset(x, y, z));
+                    if (be instanceof ThrusterBlockEntity t && t.redstoneInput > max) {
+                        max = t.redstoneInput;
+                    }
+                }
+            }
+        }
+        return max;
+    }
+
+    @Override
+    public void setRedstoneInput(int power) {
+        if (this.redstoneInput == power) return;
+        this.redstoneInput = power;
+        if (controlMode == ControlMode.NORMAL) {
+            dirtyThrust();
+            notifyUpdate();
+        }
+        if (isMultiblock() && !isController()) {
+            ThrusterBlockEntity ctrl = getControllerBE();
+            if (ctrl != null) {
+                ctrl.dirtyThrust();
+                ctrl.notifyUpdate();
+            }
+        }
+    }
+
     @Override
     protected boolean isWorking() {
         return validFluid();
@@ -88,8 +526,121 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         if (!super.shouldEmitParticles()) {
             return false;
         }
+        if (isMultiblock()) {
+            // Treat assembled cubes as one engine effect: only controller emits.
+            if (!isController()) return false;
+            if (calculateObstructionEffect() <= 0f) return false;
+        }
         FluidThrusterProperties properties = getFuelProperties(fluidStack().getFluid());
         return properties != null && properties.particleType() != ThrusterParticleType.NONE;
+    }
+
+    @Override
+    public void emitParticles(Level level, BlockPos pos, BlockState state) {
+        if (!(isController() && isMultiblock())) {
+            super.emitParticles(level, pos, state);
+            return;
+        }
+        if (!shouldEmitParticles()) return;
+        float power = getPower();
+        float visualPower = Math.max(power, LOWEST_POWER_THRESHOLD);
+        if (visualPower <= 0) return;
+
+        Direction direction = state.getValue(AbstractThrusterBlock.FACING);
+        Direction oppositeDirection = direction.getOpposite();
+
+        double half = width * 0.5;
+        Vec3 localExhaustDirection = new Vec3(oppositeDirection.getStepX(), oppositeDirection.getStepY(), oppositeDirection.getStepZ());
+        Vec3 localCubeCenter = new Vec3(
+            worldPosition.getX() + half,
+            worldPosition.getY() + half,
+            worldPosition.getZ() + half
+        );
+        // Emit from the center nozzle plane of the whole assembled cube.
+        Vec3 localNozzlePosition = localCubeCenter.add(localExhaustDirection.scale(half + 0.45));
+
+        Vec3 worldNozzlePosition = Sable.HELPER.projectOutOfSubLevel(level, localNozzlePosition);
+        Vec3 worldAheadPosition = Sable.HELPER.projectOutOfSubLevel(level, localNozzlePosition.add(localExhaustDirection));
+        Vec3 worldExhaustDirection = worldAheadPosition.subtract(worldNozzlePosition);
+        if (worldExhaustDirection.lengthSqr() < MathUtility.epsilon) {
+            worldExhaustDirection = localExhaustDirection;
+        } else {
+            worldExhaustDirection = worldExhaustDirection.normalize();
+        }
+
+        float velocityScale = width == 2 ? 1.15f : 1.3f;
+        Vector3d particleVelocity = new Vector3d(worldExhaustDirection.x, worldExhaustDirection.y, worldExhaustDirection.z)
+            .mul(4.0f * visualPower * velocityScale);
+        ParticleOptions particleData = createParticleOptions();
+
+        int particlesToSpawn = (width == 2 ? 14 : 28);
+        double plumeRadius = width == 2 ? 0.45 : 0.7;
+        for (int i = 0; i < particlesToSpawn; i++) {
+            double ox = (level.random.nextDouble() * 2.0 - 1.0) * plumeRadius;
+            double oy = (level.random.nextDouble() * 2.0 - 1.0) * plumeRadius;
+            double oz = (level.random.nextDouble() * 2.0 - 1.0) * plumeRadius;
+            // Keep spread mostly perpendicular to exhaust direction.
+            switch (oppositeDirection.getAxis()) {
+                case X -> ox = 0.0;
+                case Y -> oy = 0.0;
+                case Z -> oz = 0.0;
+            }
+            level.addParticle(
+                particleData,
+                true,
+                worldNozzlePosition.x + ox,
+                worldNozzlePosition.y + oy,
+                worldNozzlePosition.z + oz,
+                particleVelocity.x,
+                particleVelocity.y,
+                particleVelocity.z
+            );
+        }
+    }
+
+    @Override
+    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        if (!isController() && isMultiblock()) {
+            ThrusterBlockEntity ctrl = getControllerBE();
+            if (ctrl != null && ctrl != this) {
+                return ctrl.addToGoggleTooltip(tooltip, isPlayerSneaking);
+            }
+        }
+        return super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+    }
+
+    private boolean isOnNozzleFace() {
+        ThrusterBlockEntity ctrl = getControllerBE();
+        if (ctrl == null) return true;
+        Direction facing = getBlockState().getValue(AbstractThrusterBlock.FACING);
+        BlockPos origin = ctrl.worldPosition;
+        BlockPos exhaustExit = worldPosition.relative(facing.getOpposite());
+        int s = ctrl.width;
+        int dx = exhaustExit.getX() - origin.getX();
+        int dy = exhaustExit.getY() - origin.getY();
+        int dz = exhaustExit.getZ() - origin.getZ();
+        boolean inside = dx >= 0 && dx < s && dy >= 0 && dy < s && dz >= 0 && dz < s;
+        return !inside;
+    }
+
+    private boolean isValidFormedCube(BlockPos origin, int size, Direction facing) {
+        if (level == null) return false;
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
+                for (int z = 0; z < size; z++) {
+                    BlockPos pos = origin.offset(x, y, z);
+                    BlockState state = level.getBlockState(pos);
+                    if (!(state.getBlock() instanceof ThrusterBlock)) return false;
+                    if (!state.hasProperty(AbstractThrusterBlock.FACING) || state.getValue(AbstractThrusterBlock.FACING) != facing) return false;
+                    BlockEntity be = level.getBlockEntity(pos);
+                    if (!(be instanceof ThrusterBlockEntity t)) return false;
+                    ThrusterBlockEntity ctrl = t.getControllerBE();
+                    if (ctrl == null || ctrl != this) return false;
+                    if (t.width != size) return false;
+                }
+            }
+        }
+        return true;
     }
 
     @Override
@@ -119,7 +670,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             return CreateLang.builder().add(Component.translatable("createpropulsion.gui.goggles.thruster.status.wrong_fuel")).style(ChatFormatting.RED);
         } else if (!isPowered()) {
             return CreateLang.builder().add(Component.translatable("createpropulsion.gui.goggles.thruster.status.not_powered")).style(ChatFormatting.GOLD);
-        } else if (emptyBlocks == 0) {
+        } else if (getEmptyBlocks() == 0) {
             return CreateLang.builder().add(Component.translatable("createpropulsion.gui.goggles.thruster.obstructed")).style(ChatFormatting.RED);
         } else {
             return CreateLang.builder().add(Component.translatable("createpropulsion.gui.goggles.thruster.status.working")).style(ChatFormatting.GREEN);
@@ -129,10 +680,18 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     @Override
     protected void addThrusterDetails(List<Component> tooltip, boolean isPlayerSneaking) {
         super.addThrusterDetails(tooltip, isPlayerSneaking);
-        if (tank == null) {
+        ThrusterBlockEntity ctrl = isController() ? this : getControllerBE();
+        if (ctrl == null || ctrl.tank == null) {
             return;
         }
-        addFluidContainerTooltip(tooltip, isPlayerSneaking, tank.getPrimaryHandler());
+        if (ctrl.isMultiblock()) {
+            CreateLang.builder()
+                .add(Component.translatable("createpropulsion.gui.goggles.thruster.size"))
+                .text(": " + ctrl.width + "x" + ctrl.width + "x" + ctrl.width)
+                .style(ChatFormatting.GRAY)
+                .forGoggles(tooltip);
+        }
+        addFluidContainerTooltip(tooltip, isPlayerSneaking, ctrl.tank.getPrimaryHandler());
     }
 
     private void addFluidContainerTooltip(List<Component> tooltip, boolean isPlayerSneaking, IFluidHandler handler) {
@@ -148,17 +707,17 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         int capacity = handler.getTankCapacity(0);
 
         CreateLang.builder()
-                .add(Component.translatable("createpropulsion.gui.goggles.thruster.fluid_container"))
-                .style(ChatFormatting.WHITE)
-                .forGoggles(tooltip);
+            .add(Component.translatable("createpropulsion.gui.goggles.thruster.fluid_container"))
+            .style(ChatFormatting.WHITE)
+            .forGoggles(tooltip);
 
         CreateLang.builder()
-                .add(Component.literal(" "))
-                .add(Component.literal(String.format(Locale.ROOT, "%d", amount)).withStyle(ChatFormatting.AQUA))
-                .add(Component.literal(" / ").withStyle(ChatFormatting.GRAY))
-                .add(Component.literal(String.format(Locale.ROOT, "%d", capacity)).withStyle(ChatFormatting.AQUA))
-                .add(Component.literal(" mB").withStyle(ChatFormatting.GRAY))
-                .forGoggles(tooltip);
+            .add(Component.literal(" "))
+            .add(Component.literal(String.format(Locale.ROOT, "%d", amount)).withStyle(ChatFormatting.AQUA))
+            .add(Component.literal(" / ").withStyle(ChatFormatting.GRAY))
+            .add(Component.literal(String.format(Locale.ROOT, "%d", capacity)).withStyle(ChatFormatting.AQUA))
+            .add(Component.literal(" mB").withStyle(ChatFormatting.GRAY))
+            .forGoggles(tooltip);
     }
 
     @Override
@@ -171,7 +730,9 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     }
 
     public FluidStack fluidStack() {
-        return tank.getPrimaryHandler().getFluid();
+        ThrusterBlockEntity ctrl = isController() ? this : getControllerBE();
+        if (ctrl == null) ctrl = this;
+        return ctrl.tank.getPrimaryHandler().getFluid();
     }
 
     public boolean validFluid() {
@@ -204,8 +765,41 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         return resolvedProperties.particleType().createParticleOptions(resolvedProperties);
     }
 
-    private int calculateFuelConsumption(float powerPercentage, float fluidPropertiesConsumptionMultiplier, int tick_rate) {
-        float base_consumption = BASE_FUEL_CONSUMPTION * PropulsionConfig.THRUSTER_CONSUMPTION_MULTIPLIER.get().floatValue();
-        return (int) Math.ceil(base_consumption * powerPercentage * fluidPropertiesConsumptionMultiplier * tick_rate);
+    private int calculateFuelConsumption(float powerPercentage, float fluidPropertiesConsumptionMultiplier, int tickRate) {
+        float baseConsumption = BASE_FUEL_CONSUMPTION * PropulsionConfig.THRUSTER_CONSUMPTION_MULTIPLIER.get().floatValue();
+        return (int) Math.ceil(baseConsumption * powerPercentage * fluidPropertiesConsumptionMultiplier * tickRate);
+    }
+
+    @Override
+    protected void write(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
+        super.write(compound, registries, clientPacket);
+        compound.putInt("Width", width);
+        if (controllerPos != null) {
+            compound.putInt("ControllerOffX", controllerPos.getX() - worldPosition.getX());
+            compound.putInt("ControllerOffY", controllerPos.getY() - worldPosition.getY());
+            compound.putInt("ControllerOffZ", controllerPos.getZ() - worldPosition.getZ());
+        }
+        if (updateConnectivity) {
+            compound.putBoolean("UpdateConnectivity", true);
+        }
+    }
+
+    @Override
+    protected void read(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
+        super.read(compound, registries, clientPacket);
+        width = Math.max(1, compound.getInt("Width"));
+        if (compound.contains("ControllerOffX")) {
+            controllerPos = worldPosition.offset(
+                compound.getInt("ControllerOffX"),
+                compound.getInt("ControllerOffY"),
+                compound.getInt("ControllerOffZ"));
+        } else {
+            controllerPos = null;
+        }
+        updateConnectivity = compound.getBoolean("UpdateConnectivity");
+        if (isController() && isMultiblock() && tank != null) {
+            int cap = BASE_CAPACITY * width * width * width;
+            tank.getPrimaryHandler().setCapacity(cap);
+        }
     }
 }
