@@ -16,15 +16,15 @@
 	branch = 1.21.1
 [submodule "mods/create_connected"]
 	path = mods/create_connected
-	url = https://github.com/tmvkrpxl0/create_connected.git
+	url = https://github.com/coding-1ab/create_connected.git
 	branch = main
 [submodule "mods/createaddition"]
 	path = mods/createaddition
-	url = https://github.com/tmvkrpxl0/createaddition.git
+	url = https://github.com/coding-1ab/createaddition.git
 	branch = 1.21.1
 [submodule "mods/CC-Tweaked"]
 	path = mods/CC-Tweaked
-	url = https://github.com/cc-tweaked/CC-Tweaked.git
+	url = https://github.com/coding-1ab/CC-Tweaked.git
 	branch = mc-1.21.x
 [submodule "mods/NatureSpiritForge"]
 	path = mods/NatureSpiritForge
