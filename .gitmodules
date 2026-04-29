@@ -77,7 +77,6 @@
 	path = mods/MapAtlases
 	url = https://github.com/coding-1ab/mapatlases-neoforge.git
 	branch = 1.21.1
-	branch = main
 [submodule "mods/Moonlight"]
 	path = mods/Moonlight
 	url = https://github.com/coding-1ab/Moonlight.git
