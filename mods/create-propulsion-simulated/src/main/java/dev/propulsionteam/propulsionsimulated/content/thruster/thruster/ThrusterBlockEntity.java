@@ -391,7 +391,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         super.calculateObstruction(lvl, pos, forwardDirection);
     }
 
-    private void runObstructionScan(net.minecraft.world.level.Level lvl, BlockPos pos, Direction forwardDirection) {
+    private void runObstructionScan(Level lvl, BlockPos pos, Direction forwardDirection) {
         super.calculateObstruction(lvl, pos, forwardDirection);
     }
 
@@ -405,7 +405,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                     BlockPos cellPos = origin.offset(x, y, z);
                     BlockEntity be = lvl.getBlockEntity(cellPos);
                     if (!(be instanceof ThrusterBlockEntity t)) continue;
-                    if (!t.isOnNozzleFace()) continue;
+                    if (getInternalExhaustOffset(origin, cellPos, facing, width) != 0) continue;
                     int prev = t.emptyBlocks;
                     t.runObstructionScan(lvl, cellPos, facing);
                     if (t.emptyBlocks != prev) {
@@ -422,6 +422,15 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         }
     }
 
+    private static int getInternalExhaustOffset(BlockPos origin, BlockPos cellPos, Direction facing, int size) {
+        int rel = switch (facing.getAxis()) {
+            case X -> cellPos.getX() - origin.getX();
+            case Y -> cellPos.getY() - origin.getY();
+            case Z -> cellPos.getZ() - origin.getZ();
+        };
+        return facing.getAxisDirection() == Direction.AxisDirection.POSITIVE ? rel : (size - 1 - rel);
+    }
+
     @Override
     protected float calculateObstructionEffect() {
         if (!isController() && isMultiblock()) {
@@ -429,20 +438,27 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             return ctrl != null ? ctrl.calculateObstructionEffect() : 0f;
         }
         if (isController() && isMultiblock() && level != null) {
+            float total = 0f;
+            int count = 0;
+            Direction facing = getBlockState().getValue(AbstractThrusterBlock.FACING);
             BlockPos origin = worldPosition;
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < width; y++) {
                     for (int z = 0; z < width; z++) {
-                        BlockEntity be = level.getBlockEntity(origin.offset(x, y, z));
-                        if (be instanceof ThrusterBlockEntity t && t.isOnNozzleFace()) {
-                            if (t.emptyBlocks < OBSTRUCTION_LENGTH) {
+                        BlockPos cellPos = origin.offset(x, y, z);
+                        if (getInternalExhaustOffset(origin, cellPos, facing, width) != 0) continue;
+                        BlockEntity be = level.getBlockEntity(cellPos);
+                        if (be instanceof ThrusterBlockEntity t) {
+                            if (t.emptyBlocks == 0) {
                                 return 0f;
                             }
+                            total += (float) t.emptyBlocks / (float) OBSTRUCTION_LENGTH;
+                            count++;
                         }
                     }
                 }
             }
-            return 1f;
+            return count == 0 ? 0f : total / count;
         }
         return super.calculateObstructionEffect();
     }
@@ -454,20 +470,27 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             return ctrl != null ? ctrl.getEmptyBlocks() : 0;
         }
         if (isController() && isMultiblock() && level != null) {
+            int total = 0;
+            int count = 0;
+            Direction facing = getBlockState().getValue(AbstractThrusterBlock.FACING);
             BlockPos origin = worldPosition;
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < width; y++) {
                     for (int z = 0; z < width; z++) {
-                        BlockEntity be = level.getBlockEntity(origin.offset(x, y, z));
-                        if (be instanceof ThrusterBlockEntity t && t.isOnNozzleFace()) {
-                            if (t.emptyBlocks < OBSTRUCTION_LENGTH) {
+                        BlockPos cellPos = origin.offset(x, y, z);
+                        if (getInternalExhaustOffset(origin, cellPos, facing, width) != 0) continue;
+                        BlockEntity be = level.getBlockEntity(cellPos);
+                        if (be instanceof ThrusterBlockEntity t) {
+                            if (t.emptyBlocks == 0) {
                                 return 0;
                             }
+                            total += t.emptyBlocks;
+                            count++;
                         }
                     }
                 }
             }
-            return OBSTRUCTION_LENGTH;
+            return count == 0 ? 0 : Math.round((float) total / count);
         }
         return super.getEmptyBlocks();
     }
@@ -619,20 +642,6 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             }
         }
         return super.addToGoggleTooltip(tooltip, isPlayerSneaking);
-    }
-
-    private boolean isOnNozzleFace() {
-        ThrusterBlockEntity ctrl = getControllerBE();
-        if (ctrl == null) return true;
-        Direction facing = getBlockState().getValue(AbstractThrusterBlock.FACING);
-        BlockPos origin = ctrl.worldPosition;
-        BlockPos exhaustExit = worldPosition.relative(facing.getOpposite());
-        int s = ctrl.width;
-        int dx = exhaustExit.getX() - origin.getX();
-        int dy = exhaustExit.getY() - origin.getY();
-        int dz = exhaustExit.getZ() - origin.getZ();
-        boolean inside = dx >= 0 && dx < s && dy >= 0 && dy < s && dz >= 0 && dz < s;
-        return !inside;
     }
 
     private boolean isValidFormedCube(BlockPos origin, int size, Direction facing) {
