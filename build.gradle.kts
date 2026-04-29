@@ -220,7 +220,7 @@ dependencies {
     localRuntime("curse.maven:modernfix-790626:7917721")
     localRuntime("curse.maven:spark-361579:6225208")
     localRuntime("top.theillusivec4.curios:curios-neoforge:$curiosVersion+${minecraftVersion}")
-    // localRuntime("maven.modrinth:sodium:mc${minecraftVersion}-$sodiumVersion-neoforge")
+    localRuntime("maven.modrinth:sodium:mc${minecraftVersion}-$sodiumVersion-neoforge")
 
     compileOnly("com.simibubi.create:create-1.21.1")
     compileOnly("com.mrh0.createaddition:createaddition")
