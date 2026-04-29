@@ -3,9 +3,13 @@
   "package": "dev.ryanhcode.sable.neoforge.mixin",
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
+  "mixinextras": {
+    "minVersion": "0.5.0"
+  },
   "plugin": "dev.ryanhcode.sable.plugin.SableMixinPlugin",
   "client": [
     "block_entity_visible.LevelRendererMixin",
+    "block_outline_render.LevelRendererMixin",
     "camera_rotation.CameraMixin",
     "compatibility.create.behaviour_compatibility.harvester_block_entity.HarvesterRendererMixin",
     "compatibility.create.belt.BeltRendererMixin",
@@ -80,6 +84,7 @@
     "compatibility.create.big_outlines_interaction.BigOutlinesMixin",
     "compatibility.create.block_breakers.BlockBreakingKineticBlockEntityDamageMixin",
     "compatibility.create.block_breakers.BlockBreakingKineticBlockEntityMixin",
+    "compatibility.create.blueprint.BlueprintEntityMixin",
     "compatibility.create.chain_conveyor.ChainConveyorBlockEntityMixin",
     "compatibility.create.chain_conveyor.ChainConveyorBlockMixin",
     "compatibility.create.contraptions.AbstractContraptionEntityMixin",
