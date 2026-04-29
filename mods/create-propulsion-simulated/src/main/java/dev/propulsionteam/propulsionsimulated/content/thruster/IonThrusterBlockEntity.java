@@ -39,6 +39,9 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
             if (!simulate && accepted > 0) {
                 energyStored += accepted;
                 setChanged();
+                // Mark thrust dirty so it recalculates when energy is added
+                dirtyThrust();
+                notifyUpdate();
             }
             return accepted;
         }
@@ -101,8 +104,20 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
                 }
             }
         }
+        // Mark dirty if energy was depleted to force thrust recalculation
+        if (energyStored == 0 && thrust == 0) {
+            isThrustDirty = true;
+        } else {
+            isThrustDirty = false;
+        }
         thrusterData.setThrust(thrust);
-        isThrustDirty = false;
+        // Sync energy to client when it changes
+        setChanged();
+        notifyUpdate();
+        // Send block update to ensure client receives the energy sync
+        if (level != null && !level.isClientSide) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
+        }
     }
 
     @Override
