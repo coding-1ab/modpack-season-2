@@ -17,9 +17,9 @@ subprojects {
     apply plugin: "me.modmuss50.mod-publish-plugin"
     apply plugin: "dev.ithundxr.silk"
 
-	base {
-		archivesName = "create-new-age"
-	}
+    base {
+        archivesName = "create-new-age"
+    }
 
     repositories {
         mavenLocal()
