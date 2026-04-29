@@ -75,7 +75,7 @@
 	url = https://github.com/coding-1ab/Simulated-Project.git
 [submodule "mods/MapAtlases"]
 	path = mods/MapAtlases
-	url = https://github.com/jwyoon1220/mapatlases-neoforge.git
+	url = https://github.com/coding-1ab/mapatlases-neoforge.git
 	branch = 1.21.1
 	branch = main
 [submodule "mods/Moonlight"]
