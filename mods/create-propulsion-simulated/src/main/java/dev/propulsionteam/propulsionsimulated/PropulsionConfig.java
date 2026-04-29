@@ -115,7 +115,7 @@ public class PropulsionConfig {
         ION_THRUSTER_MAX_SPEED = SERVER_BUILDER.comment("Ion thruster speed limit in blocks per second.")
                 .defineInRange("ionThrusterMaxSpeed", 1000, 1, 10000000);
         CREATIVE_THRUSTER_MAX_THRUST = SERVER_BUILDER.comment("Creative thruster max thrust in pN.")
-                .defineInRange("creativeThrusterMaxThrust", 10_000.0d, 10.0d, 1_000_000.0d);
+                .defineInRange("creativeThrusterMaxThrust", 10000.0d, 10.0d, 1000000.0d);
         FUEL_MB_PER_TICK_AT_FULL_THROTTLE = SERVER_BUILDER.comment("Fuel consumption in millibuckets per tick at full redstone throttle.")
                 .defineInRange("fuelMbPerTickAtFullThrottle", 1.0d, 0.0001d, 1000.0d);
         ION_THRUSTER_ENERGY_CAPACITY_FE = SERVER_BUILDER.comment("Ion thruster internal FE capacity.")

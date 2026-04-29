@@ -10,6 +10,7 @@
     "createpropulsion.gui.goggles.stirling_engine.status.on": "On",
     "createpropulsion.ponder.redstone_transmission_incremental.header": "Incremental Control Mode",
     "item.createpropulsion.pine_resin": "Pine Resin",
+    "block.createpropulsion.turpentine": "Turpentine",
     "createpropulsion.gui.goggles.cc.peripheral_controlled": "Peripheral Controlled",
     "createpropulsion.ponder.shared.solid_burner.has_thermostat": "Solid Burners support a redstone thermostat override.",
     "createpropulsion.redstone_transmission.control_mode": "Control Mode",

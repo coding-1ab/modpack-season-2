@@ -100,7 +100,9 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
                     energyStored -= consumed;
                     float consumptionRatio = (float) consumed / (float) totalDrain;
                     float thrustMultiplier = PropulsionConfig.THRUSTER_THRUST_MULTIPLIER.get().floatValue();
-                    thrust = (float) (ION_MAX_THRUST_PN * thrustMultiplier * thrustPercentage * consumptionRatio);
+                    float baseThrustPn = (float) (getBaseThrust() * 1000.0); // convert configured base to pN-scale like other thrusters
+                    baseThrustPn *= (float) calculateAtmosphericFactor();
+                    thrust = baseThrustPn * thrustMultiplier * thrustPercentage * consumptionRatio;
                 }
             }
         }

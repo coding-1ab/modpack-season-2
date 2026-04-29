@@ -261,6 +261,23 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     protected abstract double getBaseThrust();
     protected abstract double getRawThrustCap();
 
+    /**
+     * Returns a multiplier [0..1+] that reduces thrust with altitude when
+     * `PropulsionConfig.USE_ATMOSPHERIC_PRESSURE` is enabled. Uses sea level
+     * as baseline and linearly reduces pressure up to world height (256).
+     */
+    protected double calculateAtmosphericFactor() {
+        if (!PropulsionConfig.USE_ATMOSPHERIC_PRESSURE.get()) return 1.0;
+        Level lvl = getLevel();
+        if (lvl == null) return 1.0;
+        int sea = lvl.getSeaLevel();
+        double y = worldPosition.getY();
+        double delta = Math.max(0.0, y - sea);
+        double strength = PropulsionConfig.ATMOSPHERIC_PRESSURE_AMOUNT.get();
+        double factor = 1.0 - (delta / 256.0) * strength;
+        return Math.max(0.0, factor);
+    }
+
     public float getThrottle() {
         return getPower();
     }
@@ -415,10 +432,10 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
             CreateLang.builder().add(Component.translatable("createpropulsion.gui.goggles.thruster.obstructed")).space().add(CreateLang.text(GoggleUtils.makeObstructionBar(emptyBlocks, OBSTRUCTION_LENGTH))).style(tooltipColor).forGoggles(tooltip);
         }
 
-        float fuelEfficiency = getFuelEfficiencyMultiplier();
-        float totalEfficiency = obstructionEfficiency * fuelEfficiency;
-        ChatFormatting totalEfficiencyColor = GoggleUtils.efficiencyColor(totalEfficiency);
-        CreateLang.builder().add(Component.translatable("createpropulsion.gui.goggles.thruster.efficiency")).text(": ").add(CreateLang.number(totalEfficiency)).add(CreateLang.text("%")).style(totalEfficiencyColor).forGoggles(tooltip);
+        // Show efficiency based only on block obstruction (100 = no obstruction)
+        CreateLang.builder()
+            .add(Component.translatable("createpropulsion.gui.goggles.thruster.efficiency")).text(": ").add(CreateLang.number(obstructionEfficiency)).add(CreateLang.text("%"))
+            .style(tooltipColor).forGoggles(tooltip);
 
         CreateLang.builder()
                 .add(Component.translatable("createpropulsion.gui.goggles.thruster.thrust_output"))
@@ -426,19 +443,11 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
                 .forGoggles(tooltip);
 
         CreateLang.builder()
-                .add(Component.literal(" "))
-                .add(Component.translatable("createpropulsion.tooltip.thrust1"))
-                .add(Component.literal(String.format(Locale.ROOT, "%.2f", this.getDisplayedThrustPnForTooltip())).withStyle(ChatFormatting.AQUA))
-                .add(Component.literal(" pN").withStyle(ChatFormatting.GRAY))
-                .forGoggles(tooltip);
-
-        CreateLang.builder()
-                .add(Component.literal(" "))
-                .add(Component.translatable("createpropulsion.tooltip.airflow").withStyle(ChatFormatting.GRAY))
-                .add(Component.literal(String.format(Locale.ROOT, "%.2f", this.getDisplayedAirflowMsForTooltip())).withStyle(ChatFormatting.AQUA))
-                .add(Component.literal(" m/s").withStyle(ChatFormatting.GRAY))
-                .forGoggles(tooltip);
-
+            .add(Component.literal(" "))
+            .add(Component.translatable("createpropulsion.tooltip.thrust1"))
+            .add(Component.literal(String.format(Locale.ROOT, "%.2f", this.getDisplayedThrustPnForTooltip() / 1000.0)).withStyle(ChatFormatting.AQUA))
+            .add(Component.literal(" pN").withStyle(ChatFormatting.GRAY))
+            .forGoggles(tooltip);
     }
 
 
@@ -451,6 +460,8 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         compound.putInt("RedstoneInput", redstoneInput);
         compound.putFloat("DigitalInput", digitalInput);
         compound.putInt("ControlMode", controlMode.ordinal());
+        // Sync thrust to clients when sending client packets / updates
+        compound.putFloat("Thrust", (float) thrusterData.getThrust());
     }
 
     @Override
@@ -463,6 +474,10 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         digitalInput = compound.getFloat("DigitalInput");
         if (compound.contains("ControlMode")) {
             controlMode = ControlMode.values()[compound.getInt("ControlMode")];
+        }
+        // Read thrust value from sync packets if present
+        if (compound.contains("Thrust")) {
+            thrusterData.setThrust(compound.getFloat("Thrust"));
         }
     }
 

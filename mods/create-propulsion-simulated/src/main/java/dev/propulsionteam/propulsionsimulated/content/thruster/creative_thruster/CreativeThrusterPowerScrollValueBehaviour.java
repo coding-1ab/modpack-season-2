@@ -7,18 +7,20 @@ import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsFormatt
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
 
+import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.BlockHitResult;
 
 public class CreativeThrusterPowerScrollValueBehaviour extends ScrollValueBehaviour {
-    protected static final int MAX_THRUST = 1000000;
     protected static final int TOTAL_STEPS = 100;
-    protected static final int FORCE_PER_STEP = MAX_THRUST / TOTAL_STEPS; 
+    // Use configured creative thruster max thrust; config value is already the kN-like value (divided by 1000)
+    protected static final double FORCE_PER_STEP = PropulsionConfig.CREATIVE_THRUSTER_MAX_THRUST.get() / (double) TOTAL_STEPS;
 
     public float getTargetThrust() {
-        return (value + 1) * FORCE_PER_STEP;
+        return (float) ((value + 1) * FORCE_PER_STEP);
     }
  
     public CreativeThrusterPowerScrollValueBehaviour(SmartBlockEntity be) {
@@ -49,18 +51,16 @@ public class CreativeThrusterPowerScrollValueBehaviour extends ScrollValueBehavi
     }
 
     public MutableComponent formatBoardValue(ValueSettings settings) {
-        int forceInNewtons = (settings.value() + 1) * FORCE_PER_STEP;
-        int forceInKN = forceInNewtons / 1000;
+        double forceInKN = (settings.value() + 1) * FORCE_PER_STEP;
         return CreateLang.builder()
-            .add(CreateLang.number(forceInKN))
+            .add(CreateLang.number((int) forceInKN))
             .add(Component.translatable("createpropulsion.gui.goggles.thruster.unit_pn"))
             .component();
     }
 
     @Override
     public String formatValue() {
-        int forceInNewtons = (value + 1) * FORCE_PER_STEP;
-        int forceInKN = forceInNewtons / 1000;
-        return String.valueOf(forceInKN);
+        double forceInKN = (value + 1) * FORCE_PER_STEP;
+        return String.valueOf((int) forceInKN);
     }
 }

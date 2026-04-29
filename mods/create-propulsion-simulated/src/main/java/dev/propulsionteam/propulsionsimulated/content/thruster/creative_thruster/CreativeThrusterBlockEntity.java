@@ -58,10 +58,18 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
         if (currentPower > 0) {
             float thrustMultiplier = PropulsionConfig.CREATIVE_THRUSTER_THRUST_MULTIPLIER.get().floatValue();
             float powerMultiplier = powerBehaviour.getTargetThrust();
-            thrust = thrustMultiplier * currentPower * powerMultiplier;
+            float baseThrustPn = powerMultiplier * 1000.0f; // powerBehaviour value is already divided by 1000 for display
+            baseThrustPn *= (float) calculateAtmosphericFactor();
+            thrust = thrustMultiplier * currentPower * baseThrustPn;
         }
         thrusterData.setThrust(thrust);
         isThrustDirty = false;
+        // Ensure clients receive updated thrust for tooltips
+        setChanged();
+        notifyUpdate();
+        if (level != null && !level.isClientSide) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
+        }
     }
 
     @Override

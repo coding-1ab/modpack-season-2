@@ -332,7 +332,9 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                     float consumptionRatio = (float) fuelConsumed / (float) consumption;
                     float thrustMultiplier = PropulsionConfig.THRUSTER_THRUST_MULTIPLIER.get().floatValue();
                     float fuelEfficiency = ThrusterFuelManager.getEfficiency(fluidStack().getFluid());
-                    thrust = BASE_MAX_THRUST * thrustMultiplier * thrustPercentage * properties.thrustMultiplier() * fuelEfficiency * consumptionRatio;
+                    float baseThrustPn = (float) (PropulsionConfig.BASE_THRUST.get() * 1000.0); // config is already divided by 1000
+                    baseThrustPn *= (float) calculateAtmosphericFactor();
+                    thrust = baseThrustPn * thrustMultiplier * thrustPercentage * properties.thrustMultiplier() * fuelEfficiency * consumptionRatio;
                 }
             }
         }
@@ -358,8 +360,10 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                 if (fuelConsumed > 0) {
                     float ratio = (float) fuelConsumed / (float) fuelNeeded;
                     float thrustMultiplier = PropulsionConfig.THRUSTER_THRUST_MULTIPLIER.get().floatValue();
-                    float fuelEfficiency = ThrusterFuelManager.getEfficiency(fluidStack().getFluid());
-                    totalThrust = BASE_MAX_THRUST * thrustMultiplier * thrustPercentage * properties.thrustMultiplier() * fuelEfficiency * ratio * n;
+                            float fuelEfficiency = ThrusterFuelManager.getEfficiency(fluidStack().getFluid());
+                            float baseThrustPn = (float) (PropulsionConfig.BASE_THRUST.get() * 1000.0); // config is already divided by 1000
+                            baseThrustPn *= (float) calculateAtmosphericFactor();
+                            totalThrust = baseThrustPn * thrustMultiplier * thrustPercentage * properties.thrustMultiplier() * fuelEfficiency * ratio * n;
                 }
             }
         }
@@ -666,12 +670,12 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
 
     @Override
     protected double getBaseThrust() {
-        return BASE_MAX_THRUST;
+        return PropulsionConfig.BASE_THRUST.get();
     }
 
     @Override
     protected double getRawThrustCap() {
-        return BASE_MAX_THRUST;
+        return PropulsionConfig.BASE_THRUST.get();
     }
 
     public Direction getFluidCapSide() {
@@ -696,6 +700,17 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         } else {
             return CreateLang.builder().add(Component.translatable("createpropulsion.gui.goggles.thruster.status.working")).style(ChatFormatting.GREEN);
         }
+    }
+
+    @Override
+    public double getDisplayedThrustPnForTooltip() {
+        if (isMultiblock()) {
+            ThrusterBlockEntity ctrl = isController() ? this : getControllerBE();
+            if (ctrl == null) return super.getDisplayedThrustPnForTooltip();
+            int n = ctrl.width * ctrl.width * ctrl.width;
+            return ctrl.getThrusterData().getThrust() * (double) n;
+        }
+        return super.getDisplayedThrustPnForTooltip();
     }
 
     @Override
