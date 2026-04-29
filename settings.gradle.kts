@@ -2,6 +2,8 @@ pluginManagement {
     includeBuild("build-logic")
     repositories {
         gradlePluginPortal()
+        maven { url = uri("https://maven.muon.rip/releases") }
+        maven { url = uri("https://registry.somethingcatchy.net/repository/maven-releases/") }
     }
 }
 
@@ -293,6 +295,33 @@ addMods {
                 projectPath = ":common",
                 shouldUnpack = false,
             ),
+        )
+    )
+    addMod(
+        filePath = "./mods/MapAtlases",
+        includeTransitive = false,
+        modProjects = listOf(
+            modProject(
+                dependencyNotations = listOf("maven.modrinth:mapatlases"),
+                projectPath = ":neoforge",
+                shouldUnpack = true
+            ),
+            modProject(
+                dependencyNotations = listOf("maven.modrinth:mapatlases-common"),
+                projectPath = ":common",
+                shouldUnpack = false
+            )
+        )
+    )
+    addMod(
+        filePath = "./mods/Moonlight",
+        includeTransitive = false,
+        modProjects = listOf(
+            modProject(
+                dependencyNotations = listOf("maven.modrinth:moonlight"),
+                projectPath = ":neoforge",
+                shouldUnpack = true
+            )
         )
     )
 }
