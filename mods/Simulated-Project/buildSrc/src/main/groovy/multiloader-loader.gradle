@@ -2,6 +2,15 @@ plugins {
     id 'multiloader-common'
 }
 
+['apiElements', 'runtimeElements', 'sourcesElements'].each { variant ->
+    configurations."$variant".outgoing {
+        capability("$group:${base.archivesName.get()}:$version")
+        capability("$group:$mod_id-${project.name}-${minecraft_version}:$version")
+        capability("$group:$mod_id:$version")
+        capability("$group:$mod_id-$minecraft_version:$version")
+    }
+}
+
 configurations {
     commonJava {
         canBeResolved = true
