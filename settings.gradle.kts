@@ -318,9 +318,19 @@ addMods {
         includeTransitive = false,
         modProjects = listOf(
             modProject(
-                dependencyNotations = listOf("maven.modrinth:moonlight"),
+                dependencyNotations = listOf("net.mehvahdjukaar:moonlight-neoforge"),
                 projectPath = ":neoforge",
                 shouldUnpack = true
+            ),
+            modProject(
+                dependencyNotations = listOf("net.mehvahdjukaar:moonlight"),
+                projectPath = ":common",
+                shouldUnpack = false
+            ),
+            modProject(
+                dependencyNotations = listOf("net.mehvahdjukaar:moonlight-fabric"),
+                projectPath = ":fabric",
+                shouldUnpack = false
             )
         )
     )
