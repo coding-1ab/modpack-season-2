@@ -15,6 +15,7 @@ version = "1.0-SNAPSHOT"
 val minecraftVersion = project.properties["minecraft_version"]!! as String
 val sodiumVersion = project.properties["sodium_version"]!! as String
 val curiosVersion = project.properties["curios_version"]!! as String
+val moonlightVersion = project.properties["moonlight_version"]!! as String
 
 neoForge {
     // Specify the version of NeoForge to use.
@@ -187,6 +188,15 @@ repositories {
             includeGroup("dev.ryanhcode.sable-companion")
         }
     }
+
+    exclusiveContent {
+        forRepository {
+            maven("https://registry.somethingcatchy.net/repository/maven-releases/")
+        }
+        filter {
+            includeGroup("net.mehvahdjukaar")
+        }
+    }
 }
 
 val localRuntime = configurations.maybeCreate("localRuntime")
@@ -200,14 +210,14 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation("thedarkcolour:kotlinforforge-neoforge:5.+")
 
-    localRuntime("net.createmod.ponder:ponder-neoforge:${property("ponder_version")}+mc${minecraftVersion}")
+    localRuntime("net.createmod.ponder:ponder-neoforge:${property("ponder_version")}+mc$minecraftVersion")
     localRuntime("dev.engine-room.flywheel:flywheel-neoforge-${property("minecraft_version")}:${property("flywheel_version")}")
     localRuntime("com.tterrag.registrate:Registrate:${property("registrate_version")}")
 
-    localRuntime("mezz.jei:jei-${minecraftVersion}-neoforge:19.27.0.340")
-    localRuntime("dev.emi:emi-neoforge:1.1.22+${minecraftVersion}")
+    localRuntime("mezz.jei:jei-$minecraftVersion-neoforge:19.27.0.340")
+    localRuntime("dev.emi:emi-neoforge:1.1.22+$minecraftVersion")
     localRuntime("org.appliedenergistics:guideme:21.1.1")
-    localRuntime("com.github.glitchfiend:TerraBlender-neoforge:${minecraftVersion}-4.1.0.8")
+    localRuntime("com.github.glitchfiend:TerraBlender-neoforge:$minecraftVersion-4.1.0.8")
 
     localRuntime("curse.maven:configured-457570:7276577")
     localRuntime("curse.maven:easyshulkerboxes-594006:6697879")
@@ -219,15 +229,16 @@ dependencies {
     localRuntime("curse.maven:atlas-633577:5490697")
     localRuntime("curse.maven:modernfix-790626:7917721")
     localRuntime("curse.maven:spark-361579:6225208")
-    localRuntime("top.theillusivec4.curios:curios-neoforge:$curiosVersion+${minecraftVersion}")
-    localRuntime("maven.modrinth:sodium:mc${minecraftVersion}-$sodiumVersion-neoforge")
+    localRuntime("top.theillusivec4.curios:curios-neoforge:$curiosVersion+$minecraftVersion")
+    localRuntime("maven.modrinth:sodium:mc$minecraftVersion-$sodiumVersion-neoforge")
+    localRuntime("net.mehvahdjukaar:moonlight-neoforge:$moonlightVersion")
 
     compileOnly("com.simibubi.create:create-1.21.1")
     compileOnly("com.mrh0.createaddition:createaddition")
     compileOnly("plus.dragons.createdragonsplus:create-dragons-plus")
     compileOnly("plus.dragons.createenchantmentindustry:create-enchantment-industry")
     compileOnly("org.appliedenergistics:appliedenergistics2")
-    implementation("dev.ryanhcode.sable:sable-neoforge-${minecraftVersion}")
+    implementation("dev.ryanhcode.sable:sable-neoforge-$minecraftVersion")
 
     add("additionalRuntimeClasspath", "org.jetbrains:annotations")
 }

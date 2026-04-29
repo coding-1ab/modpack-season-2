@@ -3,7 +3,6 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         maven { url = uri("https://maven.muon.rip/releases") }
-        maven { url = uri("https://registry.somethingcatchy.net/repository/maven-releases/") }
     }
 }
 
@@ -309,27 +308,6 @@ addMods {
             modProject(
                 dependencyNotations = listOf("maven.modrinth:mapatlases-common"),
                 projectPath = ":common",
-                shouldUnpack = false
-            )
-        )
-    )
-    addMod(
-        filePath = "./mods/Moonlight",
-        includeTransitive = false,
-        modProjects = listOf(
-            modProject(
-                dependencyNotations = listOf("net.mehvahdjukaar:moonlight-neoforge"),
-                projectPath = ":neoforge",
-                shouldUnpack = true
-            ),
-            modProject(
-                dependencyNotations = listOf("net.mehvahdjukaar:moonlight"),
-                projectPath = ":common",
-                shouldUnpack = false
-            ),
-            modProject(
-                dependencyNotations = listOf("net.mehvahdjukaar:moonlight-fabric"),
-                projectPath = ":fabric",
                 shouldUnpack = false
             )
         )
