@@ -48,3 +48,4 @@ bin/
 .DS_Store
 
 src/generated/resources/.cache
+createdModJars/
