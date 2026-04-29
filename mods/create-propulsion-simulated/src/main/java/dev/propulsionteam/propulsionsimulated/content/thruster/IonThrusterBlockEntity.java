@@ -18,7 +18,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -119,6 +118,11 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
     @Override
     public boolean isIon() {
         return true;
+    }
+
+    @Override
+    protected boolean supportsMultiblock() {
+        return false;
     }
 
     @Override
@@ -236,6 +240,10 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
         this.energyDrainAccumulator = tag.getDouble("EnergyDrainAccumulator");
         this.clampEnergyToCapacity();
         super.read(tag, registries, clientPacket);
+        // Ion thrusters are always single-block; strip any accidental multi state from old data.
+        this.width = 1;
+        this.controllerPos = null;
+        this.updateConnectivity = false;
     }
 
     private void clampEnergyToCapacity() {

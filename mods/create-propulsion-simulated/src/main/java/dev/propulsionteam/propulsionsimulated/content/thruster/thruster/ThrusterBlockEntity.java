@@ -85,6 +85,13 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     public void tick() {
         super.tick();
         if (level == null || level.isClientSide) return;
+        if (!supportsMultiblock()) {
+            if (isMultiblock()) {
+                width = 1;
+                controllerPos = null;
+            }
+            return;
+        }
         if (isController() && isMultiblock()) {
             Direction facing = getBlockState().getValue(AbstractThrusterBlock.FACING);
             if (!isValidFormedCube(worldPosition, width, facing)) {
@@ -256,11 +263,16 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         ThrusterBlockEntity ctrl = isController() ? this : getControllerBE();
         if (ctrl == null) return null;
         if (!ctrl.isMultiblock()) {
+            if (side == null) return tank.getPrimaryHandler();
             return side == getFluidCapSide() ? tank.getPrimaryHandler() : null;
         }
         if (side == null) return ctrl.tank.getPrimaryHandler();
         if (!isFrontLayerCell(ctrl, ctrl.getBlockState().getValue(AbstractThrusterBlock.FACING))) return null;
         return side == ctrl.getBlockState().getValue(AbstractThrusterBlock.FACING).getOpposite() ? null : ctrl.tank.getPrimaryHandler();
+    }
+
+    protected boolean supportsMultiblock() {
+        return true;
     }
 
     @Override

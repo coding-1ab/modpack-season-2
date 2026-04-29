@@ -30,6 +30,11 @@ public class DeltaPonderPlugin implements PonderPlugin {
         //Tilt adapter
         HELPER.forComponents(PropulsionBlocks.TILT_ADAPTER_BLOCK.get())
                 .addStoryBoard("tilt_adapter", TiltAdapterScenes::redstoneControl);
+        //Thruster
+        HELPER.forComponents(PropulsionBlocks.THRUSTER_BLOCK.get())
+                .addStoryBoard("ponder_thruster_normal", ThrusterScenes::normal)
+                .addStoryBoard("ponder_thruster_2x2", ThrusterScenes::multiblock2x2)
+                .addStoryBoard("ponder_thruster_3x3", ThrusterScenes::multiblock3x3);
     }
 
     @Override
