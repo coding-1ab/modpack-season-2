@@ -286,7 +286,7 @@ public class ElectricalNetwork {
     }
 
     protected void tickPost(ServerLevel level) {
-        level.getProfiler().push("camera");
+        level.getProfiler().push("power");
         transferPower();
         level.getProfiler().pop();
         consumeRequests.clear();
