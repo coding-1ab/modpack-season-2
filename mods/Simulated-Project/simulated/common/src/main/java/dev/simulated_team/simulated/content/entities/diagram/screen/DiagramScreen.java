@@ -587,8 +587,8 @@ public class DiagramScreen extends AbstractSimiScreen {
             return;
         }
 
-        this.renderContents(this.subLevel, partialTicks);
         this.note.renderWidget(graphics, mouseX, mouseY, partialTicks);
+        this.renderContents(this.subLevel, partialTicks);
 
         // genuinely how can this be null they are assigned values in the constructor
         if (this.turnDownButton != null && this.turnUpButton != null) {
@@ -750,10 +750,10 @@ public class DiagramScreen extends AbstractSimiScreen {
 
         final float x1 = 0.0f;
         final float y1 = 0.0f;
-        bufferbuilder.addVertex(matrix4f, x1, y1, 0.1f).setUv(0.0f, 1.0f).setColor(0xFFFFFFFF);
-        bufferbuilder.addVertex(matrix4f, x1, height, 0.1f).setUv(0.0f, 0.0f).setColor(0xFFFFFFFF);
-        bufferbuilder.addVertex(matrix4f, width, height, 0.1f).setUv(1.0f, 0.0f).setColor(0xFFFFFFFF);
-        bufferbuilder.addVertex(matrix4f, width, y1, 0.1f).setUv(1.0f, 1.0f).setColor(0xFFFFFFFF);
+        bufferbuilder.addVertex(matrix4f, x1, y1, 0.0f).setUv(0.0f, 1.0f).setColor(0xFFFFFFFF);
+        bufferbuilder.addVertex(matrix4f, x1, height, 0.0f).setUv(0.0f, 0.0f).setColor(0xFFFFFFFF);
+        bufferbuilder.addVertex(matrix4f, width, height, 0.0f).setUv(1.0f, 0.0f).setColor(0xFFFFFFFF);
+        bufferbuilder.addVertex(matrix4f, width, y1, 0.0f).setUv(1.0f, 1.0f).setColor(0xFFFFFFFF);
         BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
         RenderSystem.disableBlend();
     }

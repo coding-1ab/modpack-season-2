@@ -1,7 +1,5 @@
- - Fix Nature's Compass compatibility issues
- - Make all dyed Envelope blocks ponderable
- - Fix issues with String locales causing crashes in some languages
- - Fix hold interactions not working when the Use key is bound to a key instead of a mouse button
- - Fix issues with labels in the value boxes for the Torsion Spring
- - Add #simulated:non_movable tag for blocks for Simulated Contraption assembly
- - Fix issues with the ponder tooltip manager causing crashes
+ - Fix Contraption Diagram not properly recording forces in other dimensions
+ - Fix issues with some blocks and sub-level schematics
+ - Adjust ComputerCraft peripherals and behavior for some blocks
+ - Update translations from Crowdin
+ - Fix various bugs and crashes
