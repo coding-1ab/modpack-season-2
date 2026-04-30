@@ -1,5 +1,7 @@
 package dev.propulsionteam.propulsionsimulated.utility;
 
+import java.util.Locale;
+
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
 
 import net.minecraft.client.resources.model.BakedModel;
@@ -22,7 +24,8 @@ public class Bakery {
             if (i == 16) {
                 modelPath = "compass";
             } else {
-                modelPath = String.format("compass_%02d", i);
+                // i really had to make this use root language because minecrafts languages is so ass that it doesnt turn arabic numbers to normal ones.. like tf?
+                modelPath = String.format(Locale.ROOT, "compass_%02d", i);
             }
             // NeoForge 1.21 requires side-loaded models to use the standalone variant.
             COMPASS_MODELS[i] = ModelResourceLocation.vanilla(modelPath, "standalone");
