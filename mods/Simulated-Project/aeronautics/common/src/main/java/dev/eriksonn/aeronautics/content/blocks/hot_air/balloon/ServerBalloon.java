@@ -9,18 +9,18 @@ import dev.eriksonn.aeronautics.content.blocks.hot_air.lifting_gas.LiftingGasHol
 import dev.eriksonn.aeronautics.content.blocks.hot_air.lifting_gas.LiftingGasType;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.SubLevelAssemblyHelper;
-import dev.ryanhcode.sable.api.SubLevelHelper;
-import dev.ryanhcode.sable.companion.math.Pose3d;
 import dev.ryanhcode.sable.api.physics.force.ForceGroups;
 import dev.ryanhcode.sable.api.physics.force.QueuedForceGroup;
+import dev.ryanhcode.sable.companion.math.JOMLConversion;
+import dev.ryanhcode.sable.companion.math.Pose3d;
 import dev.ryanhcode.sable.physics.config.dimension_physics.DimensionPhysicsData;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
-import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.util.LevelAccelerator;
 import dev.ryanhcode.sable.util.SableMathUtils;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
@@ -336,6 +336,34 @@ public class ServerBalloon extends Balloon {
     public boolean shouldSpawnGust(final BlockPos pos) {
         final float percentHeight = (pos.getY() + 0.5f - this.bounds.minY) / this.getHeight();
         return percentHeight > 1.0 - Math.clamp(this.totalFilledVolume / this.getCapacity(), 0, 1);
+    }
+
+    @Override
+    public void spawnGust(final Level level, final BlockPos pos, final Direction dir) {
+        int contributingGases = 0;
+        for (final LiftingGasHolder liftingGasHolder : this.getLiftingGasHolders()) {
+            if (liftingGasHolder.data().amount > 0) {
+                contributingGases++;
+            }
+        }
+
+        if (contributingGases == 0) {
+            return;
+        }
+
+        boolean canSpawnGust = true;
+        final double nudge = 1d / contributingGases;
+        for (final LiftingGasHolder liftingGasHolder : this.getLiftingGasHolders()) {
+            if (liftingGasHolder.data().amount < nudge) {
+                canSpawnGust = false;
+                liftingGasHolder.data().amount = 0;
+            } else {
+                liftingGasHolder.data().amount -= nudge;
+            }
+        }
+        if (canSpawnGust) {
+            super.spawnGust(level, pos, dir);
+        }
     }
 
     @Override
