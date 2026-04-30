@@ -1,5 +1,6 @@
 package dev.createpropulsionsimulated.client.sound;
 
+import dev.ryanhcode.sable.Sable;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionSoundEvents;
 import net.minecraft.client.Minecraft;
@@ -10,6 +11,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -72,7 +74,9 @@ public final class ThrusterLoopSoundController {
     }
 
     private static final class ThrusterLoopSoundInstance extends AbstractTickableSoundInstance {
+        private static final int STOP_GRACE_TICKS = 6;
         private final AbstractThrusterBlockEntity blockEntity;
+        private int inactiveTicks;
 
         private ThrusterLoopSoundInstance(final AbstractThrusterBlockEntity blockEntity) {
             super(PropulsionSoundEvents.THRUSTER_LOOP.get(), SoundSource.BLOCKS, RandomSource.create());
@@ -86,18 +90,24 @@ public final class ThrusterLoopSoundController {
         @Override
         public void tick() {
             if (!shouldPlay(this.blockEntity)) {
-                stop();
+                inactiveTicks++;
+                if (inactiveTicks >= STOP_GRACE_TICKS) {
+                    stop();
+                }
                 return;
             }
+            inactiveTicks = 0;
             updateFromBlockEntity();
         }
 
         private void updateFromBlockEntity() {
             final BlockPos pos = this.blockEntity.getBlockPos();
             final float power = Math.max(this.blockEntity.getPower(), 5.0f / 15.0f);
-            this.x = pos.getX() + 0.5;
-            this.y = pos.getY() + 0.5;
-            this.z = pos.getZ() + 0.5;
+            final Vec3 localCenter = new Vec3(pos.getX() + 0.5d, pos.getY() + 0.5d, pos.getZ() + 0.5d);
+            final Vec3 worldCenter = Sable.HELPER.projectOutOfSubLevel(this.blockEntity.getLevel(), localCenter);
+            this.x = worldCenter.x;
+            this.y = worldCenter.y;
+            this.z = worldCenter.z;
             this.volume = 0.2f + (0.35f * power);
             this.pitch = 0.85f + (0.25f * power);
         }

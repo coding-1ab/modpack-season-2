@@ -25,7 +25,6 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import java.util.List;
 
 public class IonThrusterBlockEntity extends ThrusterBlockEntity {
-    private static final double ION_MAX_THRUST_PN = PropulsionConfig.ION_THRUSTER_MAX_SPEED.get();
     private int energyStored;
     private double energyDrainAccumulator;
     private long lastEnergyDrainGameTime = -1L;
@@ -138,14 +137,10 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
         } else {
             isThrustDirty = false;
         }
-        thrusterData.setThrust(thrust);
-        // Sync energy to client when it changes
+        setThrustAndSync(thrust);
+        // Sync energy/consumption values used in goggles.
         setChanged();
         notifyUpdate();
-        // Send block update to ensure client receives the energy sync
-        if (level != null && !level.isClientSide) {
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
-        }
     }
 
     @Override
@@ -225,7 +220,7 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
 
     @Override
     protected double getRawThrustCap() {
-        return ION_MAX_THRUST_PN;
+        return PropulsionConfig.ION_THRUSTER_MAX_THRUST.get();
     }
 
     public int getEnergyStoredFe() {

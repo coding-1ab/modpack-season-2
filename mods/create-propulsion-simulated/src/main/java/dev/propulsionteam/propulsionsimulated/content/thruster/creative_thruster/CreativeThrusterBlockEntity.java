@@ -62,14 +62,8 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
             baseThrustPn *= (float) calculateAtmosphericFactor();
             thrust = thrustMultiplier * currentPower * baseThrustPn;
         }
-        thrusterData.setThrust(thrust);
+        setThrustAndSync(thrust);
         isThrustDirty = false;
-        // Ensure clients receive updated thrust for tooltips
-        setChanged();
-        notifyUpdate();
-        if (level != null && !level.isClientSide) {
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
-        }
     }
 
     @Override
@@ -160,6 +154,9 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
             case PLASMA -> particleBuilder.add(CreateLang.builder()
                     .add(Component.translatable("createpropulsion.gui.goggles.creative_thruster.particle.plasma"))
                     .style(ChatFormatting.AQUA));
+            case ION -> particleBuilder.add(CreateLang.builder()
+                    .add(Component.translatable("createpropulsion.gui.goggles.creative_thruster.particle.ion"))
+                    .style(ChatFormatting.BLUE));
             case PLUME -> particleBuilder.add(CreateLang.builder()
                     .add(Component.translatable("createpropulsion.gui.goggles.creative_thruster.particle.plume"))
                     .style(ChatFormatting.GOLD));

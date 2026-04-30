@@ -23,6 +23,7 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -37,6 +38,9 @@ import java.util.Locale;
 
 public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     implements IHaveGoggleInformation, BlockEntitySubLevelPropellerActor, BlockSubLevelAssemblyListener, BlockEntityPropeller {
+    protected static final double PN_PER_DISPLAY_UNIT = 1000.0d;
+    protected static final double PN_PER_SABLE_FORCE_UNIT = 1500.0d;
+    protected static final double PARTICLE_BROADCAST_RANGE_BLOCKS = 150.0d;
     //Constants
     protected static final int OBSTRUCTION_LENGTH = 10;
     protected static final int TICKS_PER_ENTITY_CHECK = 5;
@@ -153,11 +157,11 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         // and cause particle direction to appear fixed.
         BlockState currentBlockState = level.getBlockState(worldPosition);
         if (level.isClientSide) {
-            if (shouldEmitParticles()) {
-                emitParticles(level, worldPosition, currentBlockState);
-            }
             ThrusterSoundHooks.clientTick(this);
             return;
+        }
+        if (shouldEmitParticles()) {
+            emitParticles(level, worldPosition, currentBlockState);
         }
         currentTick++;
         int tick_rate = PropulsionConfig.THRUSTER_TICKS_PER_UPDATE.get();
@@ -187,6 +191,21 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
 
     public ThrusterData getThrusterData() {
         return thrusterData;
+    }
+
+    protected void setThrustAndSync(float thrust) {
+        float previousThrust = (float) thrusterData.getThrust();
+        thrusterData.setThrust(thrust);
+        if (level == null || level.isClientSide) {
+            return;
+        }
+        if (java.lang.Math.abs(previousThrust - thrust) < 0.01f) {
+            return;
+        }
+        setChanged();
+        notifyUpdate();
+        BlockState state = getBlockState();
+        level.sendBlockUpdated(worldPosition, state, state, Block.UPDATE_CLIENTS);
     }
 
     public int getEmptyBlocks() {
@@ -262,20 +281,21 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     protected abstract double getRawThrustCap();
 
     /**
-     * Returns a multiplier [0..1+] that reduces thrust with altitude when
-     * `PropulsionConfig.USE_ATMOSPHERIC_PRESSURE` is enabled. Uses sea level
-     * as baseline and linearly reduces pressure up to world height (256).
+     * Returns a multiplier that models atmospheric losses by altitude.
+     * The effect is configurable and never hard-cuts thrust to zero.
      */
     protected double calculateAtmosphericFactor() {
         if (!PropulsionConfig.USE_ATMOSPHERIC_PRESSURE.get()) return 1.0;
         Level lvl = getLevel();
         if (lvl == null) return 1.0;
-        int sea = lvl.getSeaLevel();
+        double sea = lvl.getSeaLevel();
+        double worldTop = lvl.getMaxBuildHeight();
+        if (worldTop <= sea + MathUtility.epsilon) return 1.0;
         double y = worldPosition.getY();
-        double delta = Math.max(0.0, y - sea);
+        double normalizedAltitude = org.joml.Math.clamp(0.0d, 1.0d, (y - sea) / (worldTop - sea));
         double strength = PropulsionConfig.ATMOSPHERIC_PRESSURE_AMOUNT.get();
-        double factor = 1.0 - (delta / 256.0) * strength;
-        return Math.max(0.0, factor);
+        double factor = 1.0 - normalizedAltitude * strength;
+        return org.joml.Math.clamp(0.1d, 1.0d, factor);
     }
 
     public float getThrottle() {
@@ -312,8 +332,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
 
     @Override
     public double getThrust() {
-        // Sable force API works in kilo-pixel-Newtons; convert from our Newton-like internal thrust.
-        return thrusterData.getThrust() / 1000.0;
+        return thrusterData.getThrust() / PN_PER_SABLE_FORCE_UNIT;
     }
 
     @Override
@@ -385,9 +404,30 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
 
         //Spawn the calculated number of particles.
         for (int i = 0; i < particlesToSpawn; i++) {
-            level.addParticle(particleData, true,
-                particleX, particleY, particleZ,
-                particleVelocity.x, particleVelocity.y, particleVelocity.z);
+            if (level instanceof ServerLevel serverLevel) {
+                double maxDistSq = PARTICLE_BROADCAST_RANGE_BLOCKS * PARTICLE_BROADCAST_RANGE_BLOCKS;
+                for (ServerPlayer player : serverLevel.players()) {
+                    if (player.distanceToSqr(particleX, particleY, particleZ) > maxDistSq) {
+                        continue;
+                    }
+                    serverLevel.sendParticles(
+                        player,
+                        particleData,
+                        true,
+                        particleX, particleY, particleZ,
+                        0,
+                        particleVelocity.x, particleVelocity.y, particleVelocity.z,
+                        1.0
+                    );
+                }
+            } else {
+                level.addParticle(
+                    particleData,
+                    true,
+                    particleX, particleY, particleZ,
+                    particleVelocity.x, particleVelocity.y, particleVelocity.z
+                );
+            }
         }
     }
 
@@ -445,7 +485,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         CreateLang.builder()
             .add(Component.literal(" "))
             .add(Component.translatable("createpropulsion.tooltip.thrust1"))
-            .add(Component.literal(String.format(Locale.ROOT, "%.2f", this.getDisplayedThrustPnForTooltip() / 1000.0)).withStyle(ChatFormatting.AQUA))
+            .add(Component.literal(String.format(Locale.ROOT, "%.2f", this.getDisplayedThrustPnForTooltip() / PN_PER_DISPLAY_UNIT)).withStyle(ChatFormatting.AQUA))
             .add(Component.literal(" pN").withStyle(ChatFormatting.GRAY))
             .forGoggles(tooltip);
     }

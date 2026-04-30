@@ -20,6 +20,7 @@ public class PropulsionConfig {
     public static final ModConfigSpec.IntValue THRUSTER_MAX_SPEED;
     public static final ModConfigSpec.IntValue CREATIVE_THRUSTER_MAX_SPEED;
     public static final ModConfigSpec.IntValue ION_THRUSTER_MAX_SPEED;
+    public static final ModConfigSpec.DoubleValue ION_THRUSTER_MAX_THRUST;
     public static final ModConfigSpec.DoubleValue CREATIVE_THRUSTER_MAX_THRUST;
     public static final ModConfigSpec.DoubleValue FUEL_MB_PER_TICK_AT_FULL_THROTTLE;
     public static final ModConfigSpec.IntValue ION_THRUSTER_ENERGY_CAPACITY_FE;
@@ -114,6 +115,8 @@ public class PropulsionConfig {
                 .defineInRange("creativeThrusterMaxSpeed", 10000, 1, 100000);
         ION_THRUSTER_MAX_SPEED = SERVER_BUILDER.comment("Ion thruster speed limit in blocks per second.")
                 .defineInRange("ionThrusterMaxSpeed", 1000, 1, 10000000);
+        ION_THRUSTER_MAX_THRUST = SERVER_BUILDER.comment("Ion thruster maximum thrust cap in pN.")
+                .defineInRange("ionThrusterMaxThrust", 1000.0d, 1.0d, 10_000_000.0d);
         CREATIVE_THRUSTER_MAX_THRUST = SERVER_BUILDER.comment("Creative thruster max thrust in pN.")
                 .defineInRange("creativeThrusterMaxThrust", 10000.0d, 10.0d, 1000000.0d);
         FUEL_MB_PER_TICK_AT_FULL_THROTTLE = SERVER_BUILDER.comment("Fuel consumption in millibuckets per tick at full redstone throttle.")

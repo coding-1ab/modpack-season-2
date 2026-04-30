@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -50,6 +51,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     protected int width = 1;
     protected boolean updateConnectivity = true;
     protected double lastConsumedMbPerTick = 0.0d;
+    protected double fuelDrainAccumulator = 0.0d;
 
     public ThrusterBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
@@ -326,12 +328,13 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
 
             if (thrustPercentage > 0 && properties != null) {
                 int tickRate = PropulsionConfig.THRUSTER_TICKS_PER_UPDATE.get();
-                int consumption = calculateFuelConsumption(currentPower, properties.consumptionMultiplier(), tickRate);
+                double requestedConsumption = calculateFuelConsumption(currentPower, properties.consumptionMultiplier(), tickRate);
+                int consumption = consumeFuelWithAccumulator(requestedConsumption);
                 FluidStack drainedStack = tank.getPrimaryHandler().drain(consumption, IFluidHandler.FluidAction.EXECUTE);
                 int fuelConsumed = drainedStack.getAmount();
 
                 if (fuelConsumed > 0) {
-                    float consumptionRatio = (float) fuelConsumed / (float) consumption;
+                    float consumptionRatio = consumption > 0 ? (float) fuelConsumed / (float) consumption : 0.0f;
                     float thrustMultiplier = PropulsionConfig.THRUSTER_THRUST_MULTIPLIER.get().floatValue();
                     float fuelEfficiency = ThrusterFuelManager.getEfficiency(fluidStack().getFluid());
                     float baseThrustPn = (float) (PropulsionConfig.BASE_THRUST.get() * 1000.0); // config is already divided by 1000
@@ -341,7 +344,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                 }
             }
         }
-        thrusterData.setThrust(thrust);
+        setThrustAndSync(thrust);
         isThrustDirty = false;
     }
 
@@ -357,12 +360,12 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             float thrustPercentage = Math.min(currentPower, obstructionEffect);
             if (thrustPercentage > 0 && properties != null) {
                 int tickRate = PropulsionConfig.THRUSTER_TICKS_PER_UPDATE.get();
-                int baseConsumption = calculateFuelConsumption(currentPower, properties.consumptionMultiplier(), tickRate);
-                int fuelNeeded = (int) Math.ceil(baseConsumption * (double) n * getMultiblockFuelEfficiency(width));
+                double baseConsumption = calculateFuelConsumption(currentPower, properties.consumptionMultiplier(), tickRate);
+                int fuelNeeded = consumeFuelWithAccumulator(baseConsumption * (double) n * getMultiblockFuelEfficiency(width));
                 FluidStack drained = tank.getPrimaryHandler().drain(fuelNeeded, IFluidHandler.FluidAction.EXECUTE);
                 int fuelConsumed = drained.getAmount();
                 if (fuelConsumed > 0) {
-                    float ratio = (float) fuelConsumed / (float) fuelNeeded;
+                    float ratio = fuelNeeded > 0 ? (float) fuelConsumed / (float) fuelNeeded : 0.0f;
                     float thrustMultiplier = PropulsionConfig.THRUSTER_THRUST_MULTIPLIER.get().floatValue();
                             float fuelEfficiency = ThrusterFuelManager.getEfficiency(fluidStack().getFluid());
                             float baseThrustPn = (float) (PropulsionConfig.BASE_THRUST.get() * 1000.0); // config is already divided by 1000
@@ -380,7 +383,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                 for (int z = 0; z < width; z++) {
                     BlockEntity be = level.getBlockEntity(origin.offset(x, y, z));
                     if (be instanceof ThrusterBlockEntity t) {
-                        t.thrusterData.setThrust(share);
+                        t.setThrustAndSync(share);
                     }
                 }
             }
@@ -629,16 +632,41 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                 case Y -> oy = 0.0;
                 case Z -> oz = 0.0;
             }
-            level.addParticle(
-                particleData,
-                true,
-                worldNozzlePosition.x + ox,
-                worldNozzlePosition.y + oy,
-                worldNozzlePosition.z + oz,
-                particleVelocity.x,
-                particleVelocity.y,
-                particleVelocity.z
-            );
+            if (level instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+                double px = worldNozzlePosition.x + ox;
+                double py = worldNozzlePosition.y + oy;
+                double pz = worldNozzlePosition.z + oz;
+                double maxDistSq = PARTICLE_BROADCAST_RANGE_BLOCKS * PARTICLE_BROADCAST_RANGE_BLOCKS;
+                for (ServerPlayer player : serverLevel.players()) {
+                    if (player.distanceToSqr(px, py, pz) > maxDistSq) {
+                        continue;
+                    }
+                    serverLevel.sendParticles(
+                        player,
+                        particleData,
+                        true,
+                        px,
+                        py,
+                        pz,
+                        0,
+                        particleVelocity.x,
+                        particleVelocity.y,
+                        particleVelocity.z,
+                        1.0
+                    );
+                }
+            } else {
+                level.addParticle(
+                    particleData,
+                    true,
+                    worldNozzlePosition.x + ox,
+                    worldNozzlePosition.y + oy,
+                    worldNozzlePosition.z + oz,
+                    particleVelocity.x,
+                    particleVelocity.y,
+                    particleVelocity.z
+                );
+            }
         }
     }
 
@@ -812,9 +840,19 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         return resolvedProperties.particleType().createParticleOptions(resolvedProperties);
     }
 
-    private int calculateFuelConsumption(float powerPercentage, float fluidPropertiesConsumptionMultiplier, int tickRate) {
+    private double calculateFuelConsumption(float powerPercentage, float fluidPropertiesConsumptionMultiplier, int tickRate) {
         float baseConsumption = BASE_FUEL_CONSUMPTION * PropulsionConfig.THRUSTER_CONSUMPTION_MULTIPLIER.get().floatValue();
-        return (int) Math.ceil(baseConsumption * powerPercentage * fluidPropertiesConsumptionMultiplier * tickRate);
+        return baseConsumption * powerPercentage * fluidPropertiesConsumptionMultiplier * tickRate;
+    }
+
+    private int consumeFuelWithAccumulator(double requestedAmount) {
+        if (requestedAmount <= 0.0d) {
+            return 0;
+        }
+        double total = fuelDrainAccumulator + requestedAmount;
+        int toConsume = (int) Math.floor(total);
+        fuelDrainAccumulator = total - toConsume;
+        return Math.max(0, toConsume);
     }
 
     @Override
@@ -822,6 +860,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         super.write(compound, registries, clientPacket);
         compound.putInt("Width", width);
         compound.putDouble("LastConsumedMbPerTick", lastConsumedMbPerTick);
+        compound.putDouble("FuelDrainAccumulator", fuelDrainAccumulator);
         if (controllerPos != null) {
             compound.putInt("ControllerOffX", controllerPos.getX() - worldPosition.getX());
             compound.putInt("ControllerOffY", controllerPos.getY() - worldPosition.getY());
@@ -837,6 +876,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         super.read(compound, registries, clientPacket);
         width = Math.max(1, compound.getInt("Width"));
         lastConsumedMbPerTick = compound.getDouble("LastConsumedMbPerTick");
+        fuelDrainAccumulator = compound.getDouble("FuelDrainAccumulator");
         if (compound.contains("ControllerOffX")) {
             controllerPos = worldPosition.offset(
                 compound.getInt("ControllerOffX"),
