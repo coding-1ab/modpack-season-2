@@ -2,9 +2,7 @@
   "replace": false,
   "values": [
     "createpropulsion:thruster",
-    "createpropulsion:redstone_transmission",
-    "createpropulsion:solid_burner",
-    "createpropulsion:liquid_burner",
-    "createpropulsion:stirling_engine"
+    "createpropulsion:creative_thruster",
+    "createpropulsion:ion_thruster"
   ]
 }
