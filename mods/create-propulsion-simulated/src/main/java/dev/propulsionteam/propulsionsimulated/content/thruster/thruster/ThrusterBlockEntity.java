@@ -49,6 +49,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     protected BlockPos controllerPos;
     protected int width = 1;
     protected boolean updateConnectivity = true;
+    protected double lastConsumedMbPerTick = 0.0d;
 
     public ThrusterBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
@@ -317,6 +318,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     protected void updateSingleThrust(BlockState currentBlockState) {
         float thrust = 0;
         float currentPower = getPower();
+        lastConsumedMbPerTick = 0.0d;
         if (isWorking() && currentPower > 0) {
             FluidThrusterProperties properties = getFuelProperties(fluidStack().getFluid());
             float obstructionEffect = calculateObstructionEffect();
@@ -335,6 +337,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                     float baseThrustPn = (float) (PropulsionConfig.BASE_THRUST.get() * 1000.0); // config is already divided by 1000
                     baseThrustPn *= (float) calculateAtmosphericFactor();
                     thrust = baseThrustPn * thrustMultiplier * thrustPercentage * properties.thrustMultiplier() * fuelEfficiency * consumptionRatio;
+                    lastConsumedMbPerTick = (double) fuelConsumed / (double) tickRate;
                 }
             }
         }
@@ -346,6 +349,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         int n = width * width * width;
         float totalThrust = 0;
         float currentPower = getPower();
+        lastConsumedMbPerTick = 0.0d;
 
         if (isWorking() && currentPower > 0) {
             FluidThrusterProperties properties = getFuelProperties(fluidStack().getFluid());
@@ -364,6 +368,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                             float baseThrustPn = (float) (PropulsionConfig.BASE_THRUST.get() * 1000.0); // config is already divided by 1000
                             baseThrustPn *= (float) calculateAtmosphericFactor();
                             totalThrust = baseThrustPn * thrustMultiplier * thrustPercentage * properties.thrustMultiplier() * fuelEfficiency * ratio * n;
+                            lastConsumedMbPerTick = (double) fuelConsumed / (double) tickRate;
                 }
             }
         }
@@ -754,6 +759,12 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             .add(Component.literal(String.format(Locale.ROOT, "%d", capacity)).withStyle(ChatFormatting.AQUA))
             .add(Component.literal(" mB").withStyle(ChatFormatting.GRAY))
             .forGoggles(tooltip);
+
+        CreateLang.builder()
+            .add(Component.literal(" "))
+            .add(Component.literal(String.format(Locale.ROOT, "%.1f", this.lastConsumedMbPerTick)).withStyle(ChatFormatting.AQUA))
+            .add(Component.literal(" mB/t").withStyle(ChatFormatting.GRAY))
+            .forGoggles(tooltip);
     }
 
     @Override
@@ -810,6 +821,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     protected void write(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
         super.write(compound, registries, clientPacket);
         compound.putInt("Width", width);
+        compound.putDouble("LastConsumedMbPerTick", lastConsumedMbPerTick);
         if (controllerPos != null) {
             compound.putInt("ControllerOffX", controllerPos.getX() - worldPosition.getX());
             compound.putInt("ControllerOffY", controllerPos.getY() - worldPosition.getY());
@@ -824,6 +836,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     protected void read(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound, registries, clientPacket);
         width = Math.max(1, compound.getInt("Width"));
+        lastConsumedMbPerTick = compound.getDouble("LastConsumedMbPerTick");
         if (compound.contains("ControllerOffX")) {
             controllerPos = worldPosition.offset(
                 compound.getInt("ControllerOffX"),
