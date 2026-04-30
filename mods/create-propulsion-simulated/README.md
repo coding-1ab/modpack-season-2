@@ -11,8 +11,11 @@
   <a href="https://ko-fi.com/kyivsec">
     <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.3.1/assets/cozy/donate/kofi-plural_vector.svg">
   </a>
-  <a href="https://github.com/KyivSec/create_propulsion_simulated">
-    <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.3.1/assets/cozy/available/github_vector.svg">
+  <a href="https://www.curseforge.com/minecraft/mc-mods/create-propulsion-simulated">
+    <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.3.1/assets/cozy/available/curseforge_vector.svg">
+  </a>
+  <a href="https://modrinth.com/mod/create-propulsion-simulated">
+    <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.3.1/assets/cozy/available/modrinth_vector.svg">
   </a>
 </p>
 
