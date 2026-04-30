@@ -8,7 +8,7 @@ before_script:
 # Make sure it builds to validate MR
 # Could run test here but we currently have no test cases
 merge-request:
-  stage: deploy
+  stage: build
   script: ./gradlew build
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
@@ -28,6 +28,7 @@ snapshot:
   rules:
     - if: $CI_PIPELINE_SOURCE == "push"
     - if: $CI_PROJECT_NAMESPACE_SLUG == "antarcticgardens"
+    - allow_failure: true
   cache:
     key: "$CI_COMMIT_REF_NAME"
     paths:
