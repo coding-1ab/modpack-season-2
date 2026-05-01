@@ -96,10 +96,13 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             return;
         }
         if (isController() && isMultiblock()) {
-            Direction facing = getBlockState().getValue(AbstractThrusterBlock.FACING);
-            if (!isValidFormedCube(worldPosition, width, facing)) {
-                disassembleMulti();
-                return;
+            // Fix: Skip multiblock validation when outside build height to prevent disassembly.
+            if (!level.isOutsideBuildHeight(worldPosition)) {
+                Direction facing = getFacing();
+                if (!isValidFormedCube(worldPosition, width, facing)) {
+                    disassembleMulti();
+                    return;
+                }
             }
         }
         if (updateConnectivity) {

@@ -146,16 +146,18 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         if (this.isRemoved()) {
             return;
         }
-        //This part should ACTUALLY fix the issue with particle emission 
-        if (level.getBlockState(worldPosition).getBlock() != this.getBlockState().getBlock()) {
-            this.setRemoved();
-            return;
+
+        // Fix: Do not check block state when outside build height to prevent self-removal.
+        // Minecraft returns VOID_AIR outside build limits, which causes the check to fail.
+        if (!level.isOutsideBuildHeight(worldPosition)) {
+            if (level.getBlockState(worldPosition).getBlock() != getBlockState().getBlock()) {
+                this.setRemoved();
+                return;
+            }
         }
 
         super.tick();
-        // Use live world state on each tick; cached BE state can be stale client-side
-        // and cause particle direction to appear fixed.
-        BlockState currentBlockState = level.getBlockState(worldPosition);
+        BlockState currentBlockState = level.isOutsideBuildHeight(worldPosition) ? getBlockState() : level.getBlockState(worldPosition);
         if (level.isClientSide) {
             ThrusterSoundHooks.clientTick(this);
             return;
@@ -163,6 +165,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         if (shouldEmitParticles()) {
             emitParticles(level, worldPosition, currentBlockState);
         }
+
         currentTick++;
         int tick_rate = PropulsionConfig.THRUSTER_TICKS_PER_UPDATE.get();
 
@@ -288,10 +291,14 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         if (!PropulsionConfig.USE_ATMOSPHERIC_PRESSURE.get()) return 1.0;
         Level lvl = getLevel();
         if (lvl == null) return 1.0;
+
+        // Fix: Use world-space altitude for atmospheric factor calculation.
+        Vec3 worldPos = Sable.HELPER.projectOutOfSubLevel(lvl, Vec3.atCenterOf(worldPosition));
+        double y = worldPos.y;
+
         double sea = lvl.getSeaLevel();
         double worldTop = lvl.getMaxBuildHeight();
         if (worldTop <= sea + MathUtility.epsilon) return 1.0;
-        double y = worldPosition.getY();
         double normalizedAltitude = org.joml.Math.clamp(0.0d, 1.0d, (y - sea) / (worldTop - sea));
         double strength = PropulsionConfig.ATMOSPHERIC_PRESSURE_AMOUNT.get();
         double factor = 1.0 - normalizedAltitude * strength;
