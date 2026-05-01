@@ -9,7 +9,7 @@ public final class ThrusterForceProvider {
     private ThrusterForceProvider() {
     }
 
-    public static ForceSample createSample(final ThrusterBlockEntity blockEntity, final double timeStep) {
+    public static ForceSample createSample(final AbstractThrusterBlockEntity blockEntity, final double timeStep) {
         final Direction direction = blockEntity.getFacing();
 
         final Vector3d directionLocal = new Vector3d(direction.getStepX(), direction.getStepY(), direction.getStepZ());

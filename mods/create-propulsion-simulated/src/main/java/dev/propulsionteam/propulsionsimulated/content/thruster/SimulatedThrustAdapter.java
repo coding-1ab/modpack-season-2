@@ -66,6 +66,31 @@ public final class SimulatedThrustAdapter {
         return new Projection(subLevel.getLevel(), new Vec3(worldPos.x, worldPos.y, worldPos.z), new Vec3(worldDir.x, worldDir.y, worldDir.z));
     }
 
+    public static boolean isOutsideWorldBuildHeight(final Level level, final BlockPos pos) {
+        final SubLevel subLevel = Sable.HELPER.getContaining(level, pos);
+        if (subLevel == null) {
+            return level.isOutsideBuildHeight(pos);
+        }
+        final Vector3d localPos = new Vector3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+        subLevel.logicalPose().transformPosition(localPos);
+        return subLevel.getLevel().isOutsideBuildHeight((int) Math.floor(localPos.y));
+    }
+
+    @Nullable
+    public static net.minecraft.world.level.block.entity.BlockEntity getBlockEntitySafe(final Level level, final BlockPos pos) {
+        if (Sable.HELPER.getContaining(level, pos) != null && isOutsideWorldBuildHeight(level, pos)) {
+            return level.getChunkAt(pos).getBlockEntity(pos);
+        }
+        return level.getBlockEntity(pos);
+    }
+
+    public static net.minecraft.world.level.block.state.BlockState getBlockStateSafe(final Level level, final BlockPos pos) {
+        if (Sable.HELPER.getContaining(level, pos) != null && isOutsideWorldBuildHeight(level, pos)) {
+            return level.getChunkAt(pos).getBlockState(pos);
+        }
+        return level.getBlockState(pos);
+    }
+
     public record Projection(Level level, Vec3 position, Vec3 direction) {
     }
 }

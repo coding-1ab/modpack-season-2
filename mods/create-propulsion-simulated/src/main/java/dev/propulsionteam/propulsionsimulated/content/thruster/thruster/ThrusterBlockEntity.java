@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Locale;
 import dev.ryanhcode.sable.Sable;
 import dev.propulsionteam.propulsionsimulated.utility.math.MathUtility;
+import dev.propulsionteam.propulsionsimulated.content.thruster.SimulatedThrustAdapter;
 
 public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     public static final float BASE_FUEL_CONSUMPTION = 2;
@@ -80,7 +81,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     @Nullable
     public ThrusterBlockEntity getControllerBE() {
         if (isController() || !hasLevel()) return this;
-        BlockEntity be = level.getBlockEntity(controllerPos);
+        BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level,controllerPos);
         return be instanceof ThrusterBlockEntity t ? t : null;
     }
 
@@ -97,7 +98,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         }
         if (isController() && isMultiblock()) {
             // Fix: Skip multiblock validation when outside build height to prevent disassembly.
-            if (!level.isOutsideBuildHeight(worldPosition)) {
+            if (!SimulatedThrustAdapter.isOutsideWorldBuildHeight(level, worldPosition)) {
                 Direction facing = getFacing();
                 if (!isValidFormedCube(worldPosition, width, facing)) {
                     disassembleMulti();
@@ -143,10 +144,10 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             for (int y = 0; y < size; y++) {
                 for (int z = 0; z < size; z++) {
                     BlockPos pos = origin.offset(x, y, z);
-                    BlockState state = level.getBlockState(pos);
+                    BlockState state = SimulatedThrustAdapter.getBlockStateSafe(level,pos);
                     if (!state.hasProperty(AbstractThrusterBlock.FACING)) return false;
                     if (state.getValue(AbstractThrusterBlock.FACING) != facing) return false;
-                    BlockEntity be = level.getBlockEntity(pos);
+                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level,pos);
                     if (!(be instanceof ThrusterBlockEntity t)) return false;
                     if (t.isMultiblock() && t.width >= size) return false;
                 }
@@ -160,7 +161,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
                 for (int z = 0; z < size; z++) {
-                    BlockEntity be = level.getBlockEntity(origin.offset(x, y, z));
+                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level,origin.offset(x, y, z));
                     if (be instanceof ThrusterBlockEntity t && t.isMultiblock()) {
                         ThrusterBlockEntity ctrl = t.getControllerBE();
                         if (ctrl != null) ctrl.disassembleMulti();
@@ -176,7 +177,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             for (int y = 0; y < size; y++) {
                 for (int z = 0; z < size; z++) {
                     BlockPos pos = origin.offset(x, y, z);
-                    BlockEntity be = level.getBlockEntity(pos);
+                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level,pos);
                     if (!(be instanceof ThrusterBlockEntity t)) return;
                     members.add(t);
                     if (pos.equals(origin)) controller = t;
@@ -196,7 +197,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             t.width = size;
             t.isThrustDirty = true;
             BlockPos cellPos = t.getBlockPos();
-            BlockState liveState = level.getBlockState(cellPos);
+            BlockState liveState = SimulatedThrustAdapter.getBlockStateSafe(level,cellPos);
             if (liveState.getBlock() instanceof ThrusterBlock
                 && liveState.hasProperty(ThrusterBlock.MULTIBLOCK)
                 && !liveState.getValue(ThrusterBlock.MULTIBLOCK)) {
@@ -221,7 +222,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             for (int y = 0; y < size; y++) {
                 for (int z = 0; z < size; z++) {
                     BlockPos pos = origin.offset(x, y, z);
-                    BlockEntity be = level.getBlockEntity(pos);
+                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level,pos);
                     if (!(be instanceof ThrusterBlockEntity t)) continue;
                     if (!fuelPool.isEmpty()) {
                         int take = Math.min(BASE_CAPACITY, fuelPool.getAmount());
@@ -234,7 +235,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                     t.updateConnectivity = true;
                     t.isThrustDirty = true;
                     t.thrusterData.setThrust(0);
-                    BlockState liveState = level.getBlockState(pos);
+                    BlockState liveState = SimulatedThrustAdapter.getBlockStateSafe(level,pos);
                     if (liveState.getBlock() instanceof ThrusterBlock
                         && liveState.hasProperty(ThrusterBlock.MULTIBLOCK)
                         && liveState.getValue(ThrusterBlock.MULTIBLOCK)) {
@@ -384,7 +385,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < width; y++) {
                 for (int z = 0; z < width; z++) {
-                    BlockEntity be = level.getBlockEntity(origin.offset(x, y, z));
+                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level,origin.offset(x, y, z));
                     if (be instanceof ThrusterBlockEntity t) {
                         t.setThrustAndSync(share);
                     }
@@ -462,7 +463,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                     for (int z = 0; z < width; z++) {
                         BlockPos cellPos = origin.offset(x, y, z);
                         if (getInternalExhaustOffset(origin, cellPos, facing, width) != 0) continue;
-                        BlockEntity be = level.getBlockEntity(cellPos);
+                        BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level,cellPos);
                         if (be instanceof ThrusterBlockEntity t) {
                             if (t.emptyBlocks == 0) {
                                 return 0f;
@@ -494,7 +495,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                     for (int z = 0; z < width; z++) {
                         BlockPos cellPos = origin.offset(x, y, z);
                         if (getInternalExhaustOffset(origin, cellPos, facing, width) != 0) continue;
-                        BlockEntity be = level.getBlockEntity(cellPos);
+                        BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level,cellPos);
                         if (be instanceof ThrusterBlockEntity t) {
                             if (t.emptyBlocks == 0) {
                                 return 0;
@@ -539,7 +540,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             for (int y = 0; y < width; y++) {
                 for (int z = 0; z < width; z++) {
                     if (x == 0 && y == 0 && z == 0) continue;
-                    BlockEntity be = level.getBlockEntity(origin.offset(x, y, z));
+                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level,origin.offset(x, y, z));
                     if (be instanceof ThrusterBlockEntity t && t.redstoneInput > max) {
                         max = t.redstoneInput;
                     }
@@ -690,10 +691,10 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             for (int y = 0; y < size; y++) {
                 for (int z = 0; z < size; z++) {
                     BlockPos pos = origin.offset(x, y, z);
-                    BlockState state = level.getBlockState(pos);
+                    BlockState state = SimulatedThrustAdapter.getBlockStateSafe(level,pos);
                     if (!(state.getBlock() instanceof ThrusterBlock)) return false;
                     if (!state.hasProperty(AbstractThrusterBlock.FACING) || state.getValue(AbstractThrusterBlock.FACING) != facing) return false;
-                    BlockEntity be = level.getBlockEntity(pos);
+                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level,pos);
                     if (!(be instanceof ThrusterBlockEntity t)) return false;
                     ThrusterBlockEntity ctrl = t.getControllerBE();
                     if (ctrl == null || ctrl != this) return false;

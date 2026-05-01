@@ -36,8 +36,11 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import java.util.List;
 import java.util.Locale;
 
+import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
+import dev.ryanhcode.sable.sublevel.ServerSubLevel;
+
 public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
-    implements IHaveGoggleInformation, BlockEntitySubLevelPropellerActor, BlockSubLevelAssemblyListener, BlockEntityPropeller {
+    implements IHaveGoggleInformation, dev.ryanhcode.sable.api.block.BlockEntitySubLevelActor, BlockSubLevelAssemblyListener {
     protected static final double PN_PER_DISPLAY_UNIT = 1000.0d;
     protected static final double PN_PER_SABLE_FORCE_UNIT = 1500.0d;
     protected static final double PARTICLE_BROADCAST_RANGE_BLOCKS = 150.0d;
@@ -149,15 +152,16 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
 
         // Fix: Do not check block state when outside build height to prevent self-removal.
         // Minecraft returns VOID_AIR outside build limits, which causes the check to fail.
-        if (!level.isOutsideBuildHeight(worldPosition)) {
-            if (level.getBlockState(worldPosition).getBlock() != getBlockState().getBlock()) {
+        boolean isOutsideWorldHeight = SimulatedThrustAdapter.isOutsideWorldBuildHeight(level, worldPosition);
+        if (!isOutsideWorldHeight) {
+            if (SimulatedThrustAdapter.getBlockStateSafe(level,worldPosition).getBlock() != getBlockState().getBlock()) {
                 this.setRemoved();
                 return;
             }
         }
 
         super.tick();
-        BlockState currentBlockState = level.isOutsideBuildHeight(worldPosition) ? getBlockState() : level.getBlockState(worldPosition);
+        BlockState currentBlockState = isOutsideWorldHeight ? getBlockState() : SimulatedThrustAdapter.getBlockStateSafe(level,worldPosition);
         if (level.isClientSide) {
             ThrusterSoundHooks.clientTick(this);
             return;
@@ -254,7 +258,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     }
 
     public double getDisplayedAirflowMsForTooltip() {
-        return getAirflow();
+        return getPower() * calculateObstructionEffect() * 200.0;
     }
     protected float getFuelEfficiencyMultiplier() { return 1.0f; }
     
@@ -292,17 +296,31 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         Level lvl = getLevel();
         if (lvl == null) return 1.0;
 
-        // Fix: Use world-space altitude for atmospheric factor calculation.
         Vec3 worldPos = Sable.HELPER.projectOutOfSubLevel(lvl, Vec3.atCenterOf(worldPosition));
         double y = worldPos.y;
 
         double sea = lvl.getSeaLevel();
         double worldTop = lvl.getMaxBuildHeight();
-        if (worldTop <= sea + MathUtility.epsilon) return 1.0;
-        double normalizedAltitude = org.joml.Math.clamp(0.0d, 1.0d, (y - sea) / (worldTop - sea));
-        double strength = PropulsionConfig.ATMOSPHERIC_PRESSURE_AMOUNT.get();
-        double factor = 1.0 - normalizedAltitude * strength;
-        return org.joml.Math.clamp(0.1d, 1.0d, factor);
+        double normalizedAltitude = 0.0d;
+        if (worldTop > sea + MathUtility.epsilon) {
+            normalizedAltitude = org.joml.Math.clamp(0.0d, 1.0d, (y - sea) / (worldTop - sea));
+        }
+        
+        // Proxy for air pressure (1.0 at sea level, 0.0 at space/build limit)
+        double airPressure = 1.0 - normalizedAltitude;
+        double strength = org.joml.Math.clamp(0.0d, 2.0d, PropulsionConfig.ATMOSPHERIC_PRESSURE_AMOUNT.get());
+
+        if (this.isIon()) {
+            // Ion propulsion suffers strongly in dense air and ramps up toward vacuum.
+            // 1.0 pressure -> ~20% thrust, near-vacuum -> ~100%.
+            double target = org.joml.Math.clamp(0.2d, 1.0d, 1.0d - 0.8d * airPressure);
+            return org.joml.Math.clamp(0.05d, 5.0d, 1.0d + (target - 1.0d) * strength);
+        }
+
+        // Chemical/rocket thrusters stay mostly constant; altitude gives a mild bonus.
+        double vacuumBonus = airPressure < 1.0d ? (1.0d - airPressure) * 0.15d : 0.0d;
+        double target = 1.0d + vacuumBonus;
+        return org.joml.Math.clamp(0.05d, 5.0d, 1.0d + (target - 1.0d) * strength);
     }
 
     public float getThrottle() {
@@ -322,29 +340,26 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     public boolean validFluid() { return false; }
     public net.neoforged.neoforge.fluids.FluidStack fluidStack() { return net.neoforged.neoforge.fluids.FluidStack.EMPTY; }
 
-    @Override
-    public BlockEntityPropeller getPropeller() {
-        return this;
-    }
-
-    @Override
-    public Direction getBlockDirection() {
-        return getBlockState().getValue(AbstractThrusterBlock.FACING).getOpposite();
-    }
-
-    @Override
-    public double getAirflow() {
-        return getPower() * calculateObstructionEffect() * 200.0;
-    }
-
-    @Override
-    public double getThrust() {
-        return thrusterData.getThrust() / PN_PER_SABLE_FORCE_UNIT;
-    }
-
-    @Override
     public boolean isActive() {
         return isPowered() && isWorking();
+    }
+
+    @Override
+    public void sable$physicsTick(final ServerSubLevel subLevel, final RigidBodyHandle handle, final double timeStep) {
+        if (this.getCurrentThrust() <= 0.0d) {
+            return;
+        }
+
+        final dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterForceProvider.ForceSample sample = 
+            dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterForceProvider.createSample(this, timeStep);
+            
+        double scaledThrust = this.getCurrentThrust();
+        if (scaledThrust <= 0.0d || !Double.isFinite(scaledThrust)) {
+            return;
+        }
+
+        Vector3d adjustedImpulse = new Vector3d(sample.impulseLocal()).div(PN_PER_SABLE_FORCE_UNIT);
+        SimulatedThrustAdapter.applyImpulseAtPoint(subLevel, sample.pointLocal(), adjustedImpulse);
     }
 
     @Override
@@ -445,7 +460,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         int oldEmptyBlocks = this.emptyBlocks;
         for (emptyBlocks = 0; emptyBlocks < OBSTRUCTION_LENGTH; emptyBlocks++){
             BlockPos checkPos = pos.relative(forwardDirection.getOpposite(), emptyBlocks + 1);
-            BlockState state = level.getBlockState(checkPos);
+            BlockState state = SimulatedThrustAdapter.getBlockStateSafe(level,checkPos);
             if (!state.isAir() && state.isSolid()) break;
         }
         if (oldEmptyBlocks != this.emptyBlocks) { //Only set dirty if it actually changed

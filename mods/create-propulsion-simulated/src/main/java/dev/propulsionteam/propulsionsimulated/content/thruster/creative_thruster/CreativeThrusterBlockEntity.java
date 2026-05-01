@@ -21,6 +21,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import dev.propulsionteam.propulsionsimulated.content.thruster.SimulatedThrustAdapter;
 
 public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
     private CreativeThrusterPowerScrollValueBehaviour powerBehaviour;
@@ -120,13 +121,17 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
 
         if (!isPowered())
             return false;
-        Level level = getLevel();
+
+        return hasPlumeSpace();
+    }
+
+    private boolean hasPlumeSpace() {
         if (level == null)
             return false;
 
         Direction facing = getBlockState().getValue(CreativeThrusterBlock.FACING);
         BlockPos plumeOccupiedPosition = worldPosition.relative(facing.getOpposite());
-        return !level.getBlockState(plumeOccupiedPosition).isFaceSturdy(level, plumeOccupiedPosition, facing);
+        return !SimulatedThrustAdapter.getBlockStateSafe(level,plumeOccupiedPosition).isFaceSturdy(level, plumeOccupiedPosition, facing);
     }
 
     @Override
