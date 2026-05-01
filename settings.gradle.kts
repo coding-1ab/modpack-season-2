@@ -312,4 +312,31 @@ addMods {
             )
         )
     )
+    addMod(
+        filePath = "./mods/create_power_loader",
+        includeTransitive = false,
+        modProjects = listOf(
+            modProject(
+                dependencyNotations = listOf("com.hlysine.create_power_loader:create_power_loader"),
+                projectPath = ":",
+                shouldUnpack = true
+            ),
+        )
+    )
+    addMod(
+        filePath = "./mods/sable-companion",
+        includeTransitive = false,
+        modProjects = listOf(
+            modProject(
+                dependencyNotations = listOf("dev.ryanhcode.sable-companion:sable-companion-common-1.21.1"),
+                projectPath = ":common",
+                shouldUnpack = true
+            ),
+            modProject(
+                dependencyNotations = listOf("dev.ryanhcode.sable-companion:sable-companion-fabric-1.21.1"),
+                projectPath = ":fabric",
+                shouldUnpack = true
+            ),
+        )
+    )
 }

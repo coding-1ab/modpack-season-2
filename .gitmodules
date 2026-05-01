@@ -78,3 +78,11 @@
 	path = mods/MapAtlases
 	url = https://github.com/coding-1ab/mapatlases-neoforge.git
 	branch = 1.21.1
+[submodule "mods/create_power_loader"]
+	path = mods/create_power_loader
+	url = https://github.com/coding-1ab/create_power_loader.git
+	branch = main
+[submodule "mods/sable-companion"]
+	path = mods/sable-companion
+	url = https://github.com/ryanhcode/sable-companion.git
+	branch = main
