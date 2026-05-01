@@ -111,6 +111,7 @@ dependencies {
         capability("$group:${base.archivesName.get()}:$version")
         capability("$group:$mod_id-${project.name}-${minecraft_version}:$version")
         capability("$group:$mod_id:$version")
+        capability("$group:${project.name}:$version")
     }
     publishing.publications.configureEach {
         suppressPomMetadataWarningsFor(variant)
