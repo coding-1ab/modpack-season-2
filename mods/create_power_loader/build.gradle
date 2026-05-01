@@ -2,7 +2,7 @@ plugins {
     id 'idea'
     id 'java-library'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.86'
+    id 'net.neoforged.moddev' version '2.0.141'
     id 'me.modmuss50.mod-publish-plugin' version '0.4.5'
 }
 
@@ -167,10 +167,10 @@ dependencies {
     compileOnly("mezz.jei:jei-${jei_minecraft_version}-common-api:${jei_version}")
     compileOnly("mezz.jei:jei-${jei_minecraft_version}-neoforge-api:${jei_version}")
     // at runtime, use the full JEI jar for Forge
-    runtimeOnly("mezz.jei:jei-${jei_minecraft_version}-neoforge:${jei_version}")
+    localRuntime("mezz.jei:jei-${jei_minecraft_version}-neoforge:${jei_version}")
     // Sable compatibility
-    runtimeOnly("dev.ryanhcode.sable:sable-neoforge-${minecraft_version}:${sable_version}")
-    runtimeOnly("dev.simulated_team.simulated:simulated-neoforge-${minecraft_version}:${simulated_version}") {
+    localRuntime("dev.ryanhcode.sable:sable-neoforge-${minecraft_version}:${sable_version}")
+    localRuntime("dev.simulated_team.simulated:simulated-neoforge-${minecraft_version}:${simulated_version}") {
         transitive = false
     }
     jarJar(api("dev.ryanhcode.sable-companion:sable-companion-common-${minecraft_version}:[${sable_companion_version},)")) {
@@ -211,7 +211,7 @@ processResources {
     inputs.properties replaceProperties
 
     filesMatching(['META-INF/neoforge.mods.toml', 'pack.mcmeta']) {
-        expand replaceProperties + [project: project]
+        expand replaceProperties
     }
 }
 
@@ -258,7 +258,7 @@ idea {
 }
 
 wrapper {
-    gradleVersion = '8.10.1'
+    gradleVersion = '9.3.0'
     distributionType = Wrapper.DistributionType.BIN
 }
 
