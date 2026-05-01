@@ -167,8 +167,8 @@ repositories {
         name = "TerraformersMC"
     }
     maven("https://maven.dragons.plus/releases")
-    maven("https://maven.ftb.dev/releases" ) // FTB Mods
-    maven("https://maven.architectury.dev" ) // Arch API
+    maven("https://maven.ftb.dev/releases") // FTB Mods
+    maven("https://maven.architectury.dev") // Arch API
     maven("https://jm.gserv.me/repository/maven-public") { // JourneyMap
         content {
             includeGroup("info.journeymap")
@@ -201,6 +201,9 @@ repositories {
 
 val localRuntime = configurations.maybeCreate("localRuntime")
 configurations {
+    localRuntime {
+        isTransitive = false
+    }
     runtimeClasspath {
         extendsFrom(localRuntime.get())
     }
@@ -230,7 +233,9 @@ dependencies {
     localRuntime("curse.maven:modernfix-790626:7917721")
     localRuntime("curse.maven:spark-361579:6225208")
     localRuntime("top.theillusivec4.curios:curios-neoforge:$curiosVersion+$minecraftVersion")
-    localRuntime("maven.modrinth:sodium:mc$minecraftVersion-$sodiumVersion-neoforge")
+    // sodium 추가하려면 아래 줄 주석 해제할 것
+    // 주의: sodium 추가하면 Sinytra Connector가 같이 딸려옴
+    // localRuntime("maven.modrinth:sodium:mc$minecraftVersion-$sodiumVersion-neoforge")
     localRuntime("net.mehvahdjukaar:moonlight-neoforge:$moonlightVersion") {
         isTransitive = false
     }
