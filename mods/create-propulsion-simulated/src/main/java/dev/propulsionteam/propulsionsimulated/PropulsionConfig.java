@@ -48,17 +48,20 @@ public class PropulsionConfig {
     public static final ModConfigSpec.ConfigValue<Double>  THRUSTER_CONSUMPTION_MULTIPLIER;
     public static final ModConfigSpec.ConfigValue<Integer> THRUSTER_TICKS_PER_UPDATE;
     public static final ModConfigSpec.ConfigValue<Boolean> THRUSTER_DAMAGE_ENTITIES;
-    public static final ModConfigSpec.ConfigValue<Double>  THRUSTER_PARTICLE_OFFSET_INCOMING_VEL_MODIFIER;
-    public static final ModConfigSpec.ConfigValue<Double>  THRUSTER_PARTICLE_COUNT_MULTIPLIER;
+    public static final ModConfigSpec.DoubleValue STANDARD_THRUSTER_PARTICLE_COUNT_MULTIPLIER;
+    public static final ModConfigSpec.DoubleValue STANDARD_THRUSTER_PARTICLE_VELOCITY_MULTIPLIER;
+    public static final ModConfigSpec.DoubleValue ION_THRUSTER_PARTICLE_COUNT_MULTIPLIER;
+    public static final ModConfigSpec.DoubleValue ION_THRUSTER_PARTICLE_VELOCITY_MULTIPLIER;
+    public static final ModConfigSpec.DoubleValue VECTOR_THRUSTER_PARTICLE_COUNT_MULTIPLIER;
+    public static final ModConfigSpec.DoubleValue VECTOR_THRUSTER_PARTICLE_VELOCITY_MULTIPLIER;
+    public static final ModConfigSpec.DoubleValue CREATIVE_THRUSTER_PARTICLE_COUNT_MULTIPLIER;
+    public static final ModConfigSpec.DoubleValue CREATIVE_THRUSTER_PARTICLE_VELOCITY_MULTIPLIER;
+    public static final ModConfigSpec.DoubleValue CREATIVE_VECTOR_THRUSTER_PARTICLE_COUNT_MULTIPLIER;
+    public static final ModConfigSpec.DoubleValue CREATIVE_VECTOR_THRUSTER_PARTICLE_VELOCITY_MULTIPLIER;
     public static final ModConfigSpec.BooleanValue DEBUG_THRUSTER;
 
     // Creative Thruster (legacy)
     public static final ModConfigSpec.ConfigValue<Double> CREATIVE_THRUSTER_THRUST_MULTIPLIER;
-
-    // Optical sensors
-    public static final ModConfigSpec.ConfigValue<Integer> OPTICAL_SENSOR_TICKS_PER_UPDATE;
-    public static final ModConfigSpec.ConfigValue<Integer> INLINE_OPTICAL_SENSOR_MAX_DISTANCE;
-    public static final ModConfigSpec.ConfigValue<Integer> OPTICAL_SENSOR_MAX_DISTANCE;
 
     // Wings
     public static final ModConfigSpec.ConfigValue<Double> BASE_WING_LIFT;
@@ -194,15 +197,6 @@ public class PropulsionConfig {
                 .define("Creative thrust multiplier", 1.0);
         SERVER_BUILDER.pop();
 
-        SERVER_BUILDER.push("Optical sensors");
-            OPTICAL_SENSOR_TICKS_PER_UPDATE = SERVER_BUILDER.comment("How many ticks between casting a ray.")
-                .defineInRange("Optical sensor tick rate", 2, 1, 100);
-            INLINE_OPTICAL_SENSOR_MAX_DISTANCE = SERVER_BUILDER.comment("Length of the raycast ray.")
-                .defineInRange("Inline optical sensor max raycast distance", 16, 4, 32);
-            OPTICAL_SENSOR_MAX_DISTANCE = SERVER_BUILDER.comment("Length of the raycast ray. Very high values may degrade performance.")
-                .defineInRange("Optical sensor max raycast distance", 32, 8, 64);
-        SERVER_BUILDER.pop();
-
         SERVER_BUILDER.push("Wing");
             BASE_WING_LIFT = SERVER_BUILDER.comment("Wing's lift force is multiplied by this number.")
                 .define("Base lift", 150.0);
@@ -295,10 +289,36 @@ public class PropulsionConfig {
 
         //#region Client
         CLIENT_BUILDER.push("Thruster");
-            THRUSTER_PARTICLE_OFFSET_INCOMING_VEL_MODIFIER = CLIENT_BUILDER.comment("Particle additional velocity modifier when ship is moving in the same direction as exhaust.")
-                    .define("Particle velocity offset", 0.15);
-            THRUSTER_PARTICLE_COUNT_MULTIPLIER = CLIENT_BUILDER.comment("The higher this number is - the more particles are spawned.")
-                    .define("Particle count multiplier", 1.0);
+            CLIENT_BUILDER.push("Standard");
+                STANDARD_THRUSTER_PARTICLE_COUNT_MULTIPLIER = CLIENT_BUILDER.comment("The higher this number is - the more particles are spawned.")
+                        .defineInRange("Particle count multiplier", 1.0, 0.0, 32.0);
+                STANDARD_THRUSTER_PARTICLE_VELOCITY_MULTIPLIER = CLIENT_BUILDER.comment("Multiplier on emitted particle velocity. 1.0 keeps the default exhaust speed.")
+                        .defineInRange("Particle velocity multiplier", 1.0, 0.0, 32.0);
+            CLIENT_BUILDER.pop();
+            CLIENT_BUILDER.push("Ion");
+                ION_THRUSTER_PARTICLE_COUNT_MULTIPLIER = CLIENT_BUILDER.comment("The higher this number is - the more particles are spawned.")
+                        .defineInRange("Particle count multiplier", 1.0, 0.0, 32.0);
+                ION_THRUSTER_PARTICLE_VELOCITY_MULTIPLIER = CLIENT_BUILDER.comment("Multiplier on emitted particle velocity. 1.0 keeps the default exhaust speed.")
+                        .defineInRange("Particle velocity multiplier", 1.0, 0.0, 32.0);
+            CLIENT_BUILDER.pop();
+            CLIENT_BUILDER.push("Vector");
+                VECTOR_THRUSTER_PARTICLE_COUNT_MULTIPLIER = CLIENT_BUILDER.comment("The higher this number is - the more particles are spawned.")
+                        .defineInRange("Particle count multiplier", 1.0, 0.0, 32.0);
+                VECTOR_THRUSTER_PARTICLE_VELOCITY_MULTIPLIER = CLIENT_BUILDER.comment("Multiplier on emitted particle velocity. 1.0 keeps the default exhaust speed.")
+                        .defineInRange("Particle velocity multiplier", 1.0, 0.0, 32.0);
+            CLIENT_BUILDER.pop();
+            CLIENT_BUILDER.push("Creative");
+                CREATIVE_THRUSTER_PARTICLE_COUNT_MULTIPLIER = CLIENT_BUILDER.comment("The higher this number is - the more particles are spawned.")
+                        .defineInRange("Particle count multiplier", 1.0, 0.0, 32.0);
+                CREATIVE_THRUSTER_PARTICLE_VELOCITY_MULTIPLIER = CLIENT_BUILDER.comment("Multiplier on emitted particle velocity. 1.0 keeps the default exhaust speed.")
+                        .defineInRange("Particle velocity multiplier", 1.0, 0.0, 32.0);
+            CLIENT_BUILDER.pop();
+            CLIENT_BUILDER.push("Creative Vector");
+                CREATIVE_VECTOR_THRUSTER_PARTICLE_COUNT_MULTIPLIER = CLIENT_BUILDER.comment("The higher this number is - the more particles are spawned.")
+                        .defineInRange("Particle count multiplier", 1.0, 0.0, 32.0);
+                CREATIVE_VECTOR_THRUSTER_PARTICLE_VELOCITY_MULTIPLIER = CLIENT_BUILDER.comment("Multiplier on emitted particle velocity. 1.0 keeps the default exhaust speed.")
+                        .defineInRange("Particle velocity multiplier", 1.0, 0.0, 32.0);
+            CLIENT_BUILDER.pop();
         CLIENT_BUILDER.pop();
         CLIENT_BUILDER.push("Stirling Engine");
             STIRLING_REVOLUTION_PERIOD = CLIENT_BUILDER.comment("Revolution period of the simulated shaft (affects only piston movement).")
