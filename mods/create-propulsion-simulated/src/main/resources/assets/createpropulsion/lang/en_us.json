@@ -138,5 +138,6 @@
     "createpropulsion.ponder.shared.thruster_3x3.top_line_invalid": "You can only feed from the rear side for multiblocks.",
     "createpropulsion.ponder.shared.thruster_3x3.back_layer_inputs": "Feed the back layer input manifold for full operation.",
     "createpropulsion.ponder.shared.thruster_3x3.valid_fuel_now": "Insert valid thruster fuel into the rear-fed manifold.",
-    "createpropulsion.ponder.shared.thruster_3x3.power_thruster": "Apply redstone to the thruster and the whole multiblock works."
+    "createpropulsion.ponder.shared.thruster_3x3.power_thruster": "Apply redstone to the thruster and the whole multiblock works.",
+    "block.createpropulsion.vector_thruster": "Vector Thruster"
 }

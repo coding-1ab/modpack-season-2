@@ -18,16 +18,17 @@ import net.minecraft.util.Mth;
 
 public class IonParticle extends SimpleAnimatedParticle {
     
-    private static final float BASE_QUAD_SIZE = 0.95f;
-    private static final float END_QUAD_SIZE = 0.2f;
-    private static final float SPEED_MULTIPLIER = 0.144f;
-    private static final float FRICTION = 0.995f;
-    private static final int BASE_LIFETIME = 20;
-    private static final double FLUCTUATION = 0.0025d;
+    protected float getBaseQuadSize() { return 0.95f; }
+    protected float getEndQuadSize() { return 0.2f; }
+    protected float getSpeedMultiplier() { return 0.144f; }
+    protected float getParticleFriction() { return 0.995f; }
+    protected int getBaseLifetime() { return 20; }
+    protected double getFluctuation() { return 0.0025d; }
 
     private static final int SPRITE_COUNT = 9;
     private final SpriteSet spriteSet;
     private final float startSize;
+    private final float endSize;
     private final List<ResourceLocation> overrideTextures;
 
     protected IonParticle(ClientLevel level, double x, double y, double z, 
@@ -37,14 +38,16 @@ public class IonParticle extends SimpleAnimatedParticle {
         this.spriteSet = spriteSet;
         this.overrideTextures = data.overrideTextures();
         this.hasPhysics = false;
-        this.friction = FRICTION;
-        this.lifetime = BASE_LIFETIME;
+        this.friction = getParticleFriction();
+        this.lifetime = getBaseLifetime();
 
-        this.xd = dx * SPEED_MULTIPLIER;
-        this.yd = dy * SPEED_MULTIPLIER;
-        this.zd = dz * SPEED_MULTIPLIER;
+        this.xd = dx * getSpeedMultiplier();
+        this.yd = dy * getSpeedMultiplier();
+        this.zd = dz * getSpeedMultiplier();
 
-        this.quadSize = BASE_QUAD_SIZE;
+        this.quadSize = data.overrideSize() != null ? data.overrideSize() : getBaseQuadSize();
+        float scale = data.overrideSize() != null ? (data.overrideSize() / getBaseQuadSize()) : 1.0f;
+        this.endSize = getEndQuadSize() * scale;
         this.startSize = this.quadSize;
         
         if (data.overrideColor() == null) {
@@ -69,9 +72,9 @@ public class IonParticle extends SimpleAnimatedParticle {
         }
 
         this.move(this.xd, this.yd, this.zd);
-        this.xd += (this.random.nextDouble() - 0.5d) * FLUCTUATION;
-        this.yd += (this.random.nextDouble() - 0.5d) * FLUCTUATION;
-        this.zd += (this.random.nextDouble() - 0.5d) * FLUCTUATION;
+        this.xd += (this.random.nextDouble() - 0.5d) * getFluctuation();
+        this.yd += (this.random.nextDouble() - 0.5d) * getFluctuation();
+        this.zd += (this.random.nextDouble() - 0.5d) * getFluctuation();
         this.xd *= this.friction;
         this.yd *= this.friction;
         this.zd *= this.friction;
@@ -95,7 +98,7 @@ public class IonParticle extends SimpleAnimatedParticle {
             this.setSprite(this.spriteSet.get(frameIndex, SPRITE_COUNT));
         }
         
-        this.quadSize = Mth.lerp(progress, this.startSize, END_QUAD_SIZE);
+        this.quadSize = Mth.lerp(progress, this.startSize, this.endSize);
     }
 
     @Nonnull

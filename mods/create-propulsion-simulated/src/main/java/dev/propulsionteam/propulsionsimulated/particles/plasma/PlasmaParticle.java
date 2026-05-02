@@ -20,11 +20,11 @@ import net.minecraft.world.phys.Vec3;
 public class PlasmaParticle extends SimpleAnimatedParticle {
     
     //Config
-    private static final float PLASMA_SPREAD = 0.05f;
-    private static final float PLASMA_BASE_QUAD_SIZE = 2.0f;
-    private static final float PLASMA_FRICTION = 0.99f;
-    private static final float PLASMA_SPEED_MULTIPLIER = 0.144f;
-    private static final int PLASMA_BASE_LIFETIME = 40;
+    protected float getPlasmaSpread() { return 0.05f; }
+    protected float getPlasmaBaseQuadSize() { return 2.0f; }
+    protected float getPlasmaFriction() { return 0.99f; }
+    protected float getPlasmaSpeedMultiplier() { return 0.144f; }
+    protected int getPlasmaBaseLifetime() { return 40; }
     
     //Physics
     private static final float COLLISION_SPEED_RETENTION = 0.9f;
@@ -53,15 +53,15 @@ public class PlasmaParticle extends SimpleAnimatedParticle {
         this.overrideTextures = data.overrideTextures();
         
         //Initialize plasma state
-        this.quadSize *= PLASMA_BASE_QUAD_SIZE;
+        this.quadSize *= getPlasmaBaseQuadSize();
         this.baseSize = this.quadSize;
-        this.lifetime = PLASMA_BASE_LIFETIME;
-        this.friction = PLASMA_FRICTION;
+        this.lifetime = getPlasmaBaseLifetime();
+        this.friction = getPlasmaFriction();
         this.dx = dxSource + getRandomSpread(); 
         this.dy = dySource + getRandomSpread(); 
         this.dz = dzSource + getRandomSpread();
         this.hasPhysics = true;
-        this.currentSpeedMultiplier = PLASMA_SPEED_MULTIPLIER;
+        this.currentSpeedMultiplier = getPlasmaSpeedMultiplier();
         
         //Calculate spread direction (perpendicular to velocity)
         Vec3 initialVel = new Vec3(this.dx, this.dy, this.dz).normalize();
@@ -242,7 +242,7 @@ public class PlasmaParticle extends SimpleAnimatedParticle {
     }
 
     float getRandomSpread(){
-        return (random.nextFloat() * 2.0f - 1.0f) * PLASMA_SPREAD;
+        return (random.nextFloat() * 2.0f - 1.0f) * getPlasmaSpread();
     }
 
     @Nonnull

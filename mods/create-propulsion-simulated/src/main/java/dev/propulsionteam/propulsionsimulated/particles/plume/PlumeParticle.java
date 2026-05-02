@@ -19,15 +19,15 @@ import net.minecraft.world.phys.Vec3;
 
 public class PlumeParticle extends SimpleAnimatedParticle {
     //Plume
-    private static final float PLUME_SPREAD = 0.05f;
-    private static final float PLUME_BASE_QUAD_SIZE = 2.0f;
-    private static final float PLUME_FRICTION = 0.99f;
-    private static final float PLUME_SPEED_MULTIPLIER = 0.144f;
-    private static final int PLUME_BASE_LIFETIME = 40;
+    protected float getPlumeSpread() { return 0.05f; }
+    protected float getPlumeBaseQuadSize() { return 2.0f; }
+    protected float getPlumeFriction() { return 0.99f; }
+    protected float getPlumeSpeedMultiplier() { return 0.144f; }
+    protected int getPlumeBaseLifetime() { return 40; }
     //Smoke
-    private static final float SMOKE_SPREAD_MAGNITUDE = 0.15f;
-    private static final float SMOKE_FRICTION = 0.96f;
-    private static final float SMOKE_BASE_LIFt = 0.02f;
+    protected float getSmokeSpreadMagnitude() { return 0.15f; }
+    protected float getSmokeFriction() { return 0.96f; }
+    protected float getSmokeBaseLift() { return 0.02f; }
 
     //Physics
     private static final float COLLISION_SPEED_RETENTION = 0.9f;
@@ -66,16 +66,16 @@ public class PlumeParticle extends SimpleAnimatedParticle {
         this.spriteSet = spriteSet;
         this.overrideTextures = data.overrideTextures();
         //Initialize plume state
-        this.quadSize *= PLUME_BASE_QUAD_SIZE;
+        this.quadSize *= getPlumeBaseQuadSize();
         this.baseSize = this.quadSize;
-        this.lifetime = PLUME_BASE_LIFETIME + random.nextInt(5);
-        this.friction = PLUME_FRICTION;
+        this.lifetime = getPlumeBaseLifetime() + random.nextInt(5);
+        this.friction = getPlumeFriction();
         this.dx = dxSource + getRandomSpread(); 
         this.dy = dySource + getRandomSpread(); 
         this.dz = dzSource + getRandomSpread();
         this.hasPhysics = true;
-        this.currentSpeedMultiplier = PLUME_SPEED_MULTIPLIER;
-        this.currentFriction = PLUME_FRICTION;
+        this.currentSpeedMultiplier = getPlumeSpeedMultiplier();
+        this.currentFriction = getPlumeFriction();
         this.currentState = ParticleState.PLUME;
         //Calculate spread direction
         Vec3 initialVel = new Vec3(this.dx, this.dy, this.dz).normalize();
@@ -89,7 +89,7 @@ public class PlumeParticle extends SimpleAnimatedParticle {
         this.spreadDirection = u.scale(Math.cos(randomAngle)).add(v.scale(Math.sin(randomAngle)));
         this.spreadMagnitude = 0.1f + this.random.nextFloat() * (0.8f - 0.1f); //0.1 - 0.8
         this.smokeTransitionAge = BASE_SMOKE_TRANSITION_AGE + this.random.nextIntBetweenInclusive(-2, 2);
-        this.smokeLift = SMOKE_BASE_LIFt + -0.01f + this.random.nextFloat() * (0.03f - -0.01f); //-0.1 - 0.03
+        this.smokeLift = getSmokeBaseLift() + -0.01f + this.random.nextFloat() * (0.03f - -0.01f); //-0.1 - 0.03
 
         setSpriteFromAge(this.spriteSet);
         if (data.overrideColor() == null) {
@@ -227,7 +227,7 @@ public class PlumeParticle extends SimpleAnimatedParticle {
         if (currentState == ParticleState.PLUME && this.age >= this.smokeTransitionAge) {
             currentState = ParticleState.SMOKE;
             this.baseSize *= 1.2f;
-            this.friction = SMOKE_FRICTION;
+            this.friction = getSmokeFriction();
         }
         if (currentState == ParticleState.SMOKE) {
             this.dy += this.smokeLift;
@@ -244,9 +244,9 @@ public class PlumeParticle extends SimpleAnimatedParticle {
         if (this.age >= presmokeAge && !this.hasCollided) {
             float smoke_percent = (this.age - presmokeAge) / (this.lifetime - presmokeAge);
             float aged_spread_magnitude = (0.8f - smoke_percent) * this.spreadMagnitude; //It slows down at last frames actually
-            this.dx += this.spreadDirection.x * SMOKE_SPREAD_MAGNITUDE * aged_spread_magnitude;
-            this.dy += this.spreadDirection.y * SMOKE_SPREAD_MAGNITUDE * aged_spread_magnitude;
-            this.dz += this.spreadDirection.z * SMOKE_SPREAD_MAGNITUDE * aged_spread_magnitude;
+            this.dx += this.spreadDirection.x * getSmokeSpreadMagnitude() * aged_spread_magnitude;
+            this.dy += this.spreadDirection.y * getSmokeSpreadMagnitude() * aged_spread_magnitude;
+            this.dz += this.spreadDirection.z * getSmokeSpreadMagnitude() * aged_spread_magnitude;
         }
 
         //Friction
@@ -294,7 +294,7 @@ public class PlumeParticle extends SimpleAnimatedParticle {
     }
 
     float getRandomSpread(){
-        return (random.nextFloat() * 2.0f - 1.0f) * PLUME_SPREAD;
+        return (random.nextFloat() * 2.0f - 1.0f) * getPlumeSpread();
     }
 
     @Nonnull

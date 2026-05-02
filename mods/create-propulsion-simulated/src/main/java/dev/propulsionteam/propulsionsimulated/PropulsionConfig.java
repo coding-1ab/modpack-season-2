@@ -26,6 +26,8 @@ public class PropulsionConfig {
     public static final ModConfigSpec.IntValue ION_THRUSTER_ENERGY_CAPACITY_FE;
     public static final ModConfigSpec.DoubleValue ION_THRUSTER_FE_PER_TICK_AT_FULL_THROTTLE;
     public static final ModConfigSpec.DoubleValue ION_THRUSTER_BASE_THRUST;
+    public static final ModConfigSpec.DoubleValue VECTOR_THRUSTER_MAX_THRUST;
+    public static final ModConfigSpec.DoubleValue VECTOR_THRUSTER_BASE_THRUST;
     public static final ModConfigSpec.BooleanValue DAMAGE_ENTITIES;
     public static final ModConfigSpec.IntValue DAMAGE_TICK_INTERVAL;
     public static final ModConfigSpec.DoubleValue NOZZLE_OFFSET_FROM_CENTER;
@@ -127,6 +129,10 @@ public class PropulsionConfig {
                 .defineInRange("ionThrusterFePerTickAtFullThrottle", 80.0d, 0.0001d, 1000000.0d);
         ION_THRUSTER_BASE_THRUST = SERVER_BUILDER.comment("Ion thruster base thrust at redstone 15 and full obstruction efficiency.")
                 .defineInRange("ionThrusterBaseThrust", 1000.d, 1.d, 10000000.d);
+        VECTOR_THRUSTER_MAX_THRUST = SERVER_BUILDER.comment("Vector thruster maximum thrust cap in pN.")
+                .defineInRange("vectorThrusterMaxThrust", 900.0d, 1.0d, 10_000_000.0d);
+        VECTOR_THRUSTER_BASE_THRUST = SERVER_BUILDER.comment("Vector thruster base thrust at redstone 15 and full obstruction efficiency.")
+                .defineInRange("vectorThrusterBaseThrust", 900.0d, 1.0d, 10000000.0d);
         DAMAGE_ENTITIES = SERVER_BUILDER.comment("If true, entities inside active thruster plume are damaged.")
                 .define("damageEntities", true);
         DAMAGE_TICK_INTERVAL = SERVER_BUILDER.comment("How often plume damage checks run, in ticks.")

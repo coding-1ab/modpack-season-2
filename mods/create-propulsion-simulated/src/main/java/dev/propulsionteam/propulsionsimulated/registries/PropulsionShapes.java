@@ -22,6 +22,19 @@ public class PropulsionShapes {
             .add(Block.box(3, 3, 14, 13, 13, 16))
             .forDirectional(),
 
+        VECTOR_THRUSTER = ShapeBuilder.shape()
+            .add(Block.box(2, 2, 0, 14, 14, 4))
+            .add(Block.box(1, 9, 0, 2, 13, 4))
+            .add(Block.box(1, 3, 0, 2, 7, 4))
+            .add(Block.box(14, 9, 0, 15, 13, 4))
+            .add(Block.box(14, 3, 0, 15, 7, 4))
+            .add(Block.box(3, 3, 9, 13, 13, 12))
+            .add(Block.box(6, 6, 4, 10, 10, 8))
+            .add(Block.box(5, 5, 7, 11, 11, 8))
+            .add(Block.box(4, 4, 8, 12, 12, 9))
+            .add(Block.box(4, 4, 4, 12, 12, 5))
+            .forDirectional(),
+
         CREATIVE_THRUSTER = ShapeBuilder.shape()
             .add(Block.box(3, 3, 0, 13, 13, 10))
             .add(Block.box(4, 4, 10, 12, 12, 12))

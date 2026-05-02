@@ -1,7 +1,6 @@
 package dev.propulsionteam.propulsionsimulated.content.thruster;
 
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
-import dev.propulsionteam.propulsionsimulated.particles.ParticleTypes;
 import dev.propulsionteam.propulsionsimulated.particles.plasma.PlasmaParticleData;
 import dev.propulsionteam.propulsionsimulated.particles.plume.PlumeParticleData;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;

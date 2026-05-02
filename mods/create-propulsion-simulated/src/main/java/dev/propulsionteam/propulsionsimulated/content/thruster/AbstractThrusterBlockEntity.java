@@ -13,8 +13,6 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.utility.CreateLang;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.block.BlockSubLevelAssemblyListener;
-import dev.ryanhcode.sable.api.block.propeller.BlockEntityPropeller;
-import dev.ryanhcode.sable.api.block.propeller.BlockEntitySubLevelPropellerActor;
 import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -47,7 +45,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     //Constants
     protected static final int OBSTRUCTION_LENGTH = 10;
     protected static final int TICKS_PER_ENTITY_CHECK = 5;
-    private static final float PARTICLE_VELOCITY = 4;
+    protected static final float PARTICLE_VELOCITY = 4.0f;
     
     protected static final float LOWEST_POWER_THRESHOLD = 5.0f / 15.0f;
 
@@ -60,6 +58,9 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     private int currentTick = 0;
     private int clientTick = 0;
     private float particleSpawnAccumulator = 0.0f;
+
+    protected double getParticleBroadcastRange() { return PARTICLE_BROADCAST_RANGE_BLOCKS; }
+    protected float getParticleVelocity() { return PARTICLE_VELOCITY; }
 
     //CC Peripheral
     public AbstractComputerBehaviour computerBehaviour;
@@ -419,7 +420,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         double particleZ = worldNozzlePosition.z;
 
         Vector3d particleVelocity = new Vector3d(worldExhaustDirection.x, worldExhaustDirection.y, worldExhaustDirection.z)
-            .mul(PARTICLE_VELOCITY * visualPower)
+            .mul(getParticleVelocity() * visualPower)
             .add(additionalVel);
     
         ParticleOptions particleData = createParticleOptions();
@@ -427,7 +428,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         //Spawn the calculated number of particles.
         for (int i = 0; i < particlesToSpawn; i++) {
             if (level instanceof ServerLevel serverLevel) {
-                double maxDistSq = PARTICLE_BROADCAST_RANGE_BLOCKS * PARTICLE_BROADCAST_RANGE_BLOCKS;
+                double maxDistSq = getParticleBroadcastRange() * getParticleBroadcastRange();
                 for (ServerPlayer player : serverLevel.players()) {
                     if (player.distanceToSqr(particleX, particleY, particleZ) > maxDistSq) {
                         continue;
