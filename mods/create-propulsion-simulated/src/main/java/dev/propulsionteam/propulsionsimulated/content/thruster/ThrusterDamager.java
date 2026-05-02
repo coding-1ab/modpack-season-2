@@ -6,15 +6,12 @@ import dev.propulsionteam.propulsionsimulated.debug.routes.MainDebugRoute;
 import dev.propulsionteam.propulsionsimulated.utility.AbstractAreaDamagerBehaviour;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Math;
-import org.joml.Quaterniond;
-import org.joml.Vector3d;
 
 import java.awt.Color;
 import java.util.Optional;
@@ -50,7 +47,7 @@ public class ThrusterDamager extends AbstractAreaDamagerBehaviour {
     @Override
     protected Optional<DamageZone> calculateDamageZone() {
         AbstractThrusterBlockEntity thruster = getThruster();
-        Direction plumeDirection = thruster.getBlockState().getValue(AbstractThrusterBlock.FACING).getOpposite();
+        Direction plumeDirection = thruster.getFacing().getOpposite();
 
         float currentPower = thruster.getPower();
         float threshold = AbstractThrusterBlockEntity.LOWEST_POWER_THRESHOLD;
@@ -60,11 +57,19 @@ public class ThrusterDamager extends AbstractAreaDamagerBehaviour {
 
         float distanceByPower = Math.lerp(0.55f, 1.5f, visualPowerPercent);
         double potentialPlumeLength = thruster.getEmptyBlocks() * distanceByPower;
-        
-        Vec3 nozzlePos = getNozzlePosInWorld(plumeDirection);
-        Vec3 worldPlumeDirection = getWorldPlumeDirection(plumeDirection);
+        if (potentialPlumeLength <= 0.01d) {
+            return Optional.empty();
+        }
 
-        double correctedPlumeLength = performRaycastCheck(nozzlePos, worldPlumeDirection, potentialPlumeLength);
+        AbstractThrusterBlockEntity.WorldExhaustRay worldRay = thruster.getWorldExhaustRay();
+        if (worldRay == null) {
+            return Optional.empty();
+        }
+
+        Vec3 nozzlePos = worldRay.nozzlePos();
+        Vec3 worldPlumeDirection = worldRay.direction();
+
+        double correctedPlumeLength = performRaycastCheck(worldRay.level(), nozzlePos, worldPlumeDirection, potentialPlumeLength);
         if (correctedPlumeLength <= 0.01) {
             return Optional.empty();
         }
@@ -72,11 +77,21 @@ public class ThrusterDamager extends AbstractAreaDamagerBehaviour {
         Vec3 boxDimensions = new Vec3(1.4, 1.4, correctedPlumeLength);
         double plumeStartOffset = 0.8;
         double centerOffsetDistance = plumeStartOffset + (correctedPlumeLength / 2.0);
-        Vec3 boxOffset = Vec3.atLowerCornerOf(plumeDirection.getNormal()).scale(centerOffsetDistance);
-        
-        ThrusterDamageContext context = new ThrusterDamageContext(nozzlePos, visualPowerPercent);
+        Vec3 normalizedWorldDirection = worldPlumeDirection.lengthSqr() < 1.0e-8
+            ? Vec3.atLowerCornerOf(plumeDirection.getNormal())
+            : worldPlumeDirection.normalize();
+        Vec3 worldBoxCenter = nozzlePos.add(normalizedWorldDirection.scale(centerOffsetDistance));
+        WorldOrientedBox worldBox = new WorldOrientedBox(worldRay.level(), worldBoxCenter, normalizedWorldDirection);
 
-        return Optional.of(new DamageZone(boxDimensions, boxOffset, plumeDirection, Direction.SOUTH, context));
+        ThrusterDamageContext context = new ThrusterDamageContext(nozzlePos, visualPowerPercent);
+        return Optional.of(new DamageZone(
+            boxDimensions,
+            Vec3.ZERO,
+            normalizedWorldDirection,
+            Vec3.atLowerCornerOf(Direction.SOUTH.getNormal()),
+            worldBox,
+            context
+        ));
     }
 
     @Override
@@ -100,33 +115,7 @@ public class ThrusterDamager extends AbstractAreaDamagerBehaviour {
         return Color.ORANGE;
     }
 
-    private Vec3 getNozzlePosInWorld(Direction plumeDirection) {
-        BlockPos worldPosition = getThruster().getBlockPos();
-        Vector3d thrusterCenterBlockShipCoords = new Vector3d(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5);
-
-        Quaterniond relativeRotation = new Quaterniond().rotateTo(new Vector3d(0, 0, 1), new Vector3d(plumeDirection.getStepX(), plumeDirection.getStepY(), plumeDirection.getStepZ()));
-
-        Vector3d thrusterCenterBlockWorld;
-        Quaterniond obbRotationWorld;
-
-        thrusterCenterBlockWorld = thrusterCenterBlockShipCoords;
-        obbRotationWorld = relativeRotation;
-
-        Vector3d nozzleOffsetLocal = new Vector3d(0, 0, 0.5);
-        Vector3d nozzleOffsetWorld = obbRotationWorld.transform(nozzleOffsetLocal, new Vector3d());
-        Vector3d thrusterNozzleWorldPos = thrusterCenterBlockWorld.add(nozzleOffsetWorld, new Vector3d());
-        
-        return new Vec3(thrusterNozzleWorldPos.x, thrusterNozzleWorldPos.y, thrusterNozzleWorldPos.z);
-    }
-
-    private Vec3 getWorldPlumeDirection(Direction plumeDirection) {
-        Vector3d localPlumeVec = new Vector3d(plumeDirection.getStepX(), plumeDirection.getStepY(), plumeDirection.getStepZ());
-        return new Vec3(localPlumeVec.x, localPlumeVec.y, localPlumeVec.z);
-    }
-
-
-    private double performRaycastCheck(Vec3 nozzlePos, Vec3 worldPlumeDirection, double maxDistance) {
-        Level level = getThruster().getLevel();
+    private double performRaycastCheck(Level level, Vec3 nozzlePos, Vec3 worldPlumeDirection, double maxDistance) {
         Vec3 endPos = nozzlePos.add(worldPlumeDirection.scale(maxDistance));
 
         var clipContext = new net.minecraft.world.level.ClipContext(

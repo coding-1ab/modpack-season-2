@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
+import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterDebugRenderer;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionPartialModels;
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import net.createmod.catnip.render.CachedBuffers;
@@ -27,6 +28,7 @@ public class CreativeThrusterRenderer extends SmartBlockEntityRenderer<CreativeT
                               final MultiBufferSource buffer,
                               final int light,
                               final int overlay) {
+        VectorThrusterDebugRenderer.render(be);
         if (VisualizationManager.supportsVisualization(be.getLevel())) {
             return;
         }

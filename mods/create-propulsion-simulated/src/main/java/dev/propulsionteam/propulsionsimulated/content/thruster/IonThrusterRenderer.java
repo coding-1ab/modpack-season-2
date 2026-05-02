@@ -19,9 +19,9 @@ public class IonThrusterRenderer extends SmartBlockEntityRenderer<IonThrusterBlo
     protected void renderSafe(IonThrusterBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
             int light, int overlay) {
         super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
+        VectorThrusterDebugRenderer.render(be);
         if (be instanceof VectorThrusterBlockEntity vector) {
             VectorThrusterRenderer.render(vector, ms, buffer, light, overlay);
-            VectorThrusterDebugRenderer.render(vector);
             VectorRedstoneLinkRenderer.renderOnBlockEntity(vector, partialTicks, ms, buffer, light, overlay);
         }
     }

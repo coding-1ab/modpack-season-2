@@ -1,14 +1,15 @@
 package dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster;
 
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
-import dev.propulsionteam.propulsionsimulated.content.thruster.SimulatedThrustAdapter;
+import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.debug.DebugRenderer;
 import dev.propulsionteam.propulsionsimulated.debug.PropulsionDebug;
 import dev.propulsionteam.propulsionsimulated.debug.routes.MainDebugRoute;
-import dev.ryanhcode.sable.Sable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
 import java.awt.Color;
@@ -24,7 +25,7 @@ public final class VectorThrusterDebugRenderer {
     private VectorThrusterDebugRenderer() {
     }
 
-    public static void render(VectorThrusterBlockEntity be) {
+    public static void render(AbstractThrusterBlockEntity be) {
         if (be == null || be.isRemoved() || be.getLevel() == null) {
             return;
         }
@@ -32,39 +33,52 @@ public final class VectorThrusterDebugRenderer {
             return;
         }
 
-        Level level = be.getLevel();
-        Vec3 localNozzle = be.getParticleDebugNozzlePositionLocal();
-        Vec3 localExhaust = be.getParticleDebugExhaustDirectionLocal();
-        if (localExhaust.lengthSqr() < 1.0e-8) {
+        AbstractThrusterBlockEntity.WorldExhaustRay worldRay = be.getWorldExhaustRay();
+        if (worldRay == null || worldRay.direction().lengthSqr() < 1.0e-8) {
             return;
         }
 
         int obstructionLength = PropulsionConfig.OBSTRUCTION_SCAN_LENGTH.get();
-        Vec3 traceStart = localNozzle.add(localExhaust.scale(START_EPSILON));
-        Vec3 localEnd = traceStart.add(localExhaust.scale(obstructionLength));
+        Level worldLevel = worldRay.level();
+        Vec3 traceStart = worldRay.nozzlePos().add(worldRay.direction().scale(START_EPSILON));
+        Vec3 worldEnd = traceStart.add(worldRay.direction().scale(obstructionLength));
 
-        Vec3 worldNozzle = Sable.HELPER.projectOutOfSubLevel(level, localNozzle);
-        Vec3 worldEnd = Sable.HELPER.projectOutOfSubLevel(level, localEnd);
-
-        String idBase = "vector_thruster_debug_" + be.getBlockPos().asLong();
+        String idBase = "thruster_debug_" + be.getBlockPos().asLong();
 
         DebugRenderer.drawElongatedBox(
             idBase + "_ray",
-            worldNozzle,
+            worldRay.nozzlePos(),
             worldEnd,
             LINE_THICKNESS,
             new Color(0, 255, 255, 255),
             false,
             RENDER_TICKS
         );
-        DebugRenderer.drawBox(idBase + "_origin", worldNozzle, new Vec3(0.12, 0.12, 0.12), Color.GREEN, RENDER_TICKS);
+        DebugRenderer.drawBox(idBase + "_origin", worldRay.nozzlePos(), new Vec3(0.12, 0.12, 0.12), Color.GREEN, RENDER_TICKS);
+
+        BlockHitResult hitResult = worldLevel.clip(new ClipContext(
+            traceStart,
+            worldEnd,
+            ClipContext.Block.COLLIDER,
+            ClipContext.Fluid.NONE,
+            net.minecraft.world.phys.shapes.CollisionContext.empty()
+        ));
+        if (hitResult.getType() == BlockHitResult.Type.BLOCK) {
+            DebugRenderer.drawBox(
+                idBase + "_ray_hit",
+                hitResult.getLocation(),
+                new Vec3(0.14, 0.14, 0.14),
+                new Color(255, 100, 100, 255),
+                RENDER_TICKS
+            );
+        }
 
         Set<Long> sampled = new HashSet<>();
         int hitIndex = 0;
-        BlockPos selfPos = be.getBlockPos();
+        BlockPos selfPos = BlockPos.containing(worldRay.nozzlePos());
         long lastPosKey = Long.MIN_VALUE;
         for (double t = 0.0d; t <= obstructionLength; t += STEP) {
-            Vec3 sample = traceStart.add(localExhaust.scale(t));
+            Vec3 sample = traceStart.add(worldRay.direction().scale(t));
             BlockPos hitPos = BlockPos.containing(sample);
             long key = hitPos.asLong();
             if (key == lastPosKey) {
@@ -75,15 +89,14 @@ public final class VectorThrusterDebugRenderer {
                 continue;
             }
 
-            BlockState stateAt = SimulatedThrustAdapter.getBlockStateSafe(level, hitPos);
+            BlockState stateAt = worldLevel.getBlockState(hitPos);
             if (stateAt.isAir() || !stateAt.isSolid()) {
                 continue;
             }
 
-            Vec3 worldHitCenter = Sable.HELPER.projectOutOfSubLevel(level, Vec3.atCenterOf(hitPos));
             DebugRenderer.drawBox(
                 idBase + "_hit_" + hitIndex,
-                worldHitCenter,
+                Vec3.atCenterOf(hitPos),
                 new Vec3(0.98, 0.98, 0.98),
                 new Color(255, 64, 64, 255),
                 RENDER_TICKS

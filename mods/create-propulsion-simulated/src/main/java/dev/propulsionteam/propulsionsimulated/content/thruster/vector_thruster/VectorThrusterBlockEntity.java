@@ -3,7 +3,6 @@ package dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster;
 import dev.propulsionteam.propulsionsimulated.content.thruster.IonThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import dev.propulsionteam.propulsionsimulated.particles.ion.IonParticleData;
-import dev.propulsionteam.propulsionsimulated.content.thruster.SimulatedThrustAdapter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -26,8 +25,6 @@ import org.joml.Vector3d;
 public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
     public static final float MAX_VISUAL_TILT_DEGREES = 30.0f;
     private static final float TWEEN_SPEED = 0.2f;
-    private static final double OBSTRUCTION_TRACE_STEP = 0.1d;
-    private static final double OBSTRUCTION_START_EPSILON = 0.05d;
 
     public LinkBehaviour leftLink;
     public VectorRedstoneLinkBehaviour rightLink;
@@ -160,46 +157,12 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
     @Override
     public void calculateObstruction(Level level, BlockPos pos, Direction forwardDirection) {
         int scanLength = OBSTRUCTION_LENGTH;
-        Vec3 localExhaustDirection = getParticleDebugExhaustDirectionLocal();
-        if (localExhaustDirection.lengthSqr() < 1.0e-8) {
-            localExhaustDirection = new Vec3(
-                forwardDirection.getOpposite().getStepX(),
-                forwardDirection.getOpposite().getStepY(),
-                forwardDirection.getOpposite().getStepZ()
-            );
-        } else {
-            localExhaustDirection = localExhaustDirection.normalize();
-        }
-
-        Vec3 start = getParticleDebugNozzlePositionLocal().add(localExhaustDirection.scale(OBSTRUCTION_START_EPSILON));
-        double firstHitDistance = scanLength;
-        boolean hit = false;
-
-        BlockPos selfPos = getBlockPos();
-        long lastPosKey = Long.MIN_VALUE;
-        for (double t = 0.0d; t <= scanLength; t += OBSTRUCTION_TRACE_STEP) {
-            Vec3 sample = start.add(localExhaustDirection.scale(t));
-            BlockPos checkPos = BlockPos.containing(sample);
-            long key = checkPos.asLong();
-            if (key == lastPosKey) {
-                continue;
-            }
-            lastPosKey = key;
-
-            if (checkPos.equals(selfPos)) {
-                continue;
-            }
-
-            BlockState stateAt = SimulatedThrustAdapter.getBlockStateSafe(level, checkPos);
-            if (!stateAt.isAir() && stateAt.isSolid()) {
-                firstHitDistance = t;
-                hit = true;
-                break;
-            }
-        }
-
-        float newEfficiency = scanLength <= 0 ? 0.0f : Math.clamp((float) (firstHitDistance / scanLength), 0.0f, 1.0f);
-        int newEmptyBlocks = hit ? Math.clamp((int) Math.floor(firstHitDistance), 0, scanLength) : scanLength;
+        ObstructionRaySample sample = sampleObstructionRaycast(level, scanLength);
+        double firstHitDistance = sample.firstHitDistance();
+        float newEfficiency = scanLength <= 0
+            ? 0.0f
+            : Math.clamp((float) (firstHitDistance / scanLength), 0.0f, 1.0f);
+        int newEmptyBlocks = sample.emptyBlocksEstimate();
 
         if (this.emptyBlocks != newEmptyBlocks || Math.abs(this.obstructionEfficiency - newEfficiency) > 1e-4f) {
             this.emptyBlocks = newEmptyBlocks;

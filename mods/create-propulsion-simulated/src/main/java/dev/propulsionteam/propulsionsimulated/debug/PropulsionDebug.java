@@ -4,14 +4,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import dev.propulsionteam.propulsionsimulated.debug.routes.MainDebugRoute;
-import com.mojang.brigadier.arguments.BoolArgumentType;
-import com.mojang.brigadier.builder.ArgumentBuilder;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.context.CommandContext;
-
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
 
 public class PropulsionDebug {
     private static final Map<IDebugRoute, Boolean> activeDebugStates = new ConcurrentHashMap<>();
@@ -30,39 +24,16 @@ public class PropulsionDebug {
     }
 
     public static boolean isDebug(IDebugRoute route) {
-        return activeDebugStates.getOrDefault(route, false);
-    }
-
-    //State registration for commands
-
-    public static LiteralArgumentBuilder<CommandSourceStack> registerCommands() {
-        LiteralArgumentBuilder<CommandSourceStack> debugCommand = Commands.literal("debug");
-        buildDebugBranch(debugCommand, MainDebugRoute.values());
-
-        return debugCommand;
-    }
-
-    //Updating debug state
-
-    private static void buildDebugBranch(ArgumentBuilder<CommandSourceStack, ?> parent, IDebugRoute[] children) {
-        for (final IDebugRoute route : children) {
-            LiteralArgumentBuilder<CommandSourceStack> currentNode = Commands.literal(route.name().toLowerCase());
-
-            if (route.getChildren().length > 0) {
-                buildDebugBranch(currentNode, route.getChildren());
-            } else {
-                currentNode.then(Commands.argument("value", BoolArgumentType.bool())
-                    .executes(context -> setDebugLeafState(context, route))
-                );
-            }
-            parent.then(currentNode);
+        if (route == MainDebugRoute.THRUSTER) {
+            return PropulsionConfig.CLIENT_SPEC.isLoaded() && PropulsionConfig.DEBUG_THRUSTER.get();
         }
-    }
-
-    private static int setDebugLeafState(CommandContext<CommandSourceStack> context, IDebugRoute leafNode) {
-        boolean value = BoolArgumentType.getBool(context, "value");
-        activeDebugStates.put(leafNode, value);
-        return 1;
+        if (route == MainDebugRoute.BURNER) {
+            return PropulsionConfig.CLIENT_SPEC.isLoaded() && PropulsionConfig.DEBUG_BURNER.get();
+        }
+        if (route == MainDebugRoute.MAGNET) {
+            return PropulsionConfig.CLIENT_SPEC.isLoaded() && PropulsionConfig.DEBUG_MAGNET.get();
+        }
+        return activeDebugStates.getOrDefault(route, false);
     }
 
     //Resolve static debug routes

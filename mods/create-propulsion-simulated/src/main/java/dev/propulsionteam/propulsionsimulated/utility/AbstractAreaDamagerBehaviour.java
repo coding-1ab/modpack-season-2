@@ -11,7 +11,6 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 
-import net.minecraft.core.Direction;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
@@ -20,7 +19,8 @@ import java.awt.Color;
 
 public abstract class AbstractAreaDamagerBehaviour extends BlockEntityBehaviour {
     public static final BehaviourType<AbstractAreaDamagerBehaviour> TYPE = new BehaviourType<>();
-    public record DamageZone(Vec3 dimensions, Vec3 offset, Direction facing, Direction up, Object context) {}
+    public record WorldOrientedBox(Level level, Vec3 center, Vec3 direction) {}
+    public record DamageZone(Vec3 dimensions, Vec3 offset, Vec3 facing, Vec3 up, WorldOrientedBox worldBox, Object context) {}
 
     public AbstractAreaDamagerBehaviour(SmartBlockEntity be) {
         super(be);
@@ -44,14 +44,24 @@ public abstract class AbstractAreaDamagerBehaviour extends BlockEntityBehaviour 
         }
 
         //Find entities in the zone
-        List<LivingEntity> entities = OBBEntityFinder.getEntitiesInOrientedBox(
-            level,
-            getPos(),
-            zone.up(),
-            zone.facing(),
-            zone.dimensions(),
-            zone.offset()
-        );
+        List<LivingEntity> entities;
+        if (zone.worldBox() != null) {
+            entities = OBBEntityFinder.getEntitiesInWorldOrientedBox(
+                zone.worldBox().level(),
+                zone.worldBox().center(),
+                zone.worldBox().direction(),
+                zone.dimensions()
+            );
+        } else {
+            entities = OBBEntityFinder.getEntitiesInOrientedBox(
+                level,
+                getPos(),
+                zone.up(),
+                zone.facing(),
+                zone.dimensions(),
+                zone.offset()
+            );
+        }
 
         if (entities.isEmpty()) { return; }
 
@@ -78,10 +88,18 @@ public abstract class AbstractAreaDamagerBehaviour extends BlockEntityBehaviour 
     protected abstract Color getDebugColor();
 
     private void debugZone(DamageZone zone) {
-        Quaterniond worldOrientation = OBBEntityFinder.calculateWorldOrientation(getWorld(), getPos(), zone.up(), zone.facing());
-        Vec3 worldCenter = OBBEntityFinder.calculateWorldCenter(getWorld(), getPos(), zone.offset(), worldOrientation);
+        Quaterniond worldOrientation;
+        Vec3 worldCenter;
+        if (zone.worldBox() != null) {
+            worldOrientation = OBBEntityFinder.calculateWorldOrientationFromDirection(zone.worldBox().direction());
+            worldCenter = zone.worldBox().center();
+        } else {
+            worldOrientation = OBBEntityFinder.calculateWorldOrientation(getWorld(), getPos(), zone.up(), zone.facing());
+            worldCenter = OBBEntityFinder.calculateWorldCenter(getWorld(), getPos(), zone.offset(), worldOrientation);
+        }
         
-        String identifier = "damager_" + blockEntity.hashCode() + "_obb";
+        String dimensionKey = getWorld().dimension().location().toString();
+        String identifier = "damager_" + dimensionKey + "_" + getPos().asLong() + "_obb";
         Quaternionf debugRotation = new Quaternionf((float)worldOrientation.x, (float)worldOrientation.y, (float)worldOrientation.z, (float)worldOrientation.w);
         
         DebugRenderer.drawBox(identifier, worldCenter, zone.dimensions(), debugRotation, getDebugColor(), false, getTickFrequency() + 1);

@@ -40,9 +40,15 @@ public class ComputerBehaviour extends AbstractComputerBehaviour {
     }
 
     public static Supplier<IPeripheral> getPeripheralFor(SmartBlockEntity blockEntity) {
-        Function<SmartBlockEntity, IPeripheral> factory = PERIPHERAL_FACTORIES.get(blockEntity.getClass());
-        if (factory != null) {
-            return () -> factory.apply(blockEntity);
+        Class<?> current = blockEntity.getClass();
+        while (current != null && SmartBlockEntity.class.isAssignableFrom(current)) {
+            @SuppressWarnings("unchecked")
+            Function<SmartBlockEntity, IPeripheral> factory =
+                PERIPHERAL_FACTORIES.get((Class<? extends SmartBlockEntity>) current);
+            if (factory != null) {
+                return () -> factory.apply(blockEntity);
+            }
+            current = current.getSuperclass();
         }
 
         throw new IllegalArgumentException("No peripheral available for " + blockEntity.getType());

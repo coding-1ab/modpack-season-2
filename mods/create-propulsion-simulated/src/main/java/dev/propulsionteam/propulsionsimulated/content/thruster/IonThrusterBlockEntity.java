@@ -3,6 +3,8 @@ package dev.propulsionteam.propulsionsimulated.content.thruster;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
+import dev.propulsionteam.propulsionsimulated.compat.PropulsionCompatibility;
+import dev.propulsionteam.propulsionsimulated.compat.computercraft.ComputerBehaviour;
 import dev.propulsionteam.propulsionsimulated.particles.ion.IonParticleData;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
@@ -89,7 +91,11 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
 
     @Override
     public void addBehaviours(final List<BlockEntityBehaviour> behaviours) {
-        // No tank behaviour for Ion Thruster
+        // Keep ion/vector tankless, but still inherit base behaviours like CC + plume damage.
+        if (PropulsionCompatibility.CC_ACTIVE) {
+            behaviours.add(computerBehaviour = new ComputerBehaviour(this));
+        }
+        behaviours.add(new ThrusterDamager(this));
     }
 
     @Override

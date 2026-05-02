@@ -49,6 +49,9 @@ public class PropulsionConfig {
     public static final ModConfigSpec.ConfigValue<Boolean> THRUSTER_DAMAGE_ENTITIES;
     public static final ModConfigSpec.ConfigValue<Double>  THRUSTER_PARTICLE_OFFSET_INCOMING_VEL_MODIFIER;
     public static final ModConfigSpec.ConfigValue<Double>  THRUSTER_PARTICLE_COUNT_MULTIPLIER;
+    public static final ModConfigSpec.BooleanValue DEBUG_THRUSTER;
+    public static final ModConfigSpec.BooleanValue DEBUG_BURNER;
+    public static final ModConfigSpec.BooleanValue DEBUG_MAGNET;
 
     // Creative Thruster (legacy)
     public static final ModConfigSpec.ConfigValue<Double> CREATIVE_THRUSTER_THRUST_MULTIPLIER;
@@ -294,6 +297,14 @@ public class PropulsionConfig {
                 .define("Crank radius", 0.125);
             STIRLING_CONROD_LENGTH = CLIENT_BUILDER.comment("Length of the simulated conrod.")
                 .define("Conrod length", 0.5);
+        CLIENT_BUILDER.pop();
+        CLIENT_BUILDER.push("Debug");
+            DEBUG_THRUSTER = CLIENT_BUILDER.comment("Render thruster debug overlays (plume ray, obstruction hits, damage zones).")
+                .define("Thruster", false);
+            DEBUG_BURNER = CLIENT_BUILDER.comment("Render burner debug overlays.")
+                .define("Burner", false);
+            DEBUG_MAGNET = CLIENT_BUILDER.comment("Enable magnet debug overlays.")
+                .define("Magnet", false);
         CLIENT_BUILDER.pop();
 
         CLIENT_SPEC = CLIENT_BUILDER.build();

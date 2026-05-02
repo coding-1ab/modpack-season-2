@@ -15,9 +15,6 @@ public class PropulsionCommands {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         LiteralArgumentBuilder<CommandSourceStack> propulsionCommand = Commands.literal("propulsion")
             .requires(source -> source.hasPermission(2));
-        //All debug commands
-        LiteralArgumentBuilder<CommandSourceStack> debugNode = PropulsionDebug.registerCommands();
-        propulsionCommand.then(debugNode);
 
         registerFloatKeys(propulsionCommand);
 

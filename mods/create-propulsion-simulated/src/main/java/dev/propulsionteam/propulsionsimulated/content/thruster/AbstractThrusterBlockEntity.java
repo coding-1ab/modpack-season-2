@@ -26,7 +26,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.BlockHitResult;
 import org.joml.Math;
 import org.joml.Vector3d;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -46,6 +48,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     protected static final int OBSTRUCTION_LENGTH = 10;
     protected static final int TICKS_PER_ENTITY_CHECK = 5;
     protected static final float PARTICLE_VELOCITY = 4.0f;
+    protected static final double OBSTRUCTION_RAY_START_EPSILON = 0.05d;
     
     protected static final float LOWEST_POWER_THRESHOLD = 5.0f / 15.0f;
 
@@ -361,6 +364,65 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         return getLocalNozzlePosition(worldPosition, localExhaustDirection, currentNozzleOffset);
     }
 
+    public record WorldExhaustRay(Level level, Vec3 nozzlePos, Vec3 direction) {}
+
+    public record ObstructionRaySample(double firstHitDistance, int emptyBlocksEstimate) {}
+
+    public WorldExhaustRay getWorldExhaustRay() {
+        if (level == null) {
+            return null;
+        }
+        Vec3 localNozzle = getParticleDebugNozzlePositionLocal();
+        Vec3 localExhaust = getParticleDebugExhaustDirectionLocal();
+
+        Vector3d localNozzleVec = new Vector3d(localNozzle.x, localNozzle.y, localNozzle.z);
+        Vector3d localExhaustVec = new Vector3d(localExhaust.x, localExhaust.y, localExhaust.z);
+        if (localExhaustVec.lengthSquared() < MathUtility.epsilon) {
+            Direction opposite = getFacing().getOpposite();
+            localExhaustVec.set(opposite.getStepX(), opposite.getStepY(), opposite.getStepZ());
+        }
+        localExhaustVec.normalize();
+
+        SimulatedThrustAdapter.Projection projection = SimulatedThrustAdapter.projectToWorld(level, worldPosition, localNozzleVec, localExhaustVec);
+        Vec3 worldDirection = projection.direction();
+        if (worldDirection.lengthSqr() < MathUtility.epsilon) {
+            worldDirection = new Vec3(localExhaustVec.x, localExhaustVec.y, localExhaustVec.z);
+        } else {
+            worldDirection = worldDirection.normalize();
+        }
+        return new WorldExhaustRay(projection.level(), projection.position(), worldDirection);
+    }
+
+    protected ObstructionRaySample sampleObstructionRaycast(Level level, int scanLength) {
+        WorldExhaustRay worldRay = getWorldExhaustRay();
+        if (worldRay == null || scanLength <= 0) {
+            return new ObstructionRaySample(0.0d, 0);
+        }
+
+        Vec3 rayStart = worldRay.nozzlePos().add(worldRay.direction().scale(OBSTRUCTION_RAY_START_EPSILON));
+        Vec3 rayEnd = rayStart.add(worldRay.direction().scale(scanLength));
+
+        ClipContext clipContext = new ClipContext(
+            rayStart,
+            rayEnd,
+            ClipContext.Block.COLLIDER,
+            ClipContext.Fluid.NONE,
+            net.minecraft.world.phys.shapes.CollisionContext.empty()
+        );
+        BlockHitResult hitResult = worldRay.level().clip(clipContext);
+
+        double firstHitDistance = scanLength;
+        boolean hit = hitResult.getType() == BlockHitResult.Type.BLOCK;
+        if (hit) {
+            firstHitDistance = Math.min(scanLength, rayStart.distanceTo(hitResult.getLocation()));
+        }
+
+        int emptyBlocksEstimate = hit
+            ? Math.clamp((int) java.lang.Math.floor(firstHitDistance), 0, scanLength)
+            : scanLength;
+        return new ObstructionRaySample(firstHitDistance, emptyBlocksEstimate);
+    }
+
     public void setRedstonePower(int power) {
         setRedstoneInput(power);
     }
@@ -484,14 +546,10 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
 
     @SuppressWarnings("deprecation") // i hate compilers let me use ts
     public void calculateObstruction(Level level, BlockPos pos, Direction forwardDirection){
-        //Starting from the block behind and iterate OBSTRUCTION_LENGTH blocks in that direction
-        //Can't really use level.clip as we explicitly want to check for obstruction only in ship space
+        // Raycast in world space so sublevel thrusters correctly collide against real-world blocks.
         int oldEmptyBlocks = this.emptyBlocks;
-        for (emptyBlocks = 0; emptyBlocks < OBSTRUCTION_LENGTH; emptyBlocks++){
-            BlockPos checkPos = pos.relative(forwardDirection.getOpposite(), emptyBlocks + 1);
-            BlockState state = SimulatedThrustAdapter.getBlockStateSafe(level,checkPos);
-            if (!state.isAir() && state.isSolid()) break;
-        }
+        ObstructionRaySample sample = sampleObstructionRaycast(level, OBSTRUCTION_LENGTH);
+        this.emptyBlocks = sample.emptyBlocksEstimate();
         if (oldEmptyBlocks != this.emptyBlocks) { //Only set dirty if it actually changed
             isThrustDirty = true;
         }

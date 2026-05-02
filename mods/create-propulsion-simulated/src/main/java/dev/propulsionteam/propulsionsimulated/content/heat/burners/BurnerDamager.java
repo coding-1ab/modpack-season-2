@@ -38,7 +38,14 @@ public class BurnerDamager extends AbstractAreaDamagerBehaviour {
     protected Optional<DamageZone> calculateDamageZone() {
         Vec3 boxDimensions = new Vec3(0.9, 0.1, 0.9);
         Vec3 boxOffset = new Vec3(0, 0.5, 0);
-        return Optional.of(new DamageZone(boxDimensions, boxOffset, Direction.UP, Direction.UP, null));
+        return Optional.of(new DamageZone(
+            boxDimensions,
+            boxOffset,
+            Vec3.atLowerCornerOf(Direction.UP.getNormal()),
+            Vec3.atLowerCornerOf(Direction.SOUTH.getNormal()),
+            null,
+            null
+        ));
     }
 
     @Override
