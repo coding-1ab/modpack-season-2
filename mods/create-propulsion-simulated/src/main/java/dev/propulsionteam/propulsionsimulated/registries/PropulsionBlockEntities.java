@@ -5,6 +5,7 @@ import dev.propulsionteam.propulsionsimulated.content.heat.burners.solid.SolidBu
 import dev.propulsionteam.propulsionsimulated.content.heat.engine.StirlingEngineBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.creative_vector_thruster.CreativeVectorThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.IonThrusterBlockEntity;
@@ -29,6 +30,9 @@ public class PropulsionBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CreativeThrusterBlockEntity>> CREATIVE_THRUSTER_BLOCK_ENTITY =
         BLOCK_ENTITY_TYPES.register("creative_thruster_block_entity",
             () -> BlockEntityType.Builder.of((pos, state) -> new CreativeThrusterBlockEntity(pos, state), PropulsionBlocks.CREATIVE_THRUSTER_BLOCK.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CreativeVectorThrusterBlockEntity>> CREATIVE_VECTOR_THRUSTER_BLOCK_ENTITY =
+        BLOCK_ENTITY_TYPES.register("creative_vector_thruster_block_entity",
+            () -> BlockEntityType.Builder.of((pos, state) -> new CreativeVectorThrusterBlockEntity(pos, state), PropulsionBlocks.CREATIVE_VECTOR_THRUSTER_BLOCK.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<IonThrusterBlockEntity>> ION_THRUSTER_BLOCK_ENTITY =
         BLOCK_ENTITY_TYPES.register("ion_thruster_block_entity",

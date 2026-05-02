@@ -4,7 +4,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlock;
+import dev.propulsionteam.propulsionsimulated.content.thruster.creative_vector_thruster.CreativeVectorThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionPartialModels;
+import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -36,7 +38,10 @@ public final class VectorThrusterRenderer {
         float yawDegrees = xAxis * VectorThrusterBlockEntity.MAX_VISUAL_TILT_DEGREES;
         float pitchDegrees = -yAxis * VectorThrusterBlockEntity.MAX_VISUAL_TILT_DEGREES;
 
-        SuperByteBuffer movingAssembly = CachedBuffers.partial(PropulsionPartialModels.VECTOR_THRUSTER_MOVING_ASSEMBLY, state);
+        PartialModel partialModel = be instanceof CreativeVectorThrusterBlockEntity
+                ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_MOVING_ASSEMBLY
+                : PropulsionPartialModels.VECTOR_THRUSTER_MOVING_ASSEMBLY;
+        SuperByteBuffer movingAssembly = CachedBuffers.partial(partialModel, state);
         VertexConsumer vb = buffer.getBuffer(RenderType.cutoutMipped());
 
         ms.pushPose();

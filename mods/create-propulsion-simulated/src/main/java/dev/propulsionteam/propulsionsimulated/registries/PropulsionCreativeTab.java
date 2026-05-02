@@ -41,6 +41,7 @@ public class PropulsionCreativeTab {
                 output.accept(PropulsionBlocks.CREATIVE_THRUSTER_BLOCK.get());
                 output.accept(PropulsionBlocks.ION_THRUSTER_BLOCK.get());
                 output.accept(PropulsionBlocks.VECTOR_THRUSTER_BLOCK.get());
+                output.accept(PropulsionBlocks.CREATIVE_VECTOR_THRUSTER_BLOCK.get());
                 //From 0.2
                 output.accept(PropulsionBlocks.REDSTONE_TRANSMISSION_BLOCK.get());
                 //From 0.2 (items)

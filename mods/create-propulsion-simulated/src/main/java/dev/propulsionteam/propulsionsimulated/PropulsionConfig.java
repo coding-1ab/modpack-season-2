@@ -22,6 +22,7 @@ public class PropulsionConfig {
     public static final ModConfigSpec.IntValue ION_THRUSTER_MAX_SPEED;
     public static final ModConfigSpec.DoubleValue ION_THRUSTER_MAX_THRUST;
     public static final ModConfigSpec.DoubleValue CREATIVE_THRUSTER_MAX_THRUST;
+    public static final ModConfigSpec.DoubleValue CREATIVE_VECTOR_THRUSTER_MAX_THRUST;
     public static final ModConfigSpec.DoubleValue FUEL_MB_PER_TICK_AT_FULL_THROTTLE;
     public static final ModConfigSpec.IntValue ION_THRUSTER_ENERGY_CAPACITY_FE;
     public static final ModConfigSpec.DoubleValue ION_THRUSTER_FE_PER_TICK_AT_FULL_THROTTLE;
@@ -124,6 +125,8 @@ public class PropulsionConfig {
                 .defineInRange("ionThrusterMaxThrust", 1000.0d, 1.0d, 10_000_000.0d);
         CREATIVE_THRUSTER_MAX_THRUST = SERVER_BUILDER.comment("Creative thruster max thrust in pN.")
                 .defineInRange("creativeThrusterMaxThrust", 10000.0d, 10.0d, 1000000.0d);
+        CREATIVE_VECTOR_THRUSTER_MAX_THRUST = SERVER_BUILDER.comment("Creative vector thruster max thrust in pN.")
+                .defineInRange("creativeVectorThrusterMaxThrust", 10000.0d, 10.0d, 1000000.0d);
         FUEL_MB_PER_TICK_AT_FULL_THROTTLE = SERVER_BUILDER.comment("Fuel consumption in millibuckets per tick at full redstone throttle.")
                 .defineInRange("fuelMbPerTickAtFullThrottle", 1.0d, 0.0001d, 1000.0d);
         ION_THRUSTER_ENERGY_CAPACITY_FE = SERVER_BUILDER.comment("Ion thruster internal FE capacity.")

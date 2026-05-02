@@ -37,10 +37,6 @@ public final class ThrusterShapes {
             .add(Block.box(1, 3, 0, 2, 7, 4)) // redstone_link
             .add(Block.box(14, 9, 0, 15, 13, 4)) // redstone_link
             .add(Block.box(14, 3, 0, 15, 7, 4)) // redstone_link
-            .add(Block.box(3, 3, 9, 13, 13, 12)) // exhaust
-            .add(Block.box(6, 6, 4, 10, 10, 8)) // base
-            .add(Block.box(5, 5, 7, 11, 11, 8)) // connector
-            .add(Block.box(4, 4, 8, 12, 12, 9)) // connector
             .add(Block.box(4, 4, 4, 12, 12, 5)) // mover
             .forDirectional();
 

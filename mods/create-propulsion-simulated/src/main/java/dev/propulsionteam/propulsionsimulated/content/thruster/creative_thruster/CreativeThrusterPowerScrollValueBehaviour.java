@@ -13,18 +13,31 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.BlockHitResult;
+import java.util.function.DoubleSupplier;
 
 public class CreativeThrusterPowerScrollValueBehaviour extends ScrollValueBehaviour {
     protected static final int TOTAL_STEPS = 100;
-    // Use configured creative thruster max thrust; config value is already the kN-like value (divided by 1000)
-    protected static final double FORCE_PER_STEP = PropulsionConfig.CREATIVE_THRUSTER_MAX_THRUST.get() / (double) TOTAL_STEPS;
+    private final DoubleSupplier maxThrustSupplier;
+
+    private double getForcePerStep() {
+        return maxThrustSupplier.getAsDouble() / (double) TOTAL_STEPS;
+    }
 
     public float getTargetThrust() {
-        return (float) ((value + 1) * FORCE_PER_STEP);
+        return (float) ((value + 1) * getForcePerStep());
     }
  
     public CreativeThrusterPowerScrollValueBehaviour(SmartBlockEntity be) {
-        super(Component.translatable("createpropulsion.gui.creative_thruster.power_behaviour"), be, new CreativeThrusterValueBox());
+        this(be, new CreativeThrusterValueBox(), () -> PropulsionConfig.CREATIVE_THRUSTER_MAX_THRUST.get());
+    }
+
+    public CreativeThrusterPowerScrollValueBehaviour(SmartBlockEntity be, DoubleSupplier maxThrustSupplier) {
+        this(be, new CreativeThrusterValueBox(), maxThrustSupplier);
+    }
+
+    public CreativeThrusterPowerScrollValueBehaviour(SmartBlockEntity be, com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform slot, DoubleSupplier maxThrustSupplier) {
+        super(Component.translatable("createpropulsion.gui.creative_thruster.power_behaviour"), be, slot);
+        this.maxThrustSupplier = maxThrustSupplier;
         between(0, TOTAL_STEPS - 1); //Why is this even a thing :\
     }
 
@@ -51,7 +64,7 @@ public class CreativeThrusterPowerScrollValueBehaviour extends ScrollValueBehavi
     }
 
     public MutableComponent formatBoardValue(ValueSettings settings) {
-        double forceInKN = (settings.value() + 1) * FORCE_PER_STEP;
+        double forceInKN = (settings.value() + 1) * getForcePerStep();
         return CreateLang.builder()
             .add(CreateLang.number((int) forceInKN))
             .add(Component.translatable("createpropulsion.gui.goggles.thruster.unit_pn"))
@@ -60,7 +73,7 @@ public class CreativeThrusterPowerScrollValueBehaviour extends ScrollValueBehavi
 
     @Override
     public String formatValue() {
-        double forceInKN = (value + 1) * FORCE_PER_STEP;
+        double forceInKN = (value + 1) * getForcePerStep();
         return String.valueOf((int) forceInKN);
     }
 }

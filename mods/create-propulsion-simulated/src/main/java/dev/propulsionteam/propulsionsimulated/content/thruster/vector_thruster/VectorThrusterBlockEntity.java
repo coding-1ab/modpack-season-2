@@ -20,6 +20,7 @@ import java.util.List;
 import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.joml.Vector3d;
 
 public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
@@ -39,6 +40,10 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
 
     public VectorThrusterBlockEntity(BlockPos pos, BlockState state) {
         super(pos, state);
+    }
+
+    protected VectorThrusterBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
     }
 
     @Override

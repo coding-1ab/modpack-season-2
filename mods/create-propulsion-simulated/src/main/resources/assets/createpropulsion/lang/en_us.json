@@ -139,5 +139,7 @@
     "createpropulsion.ponder.shared.thruster_3x3.back_layer_inputs": "Feed the back layer input manifold for full operation.",
     "createpropulsion.ponder.shared.thruster_3x3.valid_fuel_now": "Insert valid thruster fuel into the rear-fed manifold.",
     "createpropulsion.ponder.shared.thruster_3x3.power_thruster": "Apply redstone to the thruster and the whole multiblock works.",
-    "block.createpropulsion.vector_thruster": "Vector Thruster"
+    "block.createpropulsion.vector_thruster": "Vector Thruster",
+    "block.createpropulsion.creative_vector_thruster": "Creative Vector Thruster",
+    "createpropulsion.creative_vector_thruster.tooltip.summary": "Vector thruster with configurable creative thrust and wrench-cycled particle mode."
 }

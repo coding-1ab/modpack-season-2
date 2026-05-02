@@ -20,6 +20,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -80,6 +81,10 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
 
     public IonThrusterBlockEntity(final BlockPos pos, final BlockState state) {
         super(PropulsionBlockEntities.ION_THRUSTER_BLOCK_ENTITY.get(), pos, state);
+    }
+
+    protected IonThrusterBlockEntity(final BlockEntityType<?> type, final BlockPos pos, final BlockState state) {
+        super(type, pos, state);
     }
 
     @Override
