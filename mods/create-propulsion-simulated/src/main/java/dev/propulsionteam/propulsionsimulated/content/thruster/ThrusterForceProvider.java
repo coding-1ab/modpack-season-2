@@ -1,7 +1,6 @@
 package dev.propulsionteam.propulsionsimulated.content.thruster;
 
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
-import net.minecraft.core.Direction;
 import org.joml.Vector3d;
 
 public final class ThrusterForceProvider {
@@ -9,9 +8,7 @@ public final class ThrusterForceProvider {
     }
 
     public static ForceSample createSample(final AbstractThrusterBlockEntity blockEntity, final double timeStep) {
-        final Direction direction = blockEntity.getFacing();
-
-        final Vector3d directionLocal = new Vector3d(direction.getStepX(), direction.getStepY(), direction.getStepZ());
+        final Vector3d directionLocal = new Vector3d(blockEntity.getThrustDirectionLocal()).normalize();
         final Vector3d applicationPoint = new Vector3d(
                 blockEntity.getBlockPos().getX() + 0.5d,
                 blockEntity.getBlockPos().getY() + 0.5d,

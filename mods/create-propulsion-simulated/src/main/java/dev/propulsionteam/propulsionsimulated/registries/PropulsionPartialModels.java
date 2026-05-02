@@ -21,6 +21,8 @@ public class PropulsionPartialModels {
     public static final PartialModel TILT_ADAPTER_SIDE_INDICATOR = partial("tilt_adapter_side_overlay");
     //Creative thruster
     public static final PartialModel CREATIVE_THRUSTER_BRACKET = partial("creative_thruster_bracket");
+    //Vector thruster
+    public static final PartialModel VECTOR_THRUSTER_MOVING_ASSEMBLY = partial("vector_thruster_moving_assembly");
     //Multiblock thruster
     public static final PartialModel THRUSTER_MULTIBLOCK_2X2X2 = partial("thruster_multiblock_2x2x2");
     public static final PartialModel THRUSTER_MULTIBLOCK_3X3X3 = partial("thruster_multiblock_3x3x3");

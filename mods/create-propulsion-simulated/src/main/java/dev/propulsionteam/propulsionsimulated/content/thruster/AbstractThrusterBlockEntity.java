@@ -85,7 +85,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
             BlockState state = getBlockState();
             calculateObstruction(level, worldPosition, state.getValue(AbstractThrusterBlock.FACING));
             ThrusterData data = this.getThrusterData();
-            data.setDirection(new Vector3d(state.getValue(AbstractThrusterBlock.FACING).getNormal().getX(), state.getValue(AbstractThrusterBlock.FACING).getNormal().getY(), state.getValue(AbstractThrusterBlock.FACING).getNormal().getZ()));
+            data.setDirection(getThrustDirectionLocal());
             data.setThrust(0);
 
             Block block = getBlockState().getBlock();
@@ -162,6 +162,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         }
 
         super.tick();
+        thrusterData.setDirection(getThrustDirectionLocal());
         BlockState currentBlockState = isOutsideWorldHeight ? getBlockState() : SimulatedThrustAdapter.getBlockStateSafe(level,worldPosition);
         if (level.isClientSide) {
             ThrusterSoundHooks.clientTick(this);
@@ -328,6 +329,38 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         return getPower();
     }
 
+    public Vector3d getThrustDirectionLocal() {
+        Direction facing = getFacing();
+        return new Vector3d(facing.getStepX(), facing.getStepY(), facing.getStepZ()).normalize();
+    }
+
+    protected Vec3 getParticleExhaustDirectionLocal() {
+        Vector3d localThrustDirection = getThrustDirectionLocal();
+        return new Vec3(-localThrustDirection.x, -localThrustDirection.y, -localThrustDirection.z);
+    }
+
+    public Vec3 getParticleDebugExhaustDirectionLocal() {
+        Vec3 localExhaustDirection = getParticleExhaustDirectionLocal();
+        if (localExhaustDirection.lengthSqr() < MathUtility.epsilon) {
+            Direction oppositeDirection = getFacing().getOpposite();
+            localExhaustDirection = new Vec3(oppositeDirection.getStepX(), oppositeDirection.getStepY(), oppositeDirection.getStepZ());
+        } else {
+            localExhaustDirection = localExhaustDirection.normalize();
+        }
+        return localExhaustDirection;
+    }
+
+    protected Vec3 getLocalNozzlePosition(BlockPos pos, Vec3 localExhaustDirection, double nozzleOffset) {
+        Vec3 localBlockCenter = new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+        return localBlockCenter.add(localExhaustDirection.scale(nozzleOffset));
+    }
+
+    public Vec3 getParticleDebugNozzlePositionLocal() {
+        Vec3 localExhaustDirection = getParticleDebugExhaustDirectionLocal();
+        double currentNozzleOffset = getNozzleOffsetFromCenter();
+        return getLocalNozzlePosition(worldPosition, localExhaustDirection, currentNozzleOffset);
+    }
+
     public void setRedstonePower(int power) {
         setRedstoneInput(power);
     }
@@ -394,15 +427,10 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         float visualPower = Math.max(power, LOWEST_POWER_THRESHOLD);
 
         this.particleSpawnAccumulator -= particlesToSpawn;
-        Direction direction = state.getValue(AbstractThrusterBlock.FACING);
-        Direction oppositeDirection = direction.getOpposite();
-    
-        double currentNozzleOffset = getNozzleOffsetFromCenter();
-        Vector3d additionalVel = new Vector3d();
 
-        Vec3 localExhaustDirection = new Vec3(oppositeDirection.getStepX(), oppositeDirection.getStepY(), oppositeDirection.getStepZ());
-        Vec3 localBlockCenter = new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
-        Vec3 localNozzlePosition = localBlockCenter.add(localExhaustDirection.scale(currentNozzleOffset));
+        Vec3 localExhaustDirection = getParticleDebugExhaustDirectionLocal();
+        Vector3d additionalVel = new Vector3d();
+        Vec3 localNozzlePosition = getParticleDebugNozzlePositionLocal();
 
         // Convert local sublevel coordinates into world-space coordinates so particles align
         // with ship rotation instead of sticking to global axes.
