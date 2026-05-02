@@ -1,6 +1,9 @@
 package org.antarcticgardens.cna;
 
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllTags;
 import com.simibubi.create.api.stress.BlockStressValues;
+import com.simibubi.create.content.decoration.encasing.CasingBlock;
 import com.simibubi.create.content.processing.AssemblyOperatorBlockItem;
 import com.simibubi.create.foundation.block.connected.SimpleCTBehaviour;
 import com.simibubi.create.foundation.data.BlockStateGen;
@@ -260,6 +263,17 @@ public class CNABlocks {
                     .register();
 
 
+    public static final BlockEntry<CasingBlock> HEAT_CASING =
+            REGISTRATE.block("heat_casing", CasingBlock::new)
+                    .initialProperties(AllBlocks.ANDESITE_CASING::get)
+                    .properties((p) -> p.requiresCorrectToolForDrops().mapColor(MapColor.COLOR_GRAY).sound(SoundType.NETHERITE_BLOCK))
+                    .transform(b -> b.onRegister(CreateRegistrate.connectedTextures(() -> new SimpleCTBehaviour(CNASpriteShifts.HEAT_CASING))))
+                    .tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                    .tag(AllTags.AllBlockTags.CASING.tag)
+                    .item()
+                    .tag(AllTags.AllItemTags.CASING.tag)
+                    .build()
+                    .register();
 
     public static final BlockEntry<HeatPipeBlock> HEAT_PIPE =
             REGISTRATE.block("heat_pipe", HeatPipeBlock::new)
