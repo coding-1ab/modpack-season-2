@@ -51,8 +51,6 @@ public class PropulsionConfig {
     public static final ModConfigSpec.ConfigValue<Double>  THRUSTER_PARTICLE_OFFSET_INCOMING_VEL_MODIFIER;
     public static final ModConfigSpec.ConfigValue<Double>  THRUSTER_PARTICLE_COUNT_MULTIPLIER;
     public static final ModConfigSpec.BooleanValue DEBUG_THRUSTER;
-    public static final ModConfigSpec.BooleanValue DEBUG_BURNER;
-    public static final ModConfigSpec.BooleanValue DEBUG_MAGNET;
 
     // Creative Thruster (legacy)
     public static final ModConfigSpec.ConfigValue<Double> CREATIVE_THRUSTER_THRUST_MULTIPLIER;
@@ -68,6 +66,7 @@ public class PropulsionConfig {
 
     // Stirling engine
     public static final ModConfigSpec.ConfigValue<Double> STIRLING_GENERATED_SU;
+    public static final ModConfigSpec.BooleanValue BLAZE_BURNERS_HEAT_STIRLING_ENGINES;
     public static final ModConfigSpec.ConfigValue<Double> TILT_ADAPTER_ANGLE_RANGE;
     public static final ModConfigSpec.ConfigValue<Double> STIRLING_REVOLUTION_PERIOD;
     public static final ModConfigSpec.ConfigValue<Double> STIRLING_CRANK_RADIUS;
@@ -75,6 +74,8 @@ public class PropulsionConfig {
 
     // Burners
     public static final ModConfigSpec.ConfigValue<Boolean> BURNERS_POWER_HEATED_MIXERS;
+    public static final ModConfigSpec.BooleanValue BURNERS_HEAT_STEAM_ENGINES;
+    public static final ModConfigSpec.BooleanValue BURNERS_SUPERHEAT_STEAM_ENGINES;
     public static final ModConfigSpec.ConfigValue<Double>  FUEL_DEFAULT_EFFICIENCY;
     public static final ModConfigSpec.ConfigValue<Double>  FUEL_EFFICIENCY_LAVA;
     public static final ModConfigSpec.ConfigValue<Double>  FUEL_EFFICIENCY_TURPENTINE;
@@ -212,6 +213,8 @@ public class PropulsionConfig {
         SERVER_BUILDER.push("Stirling Engine");
             STIRLING_GENERATED_SU = SERVER_BUILDER.comment("Change this value to modify the amount of stress units produced by stirling engine. Value of 16 corresponds to 4096 SU.")
                 .defineInRange("Generated stress units", 16.0, 1.0, 64.0);
+            BLAZE_BURNERS_HEAT_STIRLING_ENGINES = SERVER_BUILDER.comment("If true - vanilla Create Blaze Burners can heat Stirling Engines placed directly above them.")
+                .define("Blaze Burners heat Stirling Engines", true);
         SERVER_BUILDER.pop();
 
         SERVER_BUILDER.push("Tilt Adapter");
@@ -222,6 +225,10 @@ public class PropulsionConfig {
         SERVER_BUILDER.push("Burners");
             BURNERS_POWER_HEATED_MIXERS = SERVER_BUILDER.comment("If true - both solid and liquid burners can provide heat to heated mixers allowing for pre-nether brass.")
                 .define("Burners power heated mixers", true);
+            BURNERS_HEAT_STEAM_ENGINES = SERVER_BUILDER.comment("If true - solid and liquid burners can heat Steam Engine boilers.")
+                .define("Burners heat Steam Engines", true);
+            BURNERS_SUPERHEAT_STEAM_ENGINES = SERVER_BUILDER.comment("If true - solid and liquid burners at full heat can superheat Steam Engine boilers. Has no effect if 'Burners heat Steam Engines' is disabled.")
+                .define("Burners superheat Steam Engines", true);
         SERVER_BUILDER.pop();
 
         SERVER_BUILDER.push("Fuel Efficiency");
@@ -304,10 +311,6 @@ public class PropulsionConfig {
         CLIENT_BUILDER.push("Debug");
             DEBUG_THRUSTER = CLIENT_BUILDER.comment("Render thruster debug overlays (plume ray, obstruction hits, damage zones).")
                 .define("Thruster", false);
-            DEBUG_BURNER = CLIENT_BUILDER.comment("Render burner debug overlays.")
-                .define("Burner", false);
-            DEBUG_MAGNET = CLIENT_BUILDER.comment("Enable magnet debug overlays.")
-                .define("Magnet", false);
         CLIENT_BUILDER.pop();
 
         CLIENT_SPEC = CLIENT_BUILDER.build();
