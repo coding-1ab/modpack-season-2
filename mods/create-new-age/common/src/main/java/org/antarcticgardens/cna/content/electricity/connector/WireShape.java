@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
@@ -21,8 +22,9 @@ public class WireShape {
     private final float sectionsPerMeter;
     private final float totalLength;
     private final float thickness;
+    private final int maxLength;
 
-    public WireShape(Vector3f start, Vector3f end, float sectionsPerMeter, float thickness) {
+    public WireShape(Vector3f start, Vector3f end, float sectionsPerMeter, float thickness, int maxLength) {
         this.start = start;
         Vector3f difference = end.sub(start);
         this.totalLength = difference.length();
@@ -30,6 +32,7 @@ public class WireShape {
         up = calculateUp(direction);
         this.sectionsPerMeter = sectionsPerMeter;
         this.thickness = thickness;
+        this.maxLength = maxLength;
     }
 
     private Vector3f calculateUp(Vector3f direction) {
@@ -57,7 +60,8 @@ public class WireShape {
         poseStack.translate(start.x - Math.floor(start.x), start.y - Math.floor(start.y), start.z - Math.floor(start.z));
         poseStack.mulPose(new Matrix4f().rotateTowards(direction, up));
 
-        int sectionsAmount = Math.min((int) Math.ceil(totalLength * sectionsPerMeter), 100);
+        int maxSections = Mth.ceil((maxLength + 1) * sectionsPerMeter);
+        int sectionsAmount = Math.min((int) Math.ceil(totalLength * sectionsPerMeter), maxSections);
         float catenaryScalar = new Vector3f(up).mul(GLOBAL_UP).length();
         float lastCatenary = 0.0f;
         float sectionLength = 1.0F / sectionsPerMeter;

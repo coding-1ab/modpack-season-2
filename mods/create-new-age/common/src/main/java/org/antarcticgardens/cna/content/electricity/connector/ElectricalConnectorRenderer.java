@@ -73,7 +73,8 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Abstract
                 originPoint.toVector3f(),
                 endPoint.toVector3f(),
                 CNAConfig.getClient().wireSectionsPerMeter.get(),
-                CNAConfig.getClient().wireThickness.get().floatValue()
+                CNAConfig.getClient().wireThickness.get().floatValue(),
+                CNAConfig.getServer().maxWireLength.get()
         );
         VertexConsumer consumer = buffer.getBuffer(CNARenderTypes.wire(texture));
 
@@ -163,7 +164,8 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Abstract
                 wireStart.toVector3f(),
                 wireEnd.toVector3f(),
                 CNAConfig.getClient().wireSectionsPerMeter.get(),
-                CNAConfig.getClient().wireThickness.get().floatValue()
+                CNAConfig.getClient().wireThickness.get().floatValue(),
+                CNAConfig.getServer().maxWireLength.get()
         );
         VertexConsumer consumer = buffer.getBuffer(CNARenderTypes.wire(texture));
 
