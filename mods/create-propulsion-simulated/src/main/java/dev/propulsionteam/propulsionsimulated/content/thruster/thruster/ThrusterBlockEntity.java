@@ -401,50 +401,10 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             return;
         }
         if (isController() && isMultiblock()) {
-            runCubeObstructionScan(lvl);
+            super.calculateObstruction(lvl, worldPosition, getBlockState().getValue(AbstractThrusterBlock.FACING));
             return;
         }
         super.calculateObstruction(lvl, pos, forwardDirection);
-    }
-
-    private void runObstructionScan(Level lvl, BlockPos pos, Direction forwardDirection) {
-        super.calculateObstruction(lvl, pos, forwardDirection);
-    }
-
-    private void runCubeObstructionScan(net.minecraft.world.level.Level lvl) {
-        Direction facing = getBlockState().getValue(AbstractThrusterBlock.FACING);
-        BlockPos origin = worldPosition;
-        boolean anyChanged = false;
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < width; y++) {
-                for (int z = 0; z < width; z++) {
-                    BlockPos cellPos = origin.offset(x, y, z);
-                    BlockEntity be = lvl.getBlockEntity(cellPos);
-                    if (!(be instanceof ThrusterBlockEntity t)) continue;
-                    if (getInternalExhaustOffset(origin, cellPos, facing, width) != 0) continue;
-                    int prev = t.emptyBlocks;
-                    t.runObstructionScan(lvl, cellPos, facing);
-                    if (t.emptyBlocks != prev) {
-                        anyChanged = true;
-                        t.setChanged();
-                        BlockState bs = t.getBlockState();
-                        lvl.sendBlockUpdated(cellPos, bs, bs, Block.UPDATE_CLIENTS);
-                    }
-                }
-            }
-        }
-        if (anyChanged) {
-            isThrustDirty = true;
-        }
-    }
-
-    private static int getInternalExhaustOffset(BlockPos origin, BlockPos cellPos, Direction facing, int size) {
-        int rel = switch (facing.getAxis()) {
-            case X -> cellPos.getX() - origin.getX();
-            case Y -> cellPos.getY() - origin.getY();
-            case Z -> cellPos.getZ() - origin.getZ();
-        };
-        return facing.getAxisDirection() == Direction.AxisDirection.POSITIVE ? rel : (size - 1 - rel);
     }
 
     @Override
@@ -452,29 +412,6 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         if (!isController() && isMultiblock()) {
             ThrusterBlockEntity ctrl = getControllerBE();
             return ctrl != null ? ctrl.calculateObstructionEffect() : 0f;
-        }
-        if (isController() && isMultiblock() && level != null) {
-            float total = 0f;
-            int count = 0;
-            Direction facing = getBlockState().getValue(AbstractThrusterBlock.FACING);
-            BlockPos origin = worldPosition;
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < width; y++) {
-                    for (int z = 0; z < width; z++) {
-                        BlockPos cellPos = origin.offset(x, y, z);
-                        if (getInternalExhaustOffset(origin, cellPos, facing, width) != 0) continue;
-                        BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level,cellPos);
-                        if (be instanceof ThrusterBlockEntity t) {
-                            if (t.emptyBlocks == 0) {
-                                return 0f;
-                            }
-                            total += (float) t.emptyBlocks / (float) OBSTRUCTION_LENGTH;
-                            count++;
-                        }
-                    }
-                }
-            }
-            return count == 0 ? 0f : total / count;
         }
         return super.calculateObstructionEffect();
     }
@@ -485,30 +422,64 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             ThrusterBlockEntity ctrl = getControllerBE();
             return ctrl != null ? ctrl.getEmptyBlocks() : 0;
         }
-        if (isController() && isMultiblock() && level != null) {
-            int total = 0;
-            int count = 0;
-            Direction facing = getBlockState().getValue(AbstractThrusterBlock.FACING);
-            BlockPos origin = worldPosition;
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < width; y++) {
-                    for (int z = 0; z < width; z++) {
-                        BlockPos cellPos = origin.offset(x, y, z);
-                        if (getInternalExhaustOffset(origin, cellPos, facing, width) != 0) continue;
-                        BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level,cellPos);
-                        if (be instanceof ThrusterBlockEntity t) {
-                            if (t.emptyBlocks == 0) {
-                                return 0;
-                            }
-                            total += t.emptyBlocks;
-                            count++;
-                        }
-                    }
-                }
-            }
-            return count == 0 ? 0 : Math.round((float) total / count);
-        }
         return super.getEmptyBlocks();
+    }
+
+    private Vec3 getMultiblockCenterNozzlePositionLocal() {
+        Direction exhaustDirection = getFacing().getOpposite();
+        Vec3 localExhaustDirection = new Vec3(exhaustDirection.getStepX(), exhaustDirection.getStepY(), exhaustDirection.getStepZ());
+        double half = width * 0.5d;
+        Vec3 localCubeCenter = new Vec3(
+            worldPosition.getX() + half,
+            worldPosition.getY() + half,
+            worldPosition.getZ() + half
+        );
+        return localCubeCenter.add(localExhaustDirection.scale(half + 0.45d));
+    }
+
+    @Override
+    public Vec3 getParticleDebugNozzlePositionLocal() {
+        if (!isController() && isMultiblock()) {
+            ThrusterBlockEntity ctrl = getControllerBE();
+            return ctrl != null ? ctrl.getParticleDebugNozzlePositionLocal() : super.getParticleDebugNozzlePositionLocal();
+        }
+        if (isController() && isMultiblock()) {
+            return getMultiblockCenterNozzlePositionLocal();
+        }
+        return super.getParticleDebugNozzlePositionLocal();
+    }
+
+    @Override
+    public WorldExhaustRay getWorldExhaustRay() {
+        if (!isController() && isMultiblock()) {
+            ThrusterBlockEntity ctrl = getControllerBE();
+            return ctrl != null ? ctrl.getWorldExhaustRay() : super.getWorldExhaustRay();
+        }
+        if (!(isController() && isMultiblock()) || level == null) {
+            return super.getWorldExhaustRay();
+        }
+
+        Direction exhaustDirection = getFacing().getOpposite();
+        Vec3 localNozzle = getMultiblockCenterNozzlePositionLocal();
+        Vector3d localNozzleVec = new Vector3d(localNozzle.x, localNozzle.y, localNozzle.z);
+        Vector3d localExhaustVec = new Vector3d(exhaustDirection.getStepX(), exhaustDirection.getStepY(), exhaustDirection.getStepZ()).normalize();
+        SimulatedThrustAdapter.Projection projection = SimulatedThrustAdapter.projectToWorld(level, worldPosition, localNozzleVec, localExhaustVec);
+
+        Vec3 worldDirection = projection.direction();
+        if (worldDirection.lengthSqr() < MathUtility.epsilon) {
+            worldDirection = new Vec3(localExhaustVec.x, localExhaustVec.y, localExhaustVec.z);
+        } else {
+            worldDirection = worldDirection.normalize();
+        }
+        return new WorldExhaustRay(projection.level(), projection.position(), worldDirection);
+    }
+
+    @Override
+    protected boolean shouldDamageEntities() {
+        if (isMultiblock() && !isController()) {
+            return false;
+        }
+        return super.shouldDamageEntities();
     }
 
     private static float getMultiblockFuelEfficiency(int cubeWidth) {
@@ -606,15 +577,9 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         Direction direction = state.getValue(AbstractThrusterBlock.FACING);
         Direction oppositeDirection = direction.getOpposite();
 
-        double half = width * 0.5;
         Vec3 localExhaustDirection = new Vec3(oppositeDirection.getStepX(), oppositeDirection.getStepY(), oppositeDirection.getStepZ());
-        Vec3 localCubeCenter = new Vec3(
-            worldPosition.getX() + half,
-            worldPosition.getY() + half,
-            worldPosition.getZ() + half
-        );
         // Emit from the center nozzle plane of the whole assembled cube.
-        Vec3 localNozzlePosition = localCubeCenter.add(localExhaustDirection.scale(half + 0.45));
+        Vec3 localNozzlePosition = getMultiblockCenterNozzlePositionLocal();
 
         Vec3 worldNozzlePosition = Sable.HELPER.projectOutOfSubLevel(level, localNozzlePosition);
         Vec3 worldAheadPosition = Sable.HELPER.projectOutOfSubLevel(level, localNozzlePosition.add(localExhaustDirection));
