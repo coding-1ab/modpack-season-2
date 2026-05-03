@@ -146,9 +146,9 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
             .fma(currentVectorY, up);
 
         if (combined.lengthSquared() < 1e-8) {
-            return forward.negate();
+            return forward;
         }
-        return combined.normalize().negate();
+        return combined.normalize();
     }
 
     @Override
