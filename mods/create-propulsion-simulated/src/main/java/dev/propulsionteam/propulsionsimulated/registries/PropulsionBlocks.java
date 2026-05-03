@@ -3,6 +3,7 @@ package dev.propulsionteam.propulsionsimulated.registries;
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.LiquidBurnerBlock;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.solid.SolidBurnerBlock;
+import dev.propulsionteam.propulsionsimulated.content.cable.hub.CableHubBlock;
 import dev.propulsionteam.propulsionsimulated.content.heat.engine.StirlingEngineBlock;
 import dev.propulsionteam.propulsionsimulated.content.platinum.CoralGeneratorBlock;
 import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionBlock;
@@ -87,6 +88,9 @@ public class PropulsionBlocks {
     public static final DeferredBlock<CoralGeneratorBlock> CORAL_GENERATOR = BLOCKS.register("coral_generator",
         () -> new CoralGeneratorBlock(Block.Properties.of().mapColor(MapColor.COLOR_CYAN).sound(SoundType.STONE)
             .requiresCorrectToolForDrops().strength(3.5f, 3.0f).noOcclusion()));
+    public static final DeferredBlock<CableHubBlock> CABLE_HUB = BLOCKS.register("cable_hub",
+        () -> new CableHubBlock(Block.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL)
+            .requiresCorrectToolForDrops().strength(2.5f, 3.5f).noOcclusion()));
 
     static {
         registerDefaultBlockItem("thruster", THRUSTER_BLOCK);
@@ -109,6 +113,7 @@ public class PropulsionBlocks {
         registerDefaultBlockItem("platinum_block", PLATINUM_BLOCK);
         registerDefaultBlockItem("raw_platinum_block", RAW_PLATINUM_BLOCK);
         registerBlockItem("coral_generator", CORAL_GENERATOR, new BlockItem.Properties().rarity(Rarity.RARE));
+        registerDefaultBlockItem("cable_hub", CABLE_HUB);
 
         PropulsionDefaultStress.setImpact(ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "redstone_transmission"), 0, false);
         PropulsionDefaultStress.setImpact(ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "tilt_adapter"), 0, false);

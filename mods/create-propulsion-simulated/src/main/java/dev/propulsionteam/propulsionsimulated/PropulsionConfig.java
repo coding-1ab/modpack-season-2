@@ -33,6 +33,8 @@ public class PropulsionConfig {
     public static final ModConfigSpec.DoubleValue VECTOR_THRUSTER_BASE_THRUST;
     public static final ModConfigSpec.BooleanValue DAMAGE_ENTITIES;
     public static final ModConfigSpec.IntValue DAMAGE_TICK_INTERVAL;
+    public static final ModConfigSpec.IntValue CABLE_TRANSFER_PER_EDGE;
+    public static final ModConfigSpec.IntValue CABLE_TICK_INTERVAL;
     public static final ModConfigSpec.DoubleValue NOZZLE_OFFSET_FROM_CENTER;
     public static final ModConfigSpec.BooleanValue USE_ATMOSPHERIC_PRESSURE;
     public static final ModConfigSpec.DoubleValue ATMOSPHERIC_PRESSURE_AMOUNT;
@@ -175,6 +177,13 @@ public class PropulsionConfig {
                 .defineInRange("groundedSpeedDeadzone", 0.03d, 0.0d, 5.0d);
             GROUND_PROBE_DISTANCE = SERVER_BUILDER.comment("How far downward a thruster probes to detect grounded support.")
                 .defineInRange("groundProbeDistance", 1.5d, 0.05d, 5.0d);
+        SERVER_BUILDER.pop();
+
+        SERVER_BUILDER.push("cable");
+            CABLE_TRANSFER_PER_EDGE = SERVER_BUILDER.comment("Maximum FE transferred per cable edge per server tick.")
+                .defineInRange("cableTransferPerEdge", 1000, 1, 1_000_000);
+            CABLE_TICK_INTERVAL = SERVER_BUILDER.comment("How often cable transfer resolution runs, in ticks.")
+                .defineInRange("cableTickInterval", 1, 1, 20);
         SERVER_BUILDER.pop();
 
         SERVER_BUILDER.push("Wing");

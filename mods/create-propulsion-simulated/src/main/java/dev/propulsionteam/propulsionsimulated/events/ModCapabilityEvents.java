@@ -3,6 +3,7 @@ package dev.propulsionteam.propulsionsimulated.events;
 import dan200.computercraft.api.peripheral.PeripheralCapability;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.LiquidBurnerBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.PassthroughFluidHandler;
+import dev.propulsionteam.propulsionsimulated.content.cable.hub.CableHubBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.platinum.CoralGeneratorBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.heat.engine.StirlingEngineBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionBlockEntity;
@@ -45,6 +46,11 @@ public class ModCapabilityEvents {
             Capabilities.EnergyStorage.BLOCK,
             PropulsionBlockEntities.CORAL_GENERATOR_BLOCK_ENTITY.get(),
             (be, side) -> ((CoralGeneratorBlockEntity) be).getEnergyHandler(side)
+        );
+        event.registerBlockEntity(
+            Capabilities.EnergyStorage.BLOCK,
+            PropulsionBlockEntities.CABLE_HUB_BLOCK_ENTITY.get(),
+            (be, side) -> ((CableHubBlockEntity) be).getEnergyHandler(side)
         );
 
         event.registerBlockEntity(
