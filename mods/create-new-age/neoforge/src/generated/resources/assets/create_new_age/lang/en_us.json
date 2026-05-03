@@ -26,6 +26,7 @@
   "block.create_new_age.overcharged_golden_wire_block": "Overcharged Golden Wire Block",
   "block.create_new_age.overcharged_iron_wire_block": "Overcharged Iron Wire Block",
   "block.create_new_age.reactor_casing": "Reactor Casing",
+  "block.create_new_age.reactor_encased_heat_pipe": "Reactor Encased Heat Pipe",
   "block.create_new_age.reactor_fuel_acceptor": "Reactor Fuel Acceptor",
   "block.create_new_age.reactor_glass": "Reactor Glass",
   "block.create_new_age.reactor_heat_vent": "Reactor Heat Vent",

@@ -364,7 +364,9 @@ public class CNABlocks {
                     .tag(CNATags.Block.STOPS_RADIATION.blockTag)
                     .tag(AllTags.AllBlockTags.CASING.tag)
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
-                    .simpleItem()
+                    .item()
+                    .tag(AllTags.AllItemTags.CASING.tag)
+                    .build()
                     .register();
 
     public static final BlockEntry<ReactorEncasedHeatPipeBlock> REACTOR_ENCASED_HEAT_PIPE =
