@@ -90,6 +90,35 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
         onVectorSignalChanged();
     }
 
+    public int getVectorSignalX() {
+        return rightSignal;
+    }
+
+    public int getVectorSignalY() {
+        return leftSignal;
+    }
+
+    public void setVectorSignalX(int power) {
+        setRightSignal(power);
+    }
+
+    public void setVectorSignalY(int power) {
+        setLeftSignal(power);
+    }
+
+    public void setVectorCoordinates(float x, float y) {
+        setRightSignal(mapAxisToSignal(x));
+        setLeftSignal(mapAxisToSignal(y));
+    }
+
+    public float getTargetVectorX() {
+        return targetVectorX;
+    }
+
+    public float getTargetVectorY() {
+        return targetVectorY;
+    }
+
     @Override
     public void tick() {
         updateMappedTargets();
@@ -117,9 +146,9 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
             .fma(currentVectorY, up);
 
         if (combined.lengthSquared() < 1e-8) {
-            return forward;
+            return forward.negate();
         }
-        return combined.normalize();
+        return combined.normalize().negate();
     }
 
     @Override
@@ -211,9 +240,20 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
             return 0.0f;
         }
         if (clamped < 8) {
-            return -1.0f + ((clamped - 1.0f) / 6.0f);
+            return 1.0f - ((clamped - 1.0f) / 6.0f);
         }
-        return (clamped - 9.0f) / 6.0f;
+        return -((clamped - 9.0f) / 6.0f);
+    }
+
+    private static int mapAxisToSignal(float axis) {
+        float clamped = -Mth.clamp(axis, -1.0f, 1.0f);
+        if (Math.abs(clamped) < 1.0e-4f) {
+            return 8;
+        }
+        if (clamped < 0.0f) {
+            return Mth.clamp(1 + Math.round((clamped + 1.0f) * 6.0f), 1, 7);
+        }
+        return Mth.clamp(9 + Math.round(clamped * 6.0f), 9, 15);
     }
 
     private static float tweenTowards(float current, float target) {
@@ -230,7 +270,12 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
         if (right.lengthSquared() < 1e-8) {
             return new Vector3d(1, 0, 0);
         }
-        return right.normalize();
+        right.normalize();
+        if (Math.abs(forward.y) > 0.999) {
+            // Keep control handedness consistent between horizontal and vertical orientations.
+            right.negate();
+        }
+        return right;
     }
 
     private static void rotateAroundAxis(Vector3d v, Vector3d axisUnit, double radians) {

@@ -6,7 +6,10 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
 
+import dev.propulsionteam.propulsionsimulated.compat.PropulsionCompatibility;
+import dev.propulsionteam.propulsionsimulated.compat.computercraft.ComputerBehaviour;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
+import com.simibubi.create.compat.computercraft.AbstractComputerBehaviour;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -23,6 +26,7 @@ public class CoralGeneratorBlockEntity extends SmartBlockEntity {
 
     private int energyStored;
     private SmartFluidTankBehaviour tank;
+    public AbstractComputerBehaviour computerBehaviour;
 
     private final IEnergyStorage energyHandler = new IEnergyStorage() {
         @Override
@@ -73,6 +77,9 @@ public class CoralGeneratorBlockEntity extends SmartBlockEntity {
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         tank = SmartFluidTankBehaviour.single(this, FLUID_CAPACITY_MB);
         behaviours.add(tank);
+        if (PropulsionCompatibility.CC_ACTIVE) {
+            behaviours.add(computerBehaviour = new ComputerBehaviour(this));
+        }
     }
 
     @Override
@@ -125,6 +132,28 @@ public class CoralGeneratorBlockEntity extends SmartBlockEntity {
             return energyHandler;
         }
         return side.getAxis() == Direction.Axis.Y ? energyHandler : null;
+    }
+
+    public int getCoralAmountMb() {
+        if (tank == null) {
+            return 0;
+        }
+        return tank.getPrimaryHandler().getFluidInTank(0).getAmount();
+    }
+
+    public int getCoralCapacityMb() {
+        if (tank == null) {
+            return FLUID_CAPACITY_MB;
+        }
+        return tank.getPrimaryHandler().getTankCapacity(0);
+    }
+
+    public int getEnergyStoredFe() {
+        return energyStored;
+    }
+
+    public int getEnergyCapacityFe() {
+        return ENERGY_CAPACITY;
     }
 
     @Override

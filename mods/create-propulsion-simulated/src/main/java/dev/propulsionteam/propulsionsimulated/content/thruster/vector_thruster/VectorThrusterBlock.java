@@ -11,6 +11,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.block.DirectionalBlock;
 
@@ -35,6 +36,11 @@ public class VectorThrusterBlock extends IonThrusterBlock {
             return ThrusterShapes.VECTOR_THRUSTER.get(Direction.UP);
         }
         return ThrusterShapes.VECTOR_THRUSTER.get(facing);
+    }
+
+    @Override
+    protected VoxelShape getBlockSupportShape(BlockState state, BlockGetter level, BlockPos pos) {
+        return Shapes.block();
     }
 
     @Override

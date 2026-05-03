@@ -31,6 +31,7 @@ import java.util.Locale;
 public class CreativeVectorThrusterBlockEntity extends VectorThrusterBlockEntity {
     private CreativeThrusterPowerScrollValueBehaviour powerBehaviour;
     private CreativeThrusterBlockEntity.PlumeType plumeType = CreativeThrusterBlockEntity.PlumeType.PLASMA;
+    private float peripheralThrustOutput = -1.0f;
 
     public CreativeVectorThrusterBlockEntity(BlockPos pos, BlockState state) {
         super(PropulsionBlockEntities.CREATIVE_VECTOR_THRUSTER_BLOCK_ENTITY.get(), pos, state);
@@ -55,7 +56,7 @@ public class CreativeVectorThrusterBlockEntity extends VectorThrusterBlockEntity
         float currentPower = getPower();
         if (currentPower > 0) {
             float thrustMultiplier = PropulsionConfig.CREATIVE_THRUSTER_THRUST_MULTIPLIER.get().floatValue();
-            float baseThrustPn = powerBehaviour.getTargetThrust() * 1000.0f;
+            float baseThrustPn = peripheralThrustOutput >= 0.0f ? peripheralThrustOutput : powerBehaviour.getTargetThrust() * 1000.0f;
             baseThrustPn *= (float) calculateAtmosphericFactor();
             thrust = thrustMultiplier * currentPower * baseThrustPn;
         }
@@ -196,12 +197,25 @@ public class CreativeVectorThrusterBlockEntity extends VectorThrusterBlockEntity
 
     @Override
     protected double getBaseThrust() {
+        if (peripheralThrustOutput >= 0.0f) {
+            return peripheralThrustOutput / 1000.0f;
+        }
         return powerBehaviour.getTargetThrust();
     }
 
     @Override
     protected double getRawThrustCap() {
+        if (peripheralThrustOutput >= 0.0f) {
+            return peripheralThrustOutput / 1000.0f;
+        }
         return powerBehaviour.getTargetThrust();
+    }
+
+    public void setThrustOutput(float thrustOutputPn) {
+        this.peripheralThrustOutput = Math.max(0.0f, thrustOutputPn);
+        updateThrust(getBlockState());
+        setChanged();
+        notifyUpdate();
     }
 
     @Override
@@ -213,6 +227,7 @@ public class CreativeVectorThrusterBlockEntity extends VectorThrusterBlockEntity
     protected void write(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
         super.write(compound, registries, clientPacket);
         compound.putInt("plumeType", plumeType.ordinal());
+        compound.putFloat("PeripheralThrustOutput", peripheralThrustOutput);
     }
 
     @Override
@@ -221,6 +236,9 @@ public class CreativeVectorThrusterBlockEntity extends VectorThrusterBlockEntity
         if (compound.contains("plumeType")) {
             int idx = compound.getInt("plumeType");
             plumeType = CreativeThrusterBlockEntity.PlumeType.values()[Mth.clamp(idx, 0, CreativeThrusterBlockEntity.PlumeType.values().length - 1)];
+        }
+        if (compound.contains("PeripheralThrustOutput")) {
+            peripheralThrustOutput = Math.max(-1.0f, compound.getFloat("PeripheralThrustOutput"));
         }
     }
 }

@@ -32,6 +32,7 @@ public final class VectorThrusterRenderer {
         if (!state.hasProperty(AbstractThrusterBlock.FACING)) {
             return;
         }
+        Direction facing = state.getValue(AbstractThrusterBlock.FACING);
 
         float xAxis = Mth.clamp(be.getCurrentVectorX(), -1.0f, 1.0f);
         float yAxis = Mth.clamp(be.getCurrentVectorY(), -1.0f, 1.0f);
@@ -46,7 +47,7 @@ public final class VectorThrusterRenderer {
 
         ms.pushPose();
         ms.translate(0.5, 0.5, 0.5);
-        applyFacingRotation(ms, state.getValue(AbstractThrusterBlock.FACING));
+        applyFacingRotation(ms, facing);
         ms.translate(-0.5, -0.5, -0.5);
 
         ms.translate(PIVOT_X, PIVOT_Y, PIVOT_Z);

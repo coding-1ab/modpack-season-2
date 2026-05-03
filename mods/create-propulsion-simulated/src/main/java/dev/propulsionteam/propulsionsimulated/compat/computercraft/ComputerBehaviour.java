@@ -6,10 +6,12 @@ import java.util.function.Supplier;
 import java.util.function.Function;
 
 import dev.propulsionteam.propulsionsimulated.content.heat.engine.StirlingEngineBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.platinum.CoralGeneratorBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterBlockEntity;
 import com.simibubi.create.compat.computercraft.AbstractComputerBehaviour;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 
@@ -28,7 +30,9 @@ public class ComputerBehaviour extends AbstractComputerBehaviour {
 
     static {
         register(ThrusterBlockEntity.class, ThrusterPeripheral::new);
+        register(VectorThrusterBlockEntity.class, VectorThrusterPeripheral::new);
         register(CreativeThrusterBlockEntity.class, CreativeThrusterPeripheral::new);
+        register(CoralGeneratorBlockEntity.class, CoralGeneratorPeripheral::new);
         register(StirlingEngineBlockEntity.class, StirlingEnginePeripheral::new);
         register(RedstoneTransmissionBlockEntity.class, RedstoneTransmissionPeripheral::new);
         register(TiltAdapterBlockEntity.class, TiltAdapterPeripheral::new);
