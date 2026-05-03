@@ -374,7 +374,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                             float fuelEfficiency = ThrusterFuelManager.getEfficiency(fluidStack().getFluid());
                             float baseThrustPn = (float) (PropulsionConfig.BASE_THRUST.get() * 1000.0); // config is already divided by 1000
                             baseThrustPn *= (float) calculateAtmosphericFactor();
-                            totalThrust = baseThrustPn * thrustMultiplier * thrustPercentage * properties.thrustMultiplier() * fuelEfficiency * ratio * n;
+                            totalThrust = baseThrustPn * thrustMultiplier * thrustPercentage * properties.thrustMultiplier() * fuelEfficiency * ratio * n * getMultiblockThrustMultiplier(width);
                             lastConsumedMbPerTick = (double) fuelConsumed / (double) tickRate;
                 }
             }
@@ -514,6 +514,12 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     private static float getMultiblockFuelEfficiency(int cubeWidth) {
         if (cubeWidth == 2) return 1.0f;
         if (cubeWidth == 3) return 0.95f;
+        return 1.0f;
+    }
+
+    private static float getMultiblockThrustMultiplier(int cubeWidth) {
+        if (cubeWidth == 2) return 1.10f;
+        if (cubeWidth == 3) return 1.25f;
         return 1.0f;
     }
 
