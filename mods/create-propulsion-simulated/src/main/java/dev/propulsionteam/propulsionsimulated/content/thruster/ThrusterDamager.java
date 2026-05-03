@@ -1,6 +1,5 @@
 package dev.propulsionteam.propulsionsimulated.content.thruster;
 
-import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import dev.propulsionteam.propulsionsimulated.debug.PropulsionDebug;
 import dev.propulsionteam.propulsionsimulated.debug.routes.MainDebugRoute;
 import dev.propulsionteam.propulsionsimulated.utility.AbstractAreaDamagerBehaviour;
@@ -34,9 +33,7 @@ public class ThrusterDamager extends AbstractAreaDamagerBehaviour {
 
     @Override
     protected boolean shouldDamage() {
-        return PropulsionConfig.THRUSTER_DAMAGE_ENTITIES.get()
-            && getThruster().isPowered()
-            && getThruster().isWorking();
+        return getThruster().shouldDamageEntities();
     }
 
     @Override
