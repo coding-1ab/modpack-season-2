@@ -41,6 +41,7 @@ import org.antarcticgardens.cna.content.energising.EnergisingBlockItem;
 import org.antarcticgardens.cna.content.heat.heater.HeaterBlock;
 import org.antarcticgardens.cna.content.heat.pipe.HeatPipeBlock;
 import org.antarcticgardens.cna.content.heat.pipe.EncasedHeatPipeBlock;
+import org.antarcticgardens.cna.content.heat.pipe.ReactorEncasedHeatPipeBlock;
 import org.antarcticgardens.cna.content.heat.plate.SolarHeatingPlateBlock;
 import org.antarcticgardens.cna.content.heat.pump.HeatPumpBlock;
 import org.antarcticgardens.cna.content.heat.stirling.StirlingEngineBlock;
@@ -57,6 +58,7 @@ import org.antarcticgardens.cna.content.motor.variants.ReinforcedMotorVariant;
 import org.antarcticgardens.cna.content.nuclear.CoriumBlock;
 import org.antarcticgardens.cna.content.nuclear.SolidCoriumBlock;
 import org.antarcticgardens.cna.content.nuclear.reactor.ReactorBlock;
+import org.antarcticgardens.cna.content.nuclear.reactor.ReactorCasingBlock;
 import org.antarcticgardens.cna.content.nuclear.reactor.ReactorTransparentBlock;
 import org.antarcticgardens.cna.content.nuclear.reactor.fuelacceptor.ReactorFuelAcceptorBlock;
 import org.antarcticgardens.cna.content.nuclear.reactor.rod.ReactorRodBlock;
@@ -297,6 +299,7 @@ public class CNABlocks {
                     .onRegister(CreateRegistrate.casingConnectivity((block, cc) -> cc.make(block, CNASpriteShifts.HEAT_CASING,
                             (s, f) -> !s.getValue(EncasedHeatPipeBlock.getDirectionProperty(f)))))
                     .loot((p, b) -> p.dropOther(b, HEAT_PIPE.get()))
+                    .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .blockstate(CNABlockStateGen.encasedHeatPipe())
                     .transform(EncasingRegistry.addVariantTo(HEAT_PIPE))
                     .register();
@@ -353,13 +356,28 @@ public class CNABlocks {
                     .simpleItem()
                     .register();
 
-    public static final BlockEntry<ReactorBlock> REACTOR_CASING =
-            REGISTRATE.block("reactor_casing", ReactorBlock::new)
+    public static final BlockEntry<ReactorCasingBlock> REACTOR_CASING =
+            REGISTRATE.block("reactor_casing", ReactorCasingBlock::new)
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
-                    .transform(b -> b.onRegister(CreateRegistrate.connectedTextures(() -> new SimpleCTBehaviour(CNASpriteShifts.REACTOR_CASING))))
+                    .onRegister(CreateRegistrate.connectedTextures(() -> new EncasedCTBehaviour(CNASpriteShifts.REACTOR_CASING)))
+                    .onRegister(CreateRegistrate.casingConnectivity((block, cc) -> cc.makeCasing(block, CNASpriteShifts.REACTOR_CASING)))
                     .tag(CNATags.Block.STOPS_RADIATION.blockTag)
+                    .tag(AllTags.AllBlockTags.CASING.tag)
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .simpleItem()
+                    .register();
+
+    public static final BlockEntry<ReactorEncasedHeatPipeBlock> REACTOR_ENCASED_HEAT_PIPE =
+            REGISTRATE.block("reactor_encased_heat_pipe", (p) -> new ReactorEncasedHeatPipeBlock(p, REACTOR_CASING::get))
+                    .initialProperties(REACTOR_CASING::get)
+                    .onRegister(CreateRegistrate.connectedTextures(() -> new EncasedCTBehaviour(CNASpriteShifts.REACTOR_CASING)))
+                    .onRegister(CreateRegistrate.casingConnectivity((block, cc) -> cc.make(block, CNASpriteShifts.REACTOR_CASING,
+                            (s, f) -> !s.getValue(EncasedHeatPipeBlock.getDirectionProperty(f)))))
+                    .loot((p, b) -> p.dropOther(b, HEAT_PIPE.get()))
+                    .tag(CNATags.Block.STOPS_RADIATION.blockTag)
+                    .tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                    .blockstate(CNABlockStateGen.encasedHeatPipe())
+                    .transform(EncasingRegistry.addVariantTo(HEAT_PIPE))
                     .register();
 
     public static final BlockEntry<ReactorRodBlock> REACTOR_ROD =

@@ -1,5 +1,6 @@
 {
   "values": [
-    "create_new_age:heat_casing"
+    "create_new_age:heat_casing",
+    "create_new_age:reactor_casing"
   ]
 }

@@ -70,7 +70,7 @@ public class CNABlockEntityTypes {
 
     public static final BlockEntityEntry<EncasedHeatPipeBlockEntity> ENCASED_HEAT_PIPE = REGISTRATE
             .blockEntity("encased_heat_pipe", EncasedHeatPipeBlockEntity::new)
-            .validBlocks(CNABlocks.ENCASED_HEAT_PIPE)
+            .validBlocks(CNABlocks.ENCASED_HEAT_PIPE, CNABlocks.REACTOR_ENCASED_HEAT_PIPE)
             .register();
 
     public static final BlockEntityEntry<HeatPumpBlockEntity> HEAT_PUMP = REGISTRATE
