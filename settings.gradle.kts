@@ -233,7 +233,7 @@ addMods {
                 shouldUnpack = true,
             ),
             modProject(
-                dependencyNotations = listOf("dev.simulated_team.simulated:aeronautics-neoforge-1.21.1"),
+                dependencyNotations = listOf("dev.simulated_team.simulated:aeronautics-neoforge-1.21.1","dev.eriksonn.aeronautics:aeronautics-neoforge-1.21.1"),
                 projectPath = ":aeronautics:neoforge",
                 shouldUnpack = false,
             ),
