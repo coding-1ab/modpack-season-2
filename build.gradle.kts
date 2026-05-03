@@ -233,6 +233,7 @@ dependencies {
     localRuntime("curse.maven:modernfix-790626:7917721")
     localRuntime("curse.maven:spark-361579:6225208")
     localRuntime("top.theillusivec4.curios:curios-neoforge:$curiosVersion+$minecraftVersion")
+    localRuntime("maven.modrinth:ferrite-core:7.0.3-neoforge")
     // sodium 추가하려면 아래 줄 주석 해제할 것
     // 주의: sodium 추가하면 Sinytra Connector가 같이 딸려옴
     // localRuntime("maven.modrinth:sodium:mc$minecraftVersion-$sodiumVersion-neoforge")

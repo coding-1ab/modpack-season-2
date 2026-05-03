@@ -1,22 +1,29 @@
 package com.tmvkrpxl0.modpack.updator;
 
-import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Unit;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-record Registry(
-        List<ModEntry> mods
+public record Registry(
+        List<ModEntry> builtMods,
+        List<ModSource.ExternalSource> extraMods
 ) {
-    public static final Codec<Registry> CODEC = Codec.list(ModEntry.CODEC).xmap(Registry::new, Registry::mods);
+    public static final Codec<Registry> CODEC = RecordCodecBuilder.create(builder ->
+            builder.group(
+                    ModEntry.CODEC.listOf().fieldOf("built_mods").forGetter(Registry::builtMods),
+                    ModSource.ExternalSource.CODEC.listOf().fieldOf("extra_mods").forGetter(Registry::extraMods)
+            ).apply(builder, Registry::new)
+    );
 
     public record ModEntry(
             String fileName,
             long crc,
-            AssetSource assetSource
+            ModSource assetSource
     ) {
         public static final Codec<ModEntry> CODEC = RecordCodecBuilder.create(builder -> builder.group(
                 Codec.STRING.fieldOf("fileName").forGetter(ModEntry::fileName),
@@ -27,46 +34,106 @@ record Registry(
                         return DataResult.error(() -> string + " is not a valid CRC32");
                     }
                 }, Long::toHexString).fieldOf("crc").forGetter(ModEntry::crc),
-                AssetSource.CODEC.optionalFieldOf("assetSource", AssetSource.Inline.INSTANCE).forGetter(ModEntry::assetSource)
+                ModSource.CODEC.optionalFieldOf("assetSource", ModSource.Inline.INSTANCE).forGetter(ModEntry::assetSource)
         ).apply(builder, ModEntry::new));
     }
 
-    public sealed interface AssetSource {
-        Codec<AssetSource> CODEC = Codec
-                .either(Inline.CODEC, CurseForge.CODEC)
-                .xmap(either -> either.map(a -> a, b -> b),
-                        source -> {
-                            switch (source) {
-                                case Inline inline -> {
-                                    return Either.left(inline);
-                                }
-                                case CurseForge curseForge -> {
-                                    return Either.right(curseForge);
-                                }
-                            }
-                        }
-                );
+    public sealed interface ModSource {
+        Kind getKind();
 
-        final class Inline implements AssetSource {
+        enum Kind {
+            Inline("inline"),
+            CurseForge("curseforge"),
+            Modrinth("modrinth");
+
+            private final String kind;
+            public static final Codec<Kind> CODEC = Codec.STRING.comapFlatMap(string -> {
+                switch(string) {
+                    case "inline" -> {
+                        return DataResult.success(Kind.Inline);
+                    }
+                    case "curseforge" -> {
+                        return DataResult.success(Kind.CurseForge);
+                    }
+                    case "modrinth" -> {
+                        return DataResult.success(Kind.Modrinth);
+                    }
+                    default -> {
+                        return DataResult.error(() -> "Unknown asset source type: " + string);
+                    }
+                }
+            }, Kind::kind);
+
+            Kind(String name) {
+                this.kind = name;
+            }
+
+            public @NotNull String kind() {
+                return this.kind;
+            }
+        }
+
+        Codec<ModSource> CODEC = Kind.CODEC.dispatch(ModSource::getKind, kind -> switch (kind) {
+            case Inline -> Inline.CODEC;
+            case CurseForge -> CurseForge.CODEC;
+            case Modrinth -> Modrinth.CODEC;
+        });
+
+        sealed interface ExternalSource extends ModSource {
+            Codec<ExternalSource> CODEC = ModSource.CODEC.comapFlatMap(modSource -> {
+                switch (modSource) {
+                    case ExternalSource externalSource -> {
+                        return DataResult.success(externalSource);
+                    }
+                    case Inline inline -> {
+                        return DataResult.error(() -> "Inline is not external source");
+                    }
+                }
+            }, it -> it);
+        }
+
+        final class Inline implements ModSource {
             public static final Inline INSTANCE = new Inline();
 
             private Inline() {
             }
 
-            public static final Codec<Inline> CODEC = Codec.EMPTY.xmap(
+            public static final MapCodec<Inline> CODEC = Codec.EMPTY.xmap(
                     unit -> INSTANCE,
                     inline -> Unit.INSTANCE
-            ).codec();
+            );
+
+            @Override
+            public Kind getKind() {
+                return Kind.Inline;
+            }
         }
 
-        record CurseForge(Long projectId, Long fileId) implements AssetSource {
-            public static final Codec<CurseForge> CODEC = RecordCodecBuilder.create(builder ->
+        record CurseForge(Long projectId, Long fileId) implements ExternalSource {
+            public static final MapCodec<CurseForge> CODEC = RecordCodecBuilder.mapCodec(builder ->
                     builder.group(
                             Codec.LONG.fieldOf("projectId").forGetter(CurseForge::projectId),
                             Codec.LONG.fieldOf("fieldId").forGetter(CurseForge::fileId)
                     ).apply(builder, CurseForge::new)
             );
+
+            @Override
+            public Kind getKind() {
+                return Kind.CurseForge;
+            }
         }
-        // TODO Modrinth API 쓰는법 알아내기 class Modrinth : AssetSource()
+
+        record Modrinth(String version) implements ExternalSource {
+            public static final MapCodec<Modrinth> CODEC = RecordCodecBuilder.mapCodec(builder ->
+                    builder.group(
+                            Codec.STRING.fieldOf("version").forGetter(Modrinth::version)
+                    ).apply(builder, Modrinth::new)
+            );
+
+            @Override
+            public Kind getKind() {
+                return Kind.Modrinth;
+            }
+        }
     }
 }

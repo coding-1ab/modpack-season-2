@@ -16,7 +16,7 @@ addMods {
     addMod(
         filePath = "./mods/Create",
         includeTransitive = false,
-        excludeAsset = true,
+        assetSource = modrinth("UjX6dr61"),
         modProjects = listOf(
             modProject(
                 dependencyNotations = listOf("com.simibubi.create:create-1.21.1"),
@@ -61,7 +61,7 @@ addMods {
     addMod(
         filePath = "./mods/create-new-age",
         includeTransitive = false,
-        excludeAsset = true,
+        assetSource = modrinth("eQ9rbApE"),
         modProjects = listOf(
             modProject(
                 dependencyNotations = listOf("org.antarcticgardens.cna:create-new-age"),
@@ -87,7 +87,7 @@ addMods {
     addMod(
         filePath = "./mods/NatureSpiritForge",
         includeTransitive = false,
-        excludeAsset = true,
+        assetSource = modrinth("MGjl80vc"),
         modProjects = listOf(
             modProject(
                 dependencyNotations = listOf("net.hibiscus:natures_spirit"),
@@ -225,7 +225,7 @@ addMods {
     addMod(
         filePath = "./mods/Simulated-Project",
         includeTransitive = false,
-        excludeAsset = true,
+        assetSource = modrinth("YhZLrAFC"),
         modProjects = listOf(
             modProject(
                 dependencyNotations = listOf("dev.simulated_team.simulated:create-aeronautics-bundled-1.21.1"),
@@ -233,12 +233,18 @@ addMods {
                 shouldUnpack = true,
             ),
             modProject(
-                dependencyNotations = listOf("dev.simulated_team.simulated:aeronautics-neoforge-1.21.1","dev.eriksonn.aeronautics:aeronautics-neoforge-1.21.1"),
+                dependencyNotations = listOf(
+                    "dev.simulated_team.simulated:aeronautics-neoforge-1.21.1",
+                    "dev.eriksonn.aeronautics:aeronautics-neoforge-1.21.1"
+                ),
                 projectPath = ":aeronautics:neoforge",
                 shouldUnpack = false,
             ),
             modProject(
-                dependencyNotations = listOf("dev.simulated_team.simulated:aeronautics-common-1.21.1"),
+                dependencyNotations = listOf(
+                    "dev.simulated_team.simulated:aeronautics-common-1.21.1",
+                    "dev.eriksonn.aeronautics:aeronautics-common-1.21.1"
+                ),
                 projectPath = ":aeronautics:common",
                 shouldUnpack = false,
             ),

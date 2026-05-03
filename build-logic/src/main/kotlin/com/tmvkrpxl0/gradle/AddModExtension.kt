@@ -6,22 +6,6 @@ import org.gradle.api.provider.ListProperty
 abstract class AddModExtension(private val settings: Settings) {
     abstract val registeredProjects: ListProperty<ModConfig>
 
-    fun addMod(path: String, module: String, projectPath: String = ":") {
-        val config = ModConfig(
-            filePath = path,
-            includeTransitive = true,
-            excludeAsset = false,
-            modProjects = listOf(
-                ModProjectConfig(
-                    dependencyNotations = listOf(module),
-                    projectPath,
-                    shouldUnpack = true
-                )
-            )
-        )
-        addMod(config)
-    }
-
     fun addMod(config: ModConfig) {
         registeredProjects.add(config)
 
@@ -42,32 +26,35 @@ abstract class AddModExtension(private val settings: Settings) {
         filePath: String,
         includeTransitive: Boolean,
         modProjects: List<ModProjectConfig>,
-        excludeAsset: Boolean = false,
+        assetSource: AssetSource = AssetSource.Inline,
     ) {
-        val mod = ModConfig(filePath, includeTransitive, modProjects, excludeAsset)
+        val mod = ModConfig(filePath, includeTransitive, modProjects, assetSource)
         addMod(mod)
     }
-
-    fun mod(
-        filePath: String,
-        includeTransitive: Boolean,
-        modProjects: List<ModProjectConfig>,
-        excludeAsset: Boolean = false,
-    ) = ModConfig(filePath, includeTransitive, modProjects, excludeAsset)
 
     fun modProject(
         dependencyNotations: List<String>,
         projectPath: String,
         shouldUnpack: Boolean
     ) = ModProjectConfig(dependencyNotations, projectPath, shouldUnpack)
+
+    fun inline() = AssetSource.Inline
+    fun curseforge(projectId: String, fileId: String) = AssetSource.CurseForge(projectId, fileId)
+    fun modrinth(version: String) = AssetSource.Modrinth(version)
 }
 
 data class ModConfig(
     val filePath: String,
     val includeTransitive: Boolean,
     val modProjects: List<ModProjectConfig>,
-    val excludeAsset: Boolean
+    val assetSource: AssetSource
 )
+
+sealed interface AssetSource {
+    object Inline: AssetSource
+    data class CurseForge(val projectId: String, val fileId: String): AssetSource
+    data class Modrinth(val version: String): AssetSource
+}
 
 data class ModProjectConfig(
     val dependencyNotations: List<String>,

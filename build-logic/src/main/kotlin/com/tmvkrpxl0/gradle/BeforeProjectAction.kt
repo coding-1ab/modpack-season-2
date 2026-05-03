@@ -6,6 +6,7 @@ import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.jvm.tasks.Jar
@@ -36,13 +37,13 @@ class BeforeProjectAction(
             val clearModJars = project.tasks.register<Delete>("clearModJars") {
                 delete(jarDestination)
             }
-            val createModJars = project.tasks.register("createModJars") {
-                dependsOn(clearModJars)
+            val createModJars = project.tasks.register<Copy>("createModJars") {
+                mustRunAfter(clearModJars)
             }
 
             mods.get().forEach { mod ->
                 val includeTransitive = mod.includeTransitive
-                val excludeAssets = mod.excludeAsset
+                val assetSource = mod.assetSource
 
                 mod.modProjects.forEach { modProject ->
                     val notation = modProject.dependencyNotations.first()
@@ -89,7 +90,7 @@ class BeforeProjectAction(
 
                         val prepareJar = project.tasks.register<Jar>("${sourceSetName}prepareJar") {
                             from(unzipped) {
-                                if (excludeAssets) {
+                                if (assetSource !is AssetSource.Inline) {
                                     exclude("assets")
                                     exclude("assets/*")
                                     exclude("assets/**")
@@ -99,14 +100,24 @@ class BeforeProjectAction(
                             duplicatesStrategy = DuplicatesStrategy.WARN
                             archiveBaseName.set(artifactId)
                             destinationDirectory.set(jarDestination)
-
-                            if (excludeAssets) {
-                                archiveClassifier.set("trimmed")
-                            }
                         }
 
                         createModJars.configure {
                             dependsOn(prepareJar)
+
+                            doLast {
+                                when(assetSource) {
+                                    is AssetSource.CurseForge -> {
+                                        val file = jarDestination.resolve("$artifactId.assetSource")
+                                        file.writeText("curseforge ${assetSource.projectId} ${assetSource.fileId}")
+                                    }
+                                    is AssetSource.Modrinth -> {
+                                        val file = jarDestination.resolve("$artifactId.assetSource")
+                                        file.writeText("modrinth ${assetSource.version}")
+                                    }
+                                    is AssetSource.Inline -> {}
+                                }
+                            }
                         }
                     }
                 }
