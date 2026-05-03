@@ -38,15 +38,15 @@
 		{
 			"name": "nozzle",
 			"from": [2.5, 2.5, 15],
-			"to": [13.5, 13.5, 18],
+			"to": [13.5, 13.5, 19],
 			"rotation": {"angle": 0, "axis": "y", "origin": [0, 0, 16]},
 			"faces": {
 				"north": {"uv": [9.125, 9.375, 7.75, 10.75], "texture": "#0"},
-				"east": {"uv": [0, 9, 2.75, 8.25], "rotation": 270, "texture": "#0"},
-				"south": {"uv": [5.625, 8.25, 2.875, 11], "texture": "#0"},
-				"west": {"uv": [0, 9, 2.75, 8.25], "rotation": 90, "texture": "#0"},
-				"up": {"uv": [0, 9, 2.75, 8.25], "rotation": 180, "texture": "#0"},
-				"down": {"uv": [0, 9, 2.75, 8.25], "texture": "#0"}
+				"east": {"uv": [0, 9.125, 2.75, 8.25], "rotation": 270, "texture": "#0"},
+				"south": {"uv": [2.75, 12.625, 0, 10], "texture": "#0"},
+				"west": {"uv": [0, 9.125, 2.75, 8.25], "rotation": 90, "texture": "#0"},
+				"up": {"uv": [0, 9.125, 2.75, 8.25], "rotation": 180, "texture": "#0"},
+				"down": {"uv": [0, 9.125, 2.75, 8.25], "texture": "#0"}
 			}
 		}
 	]
