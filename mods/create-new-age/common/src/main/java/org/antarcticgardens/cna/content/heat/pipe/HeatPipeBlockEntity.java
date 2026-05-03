@@ -42,7 +42,6 @@ public class HeatPipeBlockEntity extends BlockEntity implements HeatBlockEntity,
         tag.putFloat("generating", generating);
     }
 
-
     @Override
     public float getHeat() {
         return heat;
