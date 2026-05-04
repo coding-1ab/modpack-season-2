@@ -1,0 +1,15 @@
+modrinth ILW6vM7o // guideme
+modrinth 6e8GCrLb // terra blender
+modrinth EgWWSAhJ // puzzles lib
+curseforge 457570 7276577 // configured
+modrinth OBp8ltOS // easy shulker boxes
+modrinth WYcVbsBw // configurable
+modrinth FaNppCJJ // controlling
+modrinth iEE85X0w // searchables
+modrinth yd8FKCmx // jade
+modrinth 6U8JVjdw // modernfix
+modrinth yohfFbgD // curios
+modrinth JZIT5IeN // moonlight lib
+modrinth x7kQWVju // ferrite core
+modrinth YAcQ6elZ // jei
+modrinth ouSj7NfF // emi

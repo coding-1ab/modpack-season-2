@@ -14,6 +14,7 @@ import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.fml.loading.progress.ProgressMeter;
 import net.neoforged.fml.loading.progress.StartupNotificationManager;
 import net.neoforged.neoforgespi.locating.*;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 
@@ -26,7 +27,8 @@ import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.zip.CRC32;
 
@@ -42,14 +44,23 @@ public class UpdatingLocator implements IDependencyLocator {
             return;
         }
 
-        HttpClient client = HttpClient.newHttpClient();
+        HttpClient client = HttpClient.newBuilder()
+                .followRedirects(HttpClient.Redirect.NORMAL)
+                .build();
         var discoveryAttributes = ModFileDiscoveryAttributes.DEFAULT.withDependencyLocator(this);
 
         ProgressMeter registryProgress = StartupNotificationManager.addProgressBar("Reading CodingLab Mod Registry", 1);
 
         Registry registry;
         try {
-            Reader reader = new BufferedReader(new InputStreamReader(download("registry.json", client).body()));
+            Reader reader = new BufferedReader(
+                    new InputStreamReader(
+                            requestDownload(
+                                    URI.create(baseUrl).resolve("registry.json"),
+                                    client
+                            ).body()
+                    )
+            );
             JsonElement json = JsonParser.parseReader(reader);
             reader.close();
             registry = Registry.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow();
@@ -81,21 +92,15 @@ public class UpdatingLocator implements IDependencyLocator {
                     fileSize = (int) modFile.length();
                     fileContentContainer[0] = Files.readAllBytes(modPath);
                 } catch (IOException exception) {
-                    StartupNotificationManager.addModMessage("FAILED TO READ MOD FILE FOR CHECKSUM");
-                    throw new ModLoadingException(
-                            ModLoadingIssue.error(
-                                    errorKey,
-                                    "Failed to read mod file for checksum"
-                            ).withCause(exception)
-                    );
+                    throw checksumIoException(exception);
                 }
             } else {
-                fileSize = downloadMod(modFile, client, fileContentContainer);
+                fileSize = downloadMod(builtMod(modFile.getName()), modFile, client, fileContentContainer);
             }
 
             long checksum = getChecksum(fileContentContainer[0], fileSize);
             if (checksum != mod.crc()) {
-                fileSize = downloadMod(modFile, client, fileContentContainer);
+                fileSize = downloadMod(builtMod(modFile.getName()), modFile, client, fileContentContainer);
             }
             checksum = getChecksum(fileContentContainer[0], fileSize);
             if (checksum != mod.crc()) {
@@ -108,25 +113,17 @@ public class UpdatingLocator implements IDependencyLocator {
                 );
             }
 
-            switch(mod.assetSource()) {
-                case Registry.ModSource.CurseForge ignored -> {
-                    throw new RuntimeException("Curseforge download is not implemented!");
+            switch (mod.assetSource()) {
+                case Registry.ModSource.CurseForge curseForge -> {
+                    Path downloaded = downloadCurseforge(curseForge.projectId(), curseForge.fileId(), client);
+                    JarContents jar = buildJarContents(modPath, downloaded);
+                    pipeline.addJarContent(jar, discoveryAttributes, IncompatibleFileReporting.ERROR);
                 }
-                case Registry.ModSource.Inline ignored -> pipeline.addPath(modPath, discoveryAttributes, IncompatibleFileReporting.ERROR);
+                case Registry.ModSource.Inline ignored ->
+                        pipeline.addPath(modPath, discoveryAttributes, IncompatibleFileReporting.ERROR);
                 case Registry.ModSource.Modrinth modrinth -> {
                     Path downloaded = downloadModrinth(modrinth.version(), client);
-                    JarContents jar = new JarContentsBuilder()
-                            .paths(modPath, downloaded)
-                            .pathFilter((relative, source) -> {
-                                boolean isAssets = relative.startsWith("assets") || relative.startsWith("/assets");
-
-                                if (isAssets) {
-                                    return source.equals(downloaded);
-                                } else {
-                                    return source.equals(modPath);
-                                }
-                            })
-                            .build();
+                    JarContents jar = buildJarContents(modPath, downloaded);
                     pipeline.addJarContent(jar, discoveryAttributes, IncompatibleFileReporting.ERROR);
                 }
             }
@@ -134,10 +131,11 @@ public class UpdatingLocator implements IDependencyLocator {
             modCheckProgress.increment();
         }
 
-        for(Registry.ModSource.ExternalSource extra: registry.extraMods()) {
-            switch(extra) {
-                case Registry.ModSource.CurseForge ignored -> {
-                    throw new RuntimeException("Curseforge download is not implemented!");
+        for (Registry.ModSource.ExternalSource extra : registry.extraMods()) {
+            switch (extra) {
+                case Registry.ModSource.CurseForge curseForge -> {
+                    Path downloaded = downloadCurseforge(curseForge.projectId(), curseForge.fileId(), client);
+                    pipeline.addPath(downloaded, discoveryAttributes, IncompatibleFileReporting.ERROR);
                 }
                 case Registry.ModSource.Modrinth modrinth -> {
                     Path downloaded = downloadModrinth(modrinth.version(), client);
@@ -147,6 +145,35 @@ public class UpdatingLocator implements IDependencyLocator {
         }
 
         modCheckProgress.complete();
+    }
+
+    private static URI builtMod(String fileName) {
+        return URI.create(baseUrl).resolve(fileName);
+    }
+
+    private static JarContents buildJarContents(Path built, Path downloaded) {
+        return new JarContentsBuilder()
+                .paths(built, downloaded)
+                .pathFilter((relative, source) -> {
+                    boolean isAssets = relative.startsWith("assets") || relative.startsWith("/assets");
+
+                    if (isAssets) {
+                        return source.equals(downloaded);
+                    } else {
+                        return source.equals(built);
+                    }
+                })
+                .build();
+    }
+
+    private static ModLoadingException checksumIoException(@Nullable Exception exception) {
+        StartupNotificationManager.addModMessage("FAILED TO READ MOD FILE FOR CHECKSUM");
+        return new ModLoadingException(
+                ModLoadingIssue.error(
+                        errorKey,
+                        "Failed to read mod file for checksum"
+                ).withCause(exception)
+        );
     }
 
     private static long getChecksum(byte[] contents, int size) {
@@ -165,7 +192,7 @@ public class UpdatingLocator implements IDependencyLocator {
         try {
             var response = client.send(infoRequest, HttpResponse.BodyHandlers.ofInputStream());
             if (response.statusCode() != 200) {
-                throwStatusException(response.statusCode(), infoUri);
+                throw statusException(response.statusCode(), infoUri);
             }
 
             JsonObject infoJson = JsonParser.parseReader(
@@ -189,30 +216,16 @@ public class UpdatingLocator implements IDependencyLocator {
                 .findAny()
                 .orElse(info.files().getFirst());
 
-        boolean downloaded = false;
-        byte[] jarContents;
-        Path path = FMLPaths.MODSDIR.get().resolve("codinglab").resolve("modrinth").resolve(primary.filename());
-        if (!path.toFile().exists()) {
-            URI jarUri = URI.create(primary.url());
-            var jarRequest = HttpRequest.newBuilder(jarUri).GET().build();
-            try {
-                var response = client.send(jarRequest, HttpResponse.BodyHandlers.ofByteArray());
-
-                if (response.statusCode() < 200 || response.statusCode() >= 300) {
-                    throwStatusException(response.statusCode(), jarUri);
-                }
-                jarContents = response.body();
-                downloaded = true;
-            } catch (IOException | InterruptedException e) {
-                StartupNotificationManager.addModMessage("FAILED TO DOWNLOAD MOD FROM MODRINTH");
-                throw new ModLoadingException(ModLoadingIssue
-                        .error(errorKey, "Failed to download mod %s from modrinth".formatted(info.name()))
-                        .withCause(e)
-                );
-            }
+        byte[][] jarContents = new byte[][]{null};
+        int jarSize;
+        Path modPath = FMLPaths.MODSDIR.get().resolve("codinglab").resolve("modrinth").resolve(primary.filename());
+        File modFile = modPath.toFile();
+        if (!modFile.exists()) {
+            jarSize = downloadMod(URI.create(primary.url()), modFile, client, jarContents);
         } else {
             try {
-                jarContents = Files.readAllBytes(path);
+                jarSize = (int) modFile.length();
+                jarContents[0] = Files.readAllBytes(modPath);
             } catch (IOException e) {
                 StartupNotificationManager.addModMessage("FAILED TO READ MOD FROM MODRINTH FOR HASH CHECK");
                 throw new ModLoadingException(ModLoadingIssue
@@ -222,48 +235,116 @@ public class UpdatingLocator implements IDependencyLocator {
             }
         }
 
-        String sha1 = DigestUtils.sha1Hex(jarContents).toLowerCase();
-        if (!primary.hashes().sha1().equals(sha1)) {
-            StartupNotificationManager.addModMessage("DOWNLOADED FILE FAILED SHA1 HASH CHECK");
-            throw new ModLoadingException(ModLoadingIssue.error(errorKey, "Mod %s from Modrinth has failed SHA1 Hash Check".formatted(info.name())));
+        String sha1 = sha1Hash(jarContents[0], jarSize);
+        if (!primary.hashes().sha1().equalsIgnoreCase(sha1)) {
+            throw hashFailException(primary.filename());
         }
 
-        if (downloaded) {
-            try {
-                boolean ignored = path.getParent().toFile().mkdirs();
-                Files.createFile(path);
-                Files.write(path, jarContents, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-            } catch (IOException e) {
-                StartupNotificationManager.addModMessage("FAILED TO SAVE MOD FILE %s FROM MODRINTH".formatted(info.name()));
-                throw new ModLoadingException(ModLoadingIssue.error(errorKey, "Failed to save mod file %s from Modrinth".formatted(primary.filename())));
-            }
-        }
-
-        return path;
+        return modPath;
     }
 
-    private static void throwStatusException(int statusCode, URI uri) {
+    private static Path downloadCurseforge(long projectId, long fileId, HttpClient client) throws ModLoadingException {
+        URI uri = URI.create(baseUrl + "curseforge/" + projectId + "/" + fileId);
+        var curseUrlRequest = HttpRequest.newBuilder(uri)
+                .GET()
+                .build();
+
+        InputStream response;
+        try {
+            response = client.send(curseUrlRequest, HttpResponse.BodyHandlers.ofInputStream()).body();
+        } catch (InterruptedException | IOException | IllegalStateException e) {
+            StartupNotificationManager.addModMessage("FAILED TO FETCH CURSEFORGE API");
+            throw new ModLoadingException(ModLoadingIssue.error(
+                    errorKey,
+                    "Failed to fetch CurseForge API to download mod. Project Id: %d File Id: %d".formatted(projectId, fileId)
+            ).withCause(e));
+        }
+
+        CurseDownloadInfo downloadInfo;
+        try {
+            JsonObject json = JsonParser.parseReader(new InputStreamReader(response)).getAsJsonObject();
+            downloadInfo = CurseDownloadInfo.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow();
+        } catch (JsonSyntaxException | IllegalStateException e) {
+            StartupNotificationManager.addModMessage("FAILED TO PARSE DOWNLOAD URL");
+            throw new ModLoadingException(ModLoadingIssue.error(
+                    errorKey,
+                    "Failed to parse JSON from download server. Json contents"
+            ).withCause(e));
+        }
+
+        Path basePath = FMLPaths.MODSDIR.get().resolve("codinglab").resolve("curseforge");
+        Path modPath = basePath.resolve(downloadInfo.fileName());
+        File modFile = modPath.toFile();
+
+        boolean shouldDownload;
+        if (modFile.exists()) {
+            String hash;
+            try {
+                hash = DigestUtils.sha1Hex(Files.newInputStream(modPath, StandardOpenOption.READ));
+            } catch (IOException e) {
+                throw checksumIoException(e);
+            }
+
+            shouldDownload = !hash.equalsIgnoreCase(downloadInfo.sha1Hash());
+        } else {
+            shouldDownload = true;
+        }
+
+        if (!shouldDownload) {
+            return modPath;
+        }
+
+        byte[][] fileContents = new byte[][]{null};
+        int size = downloadMod(URI.create(downloadInfo.url()), modFile, client, fileContents);
+        if (!sha1Hash(fileContents[0], size).equalsIgnoreCase(downloadInfo.sha1Hash())) {
+            throw hashFailException(modFile.getName());
+        }
+        return modPath;
+    }
+
+    private static String sha1Hash(byte[] contents, int size) {
+        MessageDigest md;
+        try {
+            md = MessageDigest.getInstance("SHA1");
+        } catch (NoSuchAlgorithmException impossible) {
+            throw new RuntimeException(impossible);
+        }
+        md.update(contents, 0, size);
+
+        return Hex.encodeHexString(md.digest());
+    }
+
+    private static ModLoadingException hashFailException(String fileName) {
+        StartupNotificationManager.addModMessage("DOWNLOADED FILE FAILED SHA1 HASH CHECK");
+        throw new ModLoadingException(ModLoadingIssue.error(errorKey, "Mod %s has failed SHA1 Hash Check".formatted(fileName)));
+    }
+
+    private static ModLoadingException statusException(int statusCode, URI uri) {
         StartupNotificationManager.addModMessage("HTTP REQUEST FAILED WITH CODE %d".formatted(statusCode));
         throw new ModLoadingException(
                 ModLoadingIssue.error(errorKey, "HTTP Request to %s failed with status code %d".formatted(uri, statusCode))
         );
     }
 
-    private static int downloadMod(File modFile, HttpClient client, @Nullable byte[][] writeTo) throws ModLoadingException {
+    private static int downloadMod(URI uri, File modFile, HttpClient client, @Nullable byte[][] writeTo) throws ModLoadingException {
         StartupNotificationManager.addModMessage(String.format("Downloading %s", modFile.getName()));
         try {
             byte[] buffer = new byte[1024 * 1024 * 32]; // 32MiB buffer
             int size = IOUtils.read(
-                    download(modFile.getName(), client).body(),
+                    requestDownload(uri, client).body(),
                     buffer
             );
 
             boolean ignored = modFile.getParentFile().mkdirs();
-            Files.createFile(modFile.toPath());
-            try (FileOutputStream output = new FileOutputStream(modFile)) {
+            try (OutputStream output = Files.newOutputStream(
+                    modFile.toPath(),
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.WRITE,
+                    StandardOpenOption.TRUNCATE_EXISTING
+            )) {
                 output.write(buffer, 0, size);
                 if (writeTo != null) {
-                    writeTo[0] = Arrays.copyOfRange(buffer, 0, size);
+                    writeTo[0] = buffer;
                 }
             }
             return size;
@@ -276,19 +357,18 @@ public class UpdatingLocator implements IDependencyLocator {
         }
     }
 
-    private static HttpResponse<InputStream> download(String fileName, HttpClient client) throws ModLoadingException {
-        var uri = URI.create(baseUrl).resolve(fileName);
+    private static HttpResponse<InputStream> requestDownload(URI uri, HttpClient client) throws ModLoadingException {
         var request = HttpRequest.newBuilder(uri).GET().build();
         try {
             var response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
             if (response.statusCode() < 200 || response.statusCode() >= 300) {
-                throwStatusException(response.statusCode(), uri);
+                throw statusException(response.statusCode(), uri);
             }
             return response;
         } catch (IOException | InterruptedException exception) {
-            StartupNotificationManager.addModMessage("FAILED TO DOWNLOAD MOD FILE %s".formatted(fileName));
+            StartupNotificationManager.addModMessage("FAILED TO DOWNLOAD from %s".formatted(uri));
             throw new ModLoadingException(
-                    ModLoadingIssue.error(errorKey, "Failed to download %s".formatted(fileName)).withCause(exception)
+                    ModLoadingIssue.error(errorKey, "Failed to download from %s".formatted(uri)).withCause(exception)
             );
         }
     }

@@ -26,7 +26,7 @@ public record Registry(
             ModSource assetSource
     ) {
         public static final Codec<ModEntry> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-                Codec.STRING.fieldOf("fileName").forGetter(ModEntry::fileName),
+                Codec.STRING.fieldOf("file_name").forGetter(ModEntry::fileName),
                 Codec.STRING.comapFlatMap(string -> {
                     try {
                         return DataResult.success(Long.parseLong(string, 16));
@@ -34,7 +34,7 @@ public record Registry(
                         return DataResult.error(() -> string + " is not a valid CRC32");
                     }
                 }, Long::toHexString).fieldOf("crc").forGetter(ModEntry::crc),
-                ModSource.CODEC.optionalFieldOf("assetSource", ModSource.Inline.INSTANCE).forGetter(ModEntry::assetSource)
+                ModSource.CODEC.optionalFieldOf("asset_source", ModSource.Inline.INSTANCE).forGetter(ModEntry::assetSource)
         ).apply(builder, ModEntry::new));
     }
 
@@ -85,7 +85,7 @@ public record Registry(
                     case ExternalSource externalSource -> {
                         return DataResult.success(externalSource);
                     }
-                    case Inline inline -> {
+                    case Inline ignored -> {
                         return DataResult.error(() -> "Inline is not external source");
                     }
                 }
@@ -112,8 +112,8 @@ public record Registry(
         record CurseForge(Long projectId, Long fileId) implements ExternalSource {
             public static final MapCodec<CurseForge> CODEC = RecordCodecBuilder.mapCodec(builder ->
                     builder.group(
-                            Codec.LONG.fieldOf("projectId").forGetter(CurseForge::projectId),
-                            Codec.LONG.fieldOf("fieldId").forGetter(CurseForge::fileId)
+                            Codec.LONG.fieldOf("project_id").forGetter(CurseForge::projectId),
+                            Codec.LONG.fieldOf("file_id").forGetter(CurseForge::fileId)
                     ).apply(builder, CurseForge::new)
             );
 
