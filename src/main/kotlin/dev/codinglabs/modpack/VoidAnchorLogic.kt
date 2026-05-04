@@ -7,6 +7,7 @@ import net.minecraft.world.damagesource.DamageTypes
 import net.minecraft.world.entity.RelativeMovement
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.Vec3
 import kotlin.math.sqrt
@@ -16,7 +17,7 @@ object VoidAnchorLogic {
     private const val CLICKED_ANCHOR_TAG = "modpack_tweaks:last_void_anchor"
 
     fun saveLastClickedAnchor(player: ServerPlayer, pos: BlockPos) {
-        player.persistentData.putLong(CLICKED_ANCHOR_TAG, pos.asLong())
+        player.setData(Attachments.VOID_ANCHOR_POSITION, pos)
     }
 
     fun refreshActivation(level: Level, pos: BlockPos): BlockState {
@@ -26,7 +27,7 @@ object VoidAnchorLogic {
         }
 
         val active = if (level.dimension() == Level.OVERWORLD) {
-            hasNearbyEndPortal(level, pos)
+            hasNearbyEndPortal(level as ServerLevel, pos)
         } else {
             false
         }
@@ -115,11 +116,9 @@ object VoidAnchorLogic {
     }
 
     private fun findAnchorFromPlayerMemory(player: ServerPlayer): BlockPos? {
-        val tag = player.persistentData
-        if (!tag.contains(CLICKED_ANCHOR_TAG)) {
-            return null
-        }
-        return BlockPos.of(tag.getLong(CLICKED_ANCHOR_TAG))
+        if (player.hasData(Attachments.VOID_ANCHOR_POSITION)) {
+            return player.getData(Attachments.VOID_ANCHOR_POSITION)
+        } else return null
     }
 
     private fun findSafeTeleportPos(level: ServerLevel, anchorPos: BlockPos): Vec3? {
@@ -148,38 +147,23 @@ object VoidAnchorLogic {
         return null
     }
 
-    private fun hasNearbyEndPortal(level: Level, pos: BlockPos): Boolean {
-        val max = MAX_PORTAL_DISTANCE.toInt()
-        var nearest = Double.MAX_VALUE
+    private fun hasNearbyEndPortal(level: ServerLevel, pos: BlockPos): Boolean {
+        val chunkPos = level.getChunkAt(pos).pos
 
-        for (x in -max..max) {
-            for (y in -max..max) {
-                for (z in -max..max) {
-                    val candidate = pos.offset(x, y, z)
-                    val state = level.getBlockState(candidate)
-                    if (!isEndPortalBlock(state)) {
-                        continue
-                    }
-
-                    val distance = distance(pos, candidate)
-                    if (distance < nearest) {
-                        nearest = distance
+        for (x in -1..1) {
+            for (z in -1..1) {
+                val chunk = level.getChunk(chunkPos.x + x, chunkPos.z + z)
+                chunk.blockEntities.forEach { (_, entity) ->
+                    if (isEndPortalBlock(entity.blockState)) {
+                        return true
                     }
                 }
             }
         }
-
-        return nearest <= MAX_PORTAL_DISTANCE
+        return false
     }
 
     private fun isEndPortalBlock(state: BlockState): Boolean {
         return state.`is`(Blocks.END_PORTAL) || state.`is`(Blocks.END_PORTAL_FRAME)
-    }
-
-    private fun distance(a: BlockPos, b: BlockPos): Double {
-        val dx = (a.x - b.x).toDouble()
-        val dy = (a.y - b.y).toDouble()
-        val dz = (a.z - b.z).toDouble()
-        return sqrt(dx * dx + dy * dy + dz * dz)
     }
 }

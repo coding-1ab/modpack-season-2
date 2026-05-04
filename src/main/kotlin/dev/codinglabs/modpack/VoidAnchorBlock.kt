@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.EntityBlock
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.state.properties.BooleanProperty
 import net.minecraft.world.level.block.state.properties.IntegerProperty
 import net.minecraft.world.level.block.entity.BlockEntity
@@ -34,6 +35,8 @@ class VoidAnchorBlock(
     init {
         registerDefaultState(stateDefinition.any().setValue(CHARGES, 0).setValue(ACTIVE, false))
     }
+
+    override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
 
     override fun useWithoutItem(state: BlockState, level: Level, pos: BlockPos, player: Player, hit: BlockHitResult): InteractionResult {
         if (!level.isClientSide && player is ServerPlayer) {

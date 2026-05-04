@@ -21,6 +21,7 @@ object ModPackTweaks {
         BlockEntities.register(MOD_BUS)
         Items.register(MOD_BUS)
         Fluids.register(MOD_BUS)
+        Attachments.register(MOD_BUS)
         MOD_BUS.addListener(::gatherData)
         FORGE_BUS.addListener(::onLivingDeath)
     }
