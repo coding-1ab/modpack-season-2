@@ -9,6 +9,7 @@ import com.tmvkrpxl0.modpack.toResource
 class ItemModels(output: PackOutput, existingFileHelper: ExistingFileHelper) :
     ItemModelProvider(output, ModPackTweaks.ID, existingFileHelper) {
     override fun registerModels() {
+        withExistingParent("void_anchor", modLoc("block/void_anchor"))
         withExistingParent("ender_fuel_bucket", "minecraft:item/generated").texture(
             "layer0",
             "item/ender_fuel_bucket".toResource()

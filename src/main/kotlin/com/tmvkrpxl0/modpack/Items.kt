@@ -2,6 +2,7 @@ package com.tmvkrpxl0.modpack
 
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
+import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.BucketItem
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
@@ -21,12 +22,17 @@ object Items {
 
     val SHULKER_SHELL_FRAGMENT: Item by ITEMS.registerSimpleItem("shulker_shell_fragment")
 
+    val VOID_ANCHOR: BlockItem by ITEMS.registerItem("void_anchor") {
+        BlockItem(Blocks.VOID_ANCHOR, it)
+    }
+
     val CREATIVE_TAB: CreativeModeTab by TABS.register("creative_tab", Supplier {
         CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.${ModPackTweaks.ID}.title"))
             .displayItems { param, output ->
                 output.accept(ENDER_FUEL_BUCKET)
                 output.accept(SHULKER_SHELL_FRAGMENT)
+                output.accept(VOID_ANCHOR)
             }.build()
     })
 

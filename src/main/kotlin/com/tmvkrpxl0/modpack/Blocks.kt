@@ -37,6 +37,13 @@ object Blocks {
         .liquid()
         .sound(SoundType.EMPTY))
 
+    val VOID_ANCHOR: VoidAnchorBlock by BLOCKS.registerBlock(
+        "void_anchor", ::VoidAnchorBlock, BlockBehaviour.Properties.of()
+            .mapColor(MapColor.COLOR_YELLOW)
+            .strength(5.0f, 1200.0f) // 흑요석 폭발 저항
+            .lightLevel { state -> if (state.getValue(VoidAnchorBlock.ACTIVE) && state.getValue(VoidAnchorBlock.CHARGES) > 0) 12 else 0 }
+    )
+
     fun register(bus: IEventBus) {
         BLOCKS.register(bus)
     }

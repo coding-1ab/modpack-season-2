@@ -11,6 +11,7 @@ import com.tmvkrpxl0.modpack.Blocks
 import com.tmvkrpxl0.modpack.Blocks.ENDER_FIRE
 import com.tmvkrpxl0.modpack.EnderFire
 import com.tmvkrpxl0.modpack.ModPackTweaks
+import com.tmvkrpxl0.modpack.VoidAnchorBlock
 
 class BlockStates(output: PackOutput, helper: ExistingFileHelper) :
     BlockStateProvider(output, ModPackTweaks.ID, helper) {
@@ -26,6 +27,25 @@ class BlockStates(output: PackOutput, helper: ExistingFileHelper) :
             EnderFire.UP,
         )
         fluid("ender_fuel")
+        voidAnchor()
+    }
+
+    private fun voidAnchor() {
+        val idle = models().cubeAll("void_anchor", modLoc("block/void_anchor"))
+        val charged = models().cubeAll("void_anchor_charged", modLoc("block/void_anchor_charged"))
+        val disabled = models().cubeAll("void_anchor_disabled", modLoc("block/void_anchor_disabled"))
+
+        getVariantBuilder(Blocks.VOID_ANCHOR).forAllStates { state ->
+            val active = state.getValue(VoidAnchorBlock.ACTIVE)
+            val charges = state.getValue(VoidAnchorBlock.CHARGES)
+            val model = when {
+                !active -> disabled
+                charges > 0 -> charged
+                else -> idle
+            }
+
+            ConfiguredModel.builder().modelFile(model).build()
+        }
     }
 
     @Suppress("UnusedVariable", "unused")
