@@ -1,15 +1,34 @@
 {
   "variants": {
-    "active=false,charges=0": { "model": "modpack_tweaks:block/void_anchor_disabled" },
-    "active=false,charges=1": { "model": "modpack_tweaks:block/void_anchor_disabled" },
-    "active=false,charges=2": { "model": "modpack_tweaks:block/void_anchor_disabled" },
-    "active=false,charges=3": { "model": "modpack_tweaks:block/void_anchor_disabled" },
-    "active=false,charges=4": { "model": "modpack_tweaks:block/void_anchor_disabled" },
-    "active=true,charges=0": { "model": "modpack_tweaks:block/void_anchor" },
-    "active=true,charges=1": { "model": "modpack_tweaks:block/void_anchor_charged" },
-    "active=true,charges=2": { "model": "modpack_tweaks:block/void_anchor_charged" },
-    "active=true,charges=3": { "model": "modpack_tweaks:block/void_anchor_charged" },
-    "active=true,charges=4": { "model": "modpack_tweaks:block/void_anchor_charged" }
+    "active=false,charges=0": {
+      "model": "modpack_tweaks:block/void_anchor_disabled"
+    },
+    "active=false,charges=1": {
+      "model": "modpack_tweaks:block/void_anchor_disabled"
+    },
+    "active=false,charges=2": {
+      "model": "modpack_tweaks:block/void_anchor_disabled"
+    },
+    "active=false,charges=3": {
+      "model": "modpack_tweaks:block/void_anchor_disabled"
+    },
+    "active=false,charges=4": {
+      "model": "modpack_tweaks:block/void_anchor_disabled"
+    },
+    "active=true,charges=0": {
+      "model": "modpack_tweaks:block/void_anchor"
+    },
+    "active=true,charges=1": {
+      "model": "modpack_tweaks:block/void_anchor_charged"
+    },
+    "active=true,charges=2": {
+      "model": "modpack_tweaks:block/void_anchor_charged"
+    },
+    "active=true,charges=3": {
+      "model": "modpack_tweaks:block/void_anchor_charged"
+    },
+    "active=true,charges=4": {
+      "model": "modpack_tweaks:block/void_anchor_charged"
+    }
   }
 }
-

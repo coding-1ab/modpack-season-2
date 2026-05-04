@@ -16,7 +16,6 @@ class English(output: PackOutput) : LanguageProvider(output, ModPackTweaks.ID, "
         add(Blocks.ENDER_FUEL, "Ender Fuel")
         add(Blocks.VOID_ANCHOR, "Void Anchor")
         add(Items.SHULKER_SHELL_FRAGMENT, "Shulker Shell Fragment")
-        add(Items.VOID_ANCHOR, "Void Anchor")
         add("itemGroup.${ModPackTweaks.ID}.title", "Coding Lab Modpack Tweaks")
     }
 

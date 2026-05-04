@@ -16,7 +16,6 @@ class Korean(output: PackOutput) : LanguageProvider(output, ModPackTweaks.ID, "k
         add(Blocks.ENDER_FUEL, "엔더 연료")
         add(Blocks.VOID_ANCHOR, "공허 정박기")
         add(Items.SHULKER_SHELL_FRAGMENT, "셜커 껍데기 조각")
-        add(Items.VOID_ANCHOR, "공허 정박기")
         add("itemGroup.${ModPackTweaks.ID}.title", "코딩랩 모드팩 자체 컨텐츠")
     }
 
