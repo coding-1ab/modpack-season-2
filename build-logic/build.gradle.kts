@@ -6,8 +6,8 @@ plugins {
 gradlePlugin {
     plugins {
         create("addMods") {
-            id = "com.tmvkrpxl0.gradle.add-mod"
-            implementationClass = "com.tmvkrpxl0.gradle.AddMod"
+            id = "dev.codinglabs.gradle.add-mod"
+            implementationClass = "dev.codinglabs.gradle.AddMod"
         }
     }
 }

@@ -9,9 +9,6 @@ plugins {
     id("idea")
 }
 
-group = "com.tmvkrpxl0"
-version = "1.0-SNAPSHOT"
-
 val minecraftVersion = project.properties["minecraft_version"]!! as String
 val sodiumVersion = project.properties["sodium_version"]!! as String
 val curiosVersion = project.properties["curios_version"]!! as String

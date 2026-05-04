@@ -7,7 +7,7 @@ pluginManagement {
 }
 
 plugins {
-    id("com.tmvkrpxl0.gradle.add-mod")
+    id("dev.codinglabs.gradle.add-mod")
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 rootProject.name = "codinglab-modpack-1.21.1"

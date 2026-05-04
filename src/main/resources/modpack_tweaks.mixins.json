@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "priority": 1000,
-  "package": "com.tmvkrpxl0.modpack.mixin",
+  "package": "dev.codinglabs.modpack.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
       "FireBlockMixin"
