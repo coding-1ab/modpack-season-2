@@ -18,6 +18,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 public final class ThrusterLoopSoundController {
+    private static final float MIN_SYNCED_THRUST = 0.01f;
+    private static final float VOLUME_BOOST_MULTIPLIER = 1.5f;
+    private static final int THRUSTER_SOUND_RANGE_BLOCKS = 100;
     private static final Map<String, ThrusterLoopSoundInstance> ACTIVE_SOUNDS = new HashMap<>();
 
     private ThrusterLoopSoundController() {
@@ -63,7 +66,7 @@ public final class ThrusterLoopSoundController {
         return blockEntity.getLevel() != null
                 && blockEntity.getLevel().isClientSide()
                 && !blockEntity.isRemoved()
-                && blockEntity.isVisuallyActive();
+                && blockEntity.getCurrentThrust() > MIN_SYNCED_THRUST;
     }
 
     private static String soundKey(final AbstractThrusterBlockEntity blockEntity) {
@@ -83,7 +86,7 @@ public final class ThrusterLoopSoundController {
             this.blockEntity = blockEntity;
             this.looping = true;
             this.delay = 0;
-            this.attenuation = SoundInstance.Attenuation.LINEAR;
+            this.attenuation = SoundInstance.Attenuation.NONE;
             updateFromBlockEntity();
         }
 
@@ -108,7 +111,15 @@ public final class ThrusterLoopSoundController {
             this.x = worldCenter.x;
             this.y = worldCenter.y;
             this.z = worldCenter.z;
-            this.volume = 0.2f + (0.35f * power);
+            final Minecraft minecraft = Minecraft.getInstance();
+            final float baseVolume = Math.min(1.0f, (0.2f + (0.35f * power)) * VOLUME_BOOST_MULTIPLIER);
+            if (minecraft == null || minecraft.player == null) {
+                this.volume = 0.0f;
+            } else {
+                final double distance = Math.sqrt(minecraft.player.distanceToSqr(worldCenter));
+                final float proximityFactor = (float) Math.max(0.0d, 1.0d - (distance / THRUSTER_SOUND_RANGE_BLOCKS));
+                this.volume = baseVolume * proximityFactor;
+            }
             this.pitch = 0.85f + (0.25f * power);
         }
 

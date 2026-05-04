@@ -161,6 +161,8 @@
     "block.createpropulsion.cable_hub": "Cable Hub",
     "item.createpropulsion.coral_bucket": "Coral Bucket",
     "fluid.createpropulsion.coral": "Coral",
+    "block.createpropulsion.coral": "Coral",
+    "fluid_type.createpropulsion.coral": "Coral",
     "createpropulsion.tooltip.holdForCoralConversionSummary": "Hold [%1$s] for Coral Conversion Summary",
     "createpropulsion.tooltip.conversion_rate": "Conversion Rate",
     "advancement.createpropulsion.fuel_propulsion.title": "Fuel Propulsion",

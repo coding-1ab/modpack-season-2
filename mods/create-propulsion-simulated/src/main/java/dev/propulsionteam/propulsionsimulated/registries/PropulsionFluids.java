@@ -28,13 +28,13 @@ public class PropulsionFluids {
             () -> new FluidType(FluidType.Properties.create().descriptionId(CORAL_DESCRIPTION).density(1000).viscosity(1200)));
 
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> TURPENTINE = FLUIDS.register("turpentine",
-            () -> new BaseFlowingFluid.Source(turpentineProperties()));
+            () -> new ProtectedFlowingFluid.Source(turpentineProperties()));
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> FLOWING_TURPENTINE = FLUIDS.register("flowing_turpentine",
-            () -> new BaseFlowingFluid.Flowing(turpentineProperties()));
+            () -> new ProtectedFlowingFluid.Flowing(turpentineProperties()));
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> CORAL = FLUIDS.register("coral",
-            () -> new BaseFlowingFluid.Source(coralProperties()));
+            () -> new ProtectedFlowingFluid.Source(coralProperties()));
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> FLOWING_CORAL = FLUIDS.register("flowing_coral",
-            () -> new BaseFlowingFluid.Flowing(coralProperties()));
+            () -> new ProtectedFlowingFluid.Flowing(coralProperties()));
 
     public static final DeferredBlock<LiquidBlock> TURPENTINE_BLOCK = PropulsionBlocks.BLOCKS.register("turpentine",
             () -> new LiquidBlock((FlowingFluid) TURPENTINE.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.WATER).noLootTable()));

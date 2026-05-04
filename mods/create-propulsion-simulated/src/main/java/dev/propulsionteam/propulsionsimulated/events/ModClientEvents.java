@@ -83,12 +83,12 @@ public class ModClientEvents {
         event.registerFluidType(new IClientFluidTypeExtensions() {
             @Override
             public ResourceLocation getStillTexture() {
-                return ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "fluid/coral_still");
+                return ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "block/coral_still");
             }
 
             @Override
             public ResourceLocation getFlowingTexture() {
-                return ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "fluid/coral_flow");
+                return ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "block/coral_flow");
             }
 
             @Override
