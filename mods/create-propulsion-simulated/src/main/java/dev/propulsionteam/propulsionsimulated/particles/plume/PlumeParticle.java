@@ -140,7 +140,25 @@ public class PlumeParticle extends SimpleAnimatedParticle {
         double prevZ = this.z;
 
         //Actual movement
-        this.move(intendedMoveX, intendedMoveY, intendedMoveZ);
+        Vec3 totalMove = new Vec3(intendedMoveX, intendedMoveY, intendedMoveZ);
+        double totalDist = totalMove.length();
+        if (totalDist > 0.0D) {
+            int steps = (int)Math.ceil(totalDist / 0.5D);
+            Vec3 stepMove = totalMove.scale(1.0D / steps);
+            for (int i = 0; i < steps; ++i) {
+                double stepPrevX = this.x;
+                double stepPrevY = this.y;
+                double stepPrevZ = this.z;
+                this.move(stepMove.x, stepMove.y, stepMove.z);
+                double movedX = this.x - stepPrevX;
+                double movedY = this.y - stepPrevY;
+                double movedZ = this.z - stepPrevZ;
+                final double check = 1.0E-6D;
+                if (Math.abs(movedX - stepMove.x) > check || Math.abs(movedY - stepMove.y) > check || Math.abs(movedZ - stepMove.z) > check) {
+                    break;
+                }
+            }
+        }
         double actualMoveX = this.x - prevX;
         double actualMoveY = this.y - prevY;
         double actualMoveZ = this.z - prevZ;
