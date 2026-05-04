@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -23,6 +24,9 @@ import org.antarcticgardens.cna.content.electricity.wire.WireType;
 import org.jspecify.annotations.NonNull;
 
 public class ElectricalConnectorRenderer implements BlockEntityRenderer<AbstractElectricalConnector> {
+    public ElectricalConnectorRenderer(BlockEntityRendererProvider.Context ignored) {
+    }
+
     @Override
     public void render(AbstractElectricalConnector blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
         renderAllConnections(blockEntity, poseStack, buffer);
