@@ -17,7 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 public class IonParticle extends SimpleAnimatedParticle {
-    
+
     protected float getBaseQuadSize() { return 0.95f; }
     protected float getEndQuadSize() { return 0.2f; }
     protected float getSpeedMultiplier() { return 0.144f; }
@@ -30,9 +30,10 @@ public class IonParticle extends SimpleAnimatedParticle {
     private final float startSize;
     private final float endSize;
     private final List<ResourceLocation> overrideTextures;
+    private TextureAtlasSprite[] cachedOverrideSprites;
 
-    protected IonParticle(ClientLevel level, double x, double y, double z, 
-                            double dx, double dy, double dz, 
+    protected IonParticle(ClientLevel level, double x, double y, double z,
+                            double dx, double dy, double dz,
                             SpriteSet spriteSet, IonParticleData data) {
         super(level, x, y, z, spriteSet, 0);
         this.spriteSet = spriteSet;
@@ -49,7 +50,19 @@ public class IonParticle extends SimpleAnimatedParticle {
         float scale = data.overrideSize() != null ? (data.overrideSize() / getBaseQuadSize()) : 1.0f;
         this.endSize = getEndQuadSize() * scale;
         this.startSize = this.quadSize;
-        
+
+        if (!this.overrideTextures.isEmpty()) {
+            try {
+                var atlas = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_PARTICLES);
+                this.cachedOverrideSprites = new TextureAtlasSprite[this.overrideTextures.size()];
+                for (int i = 0; i < this.overrideTextures.size(); i++) {
+                    this.cachedOverrideSprites[i] = atlas.apply(this.overrideTextures.get(i));
+                }
+            } catch (Exception ignored) {
+                this.cachedOverrideSprites = null;
+            }
+        }
+
         if (data.overrideColor() == null) {
             setColor(0xFFFFFF);
         } else {
@@ -85,19 +98,13 @@ public class IonParticle extends SimpleAnimatedParticle {
     private void pickSpriteAndSize() {
         final float progress = Mth.clamp((float) this.age / (float) this.lifetime, 0.0f, 1.0f);
         final int frameIndex = Mth.clamp((int) (progress * SPRITE_COUNT), 0, SPRITE_COUNT - 1);
-        
-        if (this.overrideTextures != null && !this.overrideTextures.isEmpty()) {
-            try {
-                ResourceLocation texture = this.overrideTextures.get(frameIndex % this.overrideTextures.size());
-                TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_PARTICLES).apply(texture);
-                this.setSprite(sprite);
-            } catch (Exception ignored) {
-                this.setSprite(this.spriteSet.get(frameIndex, SPRITE_COUNT));
-            }
+
+        if (this.cachedOverrideSprites != null) {
+            this.setSprite(this.cachedOverrideSprites[frameIndex % this.cachedOverrideSprites.length]);
         } else {
             this.setSprite(this.spriteSet.get(frameIndex, SPRITE_COUNT));
         }
-        
+
         this.quadSize = Mth.lerp(progress, this.startSize, this.endSize);
     }
 
@@ -114,7 +121,7 @@ public class IonParticle extends SimpleAnimatedParticle {
         }
 
         @Override
-        public Particle createParticle(@Nonnull IonParticleData data, @Nonnull ClientLevel level, 
+        public Particle createParticle(@Nonnull IonParticleData data, @Nonnull ClientLevel level,
         double x, double y, double z, double dx, double dy, double dz){
             return new IonParticle(level, x, y, z, dx, dy, dz, this.spriteSet, data);
         }

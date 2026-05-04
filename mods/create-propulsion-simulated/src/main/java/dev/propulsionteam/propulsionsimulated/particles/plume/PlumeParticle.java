@@ -33,6 +33,9 @@ public class PlumeParticle extends SimpleAnimatedParticle {
     private static final float COLLISION_SPEED_RETENTION = 0.9f;
     private static final double COLLISION_DETECTION_EPSILON = 0.001;
     private static final float COLLISION_PERPENDICULAR_DAMPEN = 0.1f;
+    private static final Vec3 AXIS_X = new Vec3(1, 0, 0);
+    private static final Vec3 AXIS_Y = new Vec3(0, 1, 0);
+    private static final Vec3 AXIS_Z = new Vec3(0, 0, 1);
 
     private enum ParticleState {
         PLUME, SMOKE
@@ -42,25 +45,27 @@ public class PlumeParticle extends SimpleAnimatedParticle {
     private final SpriteSet spriteSet;
     private static final int PLUME_SPRITE_COUNT = 6;
     private static final int SMOKE_SPRITE_COUNT = 7; //Yes, should be 10 but this looks better imo
+    private static final int TOTAL_SPRITE_COUNT = PLUME_SPRITE_COUNT + SMOKE_SPRITE_COUNT;
     private static final int BASE_SMOKE_TRANSITION_AGE = 20;
 
     private ParticleState currentState;
     private float currentSpeedMultiplier;
     private float currentFriction;
-    
+
     private final int smokeTransitionAge;
     private final float smokeLift;
     private final Vec3 spreadDirection;
     private final float spreadMagnitude;
     private boolean hasCollided = false;
     private final List<ResourceLocation> overrideTextures;
+    private TextureAtlasSprite[] cachedOverrideSprites;
 
     double dx; double dy; double dz;
     float baseSize;
 
 
-    protected PlumeParticle(ClientLevel level, double x, double y, double z, 
-                            double dxSource, double dySource, double dzSource, 
+    protected PlumeParticle(ClientLevel level, double x, double y, double z,
+                            double dxSource, double dySource, double dzSource,
                             SpriteSet spriteSet, PlumeParticleData data) {
         super(level, x, y, z, spriteSet, 0);
         this.spriteSet = spriteSet;
@@ -70,8 +75,8 @@ public class PlumeParticle extends SimpleAnimatedParticle {
         this.baseSize = this.quadSize;
         this.lifetime = getPlumeBaseLifetime() + random.nextInt(5);
         this.friction = getPlumeFriction();
-        this.dx = dxSource + getRandomSpread(); 
-        this.dy = dySource + getRandomSpread(); 
+        this.dx = dxSource + getRandomSpread();
+        this.dy = dySource + getRandomSpread();
         this.dz = dzSource + getRandomSpread();
         this.hasPhysics = true;
         this.currentSpeedMultiplier = getPlumeSpeedMultiplier();
@@ -91,6 +96,18 @@ public class PlumeParticle extends SimpleAnimatedParticle {
         this.smokeTransitionAge = BASE_SMOKE_TRANSITION_AGE + this.random.nextIntBetweenInclusive(-2, 2);
         this.smokeLift = getSmokeBaseLift() + -0.01f + this.random.nextFloat() * (0.03f - -0.01f); //-0.1 - 0.03
 
+        if (!this.overrideTextures.isEmpty()) {
+            try {
+                var atlas = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_PARTICLES);
+                this.cachedOverrideSprites = new TextureAtlasSprite[this.overrideTextures.size()];
+                for (int i = 0; i < this.overrideTextures.size(); i++) {
+                    this.cachedOverrideSprites[i] = atlas.apply(this.overrideTextures.get(i));
+                }
+            } catch (Exception ignored) {
+                this.cachedOverrideSprites = null;
+            }
+        }
+
         setSpriteFromAge(this.spriteSet);
         if (data.overrideColor() == null) {
             setColor(0xFFFFFF);
@@ -107,7 +124,7 @@ public class PlumeParticle extends SimpleAnimatedParticle {
         this.yo /* gurt */ = this.y;
         this.zo = this.z;
         final double COLLISION_IGNORE_DOT_THRESHOLD = -1.0E-5D;
-        
+
         if (this.age++ >= this.lifetime) {
             this.remove();
             return;
@@ -130,10 +147,10 @@ public class PlumeParticle extends SimpleAnimatedParticle {
 
         //Determine collision and its normal
         boolean collisionDetected = false;
-        Vec3 collisionNormal = null; 
+        Vec3 collisionNormal = null;
         if (this.onGround) {
             collisionDetected = true;
-            collisionNormal = new Vec3(0, 1, 0); 
+            collisionNormal = new Vec3(0, 1, 0);
         } else {
             final float COLLISION_DETECTION_FACTOR = 0.95f;
             boolean blockedX = Math.abs(intendedMoveX) > COLLISION_DETECTION_EPSILON && Math.abs(actualMoveX) < Math.abs(intendedMoveX) * COLLISION_DETECTION_FACTOR;
@@ -141,7 +158,7 @@ public class PlumeParticle extends SimpleAnimatedParticle {
             boolean blockedYCeiling = Math.abs(intendedMoveY) > COLLISION_DETECTION_EPSILON && intendedMoveY > 0 && Math.abs(actualMoveY) < Math.abs(intendedMoveY) * COLLISION_DETECTION_FACTOR;
             if (blockedYCeiling) {
                 collisionDetected = true;
-                collisionNormal = new Vec3(0, -1, 0); 
+                collisionNormal = new Vec3(0, -1, 0);
             } else if (blockedX) {
                 collisionDetected = true;
                 collisionNormal = new Vec3(intendedMoveX < 0 ? 1 : -1, 0, 0);
@@ -174,35 +191,34 @@ public class PlumeParticle extends SimpleAnimatedParticle {
                     //Reflect + dampen
                     Vec3 desiredNormalVel;
                     if (incomingVel.dot(collisionNormal) < 0) { //Moving into the surface
-                        desiredNormalVel = V_normal_comp.scale(-COLLISION_PERPENDICULAR_DAMPEN); 
+                        desiredNormalVel = V_normal_comp.scale(-COLLISION_PERPENDICULAR_DAMPEN);
                     } else {
-                        desiredNormalVel = V_normal_comp; 
+                        desiredNormalVel = V_normal_comp;
                     }
-                    
+
                     //Calculate spread velocity
                     Vec3 spreadPlaneDirection;
                     double randomAngle = this.random.nextDouble() * Math.PI * 2.0D;
-                    
+
                     //Determine two axes perpendicular to normal
                     Vec3 axis1, axis2;
                     if (Math.abs(collisionNormal.y) > 0.9) { //Ground/Ceiling
-                        axis1 = new Vec3(1, 0, 0).normalize();
+                        axis1 = AXIS_X;
                         axis2 = collisionNormal.cross(axis1).normalize();
-                    } else { //Wall 
-                        axis1 = new Vec3(0, 1, 0).normalize();
+                    } else { //Wall
+                        axis1 = AXIS_Y;
                         axis2 = collisionNormal.cross(axis1).normalize();
                     }
                     if (axis2.lengthSqr() < 0.1) { //Fallback
-                        if(Math.abs(collisionNormal.x) > 0.9) axis1 = new Vec3(0,0,1).normalize();
-                        else axis1 = new Vec3(1,0,0).normalize();
+                        axis1 = Math.abs(collisionNormal.x) > 0.9 ? AXIS_Z : AXIS_X;
                         axis2 = collisionNormal.cross(axis1).normalize();
                     }
 
                     spreadPlaneDirection = axis1.scale(Math.cos(randomAngle)).add(axis2.scale(Math.sin(randomAngle))).normalize();
-                    
+
                     Vec3 spreadComponent = spreadPlaneDirection.scale(incomingVel.length() * spreadBlendFactor);
                     Vec3 slideComponent = V_tangential_comp.scale(slideBlendFactor); //For sliding use original tangential component
-                    
+
                     Vec3 desiredTangentialVel = slideComponent.add(spreadComponent);
 
                     //Combine and apply new velocity
@@ -253,7 +269,7 @@ public class PlumeParticle extends SimpleAnimatedParticle {
         this.dx *= this.currentFriction;
         this.dy *= this.currentFriction;
         this.dz *= this.currentFriction;
-        
+
         this.pickSprite();
     }
 
@@ -275,22 +291,16 @@ public class PlumeParticle extends SimpleAnimatedParticle {
             } else {
                 smokeFrame = (ageInSmokePhase * SMOKE_SPRITE_COUNT) / smokePhaseDuration;
             }
-            
+
             smokeFrame = Mth.clamp(smokeFrame, 0, SMOKE_SPRITE_COUNT - 1);
             frameIndex = PLUME_SPRITE_COUNT + smokeFrame;
         }
 
-        if (!this.overrideTextures.isEmpty()) {
-            try {
-                ResourceLocation texture = this.overrideTextures.get(frameIndex % this.overrideTextures.size());
-                TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_PARTICLES).apply(texture);
-                this.setSprite(sprite);
-                return;
-            } catch (Exception ignored) {
-                // Fallback to built-in sprites when the atlas is unavailable or texture id is invalid.
-            }
+        if (this.cachedOverrideSprites != null) {
+            this.setSprite(this.cachedOverrideSprites[frameIndex % this.cachedOverrideSprites.length]);
+            return;
         }
-        this.setSprite(this.spriteSet.get(frameIndex, PLUME_SPRITE_COUNT + SMOKE_SPRITE_COUNT));
+        this.setSprite(this.spriteSet.get(frameIndex, TOTAL_SPRITE_COUNT));
     }
 
     float getRandomSpread(){
@@ -310,7 +320,7 @@ public class PlumeParticle extends SimpleAnimatedParticle {
         }
 
         @Override
-        public Particle createParticle(@Nonnull PlumeParticleData data, @Nonnull ClientLevel level, 
+        public Particle createParticle(@Nonnull PlumeParticleData data, @Nonnull ClientLevel level,
         double x, double y, double z, double dx, double dy, double dz){
             return new PlumeParticle(level, x, y, z, dx, dy, dz, this.spriteSet, data);
         }
