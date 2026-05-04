@@ -2,9 +2,11 @@ package dev.codinglabs.modpack
 
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos
+import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
+import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.ItemInteractionResult
 import net.minecraft.world.entity.player.Player
@@ -30,7 +32,10 @@ class VoidAnchorBlock(
         val CODEC: MapCodec<VoidAnchorBlock> = simpleCodec(::VoidAnchorBlock)
         val CHARGES: IntegerProperty = IntegerProperty.create("charges", 0, 4)
         val ACTIVE: BooleanProperty = BooleanProperty.create("active")
+
     }
+
+    val noPortalKey = "${this.name}.no_portal"
 
     init {
         registerDefaultState(stateDefinition.any().setValue(CHARGES, 0).setValue(ACTIVE, false))
@@ -40,8 +45,8 @@ class VoidAnchorBlock(
 
     override fun useWithoutItem(state: BlockState, level: Level, pos: BlockPos, player: Player, hit: BlockHitResult): InteractionResult {
         if (!level.isClientSide && player is ServerPlayer) {
-            VoidAnchorLogic.saveLastClickedAnchor(player, pos)
-            VoidAnchorLogic.refreshActivation(level, pos)
+            player.voidAnchorPos = pos
+            VoidAnchorLogic.refreshActivation(level, pos, state)
         }
         return InteractionResult.SUCCESS
     }
@@ -52,18 +57,19 @@ class VoidAnchorBlock(
         level: Level,
         pos: BlockPos,
         player: Player,
-        hand: net.minecraft.world.InteractionHand,
+        hand: InteractionHand,
         hitResult: BlockHitResult,
     ): ItemInteractionResult {
-        if (hand != net.minecraft.world.InteractionHand.MAIN_HAND) {
+        if (hand != InteractionHand.MAIN_HAND) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
         }
 
         if (!level.isClientSide && player is ServerPlayer) {
-            VoidAnchorLogic.saveLastClickedAnchor(player, pos)
-            val refreshed = VoidAnchorLogic.refreshActivation(level, pos)
+            player.voidAnchorPos = pos
+            val refreshed = VoidAnchorLogic.refreshActivation(level, pos, state)
             if (!refreshed.getValue(ACTIVE)) {
-                player.displayClientMessage(net.minecraft.network.chat.Component.literal("공허 정박기 비활성화: 엔드 포탈 25칸 이내에서만 동작"), true)
+                this.name
+                player.displayClientMessage(Component.translatable(noPortalKey), true)
                 return ItemInteractionResult.CONSUME
             }
         }
@@ -90,7 +96,7 @@ class VoidAnchorBlock(
     override fun onPlace(state: BlockState, level: Level, pos: BlockPos, oldState: BlockState, movedByPiston: Boolean) {
         super.onPlace(state, level, pos, oldState, movedByPiston)
         if (!level.isClientSide) {
-            VoidAnchorLogic.refreshActivation(level, pos)
+            VoidAnchorLogic.refreshActivation(level, pos, state)
         }
     }
 

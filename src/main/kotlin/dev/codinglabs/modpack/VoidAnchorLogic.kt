@@ -1,41 +1,23 @@
 package dev.codinglabs.modpack
 
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.damagesource.DamageSource
 import net.minecraft.world.damagesource.DamageTypes
 import net.minecraft.world.entity.RelativeMovement
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Blocks
-import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.Vec3
-import kotlin.math.sqrt
 
 object VoidAnchorLogic {
-    private const val MAX_PORTAL_DISTANCE = 25.0
-    private const val CLICKED_ANCHOR_TAG = "modpack_tweaks:last_void_anchor"
-
-    fun saveLastClickedAnchor(player: ServerPlayer, pos: BlockPos) {
-        player.setData(Attachments.VOID_ANCHOR_POSITION, pos)
-    }
-
-    fun refreshActivation(level: Level, pos: BlockPos): BlockState {
-        val state = level.getBlockState(pos)
-        if (state.block !is VoidAnchorBlock) {
-            return state
-        }
-
+    fun refreshActivation(level: Level, pos: BlockPos, state: BlockState): BlockState {
         val active = if (level.dimension() == Level.OVERWORLD) {
             hasNearbyEndPortal(level as ServerLevel, pos)
         } else {
             false
-        }
-
-        val blockEntity = level.getBlockEntity(pos) as? VoidAnchorBlockEntity
-        if (blockEntity != null) {
-            blockEntity.activeByPortal = active
-            blockEntity.setChanged()
         }
 
         if (state.getValue(VoidAnchorBlock.ACTIVE) != active) {
@@ -47,7 +29,7 @@ object VoidAnchorLogic {
         return state
     }
 
-    fun handleVoidDeathRescue(player: ServerPlayer, level: ServerLevel, source: net.minecraft.world.damagesource.DamageSource): Boolean {
+    fun handleVoidDeathRescue(player: ServerPlayer, level: ServerLevel, source: DamageSource): Boolean {
         if (level.dimension() != Level.END) {
             return false
         }
@@ -55,49 +37,31 @@ object VoidAnchorLogic {
             // 엔드 공허 낙사만 구조
             return false
         }
+        val anchor = player.voidAnchorPos ?: return false
+        rescueToAnchor(player, anchor)
 
-        val rescueFromAnchor = findAnchorFromPlayerMemory(player)?.let { anchorPos ->
-            rescueToAnchor(player, anchorPos)
-        } ?: false
-
-        if (rescueFromAnchor) {
-            return true
-        }
-
-        return rescueToRespawnPoint(player)
+        return true
     }
 
     private fun rescueToAnchor(player: ServerPlayer, anchorPos: BlockPos): Boolean {
         val overworld = player.server.getLevel(Level.OVERWORLD) ?: return false
-        val anchorState = refreshActivation(overworld, anchorPos)
-        if (anchorState.block != dev.codinglabs.modpack.Blocks.VOID_ANCHOR) {
-            return false
-        }
-        if (!anchorState.getValue(VoidAnchorBlock.ACTIVE)) {
+        val anchorState = overworld.getBlockState(anchorPos)
+
+        val newState = refreshActivation(overworld, anchorPos, anchorState)
+        if (!newState.getValue(VoidAnchorBlock.ACTIVE)) {
             return false
         }
 
-        val charges = anchorState.getValue(VoidAnchorBlock.CHARGES)
+        val charges = newState.getValue(VoidAnchorBlock.CHARGES)
         if (charges <= 0) {
             return false
         }
 
         val targetPos = findSafeTeleportPos(overworld, anchorPos) ?: return false
-        val consumed = anchorState.setValue(VoidAnchorBlock.CHARGES, charges - 1)
+        val consumed = newState.setValue(VoidAnchorBlock.CHARGES, charges - 1)
         overworld.setBlock(anchorPos, consumed, 3)
 
-        teleportAndRevive(player, overworld, targetPos)
-        return true
-    }
-
-    private fun rescueToRespawnPoint(player: ServerPlayer): Boolean {
-        val server = player.server ?: return false
-        val respawnPos = player.respawnPosition ?: return false
-        val respawnDimension = player.respawnDimension
-        val level = server.getLevel(respawnDimension) ?: return false
-
-        val targetPos = findSafeTeleportPos(level, respawnPos) ?: respawnPos.above().center
-        teleportAndRevive(player, level, targetPos)
+        teleportAndRevive(player, overworld, targetPos.center)
         return true
     }
 
@@ -113,15 +77,10 @@ object VoidAnchorLogic {
         )
         player.health = 1.0f
         player.fallDistance = 0.0f
+        player.invulnerableTime = 20
     }
 
-    private fun findAnchorFromPlayerMemory(player: ServerPlayer): BlockPos? {
-        if (player.hasData(Attachments.VOID_ANCHOR_POSITION)) {
-            return player.getData(Attachments.VOID_ANCHOR_POSITION)
-        } else return null
-    }
-
-    private fun findSafeTeleportPos(level: ServerLevel, anchorPos: BlockPos): Vec3? {
+    private fun findSafeTeleportPos(level: ServerLevel, anchorPos: BlockPos): BlockPos? {
         val offsets = listOf(
             BlockPos.ZERO,
             BlockPos(1, 0, 0), BlockPos(-1, 0, 0),
@@ -134,13 +93,13 @@ object VoidAnchorLogic {
             val base = anchorPos.offset(offset)
             val feet = base.above()
             val head = feet.above()
-            val below = base
+            val below = base.below()
             val feetState = level.getBlockState(feet)
             val headState = level.getBlockState(head)
             val belowState = level.getBlockState(below)
 
-            if (feetState.isAir && headState.isAir && belowState.isFaceSturdy(level, below, net.minecraft.core.Direction.UP)) {
-                return Vec3(feet.x + 0.5, feet.y.toDouble(), feet.z + 0.5)
+            if (feetState.isAir && headState.isAir && belowState.isFaceSturdy(level, below, Direction.UP)) {
+                return feet
             }
         }
 
@@ -164,6 +123,6 @@ object VoidAnchorLogic {
     }
 
     private fun isEndPortalBlock(state: BlockState): Boolean {
-        return state.`is`(Blocks.END_PORTAL) || state.`is`(Blocks.END_PORTAL_FRAME)
+        return state.`is`(Blocks.END_PORTAL)
     }
 }
