@@ -1,4 +1,4 @@
-package dev.codinglabs.modpack.updator;
+package dev.codinglabs.updater;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

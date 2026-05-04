@@ -1,4 +1,4 @@
-package dev.codinglabs.modpack.updator;
+package dev.codinglabs.updater;
 
 import com.mojang.datafixers.util.Unit;
 import com.mojang.serialization.Codec;

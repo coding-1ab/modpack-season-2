@@ -12,6 +12,8 @@ plugins {
 }
 rootProject.name = "codinglab-modpack-1.21.1"
 
+include("updater")
+
 addMods {
     addMod(
         filePath = "./mods/Create",
