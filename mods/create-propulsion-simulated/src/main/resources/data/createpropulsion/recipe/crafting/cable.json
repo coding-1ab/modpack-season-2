@@ -1,20 +1,25 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    " C ",
-    "RCR",
-    " C "
+    "PR",
+    "DN"
   ],
   "key": {
-    "C": {
-      "item": "create:copper_sheet"
+    "P": {
+      "item": "createpropulsion:platinum_sheet"
     },
     "R": {
       "item": "minecraft:redstone"
+    },
+    "D": {
+      "item": "minecraft:black_dye"
+    },
+    "N": {
+      "item": "createpropulsion:platinum_nugget"
     }
   },
   "result": {
     "id": "createpropulsion:cable",
-    "count": 8
+    "count": 4
   }
 }
