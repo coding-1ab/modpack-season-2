@@ -46,6 +46,7 @@ repositories {
     maven {
    		url = "https://maven.ithundxr.dev/releases"
 	}
+	maven { url = "https://maven.ithundxr.dev/snapshots" } // Registrate
 }
 
 base {
@@ -163,15 +164,15 @@ dependencies {
     implementation "curse.maven:the-one-probe-245211:5502323"
     implementation "curse.maven:jade-324717:5529595"
     
-    implementation 'curse.maven:refined-storage-243076:6358597'
+    implementation 'curse.maven:refined-storage-243076:7039043'
     
-    implementation 'curse.maven:applied-energistics-2-223794:6225422'
-    implementation 'curse.maven:guideme-1173950:6331224'
+    implementation 'curse.maven:applied-energistics-2-223794:7027323'
+    implementation 'curse.maven:guideme-1173950:7127444'
     
     implementation 'curse.maven:ae2-jei-integration-1074338:5748513'
     
     implementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
-    implementation("net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:${ponder_version}")
+    implementation("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
     runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
     implementation("com.tterrag.registrate:Registrate:${registrate_version}")

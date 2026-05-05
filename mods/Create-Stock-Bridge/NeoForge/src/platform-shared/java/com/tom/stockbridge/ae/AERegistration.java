@@ -25,6 +25,7 @@ import com.tom.stockbridge.Registration;
 import com.tom.stockbridge.StockBridge;
 import com.tom.stockbridge.ae.menu.AEStockBridgeMenu;
 import com.tom.stockbridge.ae.menu.RemoteItemStrategy;
+import com.tom.stockbridge.data.PlatformDatagen;
 
 import appeng.api.behaviors.ContainerItemStrategies;
 import appeng.api.crafting.IPatternDetails;
@@ -43,8 +44,11 @@ public class AERegistration {
 			.properties(p -> p.noOcclusion())
 			.tag(BlockTags.NEEDS_IRON_TOOL)
 			.transform(TagGen.pickaxeOnly())
-			.blockstate((ctx, prov) -> prov.simpleBlock(ctx.getEntry(), prov.models()
-					.getExistingFile(prov.modLoc("ae_bridge"))))
+			.blockstate((ctx, prov) -> PlatformDatagen.variantBuilder(ctx, prov, st -> {
+				boolean pw = st.getValue(AEStockBridgeBlock.POWERED);
+				return prov.models()
+						.getExistingFile(prov.modLoc(pw ? "ae_bridge_powered" : "ae_bridge"));
+			}))
 			.item(LogisticallyLinkedBlockItem::new)
 			.transform(b -> b.model((c, p) -> {
 				p.withExistingParent("ae_bridge",
