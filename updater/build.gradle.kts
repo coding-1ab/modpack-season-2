@@ -1,3 +1,5 @@
+import org.slf4j.event.Level
+
 plugins {
     id("java-library")
     id("maven-publish")
@@ -26,6 +28,63 @@ repositories {
     mavenCentral()
 }
 
+neoForge {
+    // Specify the version of NeoForge to use.
+    version = project.properties["neo_version"]!! as String
+
+    parchment {
+        mappingsVersion = project.properties["parchment_mappings_version"]!! as String
+        minecraftVersion = project.properties["parchment_minecraft_version"]!! as String
+    }
+
+    // This line is optional. Access Transformers are automatically detected
+    // accessTransformers = project.files('src/main/resources/META-INF/accesstransformer.cfg')
+
+    // Default run configurations.
+    // These can be tweaked, removed, or duplicated as needed.
+    runs {
+        create("clientAuth") {
+            client()
+            gameDirectory = project.file("runs/client")
+            devLogin = true
+        }
+
+        create("client") {
+            client()
+            gameDirectory = project.file("runs/client")
+            // systemProperty("neoforge.enabledGameTestNamespaces", project.mod_id)
+        }
+
+        create("server") {
+            server()
+            gameDirectory = project.file("runs/server")
+            // systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        // applies to all the run configs above
+        configureEach {
+            // Recommended logging data for a userdev environment
+            // The markers can be added/remove as needed separated by commas.
+            // "SCAN": For mods scan.
+            // "REGISTRIES": For firing of registry events.
+            // "REGISTRYDUMP": For getting the contents of all registries.
+            systemProperty("forge.logging.markers", "REGISTRYDUMP")
+
+            // Recommended logging level for the console
+            // You can set various levels here.
+            // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
+            logLevel = Level.DEBUG
+            jvmArguments.addAll(
+                "-XX:+IgnoreUnrecognizedVMOptions",
+                "-XX:+AllowEnhancedClassRedefinition",
+                "-XX:+EnableDynamicAgentLoading",
+                //jvmArgument("-XX:-OmitStackTraceInFastThrow", // uncomment when you get exceptions with null messages etc
+                // "-XX:+UnlockCommercialFeatures", // uncomment for profiling
+            )
+        }
+    }
+}
+
 base {
     archivesName.set(mod_id)
 }
@@ -33,16 +92,6 @@ base {
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(21))
-    }
-}
-
-neoForge {
-    version = neo_version
-
-    mods {
-        create(mod_id) {
-            sourceSet(sourceSets.main.get())
-        }
     }
 }
 
@@ -54,36 +103,8 @@ sourceSets.main {
 }
 
 dependencies {
-    // 필요한 의존성을 여기에 추가하세요.
+    jarJar(create("dev.codinglabs:dev.codinglabs"))
 }
-
-// 모드 메타데이터 생성 태스크 (neoforge.mods.toml 등)
-val generateModMetadata = tasks.register<ProcessResources>("generateModMetadata") {
-    description = "Generates mod metadata files (e.g., neoforge.mods.toml) by processing templates with project properties."
-    val replaceProperties = mapOf(
-        "minecraft_version" to minecraft_version,
-        "minecraft_version_range" to minecraft_version_range,
-        "neo_version" to neo_version,
-        "neo_version_range" to neo_version_range,
-        "loader_version_range" to loader_version_range,
-        "mod_id" to mod_id,
-        "mod_name" to mod_name,
-        "mod_license" to mod_license,
-        "mod_version" to mod_version,
-        "mod_authors" to mod_authors,
-        "mod_description" to mod_description
-    )
-
-    inputs.properties(replaceProperties)
-    expand(replaceProperties)
-    from("src/main/templates")
-    into("build/generated/sources/modMetadata")
-}
-
-sourceSets.main.get().resources.srcDir(generateModMetadata)
-
-
-neoForge.ideSyncTask(generateModMetadata)
 
 publishing {
     publications {

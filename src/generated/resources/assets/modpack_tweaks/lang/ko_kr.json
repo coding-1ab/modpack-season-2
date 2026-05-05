@@ -1,9 +1,10 @@
 {
+  "block.minecraft.air": "공허 정박기",
   "block.modpack_tweaks.ender_fire": "엔더의 불",
   "block.modpack_tweaks.ender_fuel": "엔더 연료",
-  "block.modpack_tweaks.void_anchor": "공허 정박기",
   "fluid_type.modpack_tweaks.ender_fuel": "엔더 연료",
   "item.modpack_tweaks.ender_fuel_bucket": "엔더 연료 양동이",
   "item.modpack_tweaks.shulker_shell_fragment": "셜커 껍데기 조각",
-  "itemGroup.modpack_tweaks.title": "코딩랩 모드팩 자체 컨텐츠"
+  "itemGroup.modpack_tweaks.title": "코딩랩 모드팩 자체 컨텐츠",
+  "translation{key='block.minecraft.air', args=[]}.no_portal": "엔드 포탈 근처에서만 사용할 수 있습니다"
 }

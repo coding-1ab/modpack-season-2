@@ -39,11 +39,6 @@ public class UpdatingLocator implements IDependencyLocator {
 
     @Override
     public void scanMods(List<IModFile> loadedMods, IDiscoveryPipeline pipeline) {
-        if (!FMLEnvironment.production) {
-            StartupNotificationManager.addModMessage("DEV: Ignoring Remote Mod Registry");
-            return;
-        }
-
         HttpClient client = HttpClient.newBuilder()
                 .followRedirects(HttpClient.Redirect.NORMAL)
                 .build();

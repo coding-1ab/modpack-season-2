@@ -32,7 +32,6 @@ neoForge {
         create("clientAuth") {
             client()
             gameDirectory = project.file("runs/client")
-            jvmArguments.add("-Dmodernfix.allowSparkProfiling=true")
             devLogin = true
         }
         create("client") {
