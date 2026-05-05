@@ -3,7 +3,7 @@
   "textures": {
     "down": "modpack_tweaks:block/void_anchor_side",
     "east": "modpack_tweaks:block/void_anchor_side",
-    "north": "modpack_tweaks:block/void_anchor_front_0",
+    "north": "modpack_tweaks:block/void_anchor_front_4",
     "particle": "modpack_tweaks:block/void_anchor_side",
     "south": "modpack_tweaks:block/void_anchor_side",
     "up": "modpack_tweaks:block/void_anchor_top_clear",

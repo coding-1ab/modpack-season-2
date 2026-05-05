@@ -1,6 +1,12 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube",
   "textures": {
-    "all": "modpack_tweaks:block/void_anchor_disabled"
+    "down": "modpack_tweaks:block/void_anchor_side",
+    "east": "modpack_tweaks:block/void_anchor_side",
+    "north": "modpack_tweaks:block/void_anchor_front_disabled",
+    "particle": "modpack_tweaks:block/void_anchor_side",
+    "south": "modpack_tweaks:block/void_anchor_side",
+    "up": "modpack_tweaks:block/void_anchor_top_clear",
+    "west": "modpack_tweaks:block/void_anchor_side"
   }
 }

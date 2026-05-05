@@ -1,34 +1,154 @@
 {
   "variants": {
-    "active=false,charges=0": {
+    "active=false,charges=0,facing=east": {
+      "model": "modpack_tweaks:block/void_anchor_disabled",
+      "y": 90
+    },
+    "active=false,charges=0,facing=north": {
       "model": "modpack_tweaks:block/void_anchor_disabled"
     },
-    "active=false,charges=1": {
+    "active=false,charges=0,facing=south": {
+      "model": "modpack_tweaks:block/void_anchor_disabled",
+      "y": 180
+    },
+    "active=false,charges=0,facing=west": {
+      "model": "modpack_tweaks:block/void_anchor_disabled",
+      "y": 270
+    },
+    "active=false,charges=1,facing=east": {
+      "model": "modpack_tweaks:block/void_anchor_disabled",
+      "y": 90
+    },
+    "active=false,charges=1,facing=north": {
       "model": "modpack_tweaks:block/void_anchor_disabled"
     },
-    "active=false,charges=2": {
+    "active=false,charges=1,facing=south": {
+      "model": "modpack_tweaks:block/void_anchor_disabled",
+      "y": 180
+    },
+    "active=false,charges=1,facing=west": {
+      "model": "modpack_tweaks:block/void_anchor_disabled",
+      "y": 270
+    },
+    "active=false,charges=2,facing=east": {
+      "model": "modpack_tweaks:block/void_anchor_disabled",
+      "y": 90
+    },
+    "active=false,charges=2,facing=north": {
       "model": "modpack_tweaks:block/void_anchor_disabled"
     },
-    "active=false,charges=3": {
+    "active=false,charges=2,facing=south": {
+      "model": "modpack_tweaks:block/void_anchor_disabled",
+      "y": 180
+    },
+    "active=false,charges=2,facing=west": {
+      "model": "modpack_tweaks:block/void_anchor_disabled",
+      "y": 270
+    },
+    "active=false,charges=3,facing=east": {
+      "model": "modpack_tweaks:block/void_anchor_disabled",
+      "y": 90
+    },
+    "active=false,charges=3,facing=north": {
       "model": "modpack_tweaks:block/void_anchor_disabled"
     },
-    "active=false,charges=4": {
+    "active=false,charges=3,facing=south": {
+      "model": "modpack_tweaks:block/void_anchor_disabled",
+      "y": 180
+    },
+    "active=false,charges=3,facing=west": {
+      "model": "modpack_tweaks:block/void_anchor_disabled",
+      "y": 270
+    },
+    "active=false,charges=4,facing=east": {
+      "model": "modpack_tweaks:block/void_anchor_disabled",
+      "y": 90
+    },
+    "active=false,charges=4,facing=north": {
       "model": "modpack_tweaks:block/void_anchor_disabled"
     },
-    "active=true,charges=0": {
+    "active=false,charges=4,facing=south": {
+      "model": "modpack_tweaks:block/void_anchor_disabled",
+      "y": 180
+    },
+    "active=false,charges=4,facing=west": {
+      "model": "modpack_tweaks:block/void_anchor_disabled",
+      "y": 270
+    },
+    "active=true,charges=0,facing=east": {
+      "model": "modpack_tweaks:block/void_anchor",
+      "y": 90
+    },
+    "active=true,charges=0,facing=north": {
       "model": "modpack_tweaks:block/void_anchor"
     },
-    "active=true,charges=1": {
-      "model": "modpack_tweaks:block/void_anchor_charged"
+    "active=true,charges=0,facing=south": {
+      "model": "modpack_tweaks:block/void_anchor",
+      "y": 180
     },
-    "active=true,charges=2": {
-      "model": "modpack_tweaks:block/void_anchor_charged"
+    "active=true,charges=0,facing=west": {
+      "model": "modpack_tweaks:block/void_anchor",
+      "y": 270
     },
-    "active=true,charges=3": {
-      "model": "modpack_tweaks:block/void_anchor_charged"
+    "active=true,charges=1,facing=east": {
+      "model": "modpack_tweaks:block/void_anchor_charge_1",
+      "y": 90
     },
-    "active=true,charges=4": {
-      "model": "modpack_tweaks:block/void_anchor_charged"
+    "active=true,charges=1,facing=north": {
+      "model": "modpack_tweaks:block/void_anchor_charge_1"
+    },
+    "active=true,charges=1,facing=south": {
+      "model": "modpack_tweaks:block/void_anchor_charge_1",
+      "y": 180
+    },
+    "active=true,charges=1,facing=west": {
+      "model": "modpack_tweaks:block/void_anchor_charge_1",
+      "y": 270
+    },
+    "active=true,charges=2,facing=east": {
+      "model": "modpack_tweaks:block/void_anchor_charge_2",
+      "y": 90
+    },
+    "active=true,charges=2,facing=north": {
+      "model": "modpack_tweaks:block/void_anchor_charge_2"
+    },
+    "active=true,charges=2,facing=south": {
+      "model": "modpack_tweaks:block/void_anchor_charge_2",
+      "y": 180
+    },
+    "active=true,charges=2,facing=west": {
+      "model": "modpack_tweaks:block/void_anchor_charge_2",
+      "y": 270
+    },
+    "active=true,charges=3,facing=east": {
+      "model": "modpack_tweaks:block/void_anchor_charge_3",
+      "y": 90
+    },
+    "active=true,charges=3,facing=north": {
+      "model": "modpack_tweaks:block/void_anchor_charge_3"
+    },
+    "active=true,charges=3,facing=south": {
+      "model": "modpack_tweaks:block/void_anchor_charge_3",
+      "y": 180
+    },
+    "active=true,charges=3,facing=west": {
+      "model": "modpack_tweaks:block/void_anchor_charge_3",
+      "y": 270
+    },
+    "active=true,charges=4,facing=east": {
+      "model": "modpack_tweaks:block/void_anchor_charge_4",
+      "y": 90
+    },
+    "active=true,charges=4,facing=north": {
+      "model": "modpack_tweaks:block/void_anchor_charge_4"
+    },
+    "active=true,charges=4,facing=south": {
+      "model": "modpack_tweaks:block/void_anchor_charge_4",
+      "y": 180
+    },
+    "active=true,charges=4,facing=west": {
+      "model": "modpack_tweaks:block/void_anchor_charge_4",
+      "y": 270
     }
   }
 }
