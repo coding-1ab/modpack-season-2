@@ -1,6 +1,7 @@
 package dev.codinglabs.modpack.data
 
 import net.minecraft.data.PackOutput
+import net.minecraft.core.Direction
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.properties.BooleanProperty
 import net.neoforged.neoforge.client.model.generators.BlockModelBuilder
@@ -12,6 +13,7 @@ import dev.codinglabs.modpack.Blocks.ENDER_FIRE
 import dev.codinglabs.modpack.EnderFire
 import dev.codinglabs.modpack.ModPackTweaks
 import dev.codinglabs.modpack.VoidAnchorBlock
+import it.unimi.dsi.fastutil.objects.ObjectArrayList
 
 class BlockStates(output: PackOutput, helper: ExistingFileHelper) :
     BlockStateProvider(output, ModPackTweaks.ID, helper) {
@@ -31,21 +33,54 @@ class BlockStates(output: PackOutput, helper: ExistingFileHelper) :
     }
 
     private fun voidAnchor() {
-        val idle = models().cubeAll("void_anchor", modLoc("block/void_anchor"))
-        val charged = models().cubeAll("void_anchor_charged", modLoc("block/void_anchor_charged"))
-        val disabled = models().cubeAll("void_anchor_disabled", modLoc("block/void_anchor_disabled"))
+        val disabled = voidAnchorModel("void_anchor_disabled", "disabled")
+        val idle = voidAnchorModel("void_anchor", "0")
+        val charged1 = voidAnchorModel("void_anchor_charge_1", "1")
+        val charged2 = voidAnchorModel("void_anchor_charge_2", "2")
+        val charged3 = voidAnchorModel("void_anchor_charge_3", "3")
+        val charged4 = voidAnchorModel("void_anchor_charge_4", "4")
+        models().withExistingParent("void_anchor_item", mcLoc("block/cube"))
+            .texture("particle", modLoc("block/void_anchor_side"))
+            .texture("down", modLoc("block/void_anchor_side"))
+            .texture("up", modLoc("block/void_anchor_top_0"))
+            .texture("north", modLoc("block/void_anchor_front_0"))
+            .texture("south", modLoc("block/void_anchor_side"))
+            .texture("east", modLoc("block/void_anchor_side"))
+            .texture("west", modLoc("block/void_anchor_side"))
 
         getVariantBuilder(Blocks.VOID_ANCHOR).forAllStates { state ->
             val active = state.getValue(VoidAnchorBlock.ACTIVE)
             val charges = state.getValue(VoidAnchorBlock.CHARGES)
             val model = when {
                 !active -> disabled
-                charges > 0 -> charged
-                else -> idle
+                charges == 0 -> idle
+                charges == 1 -> charged1
+                charges == 2 -> charged2
+                charges == 3 -> charged3
+                else -> charged4
             }
 
-            ConfiguredModel.builder().modelFile(model).build()
+            val yRot = when (state.getValue(VoidAnchorBlock.FACING)) {
+                Direction.NORTH -> 0
+                Direction.EAST -> 90
+                Direction.SOUTH -> 180
+                Direction.WEST -> 270
+                else -> 0
+            }
+
+            ConfiguredModel.builder().modelFile(model).rotationY(yRot).build()
         }
+    }
+
+    private fun voidAnchorModel(name: String, suffix: String): BlockModelBuilder {
+        return models().withExistingParent(name, mcLoc("block/cube"))
+            .texture("particle", modLoc("block/void_anchor_side"))
+            .texture("down", modLoc("block/void_anchor_side"))
+            .texture("up", modLoc("block/void_anchor_top_clear"))
+            .texture("north", modLoc("block/void_anchor_front_$suffix"))
+            .texture("south", modLoc("block/void_anchor_side"))
+            .texture("east", modLoc("block/void_anchor_side"))
+            .texture("west", modLoc("block/void_anchor_side"))
     }
 
     @Suppress("UnusedVariable", "unused")
@@ -69,9 +104,9 @@ class BlockStates(output: PackOutput, helper: ExistingFileHelper) :
         westProperty: BooleanProperty,
         upProperty: BooleanProperty,
     ) {
-        val floor = ArrayList<BlockModelBuilder>()
-        val up = ArrayList<BlockModelBuilder>()
-        val side = ArrayList<BlockModelBuilder>()
+        val floor = ObjectArrayList<BlockModelBuilder>()
+        val up = ObjectArrayList<BlockModelBuilder>()
+        val side = ObjectArrayList<BlockModelBuilder>()
 
         val suffixes = arrayOf(
             "_up",

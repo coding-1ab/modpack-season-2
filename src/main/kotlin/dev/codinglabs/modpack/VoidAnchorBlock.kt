@@ -15,13 +15,19 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.BaseEntityBlock
 import net.minecraft.world.level.block.EntityBlock
+import net.minecraft.world.level.block.HorizontalDirectionalBlock
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.Mirror
 import net.minecraft.world.level.block.RenderShape
+import net.minecraft.world.level.block.Rotation
 import net.minecraft.world.level.block.state.properties.BooleanProperty
+import net.minecraft.world.level.block.state.properties.DirectionProperty
 import net.minecraft.world.level.block.state.properties.IntegerProperty
 import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.world.item.context.BlockPlaceContext
+import net.minecraft.core.Direction
 import net.minecraft.world.phys.BlockHitResult
 
 class VoidAnchorBlock(
@@ -32,13 +38,14 @@ class VoidAnchorBlock(
         val CODEC: MapCodec<VoidAnchorBlock> = simpleCodec(::VoidAnchorBlock)
         val CHARGES: IntegerProperty = IntegerProperty.create("charges", 0, 4)
         val ACTIVE: BooleanProperty = BooleanProperty.create("active")
+        val FACING: DirectionProperty = HorizontalDirectionalBlock.FACING
 
     }
 
-    val noPortalKey = "${this.name}.no_portal"
+    val noPortalKey get() = MSG_NO_PORTAL
 
     init {
-        registerDefaultState(stateDefinition.any().setValue(CHARGES, 0).setValue(ACTIVE, false))
+        registerDefaultState(stateDefinition.any().setValue(CHARGES, 0).setValue(ACTIVE, false).setValue(FACING, Direction.NORTH))
     }
 
     override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
