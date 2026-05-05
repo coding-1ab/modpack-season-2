@@ -34,7 +34,7 @@ public class StockBridge {
 	}
 
 	private void setup(final FMLCommonSetupEvent event) {
-		LOGGER.info("Create Contraption Terminals starting");
+		LOGGER.info("Create Stock Bridge starting");
 		Registration.postRegister();
 		NetworkHandler.init();
 	}

@@ -81,11 +81,13 @@ public class AEStockBridgeBlockEntity extends AbstractAEStockBridgeBlockEntity {
 
 		var what = AEItemKey.of(stack);
 		final long acquired = StorageHelper.poweredExtraction(energySrc, networkInv, what, amount, actionSource, Actionable.SIMULATE);
-		var r = ItemHandlerHelper.insertItemStacked(inv.extractW, stack.copyWithCount((int) acquired), true);
-		int count = (int) (acquired - r.getCount());
+
+		if (acquired <= 0) {
+			return null;
+		}
 
 		return Pair.of(packager,
-				PackagingRequest.create(stack, count, address, linkIndex, finalLink, 0, orderId, context));
+				PackagingRequest.create(stack, (int) acquired, address, linkIndex, finalLink, 0, orderId, context));
 	}
 
 	@Override
@@ -126,10 +128,14 @@ public class AEStockBridgeBlockEntity extends AbstractAEStockBridgeBlockEntity {
 
 		var what = AEItemKey.of(packagingRequest.item());
 
-		long extracted = StorageHelper.poweredExtraction(energySrc, networkInv, what, packagingRequest.getCount(), actionSource);
+		ItemStack rem = ItemHandlerHelper.insertItemStacked(inv.extractW, packagingRequest.item().copyWithCount(packagingRequest.getCount()), true);
+		int maxSpace = packagingRequest.getCount() - rem.getCount();
+		if (maxSpace < 1)return;
+
+		long extracted = StorageHelper.poweredExtraction(energySrc, networkInv, what, maxSpace, actionSource);
 		ItemStack ex = ItemHandlerHelper.insertItemStacked(inv.extractW, packagingRequest.item().copyWithCount((int) extracted), false);
 		if (!ex.isEmpty()) {
-			//TODO handle full
+			networkInv.insert(AEItemKey.of(ex), ex.getCount(), Actionable.MODULATE, actionSource);
 		}
 		sendPulseNextSync();
 		notifyUpdate();
@@ -149,5 +155,14 @@ public class AEStockBridgeBlockEntity extends AbstractAEStockBridgeBlockEntity {
 		if (!clientPacket) {
 			inv.read(tag.getCompound("inv"));
 		}
+	}
+
+	@Override
+	protected boolean hasInventorySpace() {
+		for (int i = 0;i<inv.extractW.getSlots();i++) {
+			if (inv.extractW.getStackInSlot(i).isEmpty())
+				return true;
+		}
+		return false;
 	}
 }

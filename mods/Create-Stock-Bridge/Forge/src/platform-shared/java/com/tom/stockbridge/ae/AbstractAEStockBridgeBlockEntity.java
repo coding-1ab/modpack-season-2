@@ -2,6 +2,7 @@ package com.tom.stockbridge.ae;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import net.createmod.catnip.data.Pair;
 import net.minecraft.core.BlockPos;
@@ -17,6 +18,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
+import com.simibubi.create.Create;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
 
 import com.google.common.collect.ImmutableSet;
@@ -30,10 +32,12 @@ import appeng.api.networking.GridFlags;
 import appeng.api.networking.GridHelper;
 import appeng.api.networking.IGridNodeListener;
 import appeng.api.networking.IManagedGridNode;
+import appeng.api.networking.IStackWatcher;
 import appeng.api.networking.crafting.ICraftingLink;
 import appeng.api.networking.crafting.ICraftingProvider;
 import appeng.api.networking.crafting.ICraftingRequester;
 import appeng.api.networking.security.IActionSource;
+import appeng.api.networking.storage.IStorageWatcherNode;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.AEKey;
 import appeng.api.stacks.KeyCounter;
@@ -53,7 +57,7 @@ import appeng.menu.locator.MenuLocators;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 
 public abstract class AbstractAEStockBridgeBlockEntity extends AbstractStockBridgeBlockEntity implements
-IGridConnectedBlockEntity, IPriorityHost, IStorageProvider, ICraftingProvider, ICraftingRequester {
+IGridConnectedBlockEntity, IPriorityHost, IStorageProvider, ICraftingProvider, ICraftingRequester, IStorageWatcherNode {
 	protected final IManagedGridNode mainNode;
 	protected final MEStorage inventory;
 	private int priority = 100;
@@ -68,11 +72,12 @@ IGridConnectedBlockEntity, IPriorityHost, IStorageProvider, ICraftingProvider, I
 		super(type, pos, state);
 		this.mainNode = this.createMainNode().setVisualRepresentation(AERegistration.BRIDGE_BLOCK.asItem())
 				.setInWorldNode(true).setTagName("proxy").setFlags(GridFlags.REQUIRE_CHANNEL).setIdlePowerUsage(4d);
-		this.inventory = new BridgeStorge();
+		this.inventory = new BridgeStorage();
 		this.craftingTracker = new MultiCraftingTracker(this, 8);
 		this.getMainNode().addService(IStorageProvider.class, this);
 		this.getMainNode().addService(ICraftingRequester.class, this);
 		this.getMainNode().addService(ICraftingProvider.class, this);
+		this.getMainNode().addService(IStorageWatcherNode.class, this);
 		this.actionSource = new MachineSource(mainNode::getNode);
 		this.onGridConnectableSidesChanged();
 	}
@@ -240,7 +245,7 @@ IGridConnectedBlockEntity, IPriorityHost, IStorageProvider, ICraftingProvider, I
 		}
 	}
 
-	private class BridgeStorge implements MEStorage {
+	private class BridgeStorage implements MEStorage {
 
 		@Override
 		public Component getDescription() {
@@ -356,5 +361,19 @@ IGridConnectedBlockEntity, IPriorityHost, IStorageProvider, ICraftingProvider, I
 	@Override
 	public void jobStateChange(ICraftingLink link) {
 		this.craftingTracker.jobStateChange(link);
+	}
+
+	@Override
+	public void updateWatcher(IStackWatcher p0) {
+		p0.setWatchAll(true);
+	}
+
+	@Override
+	public void onStackChange(AEKey what, long amount) {
+		UUID freqId = behaviour.freqId;
+		var promiseQueue = Create.LOGISTICS.getQueuedPromises(freqId);
+		if (promiseQueue != null && what instanceof AEItemKey itemKey) {
+			promiseQueue.itemEnteredSystem(itemKey.toStack((int) amount), (int) amount);
+		}
 	}
 }

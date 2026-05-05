@@ -61,12 +61,10 @@ public abstract class PackagerBlockEntityMixin extends SmartBlockEntity {
 		IItemHandler targetInv = targetInventory.getInventory();
 		if (!(targetInv instanceof BridgeInventory bi))return;
 
+		if (queuedRequests == null || queuedRequests.isEmpty())
+			return;
+
 		AbstractStockBridgeBlockEntity bridge = bi.getBlockEntity();
-
-		boolean requestQueue = queuedRequests != null;
-
-		if (requestQueue && !queuedRequests.isEmpty()) {
-			bridge.pull(queuedRequests.get(0));
-		}
+		bridge.preparePackages(queuedRequests);
 	}
 }
