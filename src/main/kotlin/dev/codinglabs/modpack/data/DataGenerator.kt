@@ -17,4 +17,5 @@ fun gatherData(event: GatherDataEvent) {
     event.generator.addProvider(event.includeClient(), Korean(output))
     event.generator.addProvider(event.includeClient(), ItemModels(output, helper))
     event.generator.addProvider(event.includeServer(), Recipes(output, lookup))
+    event.generator.addProvider(event.includeServer(), createLootTablesProvider(output, lookup))
 }

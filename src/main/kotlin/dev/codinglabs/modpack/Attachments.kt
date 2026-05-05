@@ -25,10 +25,17 @@ object Attachments {
 
 var ServerPlayer.voidAnchorPos: BlockPos?
     get() {
+        // 데이터가 없거나, 기본값(ZERO)인 경우 null로 취급하고 싶다면 아래와 같이 작성
         return if (this.hasData(Attachments.VOID_ANCHOR_POSITION)) {
             this.getData(Attachments.VOID_ANCHOR_POSITION)
         } else null
     }
     set(value) {
-        this.setData(Attachments.VOID_ANCHOR_POSITION, value!!)
+        if (value == null) {
+            // null을 대입하려고 하면 데이터를 아예 삭제합니다.
+            this.removeData(Attachments.VOID_ANCHOR_POSITION)
+        } else {
+            // 값이 있을 때만 저장합니다.
+            this.setData(Attachments.VOID_ANCHOR_POSITION, value)
+        }
     }

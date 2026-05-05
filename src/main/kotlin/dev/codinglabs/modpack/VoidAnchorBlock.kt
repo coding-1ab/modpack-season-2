@@ -132,11 +132,13 @@ class VoidAnchorBlock(
     override fun onRemove(state: BlockState, level: Level, pos: BlockPos, newState: BlockState, movedByPiston: Boolean) {
         if (!state.`is`(newState.block)) {
             if (!level.isClientSide) {
-                // 이 앵커를 쓰던 모든 플레이어의 좌표 초기화 + 알림
                 level.players().forEach { player ->
-                    if (player is ServerPlayer && player.voidAnchorPos == pos) {
-                        player.voidAnchorPos = null
-                        player.displayClientMessage(Component.translatable(MSG_DESTROYED), true)
+                    if (player is ServerPlayer) {
+                        val currentPos = player.voidAnchorPos
+                        if (currentPos != null && currentPos == pos) {
+                            player.voidAnchorPos = null
+                            player.displayClientMessage(Component.translatable(MSG_DESTROYED), true)
+                        }
                     }
                 }
             }

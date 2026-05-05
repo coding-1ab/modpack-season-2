@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecraft:match_tool",
+              "predicate": {
+                "items": [
+                  "minecraft:diamond_pickaxe",
+                  "minecraft:netherite_pickaxe"
+                ]
+              }
+            }
+          ],
+          "name": "modpack_tweaks:void_anchor"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "modpack_tweaks:blocks/void_anchor"
+}
