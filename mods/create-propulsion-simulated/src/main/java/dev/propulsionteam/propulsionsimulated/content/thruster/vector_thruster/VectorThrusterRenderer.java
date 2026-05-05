@@ -38,6 +38,12 @@ public final class VectorThrusterRenderer {
         float yAxis = Mth.clamp(be.getCurrentVectorY(), -1.0f, 1.0f);
         float yawDegrees = xAxis * VectorThrusterBlockEntity.MAX_VISUAL_TILT_DEGREES;
         float pitchDegrees = -yAxis * VectorThrusterBlockEntity.MAX_VISUAL_TILT_DEGREES;
+        // For FACING=UP the Rx(90°) facing rotation maps model-Y to world +Z, inverting
+        // the effective yaw/pitch axis relative to computeRight's negated right/up vectors.
+        if (facing == Direction.UP) {
+            yawDegrees = -yawDegrees;
+            pitchDegrees = -pitchDegrees;
+        }
 
         PartialModel partialModel = be instanceof CreativeVectorThrusterBlockEntity
                 ? PropulsionPartialModels.CREATIVE_VECTOR_THRUSTER_MOVING_ASSEMBLY

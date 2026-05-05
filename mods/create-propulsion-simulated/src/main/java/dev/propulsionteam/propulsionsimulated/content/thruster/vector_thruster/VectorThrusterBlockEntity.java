@@ -184,12 +184,13 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
             .fma(1.0d / 16.0d, up)
             .fma(7.0d / 16.0d, forward);
 
-        // Neutral nozzle anchor used before applying vector rotation.
+        Vector3d exhaust = new Vector3d(localExhaustDirection.x, localExhaustDirection.y, localExhaustDirection.z);
+        double tiltScale = Math.tan(Math.toRadians(MAX_VISUAL_TILT_DEGREES));
+        double yawRad   = Math.toRadians(Mth.clamp((float) (exhaust.dot(right) / tiltScale), -1f, 1f) * MAX_VISUAL_TILT_DEGREES);
+        double pitchRad = Math.toRadians(-Mth.clamp((float) (exhaust.dot(up)    / tiltScale), -1f, 1f) * MAX_VISUAL_TILT_DEGREES);
+
         Vector3d neutralNozzle = new Vector3d(center).fma(-nozzleOffset, forward);
         Vector3d relative = neutralNozzle.sub(pivot, new Vector3d());
-
-        double yawRad = Math.toRadians(Mth.clamp(currentVectorX, -1.0f, 1.0f) * MAX_VISUAL_TILT_DEGREES);
-        double pitchRad = Math.toRadians(-Mth.clamp(currentVectorY, -1.0f, 1.0f) * MAX_VISUAL_TILT_DEGREES);
 
         rotateAroundAxis(relative, up, yawRad);
         rotateAroundAxis(relative, right, pitchRad);
