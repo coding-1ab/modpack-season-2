@@ -58,6 +58,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
 
     //Common State
     protected ThrusterData thrusterData;
+    protected String dyeId = null;
     protected int emptyBlocks;
     protected boolean isThrustDirty = false;
 
@@ -279,6 +280,18 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     
     public boolean isCreative() { return false; }
     public boolean isIon() { return false; }
+
+    public String getDyeId() { return dyeId; }
+
+    public void setDyeId(String id) {
+        this.dyeId = id;
+        setChanged();
+        notifyUpdate();
+    }
+
+    public Integer getDyeColor() {
+        return dyeId != null ? PropulsionConfig.getDyeColor(dyeId) : null;
+    }
     
     public dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterBlockEntity.PlumeType getPlumeType() {
         return dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterBlockEntity.PlumeType.NONE;
@@ -621,6 +634,11 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         compound.putInt("ControlMode", controlMode.ordinal());
         // Sync thrust to clients when sending client packets / updates
         compound.putFloat("Thrust", (float) thrusterData.getThrust());
+        if (dyeId != null) {
+            compound.putString("DyeId", dyeId);
+        } else {
+            compound.remove("DyeId");
+        }
     }
 
     @Override
@@ -638,6 +656,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         if (compound.contains("Thrust")) {
             thrusterData.setThrust(compound.getFloat("Thrust"));
         }
+        dyeId = compound.contains("DyeId") ? compound.getString("DyeId") : null;
     }
 
 }

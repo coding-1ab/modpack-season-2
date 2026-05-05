@@ -119,16 +119,17 @@ public class CreativeVectorThrusterBlockEntity extends VectorThrusterBlockEntity
 
     @Override
     protected ParticleOptions createParticleOptions() {
+        Integer color = getDyeColor();
         if (plumeType == CreativeThrusterBlockEntity.PlumeType.PLASMA) {
-            return new PlasmaParticleData();
+            return new PlasmaParticleData(List.of(), color);
         }
         if (plumeType == CreativeThrusterBlockEntity.PlumeType.ION) {
-            return new IonParticleData(List.of(), null, 0.85f);
+            return new IonParticleData(List.of(), color, 0.85f);
         }
         if (plumeType == CreativeThrusterBlockEntity.PlumeType.PLUME) {
-            return new PlumeParticleData();
+            return new PlumeParticleData(List.of(), color);
         }
-        return new PlumeParticleData();
+        return new PlumeParticleData(List.of(), color);
     }
 
     @Override

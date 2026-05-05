@@ -2,7 +2,7 @@
   "type": "create:splashing",
   "ingredients": [
     {
-      "item": "createpropulsion:crushed_raw_platinum"
+      "item": "create:crushed_raw_platinum"
     }
   ],
   "results": [

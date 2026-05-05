@@ -186,7 +186,7 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
 
     @Override
     protected ParticleOptions createParticleOptions() {
-        return new IonParticleData();
+        return new IonParticleData(List.of(), getDyeColor(), null);
     }
 
     @Override

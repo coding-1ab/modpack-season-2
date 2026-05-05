@@ -4,7 +4,9 @@ import dev.propulsionteam.propulsionsimulated.registries.PropulsionDefaultStress
 
 import net.neoforged.neoforge.common.ModConfigSpec;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PropulsionConfig {
     public static final ModConfigSpec.Builder SERVER_BUILDER = new ModConfigSpec.Builder();
@@ -41,6 +43,8 @@ public class PropulsionConfig {
     public static final ModConfigSpec.DoubleValue GROUNDED_SPEED_DEADZONE;
     public static final ModConfigSpec.DoubleValue GROUND_PROBE_DISTANCE;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> FUEL_PROPERTIES;
+    /** Maps full item ID (e.g. {@code "minecraft:cyan_dye"}) → config value holding an RRGGBB hex string. */
+    public static final Map<String, ModConfigSpec.ConfigValue<String>> THRUSTER_DYE_COLORS = new LinkedHashMap<>();
     public static final ModConfigSpec.DoubleValue TILT_ADAPTER_MAX_ANGLE;
     public static final ModConfigSpec.IntValue CABLE_ENERGY_TRANSFER;
 
@@ -251,6 +255,31 @@ public class PropulsionConfig {
 
         SERVER_BUILDER.pop();
 
+        SERVER_BUILDER.push("thrusterDyeColors");
+        SERVER_BUILDER.comment("Particle color overrides when a dye is applied to a thruster. Values are RRGGBB hex strings.");
+        for (String[] e : new String[][] {
+            { "white",       "FFFFFF" },
+            { "orange",      "FF8000" },
+            { "magenta",     "FF00FF" },
+            { "light_blue",  "00BFFF" },
+            { "yellow",      "FFFF00" },
+            { "lime",        "7FFF00" },
+            { "pink",        "FF69B4" },
+            { "gray",        "808080" },
+            { "light_gray",  "C0C0C0" },
+            { "cyan",        "00FFFF" },
+            { "purple",      "BF00FF" },
+            { "blue",        "5555FF" },
+            { "brown",       "C86400" },
+            { "green",       "00C800" },
+            { "red",         "FF0000" },
+            { "black",       "2A2A2A" },
+        }) {
+            THRUSTER_DYE_COLORS.put("minecraft:" + e[0] + "_dye",
+                SERVER_BUILDER.define(e[0], e[1]));
+        }
+        SERVER_BUILDER.pop();
+
         SERVER_BUILDER.push("Thruster Particles");
             THRUSTER_PARTICLE_OFFSET_INCOMING_VEL_MODIFIER = SERVER_BUILDER.comment("Particle additional velocity modifier when ship is moving in the same direction as exhaust.")
                     .define("Particle velocity offset", 0.15);
@@ -404,6 +433,20 @@ public class PropulsionConfig {
                 "northstar:liquid_hydrogen=80",
                 "immersivepetroleum:diesel_sulfur=100"
         );
+    }
+
+    public static Integer getDyeColor(String dyeId) {
+        ModConfigSpec.ConfigValue<String> cv = THRUSTER_DYE_COLORS.get(dyeId);
+        if (cv == null) return null;
+        try {
+            return Integer.parseUnsignedInt(cv.get().trim(), 16);
+        } catch (NumberFormatException | IllegalStateException ignored) {
+            return null;
+        }
+    }
+
+    public static boolean isDyeConfigured(String itemId) {
+        return THRUSTER_DYE_COLORS.containsKey(itemId);
     }
 
     public static List<? extends String> getCoralFuelConversionRatesOrDefault() {

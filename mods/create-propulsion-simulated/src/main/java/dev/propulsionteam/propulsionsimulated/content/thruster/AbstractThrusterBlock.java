@@ -1,9 +1,13 @@
 package dev.propulsionteam.propulsionsimulated.content.thruster;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
+import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -81,6 +85,27 @@ public abstract class AbstractThrusterBlock extends DirectionalBlock implements 
                                               final Player player,
                                               final InteractionHand hand,
                                               final BlockHitResult hitResult) {
+        if (!stack.isEmpty()) {
+            String itemId = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
+            if (PropulsionConfig.isDyeConfigured(itemId)) {
+                if (!level.isClientSide()) {
+                    if (level.getBlockEntity(pos) instanceof AbstractThrusterBlockEntity be) {
+                        String currentDye = be.getDyeId();
+                        if (currentDye != null && !currentDye.equals(itemId)) {
+                            Block.popResource(level, pos, new ItemStack(
+                                BuiltInRegistries.ITEM.get(ResourceLocation.parse(currentDye))));
+                        }
+                        if (!itemId.equals(currentDye)) {
+                            be.setDyeId(itemId);
+                            if (!player.isCreative()) {
+                                stack.shrink(1);
+                            }
+                        }
+                    }
+                }
+                return ItemInteractionResult.sidedSuccess(level.isClientSide());
+            }
+        }
         final ItemInteractionResult interactionResult = this.onBlockEntityUseItemOn(level, pos,
                 be -> be.tryConsumeFuelBucket(player, hand, stack)
                         ? ItemInteractionResult.sidedSuccess(level.isClientSide())
@@ -89,6 +114,30 @@ public abstract class AbstractThrusterBlock extends DirectionalBlock implements 
             return interactionResult;
         }
         return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(final BlockState state,
+                                               final Level level,
+                                               final BlockPos pos,
+                                               final Player player,
+                                               final BlockHitResult hitResult) {
+        if (!level.isClientSide()) {
+            if (level.getBlockEntity(pos) instanceof AbstractThrusterBlockEntity be) {
+                String currentDye = be.getDyeId();
+                if (currentDye != null) {
+                    be.setDyeId(null);
+                    Block.popResource(level, pos, new ItemStack(
+                        BuiltInRegistries.ITEM.get(ResourceLocation.parse(currentDye))));
+                    return InteractionResult.SUCCESS;
+                }
+            }
+        } else {
+            if (level.getBlockEntity(pos) instanceof AbstractThrusterBlockEntity be && be.getDyeId() != null) {
+                return InteractionResult.SUCCESS;
+            }
+        }
+        return InteractionResult.PASS;
     }
 
     @Override
