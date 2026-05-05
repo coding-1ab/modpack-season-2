@@ -17,7 +17,12 @@ class Korean(output: PackOutput) : LanguageProvider(output, ModPackTweaks.ID, "k
         add(Blocks.ENDER_FUEL, "엔더 연료")
         add(Blocks.VOID_ANCHOR, "공허 정박기")
         add(Items.SHULKER_SHELL_FRAGMENT, "셜커 껍데기 조각")
-        add(Blocks.VOID_ANCHOR.noPortalKey, "엔드 포탈 근처에서만 사용할 수 있습니다")
+        add(VoidAnchorBlock.MSG_NO_PORTAL,  "엔드 포탈 근처에서만 사용할 수 있습니다")
+        add(VoidAnchorBlock.MSG_SET,        "공허 정박기가 등록되었습니다.")
+        add(VoidAnchorBlock.MSG_CHARGES,    "충전량: %s / %s")
+        add(VoidAnchorBlock.MSG_FULL,       "이미 충전이 완료되었습니다.")
+        add(VoidAnchorBlock.MSG_DESTROYED,  "공허 정박기가 파괴되어 앵커가 해제되었습니다")
+        add(VoidAnchorBlock.MSG_NO_CHARGES, "충전량이 부족합니다")
         add("itemGroup.${ModPackTweaks.ID}.title", "코딩랩 모드팩 자체 컨텐츠")
     }
 
