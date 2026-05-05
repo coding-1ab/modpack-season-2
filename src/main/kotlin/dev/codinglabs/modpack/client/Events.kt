@@ -4,13 +4,21 @@ import net.minecraft.client.Minecraft
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import net.minecraft.util.Mth
+import net.neoforged.neoforge.client.event.EntityRenderersEvent
 import net.neoforged.neoforge.client.event.ClientTickEvent
 import net.neoforged.neoforge.client.event.ViewportEvent
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent
+import dev.codinglabs.modpack.BlockEntities
 import dev.codinglabs.modpack.Fluids
+import dev.codinglabs.modpack.client.VoidAnchorRenderer
 
 fun registerClientExtensions(event: RegisterClientExtensionsEvent) {
     event.registerFluidType(EnderFuelExtension, Fluids.ENDER_FUEL_TYPE)
+}
+
+// 블록 엔티티 랜더러 등록
+fun registerBlockEntityRenderers(event: EntityRenderersEvent.RegisterRenderers) {
+    event.registerBlockEntityRenderer(BlockEntities.VOID_ANCHOR, ::VoidAnchorRenderer)
 }
 
 fun modifyFov(event: ViewportEvent.ComputeFov) {
