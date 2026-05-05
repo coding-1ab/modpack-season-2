@@ -106,7 +106,7 @@ object VoidAnchorLogic {
         return null
     }
 
-    private fun hasNearbyEndPortal(level: ServerLevel, pos: BlockPos): Boolean {
+    fun hasNearbyEndPortal(level: ServerLevel, pos: BlockPos): Boolean {
         val chunkPos = level.getChunkAt(pos).pos
 
         for (x in -1..1) {

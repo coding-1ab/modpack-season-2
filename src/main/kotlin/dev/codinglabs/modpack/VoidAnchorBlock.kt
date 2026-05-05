@@ -28,6 +28,7 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.core.Direction
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.phys.BlockHitResult
 
 class VoidAnchorBlock(
@@ -58,6 +59,21 @@ class VoidAnchorBlock(
 
     override fun useWithoutItem(state: BlockState, level: Level, pos: BlockPos, player: Player, hit: BlockHitResult): InteractionResult {
         if (!level.isClientSide && player is ServerPlayer) {
+
+            if (!VoidAnchorLogic.hasNearbyEndPortal(level as ServerLevel, pos)) {
+                //player.displayClientMessage(Component.translatable(MSG_NO_PORTAL), true)
+                for (player in level.players()) {
+                    if (player is ServerPlayer) {
+                        val currentPos = player.voidAnchorPos
+                        if (currentPos != null && currentPos == pos) {
+                            player.voidAnchorPos = null
+                            player.displayClientMessage(Component.translatable(MSG_NO_PORTAL), true)
+                        }
+                    }
+                }
+                return InteractionResult.sidedSuccess(level.isClientSide)
+            }
+
             val refreshed = VoidAnchorLogic.refreshActivation(level, pos, state)
             if (!refreshed.getValue(ACTIVE)) {
                 player.displayClientMessage(Component.translatable(MSG_NO_PORTAL), true)
@@ -96,6 +112,20 @@ class VoidAnchorBlock(
         // 엔더 진주가 아니면 빈 손 상호작용(useWithoutItem)으로 넘기긱
         if (!stack.`is`(Items.ENDER_PEARL)) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
+        }
+
+        if (!VoidAnchorLogic.hasNearbyEndPortal(level as ServerLevel, pos)) {
+            //player.displayClientMessage(Component.translatable(MSG_NO_PORTAL), true)
+            for (player in level.players()) {
+                if (player is ServerPlayer) {
+                    val currentPos = player.voidAnchorPos
+                    if (currentPos != null && currentPos == pos) {
+                        player.voidAnchorPos = null
+                        player.displayClientMessage(Component.translatable(MSG_NO_PORTAL), true)
+                    }
+                }
+            }
+            return ItemInteractionResult.sidedSuccess(level.isClientSide)
         }
 
         // 충전
