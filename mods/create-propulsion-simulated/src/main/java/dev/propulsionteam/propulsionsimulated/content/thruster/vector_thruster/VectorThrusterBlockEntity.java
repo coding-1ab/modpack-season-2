@@ -364,6 +364,12 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
         }
 
         @Override
+        public void transform(LevelAccessor level, BlockPos pos, BlockState state, PoseStack ms) {
+            super.transform(level, pos, state, ms);
+            ms.scale(0.75f, 0.75f, 0.75f);
+        }
+
+        @Override
         public float getScale() {
             // Match Create's redstone-link frequency slot hitbox size for reliable targeting.
             return 0.4975f;
