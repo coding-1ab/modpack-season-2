@@ -1,10 +1,15 @@
 {
-  "block.minecraft.air": "공허 정박기",
   "block.modpack_tweaks.ender_fire": "엔더의 불",
   "block.modpack_tweaks.ender_fuel": "엔더 연료",
+  "block.modpack_tweaks.void_anchor": "공허 정박기",
+  "block.modpack_tweaks.void_anchor.charges": "충전량: %s / %s",
+  "block.modpack_tweaks.void_anchor.destroyed": "공허 정박기가 파괴되어 앵커가 해제되었습니다",
+  "block.modpack_tweaks.void_anchor.full": "이미 충전이 완료되었습니다.",
+  "block.modpack_tweaks.void_anchor.no_charges": "충전량이 부족합니다",
+  "block.modpack_tweaks.void_anchor.no_portal": "엔드 포탈 근처에서만 사용할 수 있습니다",
+  "block.modpack_tweaks.void_anchor.set": "공허 정박기가 등록되었습니다.",
   "fluid_type.modpack_tweaks.ender_fuel": "엔더 연료",
   "item.modpack_tweaks.ender_fuel_bucket": "엔더 연료 양동이",
   "item.modpack_tweaks.shulker_shell_fragment": "셜커 껍데기 조각",
-  "itemGroup.modpack_tweaks.title": "코딩랩 모드팩 자체 컨텐츠",
-  "translation{key='block.minecraft.air', args=[]}.no_portal": "엔드 포탈 근처에서만 사용할 수 있습니다"
+  "itemGroup.modpack_tweaks.title": "코딩랩 모드팩 자체 컨텐츠"
 }

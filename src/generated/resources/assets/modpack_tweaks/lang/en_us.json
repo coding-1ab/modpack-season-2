@@ -1,10 +1,15 @@
 {
-  "block.minecraft.air": "Void Anchor",
   "block.modpack_tweaks.ender_fire": "Ender Fire",
   "block.modpack_tweaks.ender_fuel": "Ender Fuel",
+  "block.modpack_tweaks.void_anchor": "Void Anchor",
+  "block.modpack_tweaks.void_anchor.charges": "Charges: %s / %s",
+  "block.modpack_tweaks.void_anchor.destroyed": "Your Void Anchor was destroyed",
+  "block.modpack_tweaks.void_anchor.full": "Void Anchor is already full",
+  "block.modpack_tweaks.void_anchor.no_charges": "Void Anchor has no charges",
+  "block.modpack_tweaks.void_anchor.no_portal": "Must be near an active End Portal",
+  "block.modpack_tweaks.void_anchor.set": "Void Anchor set.",
   "fluid_type.modpack_tweaks.ender_fuel": "Ender Fuel",
   "item.modpack_tweaks.ender_fuel_bucket": "Ender Fuel Bucket",
   "item.modpack_tweaks.shulker_shell_fragment": "Shulker Shell Fragment",
-  "itemGroup.modpack_tweaks.title": "Coding Lab Modpack Tweaks",
-  "translation{key='block.minecraft.air', args=[]}.no_portal": "Must be near active End Portal"
+  "itemGroup.modpack_tweaks.title": "Coding Lab Modpack Tweaks"
 }
