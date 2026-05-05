@@ -249,11 +249,11 @@ cct.jacoco(runGametestClient)
 
 val runGametestClientWithIris by tasks.registering(ClientJavaExec::class) {
     description = "Runs client-side gametests with Iris"
-    copyFromForge("runGameTestClient")
+    // runGameTestClient 대신 실제 존재하는 runTestClient를 참조하도록 수정
+    copyFromForge("runTestClient")
 
     tags("iris")
     classpath += configurations["testWithIris"]
-
     withComplementaryShaders()
 }
 cct.jacoco(runGametestClientWithIris)
