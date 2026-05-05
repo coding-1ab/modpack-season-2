@@ -15,11 +15,6 @@ group = 'vectorwing.farmersdelight' // http://maven.apache.org/guides/mini/guide
 
 repositories {
     maven {
-        // JEI
-        name = "Progwml6 maven"
-        url = "https://dvs1.progwml6.com/files/maven/"
-    }
-    maven {
         // CraftTweaker
         name = "BlameJared"
         url = "https://maven.blamejared.com"
