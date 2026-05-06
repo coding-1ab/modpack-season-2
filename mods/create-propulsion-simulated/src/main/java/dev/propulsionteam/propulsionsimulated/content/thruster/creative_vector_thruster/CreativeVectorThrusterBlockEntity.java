@@ -117,7 +117,8 @@ public class CreativeVectorThrusterBlockEntity extends VectorThrusterBlockEntity
             return new PlasmaParticleData(List.of(), color);
         }
         if (plumeType == CreativeThrusterBlockEntity.PlumeType.ION) {
-            return new IonParticleData(List.of(), color, 0.85f);
+            float size = Mth.lerp(getInterpolatedFlapProgress(1.0f), 0.85f, 0.35f);
+            return new IonParticleData(List.of(), color, size);
         }
         if (plumeType == CreativeThrusterBlockEntity.PlumeType.PLUME) {
             return new PlumeParticleData(List.of(), color);
