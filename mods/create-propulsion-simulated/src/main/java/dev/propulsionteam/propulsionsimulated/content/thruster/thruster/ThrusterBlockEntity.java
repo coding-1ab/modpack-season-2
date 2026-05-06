@@ -149,6 +149,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                     if (state.getValue(AbstractThrusterBlock.FACING) != facing) return false;
                     BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level,pos);
                     if (!(be instanceof ThrusterBlockEntity t)) return false;
+                    if (!t.supportsMultiblock()) return false;
                     if (t.isMultiblock() && t.width >= size) return false;
                 }
             }
