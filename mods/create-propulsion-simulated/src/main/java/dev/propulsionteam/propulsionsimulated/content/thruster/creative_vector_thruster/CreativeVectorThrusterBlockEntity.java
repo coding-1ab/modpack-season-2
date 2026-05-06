@@ -42,7 +42,10 @@ public class CreativeVectorThrusterBlockEntity extends VectorThrusterBlockEntity
         super.addBehaviours(behaviours);
         ValueBoxTransform slot = new CreativeVectorThrusterValueBox(true);
         powerBehaviour = new CreativeThrusterPowerScrollValueBehaviour(this, slot, () -> PropulsionConfig.CREATIVE_VECTOR_THRUSTER_MAX_THRUST.get());
-        powerBehaviour.value = 49;
+        double base = PropulsionConfig.CREATIVE_VECTOR_THRUSTER_BASE_THRUST.get();
+        double max = PropulsionConfig.CREATIVE_VECTOR_THRUSTER_MAX_THRUST.get();
+        int startStep = (int) Math.round((base / max) * (CreativeThrusterPowerScrollValueBehaviour.TOTAL_STEPS - 1));
+        powerBehaviour.value = Math.max(0, Math.min(CreativeThrusterPowerScrollValueBehaviour.TOTAL_STEPS - 1, startStep));
         powerBehaviour.withCallback(i -> {
             updateThrust(getBlockState());
             sendData();
@@ -55,10 +58,9 @@ public class CreativeVectorThrusterBlockEntity extends VectorThrusterBlockEntity
         float thrust = 0;
         float currentPower = getPower();
         if (currentPower > 0) {
-            float thrustMultiplier = PropulsionConfig.CREATIVE_THRUSTER_THRUST_MULTIPLIER.get().floatValue();
             float baseThrustPn = peripheralThrustOutput >= 0.0f ? peripheralThrustOutput : powerBehaviour.getTargetThrust() * 1000.0f;
             baseThrustPn *= (float) calculateAtmosphericFactor();
-            thrust = thrustMultiplier * currentPower * baseThrustPn;
+            thrust = currentPower * baseThrustPn;
         }
         setThrustAndSync(thrust);
         isThrustDirty = false;
@@ -74,15 +76,6 @@ public class CreativeVectorThrusterBlockEntity extends VectorThrusterBlockEntity
         return true;
     }
 
-    @Override
-    protected double getParticleCountMultiplier() {
-        return PropulsionConfig.CREATIVE_VECTOR_THRUSTER_PARTICLE_COUNT_MULTIPLIER.get();
-    }
-
-    @Override
-    protected double getParticleVelocityMultiplier() {
-        return PropulsionConfig.CREATIVE_VECTOR_THRUSTER_PARTICLE_VELOCITY_MULTIPLIER.get();
-    }
 
     @Override
     public CreativeThrusterBlockEntity.PlumeType getPlumeType() {

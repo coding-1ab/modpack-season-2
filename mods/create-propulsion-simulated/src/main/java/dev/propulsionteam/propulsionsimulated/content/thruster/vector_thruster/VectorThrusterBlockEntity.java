@@ -36,6 +36,8 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
     private float targetVectorY;
     private float currentVectorX;
     private float currentVectorY;
+    private float prevVectorX;
+    private float prevVectorY;
     private float obstructionEfficiency = 1.0f;
 
     public VectorThrusterBlockEntity(BlockPos pos, BlockState state) {
@@ -46,15 +48,6 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
         super(type, pos, state);
     }
 
-    @Override
-    protected double getParticleCountMultiplier() {
-        return PropulsionConfig.VECTOR_THRUSTER_PARTICLE_COUNT_MULTIPLIER.get();
-    }
-
-    @Override
-    protected double getParticleVelocityMultiplier() {
-        return PropulsionConfig.VECTOR_THRUSTER_PARTICLE_VELOCITY_MULTIPLIER.get();
-    }
 
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
@@ -122,6 +115,8 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
     @Override
     public void tick() {
         updateMappedTargets();
+        prevVectorX = currentVectorX;
+        prevVectorY = currentVectorY;
         currentVectorX = tweenTowards(currentVectorX, targetVectorX);
         currentVectorY = tweenTowards(currentVectorY, targetVectorY);
         super.tick();
@@ -133,6 +128,14 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
 
     public float getCurrentVectorY() {
         return currentVectorY;
+    }
+
+    public float getInterpolatedVectorX(float partialTick) {
+        return Mth.lerp(partialTick, prevVectorX, currentVectorX);
+    }
+
+    public float getInterpolatedVectorY(float partialTick) {
+        return Mth.lerp(partialTick, prevVectorY, currentVectorY);
     }
 
     @Override
@@ -314,6 +317,8 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
         targetVectorY = compound.contains("TargetVectorY") ? compound.getFloat("TargetVectorY") : targetVectorY;
         currentVectorX = compound.contains("CurrentVectorX") ? compound.getFloat("CurrentVectorX") : targetVectorX;
         currentVectorY = compound.contains("CurrentVectorY") ? compound.getFloat("CurrentVectorY") : targetVectorY;
+        prevVectorX = currentVectorX;
+        prevVectorY = currentVectorY;
         obstructionEfficiency = compound.contains("ObstructionEfficiency") ? compound.getFloat("ObstructionEfficiency")
             : (OBSTRUCTION_LENGTH <= 0 ? 0.0f : Math.clamp((float) emptyBlocks / (float) OBSTRUCTION_LENGTH, 0.0f, 1.0f));
     }
@@ -324,10 +329,10 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
     }
 
     @Override
-    protected double getBaseThrust() { return Math.min(PropulsionConfig.VECTOR_THRUSTER_BASE_THRUST.get(), this.getRawThrustCap()); }
+    protected double getBaseThrust() { return PropulsionConfig.VECTOR_THRUSTER_BASE_THRUST.get(); }
 
     @Override
-    protected double getRawThrustCap() { return PropulsionConfig.VECTOR_THRUSTER_MAX_THRUST.get(); }
+    protected double getRawThrustCap() { return PropulsionConfig.VECTOR_THRUSTER_BASE_THRUST.get(); }
 
     @Override
     protected ParticleOptions createParticleOptions() {

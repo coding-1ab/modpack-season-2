@@ -69,11 +69,11 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     protected float getParticleVelocity() { return PARTICLE_VELOCITY; }
 
     protected double getParticleCountMultiplier() {
-        return PropulsionConfig.STANDARD_THRUSTER_PARTICLE_COUNT_MULTIPLIER.get();
+        return 1.0;
     }
 
     protected double getParticleVelocityMultiplier() {
-        return PropulsionConfig.STANDARD_THRUSTER_PARTICLE_VELOCITY_MULTIPLIER.get();
+        return 1.0;
     }
 
     //CC Peripheral
@@ -187,7 +187,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         }
 
         currentTick++;
-        int tick_rate = PropulsionConfig.THRUSTER_TICKS_PER_UPDATE.get();
+        final int tick_rate = 10;
 
         //Periodically recalculate obstruction
         if (currentTick % (tick_rate * 2) == 0) {
@@ -244,7 +244,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     }
 
     protected boolean shouldDamageEntities() {
-        return PropulsionConfig.THRUSTER_DAMAGE_ENTITIES.get() && isPowered() && isWorking();
+        return PropulsionConfig.DAMAGE_ENTITIES.get() && isPowered() && isWorking();
     }
 
     protected void addSpecificGoggleInfo(List<Component> tooltip, boolean isPlayerSneaking) {}
@@ -417,8 +417,41 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     }
 
     protected ObstructionRaySample sampleObstructionRaycast(Level level, int scanLength) {
+        if (scanLength <= 0) {
+            return new ObstructionRaySample(0.0d, 0);
+        }
+
+        // When the config option is enabled and the thruster is on a sub-level, clip in
+        // local sub-level space so only blocks belonging to the same sub-level count.
+        if (PropulsionConfig.OBSTRUCTION_IGNORE_OTHER_SUBLEVELS.get()
+                && Sable.HELPER.getContaining(level, worldPosition) != null) {
+            Vec3 localNozzle = getParticleDebugNozzlePositionLocal();
+            Vec3 localDir = getParticleDebugExhaustDirectionLocal();
+            Vec3 rayStart = localNozzle.add(localDir.scale(OBSTRUCTION_RAY_START_EPSILON));
+            Vec3 rayEnd = rayStart.add(localDir.scale(scanLength));
+
+            ClipContext clipContext = new ClipContext(
+                rayStart,
+                rayEnd,
+                ClipContext.Block.COLLIDER,
+                ClipContext.Fluid.NONE,
+                net.minecraft.world.phys.shapes.CollisionContext.empty()
+            );
+            BlockHitResult hitResult = level.clip(clipContext);
+
+            double firstHitDistance = scanLength;
+            boolean hit = hitResult.getType() == BlockHitResult.Type.BLOCK;
+            if (hit) {
+                firstHitDistance = Math.min(scanLength, rayStart.distanceTo(hitResult.getLocation()));
+            }
+            int emptyBlocksEstimate = hit
+                ? Math.clamp((int) java.lang.Math.floor(firstHitDistance), 0, scanLength)
+                : scanLength;
+            return new ObstructionRaySample(firstHitDistance, emptyBlocksEstimate);
+        }
+
         WorldExhaustRay worldRay = getWorldExhaustRay();
-        if (worldRay == null || scanLength <= 0) {
+        if (worldRay == null) {
             return new ObstructionRaySample(0.0d, 0);
         }
 
