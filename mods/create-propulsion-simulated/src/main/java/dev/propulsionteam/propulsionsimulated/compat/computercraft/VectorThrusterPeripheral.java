@@ -17,31 +17,7 @@ public class VectorThrusterPeripheral extends SyncedPeripheral<VectorThrusterBlo
         return "vector_thruster";
     }
 
-    @LuaFunction
-    public final int getSignalX() {
-        return blockEntity.getVectorSignalX();
-    }
-
-    @LuaFunction
-    public final int getSignalY() {
-        return blockEntity.getVectorSignalY();
-    }
-
-    @LuaFunction(mainThread = true)
-    public final void setSignalX(int signal) {
-        blockEntity.setVectorSignalX(Mth.clamp(signal, 0, 15));
-    }
-
-    @LuaFunction(mainThread = true)
-    public final void setSignalY(int signal) {
-        blockEntity.setVectorSignalY(Mth.clamp(signal, 0, 15));
-    }
-
-    @LuaFunction(mainThread = true)
-    public final void setSignals(int x, int y) {
-        blockEntity.setVectorSignalX(Mth.clamp(x, 0, 15));
-        blockEntity.setVectorSignalY(Mth.clamp(y, 0, 15));
-    }
+    // --- Vector control (float -1..1 coordinates) --------------------------
 
     @LuaFunction
     public final double getVectorX() {
@@ -77,6 +53,8 @@ public class VectorThrusterPeripheral extends SyncedPeripheral<VectorThrusterBlo
     public final void setVector(double x, double y) {
         blockEntity.setVectorCoordinates((float) Mth.clamp(x, -1.0, 1.0), (float) Mth.clamp(y, -1.0, 1.0));
     }
+
+    // --- Throttle ----------------------------------------------------------
 
     @LuaFunction(mainThread = true)
     public final void setThrust(int power) {

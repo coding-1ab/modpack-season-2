@@ -1,5 +1,6 @@
 package dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster;
 
+import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.utility.RaycastHelper;
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
@@ -25,6 +26,14 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 @EventBusSubscriber(modid = CreatePropulsion.ID)
 public class VectorRedstoneLinkHandler {
 
+    @SuppressWarnings("unchecked")
+    private static final BehaviourType<VectorRedstoneLinkBehaviour>[] ALL_TYPES = new BehaviourType[]{
+        VectorRedstoneLinkBehaviour.WEST_TYPE,
+        VectorRedstoneLinkBehaviour.EAST_TYPE,
+        VectorRedstoneLinkBehaviour.DOWN_TYPE,
+        VectorRedstoneLinkBehaviour.UP_TYPE
+    };
+
     @SubscribeEvent
     public static void onBlockActivated(PlayerInteractEvent.RightClickBlock event) {
         if (event.isCanceled())
@@ -38,10 +47,6 @@ public class VectorRedstoneLinkHandler {
         if (player.isShiftKeyDown() || player.isSpectator())
             return;
 
-        VectorRedstoneLinkBehaviour behaviour = BlockEntityBehaviour.get(world, pos, VectorRedstoneLinkBehaviour.TYPE);
-        if (behaviour == null)
-            return;
-
         ItemStack heldItem = player.getItemInHand(hand);
         BlockHitResult ray = RaycastHelper.rayTraceRange(world, player, 10);
         if (ray == null)
@@ -50,24 +55,31 @@ public class VectorRedstoneLinkHandler {
         if ("create:linked_controller".equals(heldItemId) || "create:wrench".equals(heldItemId))
             return;
 
-        boolean fakePlayer = player instanceof FakePlayer;
-        boolean fakePlayerChoice = false;
+        for (BehaviourType<VectorRedstoneLinkBehaviour> type : ALL_TYPES) {
+            VectorRedstoneLinkBehaviour behaviour = BlockEntityBehaviour.get(world, pos, type);
+            if (behaviour == null)
+                continue;
 
-        if (fakePlayer) {
-            BlockState blockState = world.getBlockState(pos);
-            Vec3 localHit = ray.getLocation().subtract(Vec3.atLowerCornerOf(pos))
-                    .add(Vec3.atLowerCornerOf(ray.getDirection().getNormal()).scale(.25f));
-            fakePlayerChoice = localHit.distanceToSqr(behaviour.getFirstSlot().getLocalOffset(world, pos, blockState)) >
-                    localHit.distanceToSqr(behaviour.getSecondSlot().getLocalOffset(world, pos, blockState));
-        }
+            boolean fakePlayer = player instanceof FakePlayer;
+            boolean fakePlayerChoice = false;
 
-        for (boolean first : Arrays.asList(false, true)) {
-            if (behaviour.testHit(first, ray.getLocation()) || fakePlayer && fakePlayerChoice == first) {
-                if (event.getSide() != LogicalSide.CLIENT)
-                    behaviour.setFrequency(first, heldItem);
-                event.setCanceled(true);
-                event.setCancellationResult(InteractionResult.SUCCESS);
-                world.playSound(null, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, .25f, .1f);
+            if (fakePlayer) {
+                BlockState blockState = world.getBlockState(pos);
+                Vec3 localHit = ray.getLocation().subtract(Vec3.atLowerCornerOf(pos))
+                        .add(Vec3.atLowerCornerOf(ray.getDirection().getNormal()).scale(.25f));
+                fakePlayerChoice = localHit.distanceToSqr(behaviour.getFirstSlot().getLocalOffset(world, pos, blockState)) >
+                        localHit.distanceToSqr(behaviour.getSecondSlot().getLocalOffset(world, pos, blockState));
+            }
+
+            for (boolean first : Arrays.asList(false, true)) {
+                if (behaviour.testHit(first, ray.getLocation()) || fakePlayer && fakePlayerChoice == first) {
+                    if (event.getSide() != LogicalSide.CLIENT)
+                        behaviour.setFrequency(first, heldItem);
+                    event.setCanceled(true);
+                    event.setCancellationResult(InteractionResult.SUCCESS);
+                    world.playSound(null, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, .25f, .1f);
+                    return;
+                }
             }
         }
     }

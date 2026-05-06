@@ -21,7 +21,10 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class VectorRedstoneLinkBehaviour extends BlockEntityBehaviour implements IRedstoneLinkable {
 
-    public static final BehaviourType<VectorRedstoneLinkBehaviour> TYPE = new BehaviourType<>();
+    public static final BehaviourType<VectorRedstoneLinkBehaviour> WEST_TYPE = new BehaviourType<>();
+    public static final BehaviourType<VectorRedstoneLinkBehaviour> EAST_TYPE = new BehaviourType<>();
+    public static final BehaviourType<VectorRedstoneLinkBehaviour> DOWN_TYPE = new BehaviourType<>();
+    public static final BehaviourType<VectorRedstoneLinkBehaviour> UP_TYPE = new BehaviourType<>();
 
     private enum Mode {
         TRANSMIT, RECEIVE
@@ -37,26 +40,36 @@ public class VectorRedstoneLinkBehaviour extends BlockEntityBehaviour implements
     private IntSupplier transmission;
     private IntConsumer signalCallback;
 
-    protected VectorRedstoneLinkBehaviour(SmartBlockEntity be, Pair<ValueBoxTransform, ValueBoxTransform> slots) {
+    private final BehaviourType<VectorRedstoneLinkBehaviour> behaviourType;
+    private final String sideKey;
+
+    protected VectorRedstoneLinkBehaviour(SmartBlockEntity be, Pair<ValueBoxTransform, ValueBoxTransform> slots,
+            BehaviourType<VectorRedstoneLinkBehaviour> type, String sideKey) {
         super(be);
         frequencyFirst = Frequency.EMPTY;
         frequencyLast = Frequency.EMPTY;
         firstSlot = slots.getLeft();
         secondSlot = slots.getRight();
         newPosition = true;
+        behaviourType = type;
+        this.sideKey = sideKey;
     }
 
     public static VectorRedstoneLinkBehaviour receiver(SmartBlockEntity be,
-            Pair<ValueBoxTransform, ValueBoxTransform> slots, IntConsumer signalCallback) {
-        VectorRedstoneLinkBehaviour behaviour = new VectorRedstoneLinkBehaviour(be, slots);
+            Pair<ValueBoxTransform, ValueBoxTransform> slots,
+            BehaviourType<VectorRedstoneLinkBehaviour> type, String sideKey,
+            IntConsumer signalCallback) {
+        VectorRedstoneLinkBehaviour behaviour = new VectorRedstoneLinkBehaviour(be, slots, type, sideKey);
         behaviour.signalCallback = signalCallback;
         behaviour.mode = Mode.RECEIVE;
         return behaviour;
     }
 
     public static VectorRedstoneLinkBehaviour transmitter(SmartBlockEntity be,
-            Pair<ValueBoxTransform, ValueBoxTransform> slots, IntSupplier transmission) {
-        VectorRedstoneLinkBehaviour behaviour = new VectorRedstoneLinkBehaviour(be, slots);
+            Pair<ValueBoxTransform, ValueBoxTransform> slots,
+            BehaviourType<VectorRedstoneLinkBehaviour> type, String sideKey,
+            IntSupplier transmission) {
+        VectorRedstoneLinkBehaviour behaviour = new VectorRedstoneLinkBehaviour(be, slots, type, sideKey);
         behaviour.transmission = transmission;
         behaviour.mode = Mode.TRANSMIT;
         return behaviour;
@@ -113,20 +126,20 @@ public class VectorRedstoneLinkBehaviour extends BlockEntityBehaviour implements
     @Override
     public void write(CompoundTag nbt, HolderLookup.Provider registries, boolean clientPacket) {
         super.write(nbt, registries, clientPacket);
-        nbt.put("VectorLink2FrequencyFirst", frequencyFirst.getStack().saveOptional(registries));
-        nbt.put("VectorLink2FrequencyLast", frequencyLast.getStack().saveOptional(registries));
-        nbt.putLong("VectorLink2LastKnownPosition", blockEntity.getBlockPos().asLong());
+        nbt.put(sideKey + "FrequencyFirst", frequencyFirst.getStack().saveOptional(registries));
+        nbt.put(sideKey + "FrequencyLast", frequencyLast.getStack().saveOptional(registries));
+        nbt.putLong(sideKey + "LastKnownPosition", blockEntity.getBlockPos().asLong());
     }
 
     @Override
     public void read(CompoundTag nbt, HolderLookup.Provider registries, boolean clientPacket) {
         long positionInTag = blockEntity.getBlockPos().asLong();
-        long positionKey = nbt.getLong("VectorLink2LastKnownPosition");
+        long positionKey = nbt.getLong(sideKey + "LastKnownPosition");
         newPosition = positionInTag != positionKey;
 
         super.read(nbt, registries, clientPacket);
-        frequencyFirst = Frequency.of(ItemStack.parseOptional(registries, nbt.getCompound("VectorLink2FrequencyFirst")));
-        frequencyLast = Frequency.of(ItemStack.parseOptional(registries, nbt.getCompound("VectorLink2FrequencyLast")));
+        frequencyFirst = Frequency.of(ItemStack.parseOptional(registries, nbt.getCompound(sideKey + "FrequencyFirst")));
+        frequencyLast = Frequency.of(ItemStack.parseOptional(registries, nbt.getCompound(sideKey + "FrequencyLast")));
     }
 
     public void setFrequency(boolean first, ItemStack stack) {
@@ -152,7 +165,7 @@ public class VectorRedstoneLinkBehaviour extends BlockEntityBehaviour implements
 
     @Override
     public BehaviourType<?> getType() {
-        return TYPE;
+        return behaviourType;
     }
 
     public boolean testHit(Boolean first, Vec3 hit) {

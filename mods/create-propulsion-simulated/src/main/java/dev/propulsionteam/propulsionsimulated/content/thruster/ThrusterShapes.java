@@ -33,10 +33,14 @@ public final class ThrusterShapes {
 
     public static final VoxelShaper VECTOR_THRUSTER = ShapeBuilder.shape()
             .add(Block.box(2, 2, 0, 14, 14, 4)) // input
-            .add(Block.box(1, 9, 0, 2, 13, 4)) // redstone_link
-            .add(Block.box(1, 3, 0, 2, 7, 4)) // redstone_link
-            .add(Block.box(14, 9, 0, 15, 13, 4)) // redstone_link
-            .add(Block.box(14, 3, 0, 15, 7, 4)) // redstone_link
+            .add(Block.box(1, 9, 0, 2, 13, 4))  // west upper
+            .add(Block.box(1, 3, 0, 2, 7, 4))   // west lower
+            .add(Block.box(14, 9, 0, 15, 13, 4)) // east upper
+            .add(Block.box(14, 3, 0, 15, 7, 4)) // east lower
+            .add(Block.box(3, 1, 0, 7, 2, 4))   // down left
+            .add(Block.box(9, 1, 0, 13, 2, 4))  // down right
+            .add(Block.box(3, 14, 0, 7, 15, 4)) // up left
+            .add(Block.box(9, 14, 0, 13, 15, 4)) // up right
             .add(Block.box(4, 4, 4, 12, 12, 5)) // mover
             .forDirectional();
 
