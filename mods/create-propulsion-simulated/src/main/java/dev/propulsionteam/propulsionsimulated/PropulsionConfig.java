@@ -17,20 +17,22 @@ public class PropulsionConfig {
     // ── Thruster (reference-style typed values for new code) ────────────────
     public static final ModConfigSpec.DoubleValue BASE_THRUST;
     public static final ModConfigSpec.IntValue OBSTRUCTION_SCAN_LENGTH;
+    public static final ModConfigSpec.BooleanValue OBSTRUCTION_IGNORE_OTHER_SUBLEVELS;
     public static final ModConfigSpec.BooleanValue REQUIRE_FUEL;
     public static final ModConfigSpec.IntValue FUEL_TANK_CAPACITY_MB;
-    public static final ModConfigSpec.IntValue THRUSTER_MAX_SPEED;
-    public static final ModConfigSpec.IntValue CREATIVE_THRUSTER_MAX_SPEED;
-    public static final ModConfigSpec.IntValue ION_THRUSTER_MAX_SPEED;
-    public static final ModConfigSpec.DoubleValue ION_THRUSTER_MAX_THRUST;
+    public static final ModConfigSpec.DoubleValue CREATIVE_THRUSTER_BASE_THRUST;
     public static final ModConfigSpec.DoubleValue CREATIVE_THRUSTER_MAX_THRUST;
+    public static final ModConfigSpec.DoubleValue CREATIVE_VECTOR_THRUSTER_BASE_THRUST;
     public static final ModConfigSpec.DoubleValue CREATIVE_VECTOR_THRUSTER_MAX_THRUST;
     public static final ModConfigSpec.DoubleValue FUEL_MB_PER_TICK_AT_FULL_THROTTLE;
     public static final ModConfigSpec.IntValue ION_THRUSTER_ENERGY_CAPACITY_FE;
     public static final ModConfigSpec.DoubleValue ION_THRUSTER_FE_PER_TICK_AT_FULL_THROTTLE;
     public static final ModConfigSpec.DoubleValue ION_THRUSTER_BASE_THRUST;
-    public static final ModConfigSpec.DoubleValue VECTOR_THRUSTER_MAX_THRUST;
     public static final ModConfigSpec.DoubleValue VECTOR_THRUSTER_BASE_THRUST;
+    public static final ModConfigSpec.DoubleValue MULTIBLOCK_2X_THRUST_MULTIPLIER;
+    public static final ModConfigSpec.DoubleValue MULTIBLOCK_3X_THRUST_MULTIPLIER;
+    public static final ModConfigSpec.DoubleValue MULTIBLOCK_2X_FUEL_EFFICIENCY;
+    public static final ModConfigSpec.DoubleValue MULTIBLOCK_3X_FUEL_EFFICIENCY;
     public static final ModConfigSpec.BooleanValue DAMAGE_ENTITIES;
     public static final ModConfigSpec.IntValue DAMAGE_TICK_INTERVAL;
     public static final ModConfigSpec.DoubleValue NOZZLE_OFFSET_FROM_CENTER;
@@ -43,34 +45,13 @@ public class PropulsionConfig {
     public static final ModConfigSpec.DoubleValue GROUNDED_SPEED_DEADZONE;
     public static final ModConfigSpec.DoubleValue GROUND_PROBE_DISTANCE;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> FUEL_PROPERTIES;
-    /** Maps full item ID (e.g. {@code "minecraft:cyan_dye"}) → config value holding an RRGGBB hex string. */
     public static final Map<String, ModConfigSpec.ConfigValue<String>> THRUSTER_DYE_COLORS = new LinkedHashMap<>();
     public static final ModConfigSpec.DoubleValue TILT_ADAPTER_MAX_ANGLE;
     public static final ModConfigSpec.IntValue CABLE_ENERGY_TRANSFER;
 
-    // ── Legacy-style values kept for backward compat with other subsystems ──
-    public static final ModConfigSpec.ConfigValue<Double>  THRUSTER_THRUST_MULTIPLIER;
-    public static final ModConfigSpec.ConfigValue<Double>  THRUSTER_CONSUMPTION_MULTIPLIER;
-    public static final ModConfigSpec.ConfigValue<Integer> THRUSTER_TICKS_PER_UPDATE;
-    public static final ModConfigSpec.ConfigValue<Boolean> THRUSTER_DAMAGE_ENTITIES;
-    public static final ModConfigSpec.ConfigValue<Double>  THRUSTER_PARTICLE_OFFSET_INCOMING_VEL_MODIFIER;
-    public static final ModConfigSpec.ConfigValue<Double>  THRUSTER_PARTICLE_COUNT_MULTIPLIER;
-    public static final ModConfigSpec.ConfigValue<Double>  STANDARD_THRUSTER_PARTICLE_COUNT_MULTIPLIER;
-    public static final ModConfigSpec.ConfigValue<Double>  STANDARD_THRUSTER_PARTICLE_VELOCITY_MULTIPLIER;
-    public static final ModConfigSpec.ConfigValue<Double>  ION_THRUSTER_PARTICLE_COUNT_MULTIPLIER;
-    public static final ModConfigSpec.ConfigValue<Double>  ION_THRUSTER_PARTICLE_VELOCITY_MULTIPLIER;
-    public static final ModConfigSpec.ConfigValue<Double>  VECTOR_THRUSTER_PARTICLE_COUNT_MULTIPLIER;
-    public static final ModConfigSpec.ConfigValue<Double>  VECTOR_THRUSTER_PARTICLE_VELOCITY_MULTIPLIER;
-    public static final ModConfigSpec.ConfigValue<Double>  CREATIVE_THRUSTER_PARTICLE_COUNT_MULTIPLIER;
-    public static final ModConfigSpec.ConfigValue<Double>  CREATIVE_THRUSTER_PARTICLE_VELOCITY_MULTIPLIER;
-    public static final ModConfigSpec.ConfigValue<Double>  CREATIVE_VECTOR_THRUSTER_PARTICLE_COUNT_MULTIPLIER;
-    public static final ModConfigSpec.ConfigValue<Double>  CREATIVE_VECTOR_THRUSTER_PARTICLE_VELOCITY_MULTIPLIER;
     public static final ModConfigSpec.BooleanValue DEBUG_THRUSTER;
     public static final ModConfigSpec.BooleanValue DEBUG_BURNER;
     public static final ModConfigSpec.BooleanValue DEBUG_MAGNET;
-
-    // Creative Thruster (legacy)
-    public static final ModConfigSpec.ConfigValue<Double> CREATIVE_THRUSTER_THRUST_MULTIPLIER;
 
     // Optical sensors
     public static final ModConfigSpec.ConfigValue<Integer> OPTICAL_SENSOR_TICKS_PER_UPDATE;
@@ -103,15 +84,16 @@ public class PropulsionConfig {
 
         BASE_THRUST = SERVER_BUILDER.comment("Base thrust at redstone 15 and full obstruction efficiency for the standard thruster.",
                         "Effective thrust uses: baseThrust * fuel_thrust_percent / 100.")
-                .defineInRange("baseThrust", 600.0d, 1.0d, 10_000_000.0d);
+                .defineInRange("baseThrust", 800.0d, 1.0d, 10000000.0d);
         OBSTRUCTION_SCAN_LENGTH = SERVER_BUILDER.comment("How many blocks behind the nozzle are checked for obstruction.")
                 .defineInRange("obstructionScanLength", 10, 1, 64);
+        OBSTRUCTION_IGNORE_OTHER_SUBLEVELS = SERVER_BUILDER.comment(
+                        "Ignore non-sublevel blocks when checking for obstruction.")
+                .define("obstructionIgnoreOtherSubLevels", false);
         REQUIRE_FUEL = SERVER_BUILDER.comment("If true, standard thrusters require configured fluid fuel to produce force.")
                 .define("requireFuel", true);
         FUEL_TANK_CAPACITY_MB = SERVER_BUILDER.comment("Internal fuel tank capacity in millibuckets.")
-                .defineInRange("fuelTankCapacityMb", 250, 250, 64000);
-        THRUSTER_MAX_SPEED = SERVER_BUILDER.comment("Standard thruster speed limit in blocks per second.")
-                .defineInRange("thrusterMaxSpeed", 600, 1, 10000000);
+                .defineInRange("fuelTankCapacityMb", 1000, 250, 10000000);
         FUEL_MB_PER_TICK_AT_FULL_THROTTLE = SERVER_BUILDER.comment("Fuel consumption in millibuckets per tick at full redstone throttle.")
                 .defineInRange("fuelMbPerTickAtFullThrottle", 1.0d, 0.0001d, 1000.0d);
         DAMAGE_ENTITIES = SERVER_BUILDER.comment("If true, entities inside active thruster plume are damaged.")
@@ -120,49 +102,44 @@ public class PropulsionConfig {
         CLIENT_PARTICLES_PER_TICK = SERVER_BUILDER.comment("Max client particles per tick while active.")
                 .defineInRange("clientParticlesPerTick", 4, 0, 64);
 
-        // Legacy compatibility values (used by other subsystems in this mod)
-        THRUSTER_THRUST_MULTIPLIER = SERVER_BUILDER.comment("Thrust is multiplied by that.")
-                .define("Thrust multiplier", 1.0);
-        THRUSTER_CONSUMPTION_MULTIPLIER = SERVER_BUILDER.comment("Fuel consumption is multiplied by that.")
-                .define("Fuel consumption", 1.0);
-        THRUSTER_TICKS_PER_UPDATE = SERVER_BUILDER.comment("Thruster tick rate. Lower values make fluid consumption a little more precise.")
-                .defineInRange("Thruster tick rate", 10, 1, 100);
-        THRUSTER_DAMAGE_ENTITIES = SERVER_BUILDER.comment("If true - thrusters will damage entities.")
-                .define("Thrusters damage entities", true);
-
         SERVER_BUILDER.pop(); // thruster
 
         SERVER_BUILDER.push("ionThruster");
-        ION_THRUSTER_MAX_SPEED = SERVER_BUILDER.comment("Ion thruster speed limit in blocks per second.")
-                .defineInRange("ionThrusterMaxSpeed", 1000, 1, 10000000);
-        ION_THRUSTER_MAX_THRUST = SERVER_BUILDER.comment("Ion thruster maximum thrust cap in pN.")
-                .defineInRange("ionThrusterMaxThrust", 1000.0d, 1.0d, 10_000_000.0d);
         ION_THRUSTER_ENERGY_CAPACITY_FE = SERVER_BUILDER.comment("Ion thruster internal FE capacity.")
-                .defineInRange("ionThrusterEnergyCapacityFe", 1000, 1, 100000000);
+                .defineInRange("ionThrusterEnergyCapacityFe", 4000, 1, 100000000);
         ION_THRUSTER_FE_PER_TICK_AT_FULL_THROTTLE = SERVER_BUILDER.comment("Ion thruster energy consumption in FE per tick at full redstone throttle.")
                 .defineInRange("ionThrusterFePerTickAtFullThrottle", 80.0d, 0.0001d, 1000000.0d);
         ION_THRUSTER_BASE_THRUST = SERVER_BUILDER.comment("Ion thruster base thrust at redstone 15 and full obstruction efficiency.")
-                .defineInRange("ionThrusterBaseThrust", 1000.d, 1.d, 10000000.d);
+                .defineInRange("ionThrusterBaseThrust", 1200.d, 1.d, 10000000.d);
         SERVER_BUILDER.pop();
 
         SERVER_BUILDER.push("Creative Thruster");
-            CREATIVE_THRUSTER_THRUST_MULTIPLIER = SERVER_BUILDER.comment("Thrust is multiplied by that.")
-                .define("Creative thrust multiplier", 1.0);
-            CREATIVE_THRUSTER_MAX_SPEED = SERVER_BUILDER.comment("Creative thruster speed limit in blocks per second.")
-                .defineInRange("creativeThrusterMaxSpeed", 10000, 1, 100000);
-            CREATIVE_THRUSTER_MAX_THRUST = SERVER_BUILDER.comment("Creative thruster max thrust in pN.")
+            CREATIVE_THRUSTER_BASE_THRUST = SERVER_BUILDER.comment("Starting thrust value (kN) when a creative thruster is placed.")
+                .defineInRange("creativeThrusterBaseThrust", 1000.0d, 1.0d, 1000000.0d);
+            CREATIVE_THRUSTER_MAX_THRUST = SERVER_BUILDER.comment("Maximum thrust (kN) the scroll can reach on a creative thruster.")
                 .defineInRange("creativeThrusterMaxThrust", 10000.0d, 10.0d, 1000000.0d);
         SERVER_BUILDER.pop();
 
         SERVER_BUILDER.push("vectorThruster");
-            VECTOR_THRUSTER_MAX_THRUST = SERVER_BUILDER.comment("Vector thruster maximum thrust cap in pN.")
-                .defineInRange("vectorThrusterMaxThrust", 900.0d, 1.0d, 10_000_000.0d);
             VECTOR_THRUSTER_BASE_THRUST = SERVER_BUILDER.comment("Vector thruster base thrust at redstone 15 and full obstruction efficiency.")
-                .defineInRange("vectorThrusterBaseThrust", 900.0d, 1.0d, 10000000.0d);
+                .defineInRange("vectorThrusterBaseThrust", 1100.0d, 1.0d, 10000000.0d);
+        SERVER_BUILDER.pop();
+
+        SERVER_BUILDER.push("multiblockThruster");
+            MULTIBLOCK_2X_THRUST_MULTIPLIER = SERVER_BUILDER.comment("Thrust multiplier for a 2x2x2 multiblock thruster (e.g. 1.10 = 10% bonus).")
+                .defineInRange("multiblock2xThrustMultiplier", 1.25d, 0.01d, 10.0d);
+            MULTIBLOCK_3X_THRUST_MULTIPLIER = SERVER_BUILDER.comment("Thrust multiplier for a 3x3x3 multiblock thruster (e.g. 1.25 = 25% bonus).")
+                .defineInRange("multiblock3xThrustMultiplier", 1.5d, 0.01d, 10.0d);
+            MULTIBLOCK_2X_FUEL_EFFICIENCY = SERVER_BUILDER.comment("Fuel cost multiplier for a 2x2x2 multiblock thruster (e.g. 1.0 = no reduction, 0.8 = 20% cheaper).")
+                .defineInRange("multiblock2xFuelEfficiency", 0.8d, 0.01d, 10.0d);
+            MULTIBLOCK_3X_FUEL_EFFICIENCY = SERVER_BUILDER.comment("Fuel cost multiplier for a 3x3x3 multiblock thruster (e.g. 0.95 = 5% cheaper).")
+                .defineInRange("multiblock3xFuelEfficiency", 0.6d, 0.01d, 10.0d);
         SERVER_BUILDER.pop();
 
         SERVER_BUILDER.push("creativeVectorThruster");
-            CREATIVE_VECTOR_THRUSTER_MAX_THRUST = SERVER_BUILDER.comment("Creative vector thruster max thrust in pN.")
+            CREATIVE_VECTOR_THRUSTER_BASE_THRUST = SERVER_BUILDER.comment("Starting thrust value (kN) when a creative vector thruster is placed.")
+                .defineInRange("creativeVectorThrusterBaseThrust", 1000.0d, 1.0d, 1000000.0d);
+            CREATIVE_VECTOR_THRUSTER_MAX_THRUST = SERVER_BUILDER.comment("Maximum thrust (kN) the scroll can reach on a creative vector thruster.")
                 .defineInRange("creativeVectorThrusterMaxThrust", 10000.0d, 10.0d, 1000000.0d);
         SERVER_BUILDER.pop();
 
@@ -178,7 +155,7 @@ public class PropulsionConfig {
             GROUND_FRICTION_COEFFICIENT = SERVER_BUILDER.comment("Ground friction coefficient applied while a thruster detects support under it.")
                 .defineInRange("groundFrictionCoefficient", 0.08d, 0.0d, 5.0d);
             GROUND_LINEAR_DRAG = SERVER_BUILDER.comment("Grounded linear drag coefficient in pN per m/s.")
-                .defineInRange("groundLinearDrag", 180.0d, 0.0d, 10_000.0d);
+                .defineInRange("groundLinearDrag", 180.0d, 0.0d, 10000.0d);
             GROUND_ROLLING_RESISTANCE = SERVER_BUILDER.comment("Additional grounded rolling resistance in pN.")
                 .defineInRange("groundRollingResistance", 80.0d, 0.0d, 10_000.0d);
             GROUNDED_SPEED_DEADZONE = SERVER_BUILDER.comment("Horizontal speed below this value is treated as stopped for grounded drag.")
@@ -228,7 +205,7 @@ public class PropulsionConfig {
 
         SERVER_BUILDER.push("Cable");
             CABLE_ENERGY_TRANSFER = SERVER_BUILDER.comment("Maximum FE moved per tick by a single cable block.")
-                .defineInRange("Energy transfer", 1_000, 1, 100_000_000);
+                .defineInRange("Energy transfer", 1_000, 1, 100000000);
         SERVER_BUILDER.pop();
 
         SERVER_BUILDER.push("Fuel Configuration");
@@ -278,33 +255,6 @@ public class PropulsionConfig {
             THRUSTER_DYE_COLORS.put("minecraft:" + e[0] + "_dye",
                 SERVER_BUILDER.define(e[0], e[1]));
         }
-        SERVER_BUILDER.pop();
-
-        SERVER_BUILDER.push("Thruster Particles");
-            THRUSTER_PARTICLE_OFFSET_INCOMING_VEL_MODIFIER = SERVER_BUILDER.comment("Particle additional velocity modifier when ship is moving in the same direction as exhaust.")
-                    .define("Particle velocity offset", 0.15);
-            THRUSTER_PARTICLE_COUNT_MULTIPLIER = SERVER_BUILDER.comment("The higher this number is - the more particles are spawned.")
-                    .define("Particle count multiplier", 1.0);
-            STANDARD_THRUSTER_PARTICLE_COUNT_MULTIPLIER = SERVER_BUILDER.comment("Particle count multiplier for standard thrusters.")
-                    .define("Standard thruster particle count multiplier", 1.0);
-            STANDARD_THRUSTER_PARTICLE_VELOCITY_MULTIPLIER = SERVER_BUILDER.comment("Particle velocity multiplier for standard thrusters.")
-                    .define("Standard thruster particle velocity multiplier", 1.0);
-            ION_THRUSTER_PARTICLE_COUNT_MULTIPLIER = SERVER_BUILDER.comment("Particle count multiplier for ion thrusters.")
-                    .define("Ion thruster particle count multiplier", 1.0);
-            ION_THRUSTER_PARTICLE_VELOCITY_MULTIPLIER = SERVER_BUILDER.comment("Particle velocity multiplier for ion thrusters.")
-                    .define("Ion thruster particle velocity multiplier", 1.0);
-            VECTOR_THRUSTER_PARTICLE_COUNT_MULTIPLIER = SERVER_BUILDER.comment("Particle count multiplier for vector thrusters.")
-                    .define("Vector thruster particle count multiplier", 1.0);
-            VECTOR_THRUSTER_PARTICLE_VELOCITY_MULTIPLIER = SERVER_BUILDER.comment("Particle velocity multiplier for vector thrusters.")
-                    .define("Vector thruster particle velocity multiplier", 1.0);
-            CREATIVE_THRUSTER_PARTICLE_COUNT_MULTIPLIER = SERVER_BUILDER.comment("Particle count multiplier for creative thrusters.")
-                    .define("Creative thruster particle count multiplier", 1.0);
-            CREATIVE_THRUSTER_PARTICLE_VELOCITY_MULTIPLIER = SERVER_BUILDER.comment("Particle velocity multiplier for creative thrusters.")
-                    .define("Creative thruster particle velocity multiplier", 1.0);
-            CREATIVE_VECTOR_THRUSTER_PARTICLE_COUNT_MULTIPLIER = SERVER_BUILDER.comment("Particle count multiplier for creative vector thrusters.")
-                    .define("Creative vector thruster particle count multiplier", 1.0);
-            CREATIVE_VECTOR_THRUSTER_PARTICLE_VELOCITY_MULTIPLIER = SERVER_BUILDER.comment("Particle velocity multiplier for creative vector thrusters.")
-                    .define("Creative vector thruster particle velocity multiplier", 1.0);
         SERVER_BUILDER.pop();
 
         PropulsionDefaultStress.INSTANCE.registerAll(SERVER_BUILDER);

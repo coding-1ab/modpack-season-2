@@ -130,10 +130,9 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
                 if (consumed > 0) {
                     energyStored -= consumed;
                     float consumptionRatio = (float) consumed / (float) totalDrain;
-                    float thrustMultiplier = PropulsionConfig.THRUSTER_THRUST_MULTIPLIER.get().floatValue();
-                    float baseThrustPn = (float) (getBaseThrust() * 1000.0); // convert configured base to pN-scale like other thrusters
+                        float baseThrustPn = (float) (PropulsionConfig.ION_THRUSTER_BASE_THRUST.get() * 1000.0);
                     baseThrustPn *= (float) calculateAtmosphericFactor();
-                    thrust = baseThrustPn * thrustMultiplier * thrustPercentage * consumptionRatio;
+                    thrust = baseThrustPn * thrustPercentage * consumptionRatio;
                 }
                 lastConsumedFePerTick = ticksElapsed > 0 ? (double) consumed / (double) ticksElapsed : 0.0d;
             } else {
@@ -169,15 +168,6 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
         return true;
     }
 
-    @Override
-    protected double getParticleCountMultiplier() {
-        return PropulsionConfig.ION_THRUSTER_PARTICLE_COUNT_MULTIPLIER.get();
-    }
-
-    @Override
-    protected double getParticleVelocityMultiplier() {
-        return PropulsionConfig.ION_THRUSTER_PARTICLE_VELOCITY_MULTIPLIER.get();
-    }
 
     @Override
     protected boolean supportsMultiblock() {
@@ -236,12 +226,12 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
 
     @Override
     protected double getBaseThrust() {
-        return Math.min(PropulsionConfig.ION_THRUSTER_BASE_THRUST.get(), this.getRawThrustCap());
+        return PropulsionConfig.ION_THRUSTER_BASE_THRUST.get();
     }
 
     @Override
     protected double getRawThrustCap() {
-        return PropulsionConfig.ION_THRUSTER_MAX_THRUST.get();
+        return PropulsionConfig.ION_THRUSTER_BASE_THRUST.get();
     }
 
     public int getEnergyStoredFe() {

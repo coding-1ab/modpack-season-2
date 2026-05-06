@@ -44,7 +44,11 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         super.addBehaviours(behaviours);
         powerBehaviour = new CreativeThrusterPowerScrollValueBehaviour(this);
-        powerBehaviour.value = 49;
+        // Start scroll at the configured base thrust value
+        double base = PropulsionConfig.CREATIVE_THRUSTER_BASE_THRUST.get();
+        double max = PropulsionConfig.CREATIVE_THRUSTER_MAX_THRUST.get();
+        int startStep = (int) Math.round((base / max) * (CreativeThrusterPowerScrollValueBehaviour.TOTAL_STEPS - 1));
+        powerBehaviour.value = Math.max(0, Math.min(CreativeThrusterPowerScrollValueBehaviour.TOTAL_STEPS - 1, startStep));
         powerBehaviour.withCallback(i -> {
             updateThrust(getBlockState());
             sendData();
@@ -57,11 +61,9 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
         float thrust = 0;
         float currentPower = getPower();
         if (currentPower > 0) {
-            float thrustMultiplier = PropulsionConfig.CREATIVE_THRUSTER_THRUST_MULTIPLIER.get().floatValue();
-            float powerMultiplier = powerBehaviour.getTargetThrust();
-            float baseThrustPn = powerMultiplier * 1000.0f; // powerBehaviour value is already divided by 1000 for display
+            float baseThrustPn = powerBehaviour.getTargetThrust() * 1000.0f;
             baseThrustPn *= (float) calculateAtmosphericFactor();
-            thrust = thrustMultiplier * currentPower * baseThrustPn;
+            thrust = currentPower * baseThrustPn;
         }
         setThrustAndSync(thrust);
         isThrustDirty = false;
@@ -77,15 +79,6 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
         return true;
     }
 
-    @Override
-    protected double getParticleCountMultiplier() {
-        return PropulsionConfig.CREATIVE_THRUSTER_PARTICLE_COUNT_MULTIPLIER.get();
-    }
-
-    @Override
-    protected double getParticleVelocityMultiplier() {
-        return PropulsionConfig.CREATIVE_THRUSTER_PARTICLE_VELOCITY_MULTIPLIER.get();
-    }
 
     @Override
     public PlumeType getPlumeType() {

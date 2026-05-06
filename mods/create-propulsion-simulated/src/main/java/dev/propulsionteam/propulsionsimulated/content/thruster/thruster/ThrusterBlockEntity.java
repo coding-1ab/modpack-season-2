@@ -331,7 +331,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             float thrustPercentage = Math.min(currentPower, obstructionEffect);
 
             if (thrustPercentage > 0 && properties != null) {
-                int tickRate = PropulsionConfig.THRUSTER_TICKS_PER_UPDATE.get();
+                final int tickRate = 10;
                 double requestedConsumption = calculateFuelConsumption(currentPower, properties.consumptionMultiplier(), tickRate);
                 int consumption = consumeFuelWithAccumulator(requestedConsumption);
                 FluidStack drainedStack = tank.getPrimaryHandler().drain(consumption, IFluidHandler.FluidAction.EXECUTE);
@@ -339,11 +339,10 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
 
                 if (fuelConsumed > 0) {
                     float consumptionRatio = consumption > 0 ? (float) fuelConsumed / (float) consumption : 0.0f;
-                    float thrustMultiplier = PropulsionConfig.THRUSTER_THRUST_MULTIPLIER.get().floatValue();
                     float fuelEfficiency = ThrusterFuelManager.getEfficiency(fluidStack().getFluid());
-                    float baseThrustPn = (float) (PropulsionConfig.BASE_THRUST.get() * 1000.0); // config is already divided by 1000
+                    float baseThrustPn = (float) (PropulsionConfig.BASE_THRUST.get() * 1000.0);
                     baseThrustPn *= (float) calculateAtmosphericFactor();
-                    thrust = baseThrustPn * thrustMultiplier * thrustPercentage * properties.thrustMultiplier() * fuelEfficiency * consumptionRatio;
+                    thrust = baseThrustPn * thrustPercentage * properties.thrustMultiplier() * fuelEfficiency * consumptionRatio;
                     lastConsumedMbPerTick = (double) fuelConsumed / (double) tickRate;
                 }
             }
@@ -363,19 +362,18 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             float obstructionEffect = calculateObstructionEffect();
             float thrustPercentage = Math.min(currentPower, obstructionEffect);
             if (thrustPercentage > 0 && properties != null) {
-                int tickRate = PropulsionConfig.THRUSTER_TICKS_PER_UPDATE.get();
+                final int tickRate = 10;
                 double baseConsumption = calculateFuelConsumption(currentPower, properties.consumptionMultiplier(), tickRate);
                 int fuelNeeded = consumeFuelWithAccumulator(baseConsumption * (double) n * getMultiblockFuelEfficiency(width));
                 FluidStack drained = tank.getPrimaryHandler().drain(fuelNeeded, IFluidHandler.FluidAction.EXECUTE);
                 int fuelConsumed = drained.getAmount();
                 if (fuelConsumed > 0) {
                     float ratio = fuelNeeded > 0 ? (float) fuelConsumed / (float) fuelNeeded : 0.0f;
-                    float thrustMultiplier = PropulsionConfig.THRUSTER_THRUST_MULTIPLIER.get().floatValue();
-                            float fuelEfficiency = ThrusterFuelManager.getEfficiency(fluidStack().getFluid());
-                            float baseThrustPn = (float) (PropulsionConfig.BASE_THRUST.get() * 1000.0); // config is already divided by 1000
-                            baseThrustPn *= (float) calculateAtmosphericFactor();
-                            totalThrust = baseThrustPn * thrustMultiplier * thrustPercentage * properties.thrustMultiplier() * fuelEfficiency * ratio * n * getMultiblockThrustMultiplier(width);
-                            lastConsumedMbPerTick = (double) fuelConsumed / (double) tickRate;
+                    float fuelEfficiency = ThrusterFuelManager.getEfficiency(fluidStack().getFluid());
+                    float baseThrustPn = (float) (PropulsionConfig.BASE_THRUST.get() * 1000.0);
+                    baseThrustPn *= (float) calculateAtmosphericFactor();
+                    totalThrust = baseThrustPn * thrustPercentage * properties.thrustMultiplier() * fuelEfficiency * ratio * n * getMultiblockThrustMultiplier(width);
+                    lastConsumedMbPerTick = (double) fuelConsumed / (double) tickRate;
                 }
             }
         }
@@ -483,14 +481,14 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     }
 
     private static float getMultiblockFuelEfficiency(int cubeWidth) {
-        if (cubeWidth == 2) return 1.0f;
-        if (cubeWidth == 3) return 0.95f;
+        if (cubeWidth == 2) return PropulsionConfig.MULTIBLOCK_2X_FUEL_EFFICIENCY.get().floatValue();
+        if (cubeWidth == 3) return PropulsionConfig.MULTIBLOCK_3X_FUEL_EFFICIENCY.get().floatValue();
         return 1.0f;
     }
 
     private static float getMultiblockThrustMultiplier(int cubeWidth) {
-        if (cubeWidth == 2) return 1.10f;
-        if (cubeWidth == 3) return 1.25f;
+        if (cubeWidth == 2) return PropulsionConfig.MULTIBLOCK_2X_THRUST_MULTIPLIER.get().floatValue();
+        if (cubeWidth == 3) return PropulsionConfig.MULTIBLOCK_3X_THRUST_MULTIPLIER.get().floatValue();
         return 1.0f;
     }
 
@@ -824,8 +822,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     }
 
     private double calculateFuelConsumption(float powerPercentage, float fluidPropertiesConsumptionMultiplier, int tickRate) {
-        float baseConsumption = BASE_FUEL_CONSUMPTION * PropulsionConfig.THRUSTER_CONSUMPTION_MULTIPLIER.get().floatValue();
-        return baseConsumption * powerPercentage * fluidPropertiesConsumptionMultiplier * tickRate;
+        return BASE_FUEL_CONSUMPTION * powerPercentage * fluidPropertiesConsumptionMultiplier * tickRate;
     }
 
     private int consumeFuelWithAccumulator(double requestedAmount) {

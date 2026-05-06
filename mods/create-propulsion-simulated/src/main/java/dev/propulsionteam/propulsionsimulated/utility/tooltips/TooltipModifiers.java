@@ -7,7 +7,6 @@ import java.util.function.Function;
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlocks;
-import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
 import com.simibubi.create.foundation.item.TooltipHelper;
 
 import net.createmod.catnip.lang.FontHelper.Palette;
@@ -26,14 +25,12 @@ public class TooltipModifiers {
 
         //Thruster
         tooltipModificationLookup.put(PropulsionBlocks.THRUSTER_BLOCK.get().asItem(), (payload) -> {
-            float thrustMultiplier = PropulsionConfig.THRUSTER_THRUST_MULTIPLIER.get().floatValue();
-            int thrusterStrength = Math.round(ThrusterBlockEntity.BASE_MAX_THRUST / 1000.0f * thrustMultiplier);
+            int thrusterStrength = (int) Math.round(PropulsionConfig.BASE_THRUST.get());
             return Component.translatable(getSummaryKey(payload.item(), payload.path() + ".tooltip.summary")).getString().replace("{}", String.valueOf(thrusterStrength));
         });
         //Creative thruster
         tooltipModificationLookup.put(PropulsionBlocks.CREATIVE_THRUSTER_BLOCK.get().asItem(), (payload) -> {
-            float thrustMultiplier = PropulsionConfig.CREATIVE_THRUSTER_THRUST_MULTIPLIER.get().floatValue();
-            int thrusterStrength = Math.round(1000 * thrustMultiplier);
+            int thrusterStrength = (int) Math.round(PropulsionConfig.CREATIVE_THRUSTER_BASE_THRUST.get());
             return Component.translatable(getSummaryKey(payload.item(), payload.path() + ".tooltip.summary")).getString().replace("{}", String.valueOf(thrusterStrength));
         });
     }

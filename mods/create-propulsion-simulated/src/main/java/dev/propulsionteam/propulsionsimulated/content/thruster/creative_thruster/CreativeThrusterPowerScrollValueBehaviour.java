@@ -16,7 +16,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import java.util.function.DoubleSupplier;
 
 public class CreativeThrusterPowerScrollValueBehaviour extends ScrollValueBehaviour {
-    protected static final int TOTAL_STEPS = 100;
+    public static final int TOTAL_STEPS = 100;
     private final DoubleSupplier maxThrustSupplier;
 
     private double getForcePerStep() {

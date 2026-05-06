@@ -21,7 +21,7 @@ public class IonThrusterRenderer extends SmartBlockEntityRenderer<IonThrusterBlo
         super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
         VectorThrusterDebugRenderer.render(be);
         if (be instanceof VectorThrusterBlockEntity vector) {
-            VectorThrusterRenderer.render(vector, ms, buffer, light, overlay);
+            VectorThrusterRenderer.render(vector, partialTicks, ms, buffer, light, overlay);
             VectorRedstoneLinkRenderer.renderOnBlockEntity(vector, partialTicks, ms, buffer, light, overlay);
         }
     }

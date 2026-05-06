@@ -23,7 +23,7 @@ public final class VectorThrusterRenderer {
     private VectorThrusterRenderer() {
     }
 
-    public static void render(VectorThrusterBlockEntity be, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
+    public static void render(VectorThrusterBlockEntity be, float partialTick, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
         if (be == null || be.isRemoved()) {
             return;
         }
@@ -34,8 +34,8 @@ public final class VectorThrusterRenderer {
         }
         Direction facing = state.getValue(AbstractThrusterBlock.FACING);
 
-        float xAxis = Mth.clamp(be.getCurrentVectorX(), -1.0f, 1.0f);
-        float yAxis = Mth.clamp(be.getCurrentVectorY(), -1.0f, 1.0f);
+        float xAxis = Mth.clamp(be.getInterpolatedVectorX(partialTick), -1.0f, 1.0f);
+        float yAxis = Mth.clamp(be.getInterpolatedVectorY(partialTick), -1.0f, 1.0f);
         float yawDegrees = xAxis * VectorThrusterBlockEntity.MAX_VISUAL_TILT_DEGREES;
         float pitchDegrees = -yAxis * VectorThrusterBlockEntity.MAX_VISUAL_TILT_DEGREES;
         // For FACING=UP the Rx(90°) facing rotation maps model-Y to world +Z, inverting
