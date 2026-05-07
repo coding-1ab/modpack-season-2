@@ -379,14 +379,16 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             }
         }
 
-        float share = totalThrust / n;
+        // Controller holds the total thrust; non-members get 0 so they skip physics and sound.
+        setThrustAndSync(totalThrust);
         BlockPos origin = worldPosition;
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < width; y++) {
                 for (int z = 0; z < width; z++) {
-                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level,origin.offset(x, y, z));
+                    if (x == 0 && y == 0 && z == 0) continue;
+                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level, origin.offset(x, y, z));
                     if (be instanceof ThrusterBlockEntity t) {
-                        t.setThrustAndSync(share);
+                        t.setThrustAndSync(0);
                     }
                 }
             }
@@ -479,6 +481,23 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             return false;
         }
         return super.shouldDamageEntities();
+    }
+
+    @Override
+    public void sable$physicsTick(final dev.ryanhcode.sable.sublevel.ServerSubLevel subLevel, final dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle handle, final double timeStep) {
+        if (isMultiblock() && !isController()) return;
+        if (isMultiblock()) {
+            float thrust = getCurrentThrust();
+            if (thrust <= 0.0f || !Float.isFinite(thrust)) return;
+            Vector3d directionLocal = new Vector3d(getThrustDirectionLocal()).normalize();
+            Vec3 centerNozzle = getMultiblockCenterNozzlePositionLocal();
+            Vector3d applicationPoint = new Vector3d(centerNozzle.x, centerNozzle.y, centerNozzle.z);
+            Vector3d impulseLocal = new Vector3d(directionLocal).mul(thrust * timeStep);
+            Vector3d adjustedImpulse = new Vector3d(impulseLocal).div(PN_PER_SABLE_FORCE_UNIT);
+            SimulatedThrustAdapter.applyImpulseAtPoint(subLevel, applicationPoint, adjustedImpulse);
+            return;
+        }
+        super.sable$physicsTick(subLevel, handle, timeStep);
     }
 
     private static float getMultiblockFuelEfficiency(int cubeWidth) {
@@ -722,8 +741,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         if (isMultiblock()) {
             ThrusterBlockEntity ctrl = isController() ? this : getControllerBE();
             if (ctrl == null) return super.getDisplayedThrustPnForTooltip();
-            int n = ctrl.width * ctrl.width * ctrl.width;
-            return ctrl.getThrusterData().getThrust() * (double) n;
+            return ctrl.getThrusterData().getThrust();
         }
         return super.getDisplayedThrustPnForTooltip();
     }
