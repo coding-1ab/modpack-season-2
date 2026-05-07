@@ -3,7 +3,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.gradle.userdev' version '7.0.145'
+    id("net.neoforged.moddev") version "2.0.141"
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -33,24 +33,30 @@ repositories {
     }
 }
 
-task buildInfo {
-    def cmd = "git rev-parse --short HEAD"
-    def proc = cmd.execute()
-    proc.waitFor()
-    if (proc.exitValue() == 0) {
-        ext.revision = proc.text.trim()
-    } else {
-        ext.revision = "GITBORK"
-    }
-
-    if (System.getenv().BUILD_NUMBER != null) {
-        ext.buildNum = System.getenv().BUILD_NUMBER
-    } else {
-        ext.buildNum = "DEV.${project.buildInfo.revision}"
+String calculateRevision() {
+    try {
+        ExecOutput output = providers.exec {
+            it.workingDir(project.projectDir)
+            commandLine("git", "rev-parse", "--short", "HEAD")
+        }
+        return output.standardOutput.asText.get().trim()
+    } catch (Throwable ignored) {
+        return "GITBORK"
     }
 }
 
-version = "${minecraft_version}-neoforge-${mod_version}.${project.buildInfo.buildNum}"
+String calculateBuildNumber() {
+    String revision = calculateRevision()
+
+    if (System.getenv().BUILD_NUMBER != null) {
+        return System.getenv().BUILD_NUMBER
+    } else {
+        return "DEV.${revision}"
+    }
+}
+
+String buildNum = calculateBuildNumber()
+version = "${minecraft_version}-neoforge-${mod_version}.${buildNum}"
 group = mod_group_id
 
 base {
@@ -60,65 +66,63 @@ base {
 // Mojang ships Java 21 to end users starting in 1.20.5, so mods should target Java 21.
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
-runs {
-    // applies to all the run configs below
-    configureEach {
-        // Recommended logging data for a userdev environment
-        // The markers can be added/remove as needed separated by commas.
-        // "SCAN": For mods scan.
-        // "REGISTRIES": For firing of registry events.
-        // "REGISTRYDUMP": For getting the contents of all registries.
-        systemProperty 'forge.logging.markers', 'REGISTRIES'
+neoForge {
+    version = project.neo_version
 
-        // Recommended logging level for the console
-        // You can set various levels here.
-        // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
-        systemProperty 'forge.logging.console.level', 'debug'
-
-        modSource project.sourceSets.main
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
     }
 
-    client {
-        // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+    runs {
+        // applies to all the run configs below
+        configureEach {
+            // Recommended logging data for a userdev environment
+            // The markers can be added/remove as needed separated by commas.
+            // "SCAN": For mods scan.
+            // "REGISTRIES": For firing of registry events.
+            // "REGISTRYDUMP": For getting the contents of all registries.
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
 
-        //The below if statements are to add args to your gradle.properties file in user home
-        // (DO NOT add them directly to the gradle.properties file for this project)
-        // Setting the below properties allows use of your normal Minecraft account in the
-        // dev environment including having your skin load. Each property also has a comment
-        // explaining what information to set the value to/format it expects
-        // One thing to note is because of the caching that goes on, after changing these
-        // variables, you need to refresh the project and rerun genIntellijRuns/genEclipseRuns
-        if (project.hasProperty('mc_uuid')) {
-            //Your uuid without any dashes in the middle
-            args '--uuid', project.getProperty('mc_uuid')
+            // Recommended logging level for the console
+            // You can set various levels here.
+            // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
+            systemProperty 'forge.logging.console.level', 'debug'
         }
-        if (project.hasProperty('mc_username')) {
-            //Your username/display name, this is the name that shows up in chat
-            // Note: This is not your email, even if you have a Mojang account
-            args '--username', project.getProperty('mc_username')
+
+        client {
         }
-        if (project.hasProperty('mc_accessToken')) {
-            //Your access token, you can find it in your '.minecraft/launcher_profiles.json' file
-            args '--accessToken', project.getProperty('mc_accessToken')
+
+        clientAuth {
+            client()
+            devLogin = true
+        }
+
+        server {
+            programArgument '--nogui'
+        }
+
+        // This run config launches GameTestServer and runs all registered gametests, then exits.
+        // By default, the server will crash when no gametests are provided.
+        // The gametest system is also enabled by default for other run configs under the /test command.
+        gameTestServer {
+        }
+
+        data {
+            data()
+            gameDirectory = project.file("runs/data")
+            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
+            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
         }
     }
 
-    server {
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
-        programArgument '--nogui'
-    }
-
-    // This run config launches GameTestServer and runs all registered gametests, then exits.
-    // By default, the server will crash when no gametests are provided.
-    // The gametest system is also enabled by default for other run configs under the /test command.
-    gameTestServer {
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
-    }
-
-    data {
-        // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-        programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+    mods {
+        // define mod <-> source bindings
+        // these are used to tell the game which sources are for which mod
+        // multi mod projects should define one per mod
+        create(project.mod_id) {
+            sourceSet(sourceSets.main)
+        }
     }
 }
 
@@ -134,16 +138,14 @@ configurations {
 }
 
 dependencies {
-    implementation "net.neoforged:neoforge:${neo_version}"
-
     // compile against the JEI API but do not include it at runtime
     compileOnly("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
     compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")
     // at runtime, use the full JEI jar for NeoForge
-    runtimeOnly("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}")
+    localRuntime("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}")
 
     // Include Iron Chests
-    runtimeOnly("com.progwml6.ironchest:ironchest:${minecraft_version}-neoforge-${iron_chest_version}")
+    localRuntime("com.progwml6.ironchest:ironchest:${minecraft_version}-neoforge-${iron_chest_version}")
 }
 
 tasks.withType(ProcessResources).configureEach {
