@@ -1,7 +1,13 @@
 package dev.propulsionteam.propulsionsimulated.events;
 
+import com.simibubi.create.CreateClient;
+import com.simibubi.create.content.decoration.encasing.EncasedCTBehaviour;
+import com.simibubi.create.foundation.block.connected.CTModel;
+import com.simibubi.create.foundation.model.ModelSwapper;
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.LiquidBurnerRenderer;
+import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlocks;
+import dev.propulsionteam.propulsionsimulated.registries.PropulsionSpriteShifts;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.LiquidBurnerVisual;
 import dev.propulsionteam.propulsionsimulated.content.heat.engine.StirlingEngineRenderer;
 import dev.propulsionteam.propulsionsimulated.content.heat.engine.StirlingEngineVisual;
@@ -32,6 +38,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
@@ -120,6 +127,8 @@ public class ModClientEvents {
         PonderIndex.addPlugin(new DeltaPonderPlugin());
         PropulsionInstanceTypes.register();
 
+        CreateClient.CASING_CONNECTIVITY.makeCasing(PropulsionBlocks.PLATINUM_CASING.get(), PropulsionSpriteShifts.PLATINUM_CASING_TEXTURE);
+
         SimpleBlockEntityVisualizer.builder(PropulsionBlockEntities.STIRLING_ENGINE_BLOCK_ENTITY.get())
             .factory(StirlingEngineVisual::new)
             .skipVanillaRender(be -> VisualizationManager.supportsVisualization(be.getLevel()))
@@ -151,6 +160,14 @@ public class ModClientEvents {
         event.registerBlockEntityRenderer(PropulsionBlockEntities.ION_THRUSTER_BLOCK_ENTITY.get(), IonThrusterRenderer::new);
         event.registerBlockEntityRenderer(PropulsionBlockEntities.LIQUID_BURNER_BLOCK_ENTITY.get(), LiquidBurnerRenderer::new);
         event.registerBlockEntityRenderer(PropulsionBlockEntities.TILT_ADAPTER_BLOCK_ENTITY.get(), TiltAdapterRenderer::new);
+    }
+
+    @SubscribeEvent
+    public static void onModifyBakingResult(ModelEvent.ModifyBakingResult event) {
+        EncasedCTBehaviour behaviour = new EncasedCTBehaviour(PropulsionSpriteShifts.PLATINUM_CASING_TEXTURE);
+        ModelSwapper.swapModels(event.getModels(),
+            ModelSwapper.getAllBlockStateModelLocations(PropulsionBlocks.PLATINUM_CASING.get()),
+            model -> new CTModel(model, behaviour));
     }
 }
 

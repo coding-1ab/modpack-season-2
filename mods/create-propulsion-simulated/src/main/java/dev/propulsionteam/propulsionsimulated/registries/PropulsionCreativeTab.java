@@ -63,6 +63,7 @@ public class PropulsionCreativeTab {
                 output.accept(PropulsionBlocks.DEEPSLATE_PLATINUM_ORE.get());
                 output.accept(PropulsionBlocks.PLATINUM_BLOCK.get());
                 output.accept(PropulsionBlocks.RAW_PLATINUM_BLOCK.get());
+                output.accept(PropulsionBlocks.PLATINUM_CASING.get());
                 output.accept(PropulsionBlocks.CORAL_GENERATOR.get());
                 output.accept(PropulsionItems.PLATINUM_INGOT.get());
                 output.accept(PropulsionItems.PLATINUM_NUGGET.get());
@@ -70,6 +71,7 @@ public class PropulsionCreativeTab {
                 output.accept(PropulsionItems.RAW_PLATINUM.get());
                 output.accept(PropulsionItems.CORAL_BUCKET.get());
                 output.accept(PropulsionBlocks.FE_CABLE.get());
+                output.accept(PropulsionBlocks.CABLE_RELAY.get());
             }
         }
 }

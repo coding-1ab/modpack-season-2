@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -53,6 +54,9 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     protected boolean updateConnectivity = true;
     protected double lastConsumedMbPerTick = 0.0d;
     protected double fuelDrainAccumulator = 0.0d;
+    // Ticks to skip multiblock-validity checks after a sublevel move to tolerate transient invalidity.
+    private static final int DISASSEMBLY_GRACE_TICKS = 5;
+    private int disassemblyCooldown = 0;
 
     public ThrusterBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
@@ -97,8 +101,10 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             return;
         }
         if (isController() && isMultiblock()) {
-            // Fix: Skip multiblock validation when outside build height to prevent disassembly.
-            if (!SimulatedThrustAdapter.isOutsideWorldBuildHeight(level, worldPosition)) {
+            if (disassemblyCooldown > 0) {
+                disassemblyCooldown--;
+            } else if (!SimulatedThrustAdapter.isOutsideWorldBuildHeight(level, worldPosition)) {
+                // Fix: Skip multiblock validation when outside build height to prevent disassembly.
                 Direction facing = getFacing();
                 if (!isValidFormedCube(worldPosition, width, facing)) {
                     disassembleMulti();
@@ -307,6 +313,26 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         }
         int frontIdx = cubeFacing.getAxisDirection() == Direction.AxisDirection.POSITIVE ? size - 1 : 0;
         return rel == frontIdx;
+    }
+
+    @Override
+    public void afterMove(ServerLevel oldLevel, ServerLevel newLevel, BlockState state, BlockPos oldPos, BlockPos newPos) {
+        super.afterMove(oldLevel, newLevel, state, oldPos, newPos);
+        // On any assembly/disassembly event, wipe this block's multiblock state so that
+        // tryAssemble() can rebuild it cleanly once all blocks have settled in their new
+        // positions. Attempting to translate controllerPos through rotation doesn't work
+        // because rotation changes relative offsets between members.
+        if (isMultiblock()) {
+            width = 1;
+            controllerPos = null;
+            updateConnectivity = true;
+            isThrustDirty = true;
+            setChanged();
+        }
+        // Grace period: delay validation and reassembly until after all blocks have been
+        // moved. Each afterMove call resets the counter, so the final afterMove determines
+        // when reassembly actually runs.
+        disassemblyCooldown = DISASSEMBLY_GRACE_TICKS;
     }
 
     @Override
