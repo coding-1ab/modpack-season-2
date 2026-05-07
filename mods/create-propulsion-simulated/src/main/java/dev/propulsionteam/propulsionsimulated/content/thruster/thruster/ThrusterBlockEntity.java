@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -53,6 +54,9 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     protected boolean updateConnectivity = true;
     protected double lastConsumedMbPerTick = 0.0d;
     protected double fuelDrainAccumulator = 0.0d;
+    // Ticks to skip multiblock-validity checks after a sublevel move to tolerate transient invalidity.
+    private static final int DISASSEMBLY_GRACE_TICKS = 5;
+    private int disassemblyCooldown = 0;
 
     public ThrusterBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
@@ -97,8 +101,10 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             return;
         }
         if (isController() && isMultiblock()) {
-            // Fix: Skip multiblock validation when outside build height to prevent disassembly.
-            if (!SimulatedThrustAdapter.isOutsideWorldBuildHeight(level, worldPosition)) {
+            if (disassemblyCooldown > 0) {
+                disassemblyCooldown--;
+            } else if (!SimulatedThrustAdapter.isOutsideWorldBuildHeight(level, worldPosition)) {
+                // Fix: Skip multiblock validation when outside build height to prevent disassembly.
                 Direction facing = getFacing();
                 if (!isValidFormedCube(worldPosition, width, facing)) {
                     disassembleMulti();
@@ -310,6 +316,26 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     }
 
     @Override
+    public void afterMove(ServerLevel oldLevel, ServerLevel newLevel, BlockState state, BlockPos oldPos, BlockPos newPos) {
+        super.afterMove(oldLevel, newLevel, state, oldPos, newPos);
+        // On any assembly/disassembly event, wipe this block's multiblock state so that
+        // tryAssemble() can rebuild it cleanly once all blocks have settled in their new
+        // positions. Attempting to translate controllerPos through rotation doesn't work
+        // because rotation changes relative offsets between members.
+        if (isMultiblock()) {
+            width = 1;
+            controllerPos = null;
+            updateConnectivity = true;
+            isThrustDirty = true;
+            setChanged();
+        }
+        // Grace period: delay validation and reassembly until after all blocks have been
+        // moved. Each afterMove call resets the counter, so the final afterMove determines
+        // when reassembly actually runs.
+        disassemblyCooldown = DISASSEMBLY_GRACE_TICKS;
+    }
+
+    @Override
     public void updateThrust(BlockState currentBlockState) {
         if (!isController()) {
             isThrustDirty = false;
@@ -379,14 +405,16 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             }
         }
 
-        float share = totalThrust / n;
+        // Controller holds the total thrust; non-members get 0 so they skip physics and sound.
+        setThrustAndSync(totalThrust);
         BlockPos origin = worldPosition;
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < width; y++) {
                 for (int z = 0; z < width; z++) {
-                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level,origin.offset(x, y, z));
+                    if (x == 0 && y == 0 && z == 0) continue;
+                    BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level, origin.offset(x, y, z));
                     if (be instanceof ThrusterBlockEntity t) {
-                        t.setThrustAndSync(share);
+                        t.setThrustAndSync(0);
                     }
                 }
             }
@@ -479,6 +507,23 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             return false;
         }
         return super.shouldDamageEntities();
+    }
+
+    @Override
+    public void sable$physicsTick(final dev.ryanhcode.sable.sublevel.ServerSubLevel subLevel, final dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle handle, final double timeStep) {
+        if (isMultiblock() && !isController()) return;
+        if (isMultiblock()) {
+            float thrust = getCurrentThrust();
+            if (thrust <= 0.0f || !Float.isFinite(thrust)) return;
+            Vector3d directionLocal = new Vector3d(getThrustDirectionLocal()).normalize();
+            Vec3 centerNozzle = getMultiblockCenterNozzlePositionLocal();
+            Vector3d applicationPoint = new Vector3d(centerNozzle.x, centerNozzle.y, centerNozzle.z);
+            Vector3d impulseLocal = new Vector3d(directionLocal).mul(thrust * timeStep);
+            Vector3d adjustedImpulse = new Vector3d(impulseLocal).div(PN_PER_SABLE_FORCE_UNIT);
+            SimulatedThrustAdapter.applyImpulseAtPoint(subLevel, applicationPoint, adjustedImpulse);
+            return;
+        }
+        super.sable$physicsTick(subLevel, handle, timeStep);
     }
 
     private static float getMultiblockFuelEfficiency(int cubeWidth) {
@@ -722,8 +767,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         if (isMultiblock()) {
             ThrusterBlockEntity ctrl = isController() ? this : getControllerBE();
             if (ctrl == null) return super.getDisplayedThrustPnForTooltip();
-            int n = ctrl.width * ctrl.width * ctrl.width;
-            return ctrl.getThrusterData().getThrust() * (double) n;
+            return ctrl.getThrusterData().getThrust();
         }
         return super.getDisplayedThrustPnForTooltip();
     }

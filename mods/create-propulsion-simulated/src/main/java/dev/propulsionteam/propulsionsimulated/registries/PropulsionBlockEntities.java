@@ -4,6 +4,7 @@ import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.Liquid
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.solid.SolidBurnerBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.cable.fe.FeCableBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.cable.hub.CableHubBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.cable.relay.CableRelayBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.heat.engine.StirlingEngineBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.platinum.CoralGeneratorBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterBlockEntity;
@@ -89,6 +90,9 @@ public class PropulsionBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CableHubBlockEntity>> CABLE_HUB_BLOCK_ENTITY =
         BLOCK_ENTITY_TYPES.register("cable_hub_block_entity",
             () -> BlockEntityType.Builder.of((pos, state) -> new CableHubBlockEntity(pos, state), PropulsionBlocks.CABLE_HUB.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CableRelayBlockEntity>> CABLE_RELAY_BLOCK_ENTITY =
+        BLOCK_ENTITY_TYPES.register("cable_relay_block_entity",
+            () -> BlockEntityType.Builder.of((pos, state) -> new CableRelayBlockEntity(pos, state), PropulsionBlocks.CABLE_RELAY.get()).build(null));
 
     public static void register(IEventBus modBus) {
         BLOCK_ENTITY_TYPES.register(modBus);

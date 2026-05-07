@@ -168,7 +168,7 @@ public class RedstoneTransmissionBlockEntity extends SplitShaftBlockEntity {
     public float getRotationSpeedModifier(Direction face) {
         if (!hasSource() || face == getSourceFacing()) return 1f;
         if (shift_level == 0) return 0f;
-        return 1f;
+        return (float) shift_level / MAX_VALUE;
     }
 
     @Override

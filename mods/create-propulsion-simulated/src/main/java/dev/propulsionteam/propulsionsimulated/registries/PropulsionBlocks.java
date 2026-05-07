@@ -6,7 +6,9 @@ import dev.propulsionteam.propulsionsimulated.content.heat.burners.solid.SolidBu
 import dev.propulsionteam.propulsionsimulated.content.cable.fe.FeCableBlock;
 import dev.propulsionteam.propulsionsimulated.content.cable.hub.CableHubBlock;
 import dev.propulsionteam.propulsionsimulated.content.heat.engine.StirlingEngineBlock;
+import dev.propulsionteam.propulsionsimulated.content.cable.relay.CableRelayBlock;
 import dev.propulsionteam.propulsionsimulated.content.platinum.CoralGeneratorBlock;
+import dev.propulsionteam.propulsionsimulated.content.platinum.PlatinumCasingBlock;
 import dev.propulsionteam.propulsionsimulated.content.redstone_converter.RedstoneConverterBlock;
 import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionBlock;
 import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterBlock;
@@ -90,6 +92,9 @@ public class PropulsionBlocks {
     public static final DeferredBlock<Block> RAW_PLATINUM_BLOCK = BLOCKS.register("raw_platinum_block",
         () -> new Block(Block.Properties.of().mapColor(MapColor.RAW_IRON).sound(SoundType.STONE)
             .requiresCorrectToolForDrops().strength(5.0f, 6.0f)));
+    public static final DeferredBlock<PlatinumCasingBlock> PLATINUM_CASING = BLOCKS.register("platinum_casing",
+        () -> new PlatinumCasingBlock(Block.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL)
+            .requiresCorrectToolForDrops().strength(5.0f, 6.0f)));
     public static final DeferredBlock<CoralGeneratorBlock> CORAL_GENERATOR = BLOCKS.register("coral_generator",
         () -> new CoralGeneratorBlock(Block.Properties.of().mapColor(MapColor.COLOR_CYAN).sound(SoundType.STONE)
             .requiresCorrectToolForDrops().strength(3.5f, 3.0f).noOcclusion()));
@@ -99,6 +104,9 @@ public class PropulsionBlocks {
     public static final DeferredBlock<CableHubBlock> CABLE_HUB = BLOCKS.register("cable_hub",
         () -> new CableHubBlock(Block.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL)
             .requiresCorrectToolForDrops().strength(2.5f, 3.5f).noOcclusion()));
+    public static final DeferredBlock<CableRelayBlock> CABLE_RELAY = BLOCKS.register("cable_relay",
+        () -> new CableRelayBlock(Block.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL)
+            .requiresCorrectToolForDrops().strength(2.5f, 3.5f)));
 
     static {
         registerDefaultBlockItem("thruster", THRUSTER_BLOCK);
@@ -121,9 +129,11 @@ public class PropulsionBlocks {
         registerDefaultBlockItem("deepslate_platinum_ore", DEEPSLATE_PLATINUM_ORE);
         registerDefaultBlockItem("platinum_block", PLATINUM_BLOCK);
         registerDefaultBlockItem("raw_platinum_block", RAW_PLATINUM_BLOCK);
+        registerDefaultBlockItem("platinum_casing", PLATINUM_CASING);
         registerBlockItem("coral_generator", CORAL_GENERATOR, new BlockItem.Properties().rarity(Rarity.RARE));
         registerDefaultBlockItem("cable", FE_CABLE);
         registerDefaultBlockItem("cable_hub", CABLE_HUB);
+        registerDefaultBlockItem("cable_relay", CABLE_RELAY);
 
         PropulsionDefaultStress.setImpact(ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "redstone_transmission"), 0, false);
         PropulsionDefaultStress.setImpact(ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "tilt_adapter"), 0, false);

@@ -147,6 +147,8 @@
     "block.createpropulsion.vector_thruster": "Vector Thruster",
     "block.createpropulsion.creative_vector_thruster": "Creative Vector Thruster",
     "createpropulsion.creative_vector_thruster.tooltip.summary": "Vector thruster with configurable creative thrust and wrench-cycled particle mode.",
+    "block.createpropulsion.platinum_casing": "Platinum Casing",
+    "block.createpropulsion.cable_relay": "Cable Relay",
     "block.createpropulsion.platinum_ore": "Platinum Ore",
     "block.createpropulsion.deepslate_platinum_ore": "Deepslate Platinum Ore",
     "block.createpropulsion.platinum_block": "Block of Platinum",
