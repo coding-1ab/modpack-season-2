@@ -347,6 +347,28 @@ addMods {
             ),
         )
     )
+    addMod(
+        filePath = "./mods/ironchest",
+        includeTransitive = false,
+        modProjects = listOf(
+            modProject(
+                dependencyNotations = listOf("com.progwml6.ironchest:ironchest"),
+                projectPath = ":",
+                shouldUnpack = true
+            ),
+        )
+    )
+    addMod(
+        filePath = "./mods/ironshulkerboxes",
+        includeTransitive = false,
+        modProjects = listOf(
+            modProject(
+                dependencyNotations = listOf("com.progwml6.ironshulkerboxes:ironshulkerbox"),
+                projectPath = ":",
+                shouldUnpack = true
+            ),
+        )
+    )
 
     includeExtra("extra_mods.txt")
 }

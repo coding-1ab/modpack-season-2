@@ -86,3 +86,11 @@
 	path = mods/sable-companion
 	url = https://github.com/ryanhcode/sable-companion.git
 	branch = main
+[submodule "mods/ironchest"]
+	path = mods/ironchest
+	url = https://github.com/progwml6/ironchest.git
+	branch = 1.21.x-neoforge
+[submodule "mods/ironshulkerboxes"]
+	path = mods/ironshulkerboxes
+	url = https://github.com/coding-1ab/ironshulkerboxes.git
+	branch = 1.21.x-neoforge
