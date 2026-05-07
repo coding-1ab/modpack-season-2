@@ -19,6 +19,7 @@ import org.gradle.language.jvm.tasks.ProcessResources
 @Suppress("UnstableApiUsage")
 class BeforeProjectAction(
     private val mods: ListProperty<ModConfig>,
+    private val extras: ListProperty<String>
 ) : IsolatedAction<Project> {
     override fun execute(project: Project) {
         val archive = project.serviceOf<ArchiveOperations>()
@@ -39,6 +40,8 @@ class BeforeProjectAction(
             }
             val createModJars = project.tasks.register<Copy>("createModJars") {
                 mustRunAfter(clearModJars)
+                from(project.projectDir.resolve("extra_mods.txt"))
+                into(jarDestination)
             }
 
             mods.get().forEach { mod ->
@@ -125,6 +128,12 @@ class BeforeProjectAction(
 
             val transitiveOnly = transitive.minus(nonTransitive)
             project.dependencies.add("localRuntime", transitiveOnly)
+
+            for (extra in extras.get()) {
+                project.dependencies.add("localRuntime", extra) {
+                    isTransitive = false
+                }
+            }
         }
     }
 }

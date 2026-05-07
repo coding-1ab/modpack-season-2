@@ -218,24 +218,10 @@ dependencies {
     localRuntime("org.appliedenergistics:guideme:21.1.1")
     localRuntime("com.github.glitchfiend:TerraBlender-neoforge:$minecraftVersion-4.1.0.8")
 
-    localRuntime("curse.maven:configured-457570:7276577")
-    localRuntime("curse.maven:easyshulkerboxes-594006:6697879")
-    localRuntime("curse.maven:puzzleslib-495476:7140307")
-    localRuntime("curse.maven:configurable-1092048:7356762")
-    localRuntime("curse.maven:controlling-250398:6368976")
-    localRuntime("curse.maven:searchables-858542:5831692")
-    localRuntime("curse.maven:jade-324717:7545219")
-    localRuntime("curse.maven:atlas-633577:5490697")
-    localRuntime("curse.maven:modernfix-790626:7917721")
-    localRuntime("curse.maven:spark-361579:6225208")
-    localRuntime("top.theillusivec4.curios:curios-neoforge:$curiosVersion+$minecraftVersion")
-    localRuntime("maven.modrinth:ferrite-core:7.0.3-neoforge")
     // sodium 추가하려면 아래 줄 주석 해제할 것
     // 주의: sodium 추가하면 Sinytra Connector가 같이 딸려옴
     // localRuntime("maven.modrinth:sodium:mc$minecraftVersion-$sodiumVersion-neoforge")
-    localRuntime("net.mehvahdjukaar:moonlight-neoforge:$moonlightVersion") {
-        isTransitive = false
-    }
+    localRuntime("curse.maven:spark-361579:6225208")
 
     compileOnly("com.simibubi.create:create-1.21.1")
     compileOnly("com.mrh0.createaddition:createaddition")

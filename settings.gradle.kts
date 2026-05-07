@@ -347,4 +347,6 @@ addMods {
             ),
         )
     )
+
+    includeExtra("extra_mods.txt")
 }
