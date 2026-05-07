@@ -48,7 +48,6 @@ import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 public class LinkedTypewriterBlock extends HorizontalDirectionalBlock implements IBE<LinkedTypewriterBlockEntity>, IWrenchable {
@@ -154,6 +153,15 @@ public class LinkedTypewriterBlock extends HorizontalDirectionalBlock implements
     @Override
     public boolean hasAnalogOutputSignal(final BlockState state) {
         return true;
+    }
+
+    @Override
+    protected int getAnalogOutputSignal(final BlockState state, final Level level, final BlockPos pos) {
+        final BlockEntity be = level.getBlockEntity(pos);
+        if (be instanceof final LinkedTypewriterBlockEntity typewriter) {
+            return typewriter.isInUse() ? 15 : 0;
+        }
+        return 0;
     }
 
     @Override
