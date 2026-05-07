@@ -318,7 +318,7 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
     protected ParticleOptions createParticleOptions() {
         // Particle narrows as the nozzle closes: 0.85 at idle, 0.35 at full throttle
         float size = Mth.lerp(currentFlapProgress, 0.85f, 0.35f);
-        return new IonParticleData(List.of(), null, size);
+        return new IonParticleData(List.of(), getDyeColor(), size);
     }
 
     // -----------------------------------------------------------------------
