@@ -1,6 +1,10 @@
 import os
 import subprocess
 
+result = subprocess.run(["git", "submodule", "foreach", "git pull"])
+print(result.stdout)
+print(result.stderr)
+
 for project in os.listdir("mods"):
     print(f"+git config -f .gitmodules submodule.mods/{project}.branch")
     branch = subprocess.check_output(["git", "config", "-f", ".gitmodules", f"submodule.mods/{project}.branch"])
