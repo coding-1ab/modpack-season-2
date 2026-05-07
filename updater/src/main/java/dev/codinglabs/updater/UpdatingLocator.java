@@ -9,7 +9,6 @@ import cpw.mods.jarhandling.JarContents;
 import cpw.mods.jarhandling.JarContentsBuilder;
 import net.neoforged.fml.ModLoadingException;
 import net.neoforged.fml.ModLoadingIssue;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.fml.loading.progress.ProgressMeter;
 import net.neoforged.fml.loading.progress.StartupNotificationManager;
@@ -143,7 +142,7 @@ public class UpdatingLocator implements IDependencyLocator {
     }
 
     private static URI builtMod(String fileName) {
-        return URI.create(baseUrl).resolve(fileName);
+        return URI.create(baseUrl).resolve("built/").resolve(fileName);
     }
 
     private static JarContents buildJarContents(Path built, Path downloaded) {
@@ -244,9 +243,9 @@ public class UpdatingLocator implements IDependencyLocator {
                 .GET()
                 .build();
 
-        InputStream response;
+        String response;
         try {
-            response = client.send(curseUrlRequest, HttpResponse.BodyHandlers.ofInputStream()).body();
+            response = client.send(curseUrlRequest, HttpResponse.BodyHandlers.ofString()).body();
         } catch (InterruptedException | IOException | IllegalStateException e) {
             StartupNotificationManager.addModMessage("FAILED TO FETCH CURSEFORGE API");
             throw new ModLoadingException(ModLoadingIssue.error(
@@ -257,13 +256,13 @@ public class UpdatingLocator implements IDependencyLocator {
 
         CurseDownloadInfo downloadInfo;
         try {
-            JsonObject json = JsonParser.parseReader(new InputStreamReader(response)).getAsJsonObject();
+            JsonObject json = JsonParser.parseString(response).getAsJsonObject();
             downloadInfo = CurseDownloadInfo.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow();
         } catch (JsonSyntaxException | IllegalStateException e) {
             StartupNotificationManager.addModMessage("FAILED TO PARSE DOWNLOAD URL");
             throw new ModLoadingException(ModLoadingIssue.error(
                     errorKey,
-                    "Failed to parse JSON from download server. Json contents"
+                    "Failed to parse JSON from download server. Json contents:\n" + response
             ).withCause(e));
         }
 

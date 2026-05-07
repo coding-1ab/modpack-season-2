@@ -3,25 +3,15 @@ import org.slf4j.event.Level
 plugins {
     id("java-library")
     id("maven-publish")
-    id("net.neoforged.moddev") version "2.0.141"
+    id("net.neoforged.moddev")
     id("idea")
 }
 
-val mod_id: String by project
-val mod_version: String by project
-val mod_group_id: String by project
-val neo_version: String by project
-val minecraft_version: String by project
-val minecraft_version_range: String by project
-val neo_version_range: String by project
-val loader_version_range: String by project
-val mod_name: String by project
-val mod_license: String by project
-val mod_authors: String by project
-val mod_description: String by project
-
-version = mod_version
-group = mod_group_id
+val mod_id: String by rootProject
+val parchment_mappings_version: String by rootProject
+val parchment_minecraft_version: String by rootProject
+val mod_group_id: String by rootProject
+val neo_version: String by rootProject
 
 repositories {
     mavenLocal()
@@ -30,11 +20,11 @@ repositories {
 
 neoForge {
     // Specify the version of NeoForge to use.
-    version = project.properties["neo_version"]!! as String
+    version = neo_version
 
     parchment {
-        mappingsVersion = project.properties["parchment_mappings_version"]!! as String
-        minecraftVersion = project.properties["parchment_minecraft_version"]!! as String
+        mappingsVersion = parchment_mappings_version
+        minecraftVersion = parchment_minecraft_version
     }
 
     // This line is optional. Access Transformers are automatically detected
@@ -81,12 +71,23 @@ neoForge {
                 //jvmArgument("-XX:-OmitStackTraceInFastThrow", // uncomment when you get exceptions with null messages etc
                 // "-XX:+UnlockCommercialFeatures", // uncomment for profiling
             )
+
+            loggingConfigFile = rootProject.file("log4j.xml")
+        }
+    }
+
+    mods {
+        // define mod <-> source bindings
+        // these are used to tell the game which sources are for which mod
+        // multi mod projects should define one per mod
+        create(properties["mod_id"]!! as String) {
+            sourceSet(sourceSets.main.get())
         }
     }
 }
 
 base {
-    archivesName.set(mod_id)
+    archivesName.set("modpack-updater")
 }
 
 java {
@@ -95,15 +96,7 @@ java {
     }
 }
 
-// 데이터 제너레이터로 생성된 리소스 포함
-sourceSets.main {
-    resources {
-        srcDir("src/generated/resources")
-    }
-}
-
 dependencies {
-    jarJar(create("dev.codinglabs:dev.codinglabs"))
 }
 
 publishing {

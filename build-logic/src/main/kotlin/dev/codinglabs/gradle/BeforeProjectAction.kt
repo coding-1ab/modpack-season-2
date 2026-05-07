@@ -23,6 +23,7 @@ class BeforeProjectAction(
 ) : IsolatedAction<Project> {
     override fun execute(project: Project) {
         val archive = project.serviceOf<ArchiveOperations>()
+        val isRoot = project.rootProject == project
 
         project.pluginManager.withPlugin("java") {
             val sourceSet = project.extensions.getByType(SourceSetContainer::class.java)
@@ -35,13 +36,21 @@ class BeforeProjectAction(
             }
 
             val jarDestination = project.file("createdModJars")
-            val clearModJars = project.tasks.register<Delete>("clearModJars") {
-                delete(jarDestination)
-            }
-            val createModJars = project.tasks.register<Copy>("createModJars") {
-                mustRunAfter(clearModJars)
-                from(project.projectDir.resolve("extra_mods.txt"))
-                into(jarDestination)
+            val createModJars = if (isRoot) {
+                val clearModJars = project.tasks.register<Delete>("clearModJars") {
+                    delete(jarDestination)
+                }
+                project.tasks.register<Copy>("createModJars") {
+                    mustRunAfter(clearModJars)
+                    val jarTask = project.tasks.named<Jar>("jar")
+                    dependsOn(jarTask)
+
+                    from(project.projectDir.resolve("extra_mods.txt"))
+                    from(jarTask.get().archiveFile)
+                    into(jarDestination)
+                }
+            } else {
+                null
             }
 
             mods.get().forEach { mod ->
@@ -91,37 +100,41 @@ class BeforeProjectAction(
                             duplicatesStrategy = DuplicatesStrategy.WARN
                         }
 
-                        val prepareJar = project.tasks.register<Jar>("${sourceSetName}prepareJar") {
-                            from(unzipped) {
-                                if (assetSource !is AssetSource.Inline) {
-                                    exclude("assets")
-                                    exclude("assets/*")
-                                    exclude("assets/**")
-                                    archiveClassifier.set("trimmed")
+                        if (isRoot) {
+                            val prepareJar = project.tasks.register<Jar>("${sourceSetName}prepareJar") {
+                                from(unzipped) {
+                                    if (assetSource !is AssetSource.Inline) {
+                                        exclude("assets")
+                                        exclude("assets/*")
+                                        exclude("assets/**")
+                                        archiveClassifier.set("trimmed")
+                                    }
+                                }
+                                duplicatesStrategy = DuplicatesStrategy.WARN
+                                archiveBaseName.set(artifactId)
+
+                                destinationDirectory.set(jarDestination)
+                            }
+
+                            createModJars!!.configure {
+                                dependsOn(prepareJar)
+
+                                doLast {
+                                    when(assetSource) {
+                                        is AssetSource.CurseForge -> {
+                                            val file = jarDestination.resolve("$artifactId.assetSource")
+                                            file.writeText("curseforge ${assetSource.projectId} ${assetSource.fileId}")
+                                        }
+                                        is AssetSource.Modrinth -> {
+                                            val file = jarDestination.resolve("$artifactId.assetSource")
+                                            file.writeText("modrinth ${assetSource.version}")
+                                        }
+                                        is AssetSource.Inline -> {}
+                                    }
                                 }
                             }
-                            duplicatesStrategy = DuplicatesStrategy.WARN
-                            archiveBaseName.set(artifactId)
-                            destinationDirectory.set(jarDestination)
                         }
 
-                        createModJars.configure {
-                            dependsOn(prepareJar)
-
-                            doLast {
-                                when(assetSource) {
-                                    is AssetSource.CurseForge -> {
-                                        val file = jarDestination.resolve("$artifactId.assetSource")
-                                        file.writeText("curseforge ${assetSource.projectId} ${assetSource.fileId}")
-                                    }
-                                    is AssetSource.Modrinth -> {
-                                        val file = jarDestination.resolve("$artifactId.assetSource")
-                                        file.writeText("modrinth ${assetSource.version}")
-                                    }
-                                    is AssetSource.Inline -> {}
-                                }
-                            }
-                        }
                     }
                 }
             }
