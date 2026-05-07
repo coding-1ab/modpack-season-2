@@ -60,7 +60,7 @@ public class WireShape {
         poseStack.translate(start.x - Math.floor(start.x), start.y - Math.floor(start.y), start.z - Math.floor(start.z));
         poseStack.mulPose(new Matrix4f().rotateTowards(direction, up));
 
-        int maxSections = Mth.ceil((maxLength + 1) * sectionsPerMeter);
+        int maxSections = Mth.ceil((maxLength * Mth.sqrt(3.0F)) * sectionsPerMeter);
         int sectionsAmount = Math.min((int) Math.ceil(totalLength * sectionsPerMeter), maxSections);
         float catenaryScalar = new Vector3f(up).mul(GLOBAL_UP).length();
         float lastCatenary = 0.0f;
