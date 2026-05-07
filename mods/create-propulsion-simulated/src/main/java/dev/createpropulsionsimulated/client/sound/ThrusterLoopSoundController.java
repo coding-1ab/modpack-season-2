@@ -32,9 +32,21 @@ public final class ThrusterLoopSoundController {
             return;
         }
 
+        // Always clean up stopped sounds so stale entries don't block new ones.
+        cleanupStopped();
+
         final String key = soundKey(blockEntity);
         final boolean active = shouldPlay(blockEntity);
-        final ThrusterLoopSoundInstance existing = ACTIVE_SOUNDS.get(key);
+        ThrusterLoopSoundInstance existing = ACTIVE_SOUNDS.get(key);
+
+        // If the map has a sound for a *different* BE instance at this position (e.g. after a
+        // chunk reload which recreates the BE object), stop the stale sound immediately so a
+        // fresh one can be created for the new BE.
+        if (existing != null && !existing.isStopped() && !existing.isFor(blockEntity)) {
+            existing.halt();
+            ACTIVE_SOUNDS.remove(key);
+            existing = null;
+        }
 
         if (!active) {
             if (existing != null) {
@@ -49,8 +61,6 @@ public final class ThrusterLoopSoundController {
             ACTIVE_SOUNDS.put(key, instance);
             minecraft.getSoundManager().play(instance);
         }
-
-        cleanupStopped();
     }
 
     private static void cleanupStopped() {
@@ -121,6 +131,10 @@ public final class ThrusterLoopSoundController {
                 this.volume = baseVolume * proximityFactor;
             }
             this.pitch = 0.85f + (0.25f * power);
+        }
+
+        boolean isFor(final AbstractThrusterBlockEntity be) {
+            return this.blockEntity == be;
         }
 
         private void halt() {
