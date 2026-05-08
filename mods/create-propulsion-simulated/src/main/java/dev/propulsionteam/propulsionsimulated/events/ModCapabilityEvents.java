@@ -6,15 +6,10 @@ import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.Liquid
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.PassthroughFluidHandler;
 import dev.propulsionteam.propulsionsimulated.content.cable.hub.CableHubBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.platinum.CoralGeneratorBlockEntity;
-import dev.propulsionteam.propulsionsimulated.content.heat.engine.StirlingEngineBlockEntity;
-import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionBlockEntity;
-import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterBlockEntity;
-import dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterBlockEntity;
-import dev.propulsionteam.propulsionsimulated.content.thruster.creative_vector_thruster.CreativeVectorThrusterBlockEntity;
-import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.LiquidVectorThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ion_thruster.IonThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.liquid_vector_thruster.LiquidVectorThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
-import dev.propulsionteam.propulsionsimulated.content.thruster.IonThrusterBlockEntity;
 import net.minecraft.core.Direction;
 import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.capabilities.Capabilities;

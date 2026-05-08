@@ -318,7 +318,7 @@ public class PropulsionConfig {
     }
 
     private static List<String> defaultCoralFuelConversionRates() {
-        return new ArrayList<>(List.of("createpropulsion:coral=16"));
+        return new ArrayList<>(List.of("createpropulsion:coral=200"));
     }
 
 

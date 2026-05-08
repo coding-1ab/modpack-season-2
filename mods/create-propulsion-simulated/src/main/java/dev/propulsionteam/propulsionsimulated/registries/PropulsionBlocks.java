@@ -14,9 +14,9 @@ import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.Reds
 import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.creative_vector_thruster.CreativeVectorThrusterBlock;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ion_thruster.IonThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlock;
-import dev.propulsionteam.propulsionsimulated.content.thruster.IonThrusterBlock;
-import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.LiquidVectorThrusterBlock;
+import dev.propulsionteam.propulsionsimulated.content.thruster.liquid_vector_thruster.LiquidVectorThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.wing.CopycatWingBlock;
 import dev.propulsionteam.propulsionsimulated.content.wing.CopycatWingItem;

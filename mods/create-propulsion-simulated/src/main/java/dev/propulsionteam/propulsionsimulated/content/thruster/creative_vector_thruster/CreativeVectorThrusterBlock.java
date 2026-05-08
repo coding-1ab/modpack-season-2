@@ -1,5 +1,7 @@
 package dev.propulsionteam.propulsionsimulated.content.thruster.creative_vector_thruster;
 
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+
 import com.mojang.serialization.MapCodec;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntityTicker;

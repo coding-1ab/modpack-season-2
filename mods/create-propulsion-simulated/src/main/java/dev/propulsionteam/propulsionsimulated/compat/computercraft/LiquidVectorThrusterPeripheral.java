@@ -3,7 +3,7 @@ package dev.propulsionteam.propulsionsimulated.compat.computercraft;
 import com.simibubi.create.compat.computercraft.implementation.peripherals.SyncedPeripheral;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
-import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.LiquidVectorThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.liquid_vector_thruster.LiquidVectorThrusterBlockEntity;
 import net.minecraft.util.Mth;
 
 public class LiquidVectorThrusterPeripheral extends SyncedPeripheral<LiquidVectorThrusterBlockEntity> {
@@ -66,4 +66,3 @@ public class LiquidVectorThrusterPeripheral extends SyncedPeripheral<LiquidVecto
         throw new LuaException("setThrustOutput is only available on creative vector thrusters");
     }
 }
-

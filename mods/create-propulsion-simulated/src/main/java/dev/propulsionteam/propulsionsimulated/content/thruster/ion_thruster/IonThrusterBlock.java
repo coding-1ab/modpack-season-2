@@ -1,4 +1,9 @@
-package dev.propulsionteam.propulsionsimulated.content.thruster;
+package dev.propulsionteam.propulsionsimulated.content.thruster.ion_thruster;
+
+import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlock;
+import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterShapes;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 import com.mojang.serialization.MapCodec;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;

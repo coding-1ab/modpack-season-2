@@ -1,6 +1,5 @@
 package dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster;
 
-import dev.propulsionteam.propulsionsimulated.content.thruster.IonThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import dev.propulsionteam.propulsionsimulated.particles.ion.IonParticleData;
 import net.minecraft.core.BlockPos;
@@ -15,6 +14,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlock;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ion_thruster.IonThrusterBlockEntity;
+
 import java.util.List;
 import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.math.VecHelper;
@@ -212,7 +213,7 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
 
     @Override
     public void calculateObstruction(Level level, BlockPos pos, Direction forwardDirection) {
-        int scanLength = OBSTRUCTION_LENGTH;
+        int scanLength = PropulsionConfig.OBSTRUCTION_SCAN_LENGTH.get();
         ObstructionRaySample sample = sampleObstructionRaycast(level, scanLength);
         double firstHitDistance = sample.firstHitDistance();
         float newEfficiency = scanLength <= 0
@@ -304,13 +305,14 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
             prevVectorY = currentVectorY;
             if (clientPacket) clientInitialized = true;
         }
+        int scanLength = PropulsionConfig.OBSTRUCTION_SCAN_LENGTH.get();
         obstructionEfficiency = compound.contains("ObstructionEfficiency")
             ? compound.getFloat("ObstructionEfficiency")
-            : (OBSTRUCTION_LENGTH <= 0 ? 0.0f : Math.clamp((float) emptyBlocks / (float) OBSTRUCTION_LENGTH, 0.0f, 1.0f));
+            : (scanLength <= 0 ? 0.0f : Math.clamp((float) emptyBlocks / (float) scanLength, 0.0f, 1.0f));
     }
 
     @Override
-    public double getNozzleOffsetFromCenter() { return 0.5; }
+    public double getNozzleOffsetFromCenter() { return PropulsionConfig.NOZZLE_OFFSET_FROM_CENTER.get(); }
 
     @Override
     protected double getBaseThrust() { return PropulsionConfig.VECTOR_THRUSTER_BASE_THRUST.get(); }

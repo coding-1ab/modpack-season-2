@@ -9,6 +9,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.ValueBox;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxRenderer;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.utility.CreateLang;
+import dev.propulsionteam.propulsionsimulated.content.thruster.liquid_vector_thruster.LiquidVectorThrusterBlockEntity;
 import dev.ryanhcode.sable.Sable;
 import java.util.ArrayList;
 import java.util.List;
@@ -144,5 +145,3 @@ public class VectorRedstoneLinkRenderer {
         }
     }
 }
-
-

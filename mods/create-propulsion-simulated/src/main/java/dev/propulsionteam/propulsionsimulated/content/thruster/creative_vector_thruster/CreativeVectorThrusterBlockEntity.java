@@ -130,11 +130,12 @@ public class CreativeVectorThrusterBlockEntity extends VectorThrusterBlockEntity
     protected void addThrusterDetails(List<Component> tooltip, boolean isPlayerSneaking) {
         float obstructionEfficiency = 100;
         ChatFormatting tooltipColor = ChatFormatting.GREEN;
-        if (emptyBlocks < OBSTRUCTION_LENGTH) {
+        int scanLength = PropulsionConfig.OBSTRUCTION_SCAN_LENGTH.get();
+        if (emptyBlocks < scanLength) {
             obstructionEfficiency = calculateObstructionEffect() * 100;
             tooltipColor = GoggleUtils.efficiencyColor(obstructionEfficiency);
             CreateLang.builder().add(Component.translatable("createpropulsion.gui.goggles.thruster.obstructed")).space()
-                    .add(CreateLang.text(GoggleUtils.makeObstructionBar(emptyBlocks, OBSTRUCTION_LENGTH))).style(tooltipColor).forGoggles(tooltip);
+                    .add(CreateLang.text(GoggleUtils.makeObstructionBar(emptyBlocks, scanLength))).style(tooltipColor).forGoggles(tooltip);
         }
 
         CreateLang.builder()
@@ -215,7 +216,7 @@ public class CreativeVectorThrusterBlockEntity extends VectorThrusterBlockEntity
 
     @Override
     public void calculateObstruction(Level level, BlockPos pos, Direction forwardDirection) {
-        this.emptyBlocks = OBSTRUCTION_LENGTH;
+        this.emptyBlocks = PropulsionConfig.OBSTRUCTION_SCAN_LENGTH.get();
     }
 
     @Override

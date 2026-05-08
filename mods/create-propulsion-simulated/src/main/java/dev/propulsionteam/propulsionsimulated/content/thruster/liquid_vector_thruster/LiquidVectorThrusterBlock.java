@@ -1,8 +1,11 @@
-package dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster;
+package dev.propulsionteam.propulsionsimulated.content.thruster.liquid_vector_thruster;
+
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 import com.mojang.serialization.MapCodec;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterShapes;
+import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -29,11 +32,6 @@ public class LiquidVectorThrusterBlock extends VectorThrusterBlock {
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         Direction facing = state.getValue(FACING);
-        if (facing == Direction.UP) {
-            return ThrusterShapes.VECTOR_THRUSTER.get(Direction.DOWN);
-        } else if (facing == Direction.DOWN) {
-            return ThrusterShapes.VECTOR_THRUSTER.get(Direction.UP);
-        }
         return ThrusterShapes.VECTOR_THRUSTER.get(facing);
     }
 
@@ -49,8 +47,7 @@ public class LiquidVectorThrusterBlock extends VectorThrusterBlock {
     }
 
     @Override
-    public BlockEntityType<? extends AbstractThrusterBlockEntity> getBlockEntityType() {
+    public BlockEntityType<? extends LiquidVectorThrusterBlockEntity> getBlockEntityType() {
         return PropulsionBlockEntities.LIQUID_VECTOR_THRUSTER_BLOCK_ENTITY.get();
     }
 }
-

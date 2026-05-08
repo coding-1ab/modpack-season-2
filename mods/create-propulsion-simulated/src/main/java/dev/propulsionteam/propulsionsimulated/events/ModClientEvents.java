@@ -19,9 +19,9 @@ import dev.propulsionteam.propulsionsimulated.registries.PropulsionInstanceTypes
 import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterRenderer;
 import dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterRenderer;
 import dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterVisual;
-import dev.propulsionteam.propulsionsimulated.content.thruster.IonThrusterRenderer;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ion_thruster.IonThrusterRenderer;
+import dev.propulsionteam.propulsionsimulated.content.thruster.liquid_vector_thruster.LiquidVectorThrusterRenderer;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterRenderer;
-import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.LiquidVectorThrusterRenderer;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionFluids;
 
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
@@ -172,5 +172,3 @@ public class ModClientEvents {
             model -> new CTModel(model, behaviour));
     }
 }
-
-

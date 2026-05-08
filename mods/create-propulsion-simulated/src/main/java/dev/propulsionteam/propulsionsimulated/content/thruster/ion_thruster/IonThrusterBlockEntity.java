@@ -1,4 +1,6 @@
-package dev.propulsionteam.propulsionsimulated.content.thruster;
+package dev.propulsionteam.propulsionsimulated.content.thruster.ion_thruster;
+
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterDamager;
 
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;

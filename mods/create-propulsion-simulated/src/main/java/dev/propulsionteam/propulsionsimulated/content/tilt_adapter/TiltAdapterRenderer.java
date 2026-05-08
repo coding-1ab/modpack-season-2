@@ -103,7 +103,6 @@ public class TiltAdapterRenderer extends KineticBlockEntityRenderer<TiltAdapterB
 
         offset = -(0.5f + 4) / 16.0f;
         translateInDirection(ms, offsetDirection, offset);
-        //TODO: Rotate only if signal changed
         gantry.rotateCentered(angle, rotationDirection).color(color).light(light).renderInto(ms, buffer.getBuffer(RenderType.solid()));
 
         ms.popPose();

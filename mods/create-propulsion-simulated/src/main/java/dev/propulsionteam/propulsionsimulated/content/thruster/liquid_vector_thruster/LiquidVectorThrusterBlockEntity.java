@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster;
+package dev.propulsionteam.propulsionsimulated.content.thruster.liquid_vector_thruster;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -6,13 +6,12 @@ import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
-import dev.propulsionteam.propulsionsimulated.particles.plume.PlumeParticleData;
+import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorRedstoneLinkBehaviour;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
@@ -121,22 +120,12 @@ public class LiquidVectorThrusterBlockEntity extends ThrusterBlockEntity {
         return Mth.lerp(partialTick, prevFlapProgress, currentFlapProgress);
     }
 
-    public float getTargetVectorX() {
-        return targetVectorX;
-    }
+    public float getTargetVectorX() { return targetVectorX; }
+    public float getTargetVectorY() { return targetVectorY; }
+    public float getCurrentVectorX() { return currentVectorX; }
+    public float getCurrentVectorY() { return currentVectorY; }
 
-    public float getTargetVectorY() {
-        return targetVectorY;
-    }
-
-    public float getCurrentVectorX() {
-        return currentVectorX;
-    }
-
-    public float getCurrentVectorY() {
-        return currentVectorY;
-    }
-
+    /** Sets the four directional signals to produce the given -1..1 vector. */
     public void setVectorCoordinates(float x, float y) {
         westSignal = x > 0 ? Math.round(x * 15) : 0;
         eastSignal = x < 0 ? Math.round(-x * 15) : 0;
@@ -219,7 +208,7 @@ public class LiquidVectorThrusterBlockEntity extends ThrusterBlockEntity {
 
     @Override
     public void calculateObstruction(Level level, BlockPos pos, Direction forwardDirection) {
-        int scanLength = OBSTRUCTION_LENGTH;
+        int scanLength = PropulsionConfig.OBSTRUCTION_SCAN_LENGTH.get();
         ObstructionRaySample sample = sampleObstructionRaycast(level, scanLength);
         double firstHitDistance = sample.firstHitDistance();
         float newEfficiency = scanLength <= 0
@@ -284,6 +273,31 @@ public class LiquidVectorThrusterBlockEntity extends ThrusterBlockEntity {
     }
 
     @Override
+    public double getNozzleOffsetFromCenter() {
+        return PropulsionConfig.NOZZLE_OFFSET_FROM_CENTER.get();
+    }
+
+    @Override
+    protected double getBaseThrust() {
+        return PropulsionConfig.getLiquidVectorThrusterBaseThrustOrDefault();
+    }
+
+    @Override
+    protected double getRawThrustCap() {
+        return PropulsionConfig.getLiquidVectorThrusterBaseThrustOrDefault();
+    }
+
+    @Override
+    protected int getBaseTankCapacityMb() {
+        return PropulsionConfig.getLiquidVectorThrusterFuelTankCapacityMbOrDefault();
+    }
+
+    @Override
+    protected double getFuelConsumptionPerTickAtFullThrottle() {
+        return PropulsionConfig.getLiquidVectorThrusterFuelMbPerTickAtFullThrottleOrDefault();
+    }
+
+    @Override
     protected void write(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
         super.write(compound, registries, clientPacket);
         compound.putInt("WestSignal", westSignal);
@@ -314,39 +328,10 @@ public class LiquidVectorThrusterBlockEntity extends ThrusterBlockEntity {
             prevVectorY = currentVectorY;
             if (clientPacket) clientInitialized = true;
         }
+        int scanLength = PropulsionConfig.OBSTRUCTION_SCAN_LENGTH.get();
         obstructionEfficiency = compound.contains("ObstructionEfficiency")
             ? compound.getFloat("ObstructionEfficiency")
-            : (OBSTRUCTION_LENGTH <= 0 ? 0.0f : Math.clamp((float) emptyBlocks / (float) OBSTRUCTION_LENGTH, 0.0f, 1.0f));
-    }
-
-    @Override
-    public double getNozzleOffsetFromCenter() {
-        return 0.5;
-    }
-
-    @Override
-    protected double getBaseThrust() {
-        return PropulsionConfig.getLiquidVectorThrusterBaseThrustOrDefault();
-    }
-
-    @Override
-    protected double getRawThrustCap() {
-        return PropulsionConfig.getLiquidVectorThrusterBaseThrustOrDefault();
-    }
-
-    @Override
-    protected int getBaseTankCapacityMb() {
-        return PropulsionConfig.getLiquidVectorThrusterFuelTankCapacityMbOrDefault();
-    }
-
-    @Override
-    protected double getFuelConsumptionPerTickAtFullThrottle() {
-        return PropulsionConfig.getLiquidVectorThrusterFuelMbPerTickAtFullThrottleOrDefault();
-    }
-
-    @Override
-    protected ParticleOptions createParticleOptions() {
-        return new PlumeParticleData();
+            : (scanLength <= 0 ? 0.0f : Math.clamp((float) emptyBlocks / (float) scanLength, 0.0f, 1.0f));
     }
 
     private static class VectorThrusterLinkTransform extends ValueBoxTransform.Dual {

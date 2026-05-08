@@ -45,7 +45,6 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     protected static final double PN_PER_SABLE_FORCE_UNIT = 1500.0d;
     protected static final double PARTICLE_BROADCAST_RANGE_BLOCKS = 150.0d;
     //Constants
-    protected static final int OBSTRUCTION_LENGTH = 10;
     protected static final int TICKS_PER_ENTITY_CHECK = 5;
     protected static final float PARTICLE_VELOCITY = 4.0f;
     /** Used by server emit logic and client preview so plume segments stay visually continuous. */
@@ -304,7 +303,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     }
 
     protected float calculateObstructionEffect() {
-        return (float) emptyBlocks / (float) OBSTRUCTION_LENGTH;
+        return (float) emptyBlocks / (float) PropulsionConfig.OBSTRUCTION_SCAN_LENGTH.get();
     }
 
     protected ParticleOptions createParticleOptions() {
@@ -604,7 +603,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     public void calculateObstruction(Level level, BlockPos pos, Direction forwardDirection){
         // Raycast in world space so sublevel thrusters correctly collide against real-world blocks.
         int oldEmptyBlocks = this.emptyBlocks;
-        ObstructionRaySample sample = sampleObstructionRaycast(level, OBSTRUCTION_LENGTH);
+        ObstructionRaySample sample = sampleObstructionRaycast(level, PropulsionConfig.OBSTRUCTION_SCAN_LENGTH.get());
         this.emptyBlocks = sample.emptyBlocksEstimate();
         if (oldEmptyBlocks != this.emptyBlocks) { //Only set dirty if it actually changed
             isThrustDirty = true;
@@ -631,10 +630,11 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     protected void addThrusterDetails(List<Component> tooltip, boolean isPlayerSneaking) {
         float obstructionEfficiency = 100;
         ChatFormatting tooltipColor = ChatFormatting.GREEN;
-        if (emptyBlocks < OBSTRUCTION_LENGTH) {
+        int scanLength = PropulsionConfig.OBSTRUCTION_SCAN_LENGTH.get();
+        if (emptyBlocks < scanLength) {
             obstructionEfficiency = calculateObstructionEffect() * 100;
             tooltipColor = GoggleUtils.efficiencyColor(obstructionEfficiency);
-            CreateLang.builder().add(Component.translatable("createpropulsion.gui.goggles.thruster.obstructed")).space().add(CreateLang.text(GoggleUtils.makeObstructionBar(emptyBlocks, OBSTRUCTION_LENGTH))).style(tooltipColor).forGoggles(tooltip);
+            CreateLang.builder().add(Component.translatable("createpropulsion.gui.goggles.thruster.obstructed")).space().add(CreateLang.text(GoggleUtils.makeObstructionBar(emptyBlocks, scanLength))).style(tooltipColor).forGoggles(tooltip);
         }
 
         // Show efficiency based only on block obstruction (100 = no obstruction)

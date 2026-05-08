@@ -87,7 +87,7 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
 
     @Override
     public void calculateObstruction(Level level, BlockPos pos, Direction forwardDirection) {
-        this.emptyBlocks = OBSTRUCTION_LENGTH;
+        this.emptyBlocks = PropulsionConfig.OBSTRUCTION_SCAN_LENGTH.get();
     }
 
     // Particles

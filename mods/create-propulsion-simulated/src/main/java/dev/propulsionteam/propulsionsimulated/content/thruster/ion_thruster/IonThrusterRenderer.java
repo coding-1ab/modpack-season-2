@@ -1,4 +1,4 @@
-package dev.propulsionteam.propulsionsimulated.content.thruster;
+package dev.propulsionteam.propulsionsimulated.content.thruster.ion_thruster;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
