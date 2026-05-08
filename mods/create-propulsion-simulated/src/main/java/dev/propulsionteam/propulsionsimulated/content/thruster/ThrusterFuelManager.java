@@ -120,6 +120,8 @@ public class ThrusterFuelManager extends SimpleJsonResourceReloadListener {
         //Parse datapacks
         profiler.push(CreatePropulsion.ID + ":Loading_thruster_fuels");
         fuelPropertiesMap = parseFuelProperties(pObject);
+        // Add fuels from config that might not be in datapacks
+        mergeConfigProperties(fuelPropertiesMap);
         profiler.pop();
         //Update clients (happens only on /reload as on server start server instance is still null)
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
@@ -309,6 +311,37 @@ public class ThrusterFuelManager extends SimpleJsonResourceReloadListener {
         }
 
         return overrides;
+    }
+
+    private static void mergeConfigProperties(Map<Fluid, FluidThrusterProperties> map) {
+        Map<ResourceLocation, Float> consumptionOverrides = getConfiguredConsumptionOverrides();
+        for (ResourceLocation fluidId : consumptionOverrides.keySet()) {
+            Fluid fluid = BuiltInRegistries.FLUID.get(fluidId);
+            if (fluid == null || fluid == Fluids.EMPTY) continue;
+            
+            if (!map.containsKey(fluid)) {
+                map.put(fluid, new FluidThrusterProperties(
+                    1.0f,
+                    consumptionOverrides.get(fluidId),
+                    ThrusterParticleType.PLUME,
+                    List.of(),
+                    null,
+                    false
+                ));
+            } else {
+                FluidThrusterProperties existing = map.get(fluid);
+                if (java.lang.Math.abs(existing.consumptionMultiplier() - consumptionOverrides.get(fluidId)) > 1e-4) {
+                     map.put(fluid, new FluidThrusterProperties(
+                        existing.thrustMultiplier(),
+                        consumptionOverrides.get(fluidId),
+                        existing.particleType(),
+                        existing.overrideTextures(),
+                        existing.overrideColor(),
+                        existing.useFluidColor()
+                    ));
+                }
+            }
+        }
     }
 
     private static void syncFuelDataToClients() {

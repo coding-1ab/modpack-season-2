@@ -15,6 +15,7 @@ import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.block.BlockSubLevelAssemblyListener;
 import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
@@ -57,6 +58,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
 
     //Common State
     protected ThrusterData thrusterData;
+    public int width = 1;
     protected String dyeId = null;
     protected int emptyBlocks;
     protected boolean isThrustDirty = false;
@@ -616,7 +618,11 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         calculateObstruction(getLevel(), worldPosition, getBlockState().getValue(AbstractThrusterBlock.FACING));
         isThrustDirty = wasThrustDirty;
 
-        CreateLang.builder().add(getBlockState().getBlock().getName()).style(ChatFormatting.WHITE).forGoggles(tooltip);
+        MutableComponent title = getBlockState().getBlock().getName().copy();
+        if (width > 1) {
+            title.append(Component.literal(" (" + width + "x" + width + "x" + width + ")").withStyle(ChatFormatting.GRAY));
+        }
+        CreateLang.builder().add(title).style(ChatFormatting.WHITE).forGoggles(tooltip);
         CreateLang.builder().add(Component.translatable("createpropulsion.gui.goggles.thruster.status")).text(": ").add(getGoggleStatus()).forGoggles(tooltip);
 
         addThrusterDetails(tooltip, isPlayerSneaking);

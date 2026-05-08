@@ -394,11 +394,11 @@ public class LiquidVectorThrusterBlockEntity extends ThrusterBlockEntity {
         private Vec3 rotateDirectionForFacing(Vec3 vec, Direction blockFacing) {
             return switch (blockFacing) {
                 case NORTH -> vec;
-                case EAST -> VecHelper.rotate(vec, -90, Direction.Axis.Y);
+                case EAST  -> VecHelper.rotate(vec, -90, Direction.Axis.Y);
                 case SOUTH -> VecHelper.rotate(vec, 180, Direction.Axis.Y);
-                case WEST -> VecHelper.rotate(vec, 90, Direction.Axis.Y);
-                case UP -> VecHelper.rotate(vec, 90, Direction.Axis.X);
-                case DOWN -> VecHelper.rotate(vec, -90, Direction.Axis.X);
+                case WEST  -> VecHelper.rotate(vec, 90, Direction.Axis.Y);
+                case UP    -> VecHelper.rotate(vec, 90, Direction.Axis.X);
+                case DOWN  -> VecHelper.rotate(vec, -90, Direction.Axis.X);
             };
         }
     }
