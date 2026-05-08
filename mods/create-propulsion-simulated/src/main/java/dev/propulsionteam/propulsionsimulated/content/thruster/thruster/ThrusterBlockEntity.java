@@ -430,33 +430,33 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                 final int tickRate = 10;
                 double baseConsumption = calculateFuelConsumption(currentPower, properties.consumptionMultiplier(), tickRate);
                 
-                double fuelNeededDouble = baseConsumption * (double) n * getMultiblockFuelEfficiency(width);
-                double oxNeededDouble = baseConsumption * (double) n * getMultiblockOxidizerEfficiency(width);
-
+                boolean canUseOxidizer = validOxidizer();
+                double fuelEff = canUseOxidizer ? getMultiblockFuelEfficiency(width) : 1.0f;
+                double fuelNeededDouble = baseConsumption * (double) n * fuelEff;
                 int fuelNeeded = consumeFuelWithAccumulator(fuelNeededDouble);
-                int oxNeeded = consumeOxidizerWithAccumulator(oxNeededDouble);
 
                 FluidStack fuelSim = tank.getPrimaryHandler().drain(fuelNeeded, IFluidHandler.FluidAction.SIMULATE);
-                FluidStack oxSim = oxidizerTank.getPrimaryHandler().drain(oxNeeded, IFluidHandler.FluidAction.SIMULATE);
                 int fuelAvail = fuelSim.getAmount();
-                int oxAvail = oxSim.getAmount();
-
                 float fuelRatio = fuelNeeded > 0 ? (float) fuelAvail / (float) fuelNeeded : 0.0f;
-                float oxRatio = oxNeeded > 0 ? (float) oxAvail / (float) oxNeeded : 0.0f;
-                float limitRatio = Math.min(fuelRatio, oxRatio);
 
-                if (limitRatio > 0) {
-                    int fuelActual = (int) (fuelNeeded * limitRatio);
-                    int oxActual = (int) (oxNeeded * limitRatio);
+                if (fuelRatio > 0) {
+                    int fuelActual = (int) (fuelNeeded * fuelRatio);
                     tank.getPrimaryHandler().drain(fuelActual, IFluidHandler.FluidAction.EXECUTE);
-                    oxidizerTank.getPrimaryHandler().drain(oxActual, IFluidHandler.FluidAction.EXECUTE);
+                    
+                    if (canUseOxidizer) {
+                        double oxNeededDouble = baseConsumption * (double) n * getMultiblockOxidizerEfficiency(width);
+                        int oxToDrain = consumeOxidizerWithAccumulator(oxNeededDouble * fuelRatio);
+                        if (oxToDrain > 0) {
+                            oxidizerTank.getPrimaryHandler().drain(oxToDrain, IFluidHandler.FluidAction.EXECUTE);
+                        }
+                        lastOxidizerConsumedMbPerTick = (double) oxToDrain / (double) tickRate;
+                    }
 
                     float fuelEfficiency = ThrusterFuelManager.getEfficiency(fluidStack().getFluid());
                     float baseThrustPn = (float) (dev.propulsionteam.propulsionsimulated.PropulsionConfig.BASE_THRUST.get() * 1000.0);
                     baseThrustPn *= (float) calculateAtmosphericFactor();
-                    totalThrust = baseThrustPn * thrustPercentage * properties.thrustMultiplier() * fuelEfficiency * limitRatio * n * getMultiblockThrustMultiplier(width);
+                    totalThrust = baseThrustPn * thrustPercentage * properties.thrustMultiplier() * fuelEfficiency * fuelRatio * n * getMultiblockThrustMultiplier(width);
                     lastConsumedMbPerTick = (double) fuelActual / (double) tickRate;
-                    lastOxidizerConsumedMbPerTick = (double) oxActual / (double) tickRate;
                 }
             }
         }
@@ -650,9 +650,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
 
     @Override
     protected boolean isWorking() {
-        if (!validFluid()) return false;
-        if (isMultiblock() && !validOxidizer()) return false;
-        return true;
+        return validFluid();
     }
 
     @Override
@@ -854,10 +852,14 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             int fuelSavePct = java.lang.Math.round((1.0f - fuelEff) * 100.0f);
             int oxSavePct   = java.lang.Math.round((1.0f - oxEff)   * 100.0f);
             if (fuelSavePct > 0 || oxSavePct > 0) {
-                // Header line in blue
+                // Header line: "Efficiency Bonus: (Active)"
                 tooltip.add(CreateLang.builder()
                     .add(Component.translatable("createpropulsion.gui.goggles.thruster.bulk_bonus"))
                     .text(":")
+                    .space()
+                    .add(ctrl.validOxidizer() ? 
+                        Component.translatable("createpropulsion.gui.goggles.thruster.bulk_bonus_active").withStyle(ChatFormatting.GREEN) :
+                        Component.translatable("createpropulsion.gui.goggles.thruster.bulk_bonus_inactive").withStyle(ChatFormatting.RED))
                     .style(ChatFormatting.AQUA)
                     .component());
                 

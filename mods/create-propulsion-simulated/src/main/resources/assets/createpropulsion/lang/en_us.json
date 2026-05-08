@@ -121,6 +121,8 @@
     "createpropulsion.gui.goggles.thruster.oxidizer_label": "Oxidizer",
     "createpropulsion.gui.goggles.thruster.size": " Size",
     "createpropulsion.gui.goggles.thruster.bulk_bonus": "Efficiency Bonus",
+    "createpropulsion.gui.goggles.thruster.bulk_bonus_active": "(Active)",
+    "createpropulsion.gui.goggles.thruster.bulk_bonus_inactive": "(Missing Oxidizer)",
     "createpropulsion.gui.goggles.thruster.status.no_oxidizer": "No Oxidizer",
     "createpropulsion.gui.goggles.thruster.energy_container": "Energy Storage",
     "createpropulsion.gui.goggles.thruster.consumption": "Consumption:",

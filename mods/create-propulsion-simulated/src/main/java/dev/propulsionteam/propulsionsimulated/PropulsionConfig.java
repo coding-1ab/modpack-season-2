@@ -143,9 +143,9 @@ public class PropulsionConfig {
             MULTIBLOCK_3X_THRUST_MULTIPLIER = SERVER_BUILDER.comment("Thrust multiplier for a 3x3x3 multiblock thruster (e.g. 1.25 = 25% bonus).")
                 .defineInRange("multiblock3xThrustMultiplier", 1.5d, 0.01d, 10.0d);
             MULTIBLOCK_2X_FUEL_EFFICIENCY = SERVER_BUILDER.comment("Fuel cost multiplier for a 2x2x2 multiblock thruster (e.g. 1.0 = no reduction, 0.8 = 20% cheaper).")
-                .defineInRange("multiblock2xFuelEfficiency", 0.8d, 0.01d, 10.0d);
+                .defineInRange("multiblock2xFuelEfficiency", 0.6d, 0.01d, 10.0d);
             MULTIBLOCK_3X_FUEL_EFFICIENCY = SERVER_BUILDER.comment("Fuel cost multiplier for a 3x3x3 multiblock thruster (e.g. 0.95 = 5% cheaper).")
-                .defineInRange("multiblock3xFuelEfficiency", 0.6d, 0.01d, 10.0d);
+                .defineInRange("multiblock3xFuelEfficiency", 0.4d, 0.01d, 10.0d);
             MULTIBLOCK_2X_OXIDIZER_EFFICIENCY = SERVER_BUILDER.comment("Oxidizer cost multiplier for a 2x2x2 multiblock thruster. 0.85 = 15% savings.")
                 .defineInRange("multiblock2xOxidizerEfficiency", 0.85d, 0.01d, 10.0d);
             MULTIBLOCK_3X_OXIDIZER_EFFICIENCY = SERVER_BUILDER.comment("Oxidizer cost multiplier for a 3x3x3 multiblock thruster. 0.75 = 25% savings.")
