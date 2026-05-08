@@ -13,7 +13,6 @@ import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.fml.loading.progress.ProgressMeter;
 import net.neoforged.fml.loading.progress.StartupNotificationManager;
 import net.neoforged.neoforgespi.locating.*;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -283,7 +282,8 @@ public class UpdatingLocator implements IDependencyLocator {
         if (modFile.exists()) {
             String hash;
             try {
-                hash = DigestUtils.sha1Hex(Files.newInputStream(modPath, StandardOpenOption.READ));
+                byte[] modContents = Files.readAllBytes(modPath);
+                hash = sha1Hash(modContents, (int) modFile.length());
             } catch (IOException e) {
                 throw checksumIoException(e);
             }
