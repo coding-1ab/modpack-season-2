@@ -141,6 +141,7 @@ public abstract class AbstractBurnerBlockEntity extends SmartBlockEntity impleme
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        CreateLang.builder().add(getBlockState().getBlock().getName()).style(ChatFormatting.WHITE).forGoggles(tooltip);
         addHeatInfoToTooltip(tooltip);
         addSpecificTooltip(tooltip, isPlayerSneaking);
         return true;

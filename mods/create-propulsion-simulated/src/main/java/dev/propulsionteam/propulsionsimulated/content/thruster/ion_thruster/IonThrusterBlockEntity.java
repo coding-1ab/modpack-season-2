@@ -267,22 +267,24 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
         super.addThrusterDetails(tooltip, isPlayerSneaking);
         
         // Storage line: "Energy Storage: 100 / 1000 FE"
-        tooltip.add(CreateLang.builder()
+        CreateLang.builder()
                 .add(Component.translatable("createpropulsion.gui.goggles.thruster.energy_container"))
                 .style(ChatFormatting.WHITE)
-                .add(Component.literal(" "))
+                .add(Component.literal(": "))
                 .add(Component.literal(Integer.toString(this.energyStored)).withStyle(ChatFormatting.AQUA))
                 .add(Component.literal(" / ").withStyle(ChatFormatting.GRAY))
                 .add(Component.literal(Integer.toString(this.getEnergyCapacity())).withStyle(ChatFormatting.AQUA))
                 .add(Component.literal(" FE").withStyle(ChatFormatting.GRAY))
-                .component());
+                .forGoggles(tooltip);
 
         // Consumption line: "  Consumption: 0.0 FE/t"
-        tooltip.add(Component.literal("  ")
-                .append(Component.translatable("createpropulsion.gui.goggles.thruster.consumption").withStyle(ChatFormatting.WHITE))
-                .append(Component.literal(" "))
-                .append(Component.literal(String.format(java.util.Locale.ROOT, "%.1f", this.lastConsumedFePerTick)).withStyle(ChatFormatting.AQUA))
-                .append(Component.literal(" FE/t").withStyle(ChatFormatting.GRAY)));
+        CreateLang.builder()
+                .add(Component.literal("  "))
+                .add(Component.translatable("createpropulsion.gui.goggles.thruster.consumption").withStyle(ChatFormatting.WHITE))
+                .add(Component.literal(" "))
+                .add(Component.literal(String.format(java.util.Locale.ROOT, "%.1f", this.lastConsumedFePerTick)).withStyle(ChatFormatting.AQUA))
+                .add(Component.literal(" FE/t").withStyle(ChatFormatting.GRAY))
+                .forGoggles(tooltip);
     }
 
     @Override

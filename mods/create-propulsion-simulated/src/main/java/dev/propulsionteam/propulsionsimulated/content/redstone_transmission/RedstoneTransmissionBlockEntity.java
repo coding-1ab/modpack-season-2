@@ -216,6 +216,8 @@ public class RedstoneTransmissionBlockEntity extends SplitShaftBlockEntity {
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        CreateLang.builder().add(getBlockState().getBlock().getName()).style(ChatFormatting.WHITE).forGoggles(tooltip);
+
         //"Transmission Mode: Direct"
         Component selectedMode = Component.translatable(controlMode.get().getTranslationKey());
         CreateLang.builder()
@@ -226,7 +228,7 @@ public class RedstoneTransmissionBlockEntity extends SplitShaftBlockEntity {
 
         CreateLang.builder()
             .add(Component.translatable("createpropulsion.gui.goggles.redstone_transmission.internal_shift_title"))
-            .text(":")
+            .text(": ")
             .style(ChatFormatting.GRAY)
             .forGoggles(tooltip);
 
@@ -242,6 +244,7 @@ public class RedstoneTransmissionBlockEntity extends SplitShaftBlockEntity {
         }
 
         CreateLang.builder()
+            .add(Component.literal("  "))
             .add(Component.translatable(
                     "createpropulsion.gui.goggles.redstone_transmission.internal_shift_number",
                     shift_modified,
@@ -252,7 +255,7 @@ public class RedstoneTransmissionBlockEntity extends SplitShaftBlockEntity {
 
         CreateLang.builder()
             .add(Component.translatable("createpropulsion.gui.goggles.redstone_transmission.output"))
-            .text(":")
+            .text(": ")
             .style(ChatFormatting.GRAY)
             .forGoggles(tooltip);
 
