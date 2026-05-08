@@ -1,0 +1,16 @@
+{
+  "type": "create:deploying",
+  "ingredients": [
+    {
+      "item": "create:industrial_iron_block"
+    },
+    {
+      "item": "createpropulsion:platinum_ingot"
+    }
+  ],
+  "results": [
+    {
+      "id": "createpropulsion:platinum_casing"
+    }
+  ]
+}
