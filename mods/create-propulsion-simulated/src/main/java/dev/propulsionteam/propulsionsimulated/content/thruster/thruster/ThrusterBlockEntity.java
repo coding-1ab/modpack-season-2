@@ -41,9 +41,7 @@ import dev.propulsionteam.propulsionsimulated.utility.math.MathUtility;
 import dev.propulsionteam.propulsionsimulated.content.thruster.SimulatedThrustAdapter;
 
 public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
-    public static final float BASE_FUEL_CONSUMPTION = 2;
     public static final int BASE_MAX_THRUST = 600000;
-    public static final int BASE_CAPACITY = 200;
     public static final int MAX_WIDTH = 3;
 
     public SmartFluidTankBehaviour tank;
@@ -69,7 +67,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         super.addBehaviours(behaviours);
-        tank = SmartFluidTankBehaviour.single(this, BASE_CAPACITY);
+        tank = SmartFluidTankBehaviour.single(this, getBaseTankCapacityMb());
         behaviours.add(tank);
         tank.getPrimaryHandler().setValidator(stack -> ThrusterFuelManager.getProperties(stack.getFluid()) != null);
     }
@@ -195,7 +193,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         }
         if (controller == null) return;
 
-        int newCap = BASE_CAPACITY * size * size * size;
+        int newCap = getBaseTankCapacityMb() * size * size * size;
         controller.tank.getPrimaryHandler().setCapacity(newCap);
         controller.tank.getPrimaryHandler().setFluid(trimToCapacity(totalFuel, newCap));
 
@@ -223,7 +221,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
 
         FluidStack fuelPool = tank.getPrimaryHandler().getFluid().copy();
         tank.getPrimaryHandler().setFluid(FluidStack.EMPTY);
-        tank.getPrimaryHandler().setCapacity(BASE_CAPACITY);
+        tank.getPrimaryHandler().setCapacity(getBaseTankCapacityMb());
 
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
@@ -232,7 +230,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                     BlockEntity be = SimulatedThrustAdapter.getBlockEntitySafe(level,pos);
                     if (!(be instanceof ThrusterBlockEntity t)) continue;
                     if (!fuelPool.isEmpty()) {
-                        int take = Math.min(BASE_CAPACITY, fuelPool.getAmount());
+                        int take = Math.min(getBaseTankCapacityMb(), fuelPool.getAmount());
                         FluidStack slice = new FluidStack(fuelPool.getFluid(), take);
                         t.tank.getPrimaryHandler().fill(slice, IFluidHandler.FluidAction.EXECUTE);
                         fuelPool.shrink(take);
@@ -867,7 +865,11 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     }
 
     private double calculateFuelConsumption(float powerPercentage, float fluidPropertiesConsumptionMultiplier, int tickRate) {
-        return BASE_FUEL_CONSUMPTION * powerPercentage * fluidPropertiesConsumptionMultiplier * tickRate;
+        return getFuelConsumptionPerTickAtFullThrottle() * powerPercentage * fluidPropertiesConsumptionMultiplier * tickRate;
+    }
+
+    protected double getFuelConsumptionPerTickAtFullThrottle() {
+        return PropulsionConfig.FUEL_MB_PER_TICK_AT_FULL_THROTTLE.get();
     }
 
     private int consumeFuelWithAccumulator(double requestedAmount) {
@@ -912,8 +914,12 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         }
         updateConnectivity = compound.getBoolean("UpdateConnectivity");
         if (isController() && isMultiblock() && tank != null) {
-            int cap = BASE_CAPACITY * width * width * width;
+            int cap = getBaseTankCapacityMb() * width * width * width;
             tank.getPrimaryHandler().setCapacity(cap);
         }
+    }
+
+    protected int getBaseTankCapacityMb() {
+        return PropulsionConfig.FUEL_TANK_CAPACITY_MB.get();
     }
 }

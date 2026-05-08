@@ -11,6 +11,7 @@ import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.Reds
 import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.LiquidVectorThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterBlockEntity;
 import com.simibubi.create.compat.computercraft.AbstractComputerBehaviour;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
@@ -31,6 +32,7 @@ public class ComputerBehaviour extends AbstractComputerBehaviour {
     static {
         register(ThrusterBlockEntity.class, ThrusterPeripheral::new);
         register(VectorThrusterBlockEntity.class, VectorThrusterPeripheral::new);
+        register(LiquidVectorThrusterBlockEntity.class, LiquidVectorThrusterPeripheral::new);
         register(CreativeThrusterBlockEntity.class, CreativeThrusterPeripheral::new);
         register(CoralGeneratorBlockEntity.class, CoralGeneratorPeripheral::new);
         register(StirlingEngineBlockEntity.class, StirlingEnginePeripheral::new);

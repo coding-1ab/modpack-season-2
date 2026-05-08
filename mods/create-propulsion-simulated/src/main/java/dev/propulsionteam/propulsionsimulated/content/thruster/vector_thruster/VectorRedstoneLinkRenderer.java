@@ -9,6 +9,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.ValueBox;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxRenderer;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.utility.CreateLang;
+import dev.ryanhcode.sable.Sable;
 import java.util.ArrayList;
 import java.util.List;
 import net.createmod.catnip.data.Iterate;
@@ -93,7 +94,37 @@ public class VectorRedstoneLinkRenderer {
                 return;
             float max = com.simibubi.create.infrastructure.config.AllConfigs.client().filterItemRenderDistance.getF();
             if (Minecraft.getInstance().cameraEntity.position()
-                    .distanceToSqr(VecHelper.getCenterOf(be.getBlockPos())) > (max * max))
+                     .distanceToSqr(Sable.HELPER.projectOutOfSubLevel(be.getLevel(), VecHelper.getCenterOf(be.getBlockPos()))) > (max * max))
+                return;
+        }
+
+        VectorRedstoneLinkBehaviour[] links = {
+            be.westLink, be.eastLink, be.downLink, be.upLink
+        };
+
+        for (VectorRedstoneLinkBehaviour behaviour : links) {
+            if (behaviour == null) continue;
+            for (boolean first : Iterate.trueAndFalse) {
+                ValueBoxTransform transform = first ? behaviour.getFirstSlot() : behaviour.getSecondSlot();
+                ms.pushPose();
+                transform.transform(be.getLevel(), be.getBlockPos(), be.getBlockState(), ms);
+                ValueBoxRenderer.renderItemIntoValueBox(behaviour.getFrequency(first).getStack(), ms, buffer, light, overlay);
+                ms.popPose();
+            }
+        }
+    }
+
+    public static void renderOnBlockEntity(LiquidVectorThrusterBlockEntity be, float partialTicks, PoseStack ms,
+            MultiBufferSource buffer, int light, int overlay) {
+        if (be == null || be.isRemoved())
+            return;
+
+        if (!be.isVirtual()) {
+            if (Minecraft.getInstance().cameraEntity == null)
+                return;
+            float max = com.simibubi.create.infrastructure.config.AllConfigs.client().filterItemRenderDistance.getF();
+            if (Minecraft.getInstance().cameraEntity.position()
+                     .distanceToSqr(Sable.HELPER.projectOutOfSubLevel(be.getLevel(), VecHelper.getCenterOf(be.getBlockPos()))) > (max * max))
                 return;
         }
 
@@ -113,3 +144,5 @@ public class VectorRedstoneLinkRenderer {
         }
     }
 }
+
+

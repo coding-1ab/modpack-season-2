@@ -11,6 +11,7 @@ import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.Reds
 import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.creative_vector_thruster.CreativeVectorThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.LiquidVectorThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.IonThrusterBlockEntity;
@@ -26,6 +27,11 @@ public class ModCapabilityEvents {
             Capabilities.FluidHandler.BLOCK,
             PropulsionBlockEntities.THRUSTER_BLOCK_ENTITY.get(),
             ModCapabilityEvents::getThrusterFluidHandler
+        );
+        event.registerBlockEntity(
+            Capabilities.FluidHandler.BLOCK,
+            PropulsionBlockEntities.LIQUID_VECTOR_THRUSTER_BLOCK_ENTITY.get(),
+            ModCapabilityEvents::getLiquidVectorThrusterFluidHandler
         );
 
         event.registerBlockEntity(
@@ -95,6 +101,11 @@ public class ModCapabilityEvents {
             );
             event.registerBlockEntity(
                 capability,
+                PropulsionBlockEntities.LIQUID_VECTOR_THRUSTER_BLOCK_ENTITY.get(),
+                (be, side) -> be.computerBehaviour == null ? null : be.computerBehaviour.getPeripheralCapability()
+            );
+            event.registerBlockEntity(
+                capability,
                 PropulsionBlockEntities.STIRLING_ENGINE_BLOCK_ENTITY.get(),
                 (be, side) -> be.computerBehaviour == null ? null : be.computerBehaviour.getPeripheralCapability()
             );
@@ -119,6 +130,10 @@ public class ModCapabilityEvents {
     }
 
     private static IFluidHandler getThrusterFluidHandler(ThrusterBlockEntity blockEntity, Direction side) {
+        return blockEntity.getFluidHandler(side);
+    }
+
+    private static IFluidHandler getLiquidVectorThrusterFluidHandler(LiquidVectorThrusterBlockEntity blockEntity, Direction side) {
         return blockEntity.getFluidHandler(side);
     }
 

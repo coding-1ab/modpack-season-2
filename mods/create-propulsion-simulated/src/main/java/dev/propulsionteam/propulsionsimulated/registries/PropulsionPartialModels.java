@@ -28,6 +28,12 @@ public class PropulsionPartialModels {
     public static final PartialModel VECTOR_THRUSTER_FLAP_BOTTOM = partial("vector_thruster_flap_bottom");
     public static final PartialModel VECTOR_THRUSTER_FLAP_LEFT = partial("vector_thruster_flap_left");
     public static final PartialModel VECTOR_THRUSTER_FLAP_RIGHT = partial("vector_thruster_flap_right");
+    public static final PartialModel LIQUID_VECTOR_THRUSTER_MOVING_ASSEMBLY = partial("liquid_vector_thruster_moving_assembly");
+    public static final PartialModel LIQUID_VECTOR_THRUSTER_BODY = partial("liquid_vector_thruster_body");
+    public static final PartialModel LIQUID_VECTOR_THRUSTER_FLAP_TOP = partial("liquid_vector_thruster_flap_top");
+    public static final PartialModel LIQUID_VECTOR_THRUSTER_FLAP_BOTTOM = partial("liquid_vector_thruster_flap_bottom");
+    public static final PartialModel LIQUID_VECTOR_THRUSTER_FLAP_LEFT = partial("liquid_vector_thruster_flap_left");
+    public static final PartialModel LIQUID_VECTOR_THRUSTER_FLAP_RIGHT = partial("liquid_vector_thruster_flap_right");
     public static final PartialModel CREATIVE_VECTOR_THRUSTER_MOVING_ASSEMBLY = partial("creative_vector_thruster_moving_assembly");
     public static final PartialModel CREATIVE_VECTOR_THRUSTER_BODY = partial("creative_vector_thruster_body");
     public static final PartialModel CREATIVE_VECTOR_THRUSTER_FLAP_TOP = partial("creative_vector_thruster_flap_top");

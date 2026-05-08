@@ -21,6 +21,7 @@ import dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster
 import dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterVisual;
 import dev.propulsionteam.propulsionsimulated.content.thruster.IonThrusterRenderer;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterRenderer;
+import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.LiquidVectorThrusterRenderer;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionFluids;
 
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
@@ -158,6 +159,7 @@ public class ModClientEvents {
         event.registerBlockEntityRenderer(PropulsionBlockEntities.CREATIVE_VECTOR_THRUSTER_BLOCK_ENTITY.get(), IonThrusterRenderer::new);
         event.registerBlockEntityRenderer(PropulsionBlockEntities.THRUSTER_BLOCK_ENTITY.get(), ThrusterRenderer::new);
         event.registerBlockEntityRenderer(PropulsionBlockEntities.ION_THRUSTER_BLOCK_ENTITY.get(), IonThrusterRenderer::new);
+        event.registerBlockEntityRenderer(PropulsionBlockEntities.LIQUID_VECTOR_THRUSTER_BLOCK_ENTITY.get(), LiquidVectorThrusterRenderer::new);
         event.registerBlockEntityRenderer(PropulsionBlockEntities.LIQUID_BURNER_BLOCK_ENTITY.get(), LiquidBurnerRenderer::new);
         event.registerBlockEntityRenderer(PropulsionBlockEntities.TILT_ADAPTER_BLOCK_ENTITY.get(), TiltAdapterRenderer::new);
     }

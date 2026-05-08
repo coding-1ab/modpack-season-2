@@ -30,6 +30,9 @@ public class PropulsionConfig {
     public static final ModConfigSpec.DoubleValue ION_THRUSTER_FE_PER_TICK_AT_FULL_THROTTLE;
     public static final ModConfigSpec.DoubleValue ION_THRUSTER_BASE_THRUST;
     public static final ModConfigSpec.DoubleValue VECTOR_THRUSTER_BASE_THRUST;
+    public static final ModConfigSpec.DoubleValue LIQUID_VECTOR_THRUSTER_BASE_THRUST;
+    public static final ModConfigSpec.IntValue LIQUID_VECTOR_THRUSTER_FUEL_TANK_CAPACITY_MB;
+    public static final ModConfigSpec.DoubleValue LIQUID_VECTOR_THRUSTER_FUEL_MB_PER_TICK_AT_FULL_THROTTLE;
     public static final ModConfigSpec.DoubleValue MULTIBLOCK_2X_THRUST_MULTIPLIER;
     public static final ModConfigSpec.DoubleValue MULTIBLOCK_3X_THRUST_MULTIPLIER;
     public static final ModConfigSpec.DoubleValue MULTIBLOCK_2X_FUEL_EFFICIENCY;
@@ -122,6 +125,14 @@ public class PropulsionConfig {
         SERVER_BUILDER.push("vectorThruster");
             VECTOR_THRUSTER_BASE_THRUST = SERVER_BUILDER.comment("Vector thruster base thrust at redstone 15 and full obstruction efficiency.")
                 .defineInRange("vectorThrusterBaseThrust", 1100.0d, 1.0d, 10000000.0d);
+        SERVER_BUILDER.pop();
+        SERVER_BUILDER.push("liquidVectorThruster");
+            LIQUID_VECTOR_THRUSTER_BASE_THRUST = SERVER_BUILDER.comment("Liquid vector thruster base thrust at redstone 15 and full obstruction efficiency.")
+                .defineInRange("liquidVectorThrusterBaseThrust", 1100.0d, 1.0d, 10000000.0d);
+            LIQUID_VECTOR_THRUSTER_FUEL_TANK_CAPACITY_MB = SERVER_BUILDER.comment("Liquid vector thruster internal fuel tank capacity in millibuckets.")
+                .defineInRange("liquidVectorThrusterFuelTankCapacityMb", 1000, 250, 10000000);
+            LIQUID_VECTOR_THRUSTER_FUEL_MB_PER_TICK_AT_FULL_THROTTLE = SERVER_BUILDER.comment("Liquid vector thruster fuel consumption in millibuckets per tick at full redstone throttle.")
+                .defineInRange("liquidVectorThrusterFuelMbPerTickAtFullThrottle", 1.0d, 0.0001d, 1000.0d);
         SERVER_BUILDER.pop();
 
         SERVER_BUILDER.push("multiblockThruster");
@@ -338,6 +349,30 @@ public class PropulsionConfig {
             return FUEL_PROPERTIES.get();
         } catch (IllegalStateException ignored) {
             return defaultFuelProperties();
+        }
+    }
+
+    public static double getLiquidVectorThrusterBaseThrustOrDefault() {
+        try {
+            return LIQUID_VECTOR_THRUSTER_BASE_THRUST.get();
+        } catch (IllegalStateException ignored) {
+            return VECTOR_THRUSTER_BASE_THRUST.get();
+        }
+    }
+
+    public static int getLiquidVectorThrusterFuelTankCapacityMbOrDefault() {
+        try {
+            return LIQUID_VECTOR_THRUSTER_FUEL_TANK_CAPACITY_MB.get();
+        } catch (IllegalStateException ignored) {
+            return FUEL_TANK_CAPACITY_MB.get();
+        }
+    }
+
+    public static double getLiquidVectorThrusterFuelMbPerTickAtFullThrottleOrDefault() {
+        try {
+            return LIQUID_VECTOR_THRUSTER_FUEL_MB_PER_TICK_AT_FULL_THROTTLE.get();
+        } catch (IllegalStateException ignored) {
+            return FUEL_MB_PER_TICK_AT_FULL_THROTTLE.get();
         }
     }
 
