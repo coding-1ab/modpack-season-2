@@ -13,9 +13,10 @@ import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.fml.loading.progress.ProgressMeter;
 import net.neoforged.fml.loading.progress.StartupNotificationManager;
 import net.neoforged.neoforgespi.locating.*;
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.io.*;
@@ -28,13 +29,14 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.zip.CRC32;
 
 // TODO UpdatingLocator는 Self 업데이트 불가능. 해결할 것.
 public class UpdatingLocator implements IDependencyLocator {
     private static final String errorKey = "fml.modloadingissue.technical_error";
-    private static final String baseUrl = "https://kedete-file.tmvkrpxl0.org/";
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @Override
     public void scanMods(List<IModFile> loadedMods, IDiscoveryPipeline pipeline) {
@@ -42,6 +44,14 @@ public class UpdatingLocator implements IDependencyLocator {
                 .followRedirects(HttpClient.Redirect.NORMAL)
                 .build();
         var discoveryAttributes = ModFileDiscoveryAttributes.DEFAULT.withDependencyLocator(this);
+        String baseUrl;
+        try {
+            var base = FMLPaths.MODSDIR.get().resolve("baseURL");
+            baseUrl = Files.readString(base);
+        } catch (Exception e) {
+            baseUrl = "https://season2-files.coding-labs.dev:2053/";
+        }
+        LOGGER.info("Using base url {}", baseUrl);
 
         ProgressMeter registryProgress = StartupNotificationManager.addProgressBar("Reading CodingLab Mod Registry", 1);
 
@@ -68,7 +78,7 @@ public class UpdatingLocator implements IDependencyLocator {
         registryProgress.complete();
         ProgressMeter modCheckProgress = StartupNotificationManager.addProgressBar(
                 "Checking for mods",
-                registry.builtMods().size()
+                registry.builtMods().size() + registry.extraMods().size()
         );
 
         Path cacheDir = FMLPaths.MODSDIR.get().resolve("codinglab");
@@ -89,12 +99,12 @@ public class UpdatingLocator implements IDependencyLocator {
                     throw checksumIoException(exception);
                 }
             } else {
-                fileSize = downloadMod(builtMod(modFile.getName()), modFile, client, fileContentContainer);
+                fileSize = downloadMod(builtMod(baseUrl, modFile.getName()), modFile, client, fileContentContainer);
             }
 
             long checksum = getChecksum(fileContentContainer[0], fileSize);
             if (checksum != mod.crc()) {
-                fileSize = downloadMod(builtMod(modFile.getName()), modFile, client, fileContentContainer);
+                fileSize = downloadMod(builtMod(baseUrl, modFile.getName()), modFile, client, fileContentContainer);
             }
             checksum = getChecksum(fileContentContainer[0], fileSize);
             if (checksum != mod.crc()) {
@@ -109,7 +119,7 @@ public class UpdatingLocator implements IDependencyLocator {
 
             switch (mod.assetSource()) {
                 case Registry.ModSource.CurseForge curseForge -> {
-                    Path downloaded = downloadCurseforge(curseForge.projectId(), curseForge.fileId(), client);
+                    Path downloaded = downloadCurseforge(baseUrl, curseForge.projectId(), curseForge.fileId(), client);
                     JarContents jar = buildJarContents(modPath, downloaded);
                     pipeline.addJarContent(jar, discoveryAttributes, IncompatibleFileReporting.ERROR);
                 }
@@ -128,7 +138,7 @@ public class UpdatingLocator implements IDependencyLocator {
         for (Registry.ModSource.ExternalSource extra : registry.extraMods()) {
             switch (extra) {
                 case Registry.ModSource.CurseForge curseForge -> {
-                    Path downloaded = downloadCurseforge(curseForge.projectId(), curseForge.fileId(), client);
+                    Path downloaded = downloadCurseforge(baseUrl, curseForge.projectId(), curseForge.fileId(), client);
                     pipeline.addPath(downloaded, discoveryAttributes, IncompatibleFileReporting.ERROR);
                 }
                 case Registry.ModSource.Modrinth modrinth -> {
@@ -141,7 +151,7 @@ public class UpdatingLocator implements IDependencyLocator {
         modCheckProgress.complete();
     }
 
-    private static URI builtMod(String fileName) {
+    private static URI builtMod(String baseUrl, String fileName) {
         return URI.create(baseUrl).resolve("built/").resolve(fileName);
     }
 
@@ -237,7 +247,7 @@ public class UpdatingLocator implements IDependencyLocator {
         return modPath;
     }
 
-    private static Path downloadCurseforge(long projectId, long fileId, HttpClient client) throws ModLoadingException {
+    private static Path downloadCurseforge(String baseUrl, long projectId, long fileId, HttpClient client) throws ModLoadingException {
         URI uri = URI.create(baseUrl + "curseforge/" + projectId + "/" + fileId);
         var curseUrlRequest = HttpRequest.newBuilder(uri)
                 .GET()
@@ -270,7 +280,6 @@ public class UpdatingLocator implements IDependencyLocator {
         Path modPath = basePath.resolve(downloadInfo.fileName());
         File modFile = modPath.toFile();
 
-        boolean shouldDownload;
         if (modFile.exists()) {
             String hash;
             try {
@@ -279,20 +288,20 @@ public class UpdatingLocator implements IDependencyLocator {
                 throw checksumIoException(e);
             }
 
-            shouldDownload = !hash.equalsIgnoreCase(downloadInfo.sha1Hash());
+
+            if (!hash.equalsIgnoreCase(downloadInfo.sha1Hash())) {
+                throw hashFailException(downloadInfo.fileName());
+            }
+
+
         } else {
-            shouldDownload = true;
+            byte[][] fileContents = new byte[][]{null};
+            int size = downloadMod(URI.create(downloadInfo.url()), modFile, client, fileContents);
+            if (!sha1Hash(fileContents[0], size).equalsIgnoreCase(downloadInfo.sha1Hash())) {
+                throw hashFailException(modFile.getName());
+            }
         }
 
-        if (!shouldDownload) {
-            return modPath;
-        }
-
-        byte[][] fileContents = new byte[][]{null};
-        int size = downloadMod(URI.create(downloadInfo.url()), modFile, client, fileContents);
-        if (!sha1Hash(fileContents[0], size).equalsIgnoreCase(downloadInfo.sha1Hash())) {
-            throw hashFailException(modFile.getName());
-        }
         return modPath;
     }
 
@@ -305,7 +314,7 @@ public class UpdatingLocator implements IDependencyLocator {
         }
         md.update(contents, 0, size);
 
-        return Hex.encodeHexString(md.digest());
+        return HexFormat.of().formatHex(md.digest());
     }
 
     private static ModLoadingException hashFailException(String fileName) {
