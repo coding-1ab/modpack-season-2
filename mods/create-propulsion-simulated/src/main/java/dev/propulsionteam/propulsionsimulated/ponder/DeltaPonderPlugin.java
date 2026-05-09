@@ -37,6 +37,10 @@ public class DeltaPonderPlugin implements PonderPlugin {
                 .addStoryBoard("ponder_thruster_3x3", ThrusterScenes::multiblock3x3);
         HELPER.forComponents(PropulsionBlocks.VECTOR_THRUSTER_BLOCK.get())
                 .addStoryBoard("ponder_vector_thruster_normal", VectorThrusterFeScenes::vectorThrusterFe);
+        HELPER.forComponents(PropulsionBlocks.CREATIVE_VECTOR_THRUSTER_BLOCK.get())
+                .addStoryBoard("ponder_creative_vector_thruster", VectorThrusterFeScenes::creativeVectorThruster);
+        HELPER.forComponents(PropulsionBlocks.LIQUID_VECTOR_THRUSTER_BLOCK.get())
+                .addStoryBoard("ponder_liquid_vector_thruster", VectorThrusterFeScenes::liquidVectorThruster);
     }
 
     @Override
@@ -54,6 +58,9 @@ public class DeltaPonderPlugin implements PonderPlugin {
         final PonderTagRegistrationHelper<Block> HELPER = helper.withKeyFunction(BuiltInRegistries.BLOCK::getKey);
         HELPER.addToTag(AllCreatePonderTags.KINETIC_APPLIANCES)
             .add(PropulsionBlocks.STIRLING_ENGINE_BLOCK.get())
-            .add(PropulsionBlocks.TILT_ADAPTER_BLOCK.get());
+            .add(PropulsionBlocks.TILT_ADAPTER_BLOCK.get())
+            .add(PropulsionBlocks.VECTOR_THRUSTER_BLOCK.get())
+            .add(PropulsionBlocks.CREATIVE_VECTOR_THRUSTER_BLOCK.get())
+            .add(PropulsionBlocks.LIQUID_VECTOR_THRUSTER_BLOCK.get());
     }
 }
