@@ -9,6 +9,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.neoforged.neoforge.items.IItemHandler;
 
 public class BurnerFuelBehaviour extends BlockEntityBehaviour {
     public static final BehaviourType<BurnerFuelBehaviour> TYPE = new BehaviourType<>();
@@ -60,6 +61,10 @@ public class BurnerFuelBehaviour extends BlockEntityBehaviour {
         }
 
         return false;
+    }
+
+    public IItemHandler getItemHandler() {
+        return itemHandler;
     }
 
     //NBT
