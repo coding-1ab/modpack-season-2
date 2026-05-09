@@ -153,6 +153,8 @@
     "createpropulsion.ponder.shared.thruster_3x3.power_thruster": "Apply redstone to the thruster and the whole multiblock works.",
     
     "createpropulsion.ponder.ponder_vector_thruster_normal.header": "Vector Thruster",
+    "createpropulsion.ponder.ponder_creative_vector_thruster.header": "Creative Vector Thruster",
+    "createpropulsion.ponder.ponder_liquid_vector_thruster.header": "Liquid Vector Thruster",
     "createpropulsion.ponder.shared.vector_thruster_fe.header": "Powering a Vector Thruster",
     "createpropulsion.ponder.shared.vector_thruster_fe.intro.main": "Vector Thruster uses Forge energy to produce thrust.",
     "createpropulsion.ponder.shared.vector_thruster_fe.intro.fe": "Forge energy is stored in the thruster's internal energy storage.",
@@ -163,6 +165,13 @@
     "createpropulsion.ponder.shared.vector_thruster_fe.moving.text_3": "Each side except front and back has a redstone signal place, that direction is where it will be rotated towards when that signal is powered.",
     
     "createpropulsion.ponder.shared.vector_thruster_fe.powering.intro": "Powering a thruster is easy, any external signal to the thruster will be the power, this can range from 0-15, and will use power accordingly.",
+    "createpropulsion.ponder.shared.vector_thruster_creative.intro.main": "Creative Vector Thrusters produce configurable thrust without fuel or Forge energy.",
+    "createpropulsion.ponder.shared.vector_thruster_creative.intro.thrust": "Set the creative thrust amount from the value box on the bottom of the thruster.",
+    "createpropulsion.ponder.shared.vector_thruster_creative.powering.intro": "Creative Vector Thrusters still use redstone power as their throttle, from 0-15.",
+    "createpropulsion.ponder.shared.vector_thruster_liquid.intro.main": "Liquid Vector Thrusters vector their thrust like normal vector thrusters, but run on pumped liquid fuel.",
+    "createpropulsion.ponder.shared.vector_thruster_liquid.intro.fuel": "Pump valid thruster fuel into the liquid vector thruster through the pipe below.",
+    "createpropulsion.ponder.shared.vector_thruster_liquid.intro.pumped": "Once fuel is pumped in, the internal tank can feed the thruster while it is powered.",
+    "createpropulsion.ponder.shared.vector_thruster_liquid.powering.intro": "Apply redstone power to throttle the liquid vector thruster, from 0-15.",
     
     "block.createpropulsion.vector_thruster": "Vector Thruster",
     "block.createpropulsion.creative_vector_thruster": "Creative Vector Thruster",

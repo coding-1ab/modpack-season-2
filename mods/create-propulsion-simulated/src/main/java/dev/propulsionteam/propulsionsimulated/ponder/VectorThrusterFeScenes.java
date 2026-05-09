@@ -7,9 +7,12 @@ import com.simibubi.create.content.redstone.analogLever.AnalogLeverBlockEntity;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
+import dev.propulsionteam.propulsionsimulated.content.thruster.creative_vector_thruster.CreativeVectorThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.ion_thruster.IonThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.liquid_vector_thruster.LiquidVectorThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.particles.ion.IonParticleData;
+import dev.propulsionteam.propulsionsimulated.registries.PropulsionFluids;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
 import net.createmod.ponder.api.scene.Selection;
@@ -19,6 +22,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 /**
  * Ponder for the Forge-Energy vector thruster (see {@code ponder_vector_thruster_normal.nbt}).
@@ -30,20 +35,34 @@ public final class VectorThrusterFeScenes {
     }
 
     public static void vectorThrusterFe(SceneBuilder builder, SceneBuildingUtil util) {
+        vectorThruster(builder, util, VectorSceneType.FE);
+    }
+
+    public static void creativeVectorThruster(SceneBuilder builder, SceneBuildingUtil util) {
+        vectorThruster(builder, util, VectorSceneType.CREATIVE);
+    }
+
+    public static void liquidVectorThruster(SceneBuilder builder, SceneBuildingUtil util) {
+        vectorThruster(builder, util, VectorSceneType.LIQUID);
+    }
+
+    private static void vectorThruster(SceneBuilder builder, SceneBuildingUtil util, VectorSceneType sceneType) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-        scene.title("ponder_vector_thruster_normal", "Vector Thruster (Forge Energy)");
+        scene.title(sceneType.sceneId, sceneType.title);
         scene.configureBasePlate(0, 0, 7);
         scene.showBasePlate();
         scene.idle(12);
 
         BlockPos motorPos = util.grid().at(4, 1, 3);
-        Selection floor = util.select().fromTo(0, 0, 0, 6, 0, 6);
         Selection machineLayer = util.select()
             .position(3, 1, 3)
-            .add(util.select().position(4, 1, 3))
-            .add(util.select().position(5, 1, 3))
             .add(util.select().fromTo(1, 1, 2, 1, 1, 5))
             .add(util.select().fromTo(2, 1, 2, 2, 1, 5));
+        if (sceneType.hasPumpLine()) {
+            machineLayer = machineLayer
+                .add(util.select().position(4, 1, 3))
+                .add(util.select().position(5, 1, 3));
+        }
         Selection thrusterSel = util.select().position(3, 2, 3);
         BlockPos thrusterPos = util.grid().at(3, 2, 3);
         // Analog levers beside the thruster (ponder_vector_thruster_normal.nbt, column x = 1).
@@ -55,69 +74,53 @@ public final class VectorThrusterFeScenes {
         LeverControl leverEast = new LeverControl(util.select().position(leverEastPos), leverEastPos);
         LeverControl leverDown = new LeverControl(util.select().position(leverDownPos), leverDownPos);
         LeverControl leverUp = new LeverControl(util.select().position(leverUpPos), leverUpPos);
+        Selection linkBlocks = util.select().fromTo(2, 1, 2, 2, 1, 5);
         Selection kineticNet = util.select().position(4, 1, 3);
+        resetVectorControls(scene, linkBlocks, leverWest, leverEast, leverDown, leverUp);
 
-        // ── Section 1: reveal layout (floor, FE line, thruster) + spin pump ~32 RPM ─────────────
-        scene.world().showSection(floor, Direction.DOWN);
+        // - Section 1: reveal layout + optional pump line -------------------
         scene.idle(8);
-        Block pumpBlock = BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("create", "mechanical_pump"));
-        BlockState pumpState = pumpBlock.defaultBlockState()
-            .setValue(DirectionalKineticBlock.FACING, Direction.WEST);
-        scene.world().setBlock(motorPos, pumpState, false);
-        scene.idle(6);
+        if (sceneType.hasPumpLine()) {
+            Block pumpBlock = BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("create", "mechanical_pump"));
+            BlockState pumpState = pumpBlock.defaultBlockState()
+                .setValue(DirectionalKineticBlock.FACING, Direction.WEST);
+            scene.world().setBlock(motorPos, pumpState, false);
+            scene.idle(6);
+        }
         scene.world().showSection(machineLayer, Direction.DOWN);
         scene.idle(10);
         scene.world().showSection(thrusterSel, Direction.DOWN);
         scene.idle(12);
-        scene.world().setKineticSpeed(kineticNet, 32.0f);
-        scene.effects().rotationSpeedIndicator(motorPos);
-        scene.idle(20);
+        if (sceneType.hasPumpLine()) {
+            scene.world().setKineticSpeed(kineticNet, 32.0f);
+            scene.effects().rotationSpeedIndicator(motorPos);
+            scene.idle(20);
+        }
 
-        // ── Section 2: main intro (on thruster) ─────────────────────────────────────────────────
+        // - Section 2: main intro (on thruster) ------------------------─
         scene.overlay().showText(90)
             .attachKeyFrame()
-            .sharedText("vector_thruster_fe.intro.main")
+            .sharedText(sceneType.introKey)
             .pointAt(util.vector().centerOf(thrusterPos))
             .placeNearTarget();
         scene.idle(100);
         scene.idle(25);
 
-        // ── Section 3: FE buffer + coral generator below ───────────────────────────────────────
-        scene.overlay().showText(85)
-            .attachKeyFrame()
-            .sharedText("vector_thruster_fe.intro.fe")
-            .pointAt(util.vector().centerOf(thrusterPos))
-            .placeNearTarget();
-        scene.idle(90);
-        int feCap = PropulsionConfig.ION_THRUSTER_ENERGY_CAPACITY_FE.get();
-        scene.overlay().showText(90)
-            .attachKeyFrame()
-            .sharedText("vector_thruster_fe.intro.fe_storage", feCap)
-            .pointAt(util.vector().centerOf(thrusterPos))
-            .placeNearTarget();
-        scene.idle(95);
-        scene.world().modifyBlockEntityNBT(thrusterSel, IonThrusterBlockEntity.class, nbt -> nbt.putInt("EnergyStored", feCap));
-        scene.idle(10);
-        scene.overlay().showText(95)
-            .attachKeyFrame()
-            .sharedText("vector_thruster_fe.intro.generators")
-            .pointAt(util.vector().blockSurface(util.grid().at(3, 1, 3), Direction.DOWN))
-            .placeNearTarget();
-        scene.idle(100);
+        showVariantSetup(scene, util, sceneType, thrusterSel, thrusterPos);
 
-        // ── Section 4: analog levers + vector tilt (ponder does not tick BEs / links — thruster synced after) ─
+        // - Section 4: analog levers + vector tilt (ponder does not tick BEs / links - thruster synced after) ─
         scene.overlay().showText(85)
             .attachKeyFrame()
             .sharedText("vector_thruster_fe.moving.intro")
             .pointAt(util.vector().centerOf(util.grid().at(3, 2, 3)))
             .placeNearTarget();
         scene.idle(90);
-        runVectorCircle(scene, thrusterPos, leverWest, leverEast, leverDown, leverUp, 40);
-        animateVectorTransition(scene, thrusterPos, leverWest, leverEast, leverDown, leverUp,
+        runVectorCircle(scene, sceneType, thrusterPos, leverWest, leverEast, leverDown, leverUp, 40);
+        animateVectorTransition(scene, sceneType, thrusterPos, leverWest, leverEast, leverDown, leverUp,
             new Step(15, 0, 0, 15), new Step(0, 0, 0, 0), 24);
         scene.idle(25);
 
-        // ── Section 5: rotate view + highlight embedded redstone link sides ────────────────────
+        // - Section 5: rotate view + highlight embedded redstone link sides ----------
         scene.overlay().showText(95)
             .attachKeyFrame()
             .sharedText("vector_thruster_fe.moving.text_3")
@@ -142,29 +145,144 @@ public final class VectorThrusterFeScenes {
             .pointAt(util.vector().centerOf(util.grid().at(3, 2, 3)))
             .placeNearTarget();
         scene.idle(100);
-        // ── Section 6: thrust power (redstone) + ion plume, then power down ────────────────────
+        // - Section 6: thrust power (redstone) + ion plume, then power down ----------
         scene.overlay().showText(90)
             .attachKeyFrame()
-            .sharedText("vector_thruster_fe.powering.intro")
+            .sharedText(sceneType.powerKey)
             .pointAt(util.vector().centerOf(util.grid().at(3, 2, 3)))
             .placeNearTarget();
         scene.idle(95);
-        scene.world().modifyBlockEntityNBT(thrusterSel, IonThrusterBlockEntity.class, nbt -> {
-            nbt.putInt("EnergyStored", feCap);
-            nbt.putInt("RedstoneInput", 15);
-        });
+        powerThrusterForScene(scene, sceneType, thrusterSel, thrusterPos);
         scene.effects().indicateRedstone(util.grid().at(3, 2, 3));
         emitIonBurst(scene, util, 3, 2, 3, Direction.UP, 10);
         scene.idle(100);
-        scene.world().modifyBlockEntityNBT(thrusterSel, IonThrusterBlockEntity.class, nbt -> nbt.putInt("RedstoneInput", 0));
+        unpowerThrusterForScene(scene, sceneType, thrusterSel);
         scene.idle(35);
         scene.markAsFinished();
+    }
+
+    private enum VectorSceneType {
+        FE("ponder_vector_thruster_normal", "Vector Thruster (Forge Energy)",
+            "vector_thruster_fe.intro.main", "vector_thruster_fe.powering.intro", true),
+        CREATIVE("ponder_creative_vector_thruster", "Creative Vector Thruster",
+            "vector_thruster_creative.intro.main", "vector_thruster_creative.powering.intro", false),
+        LIQUID("ponder_liquid_vector_thruster", "Liquid Vector Thruster",
+            "vector_thruster_liquid.intro.main", "vector_thruster_liquid.powering.intro", true);
+
+        private final String sceneId;
+        private final String title;
+        private final String introKey;
+        private final String powerKey;
+        private final boolean hasPumpLine;
+
+        VectorSceneType(String sceneId, String title, String introKey, String powerKey, boolean hasPumpLine) {
+            this.sceneId = sceneId;
+            this.title = title;
+            this.introKey = introKey;
+            this.powerKey = powerKey;
+            this.hasPumpLine = hasPumpLine;
+        }
+
+        private boolean hasPumpLine() {
+            return hasPumpLine;
+        }
     }
 
     private record LeverControl(Selection selection, BlockPos pos) {
     }
 
     private record Step(int w, int e, int d, int u) {
+    }
+
+    private static void showVariantSetup(CreateSceneBuilder scene, SceneBuildingUtil util, VectorSceneType sceneType,
+        Selection thrusterSel, BlockPos thrusterPos) {
+        switch (sceneType) {
+            case FE -> {
+                scene.overlay().showText(85)
+                    .attachKeyFrame()
+                    .sharedText("vector_thruster_fe.intro.fe")
+                    .pointAt(util.vector().centerOf(thrusterPos))
+                    .placeNearTarget();
+                scene.idle(90);
+                int feCap = PropulsionConfig.ION_THRUSTER_ENERGY_CAPACITY_FE.get();
+                scene.overlay().showText(90)
+                    .attachKeyFrame()
+                    .sharedText("vector_thruster_fe.intro.fe_storage", feCap)
+                    .pointAt(util.vector().centerOf(thrusterPos))
+                    .placeNearTarget();
+                scene.idle(95);
+                scene.world().modifyBlockEntityNBT(thrusterSel, IonThrusterBlockEntity.class,
+                    nbt -> nbt.putInt("EnergyStored", feCap));
+                scene.idle(10);
+                scene.overlay().showText(95)
+                    .attachKeyFrame()
+                    .sharedText("vector_thruster_fe.intro.generators")
+                    .pointAt(util.vector().blockSurface(util.grid().at(3, 1, 3), Direction.DOWN))
+                    .placeNearTarget();
+                scene.idle(100);
+            }
+            case CREATIVE -> {
+                scene.overlay().showText(95)
+                    .attachKeyFrame()
+                    .sharedText("vector_thruster_creative.intro.thrust")
+                    .pointAt(util.vector().blockSurface(util.grid().at(3, 2, 3), Direction.DOWN))
+                    .placeNearTarget();
+                scene.overlay().showScrollInput(util.vector().blockSurface(util.grid().at(3, 1, 3), Direction.DOWN),
+                    Direction.DOWN, 80);
+                scene.idle(105);
+            }
+            case LIQUID -> {
+                scene.overlay().showText(95)
+                    .attachKeyFrame()
+                    .sharedText("vector_thruster_liquid.intro.fuel")
+                    .pointAt(util.vector().centerOf(util.grid().at(4, 1, 3)))
+                    .placeNearTarget();
+                scene.idle(95);
+                int fuelCapacity = PropulsionConfig.getLiquidVectorThrusterFuelTankCapacityMbOrDefault();
+                scene.world().modifyBlockEntity(thrusterPos, LiquidVectorThrusterBlockEntity.class,
+                    be -> be.tank.getPrimaryHandler().setFluid(new FluidStack(PropulsionFluids.TURPENTINE.get(), fuelCapacity)));
+                scene.overlay().showText(90)
+                    .attachKeyFrame()
+                    .sharedText("vector_thruster_liquid.intro.pumped")
+                    .pointAt(util.vector().blockSurface(util.grid().at(3, 1, 3), Direction.UP))
+                    .placeNearTarget();
+                scene.idle(100);
+            }
+        }
+    }
+
+    private static void powerThrusterForScene(CreateSceneBuilder scene, VectorSceneType sceneType,
+        Selection thrusterSel, BlockPos thrusterPos) {
+        switch (sceneType) {
+            case FE -> {
+                int feCap = PropulsionConfig.ION_THRUSTER_ENERGY_CAPACITY_FE.get();
+                scene.world().modifyBlockEntityNBT(thrusterSel, IonThrusterBlockEntity.class, nbt -> {
+                    nbt.putInt("EnergyStored", feCap);
+                    nbt.putInt("RedstoneInput", 15);
+                });
+            }
+            case CREATIVE -> scene.world().modifyBlockEntityNBT(thrusterSel, CreativeVectorThrusterBlockEntity.class,
+                nbt -> nbt.putInt("RedstoneInput", 15));
+            case LIQUID -> {
+                scene.world().modifyBlockEntity(thrusterPos, LiquidVectorThrusterBlockEntity.class, be -> {
+                    int fuelCapacity = PropulsionConfig.getLiquidVectorThrusterFuelTankCapacityMbOrDefault();
+                    be.tank.getPrimaryHandler().setFluid(new FluidStack(PropulsionFluids.TURPENTINE.get(), fuelCapacity));
+                });
+                scene.world().modifyBlockEntityNBT(thrusterSel, LiquidVectorThrusterBlockEntity.class,
+                    nbt -> nbt.putInt("RedstoneInput", 15));
+            }
+        }
+    }
+
+    private static void unpowerThrusterForScene(CreateSceneBuilder scene, VectorSceneType sceneType, Selection thrusterSel) {
+        switch (sceneType) {
+            case FE -> scene.world().modifyBlockEntityNBT(thrusterSel, IonThrusterBlockEntity.class,
+                nbt -> nbt.putInt("RedstoneInput", 0));
+            case CREATIVE -> scene.world().modifyBlockEntityNBT(thrusterSel, CreativeVectorThrusterBlockEntity.class,
+                nbt -> nbt.putInt("RedstoneInput", 0));
+            case LIQUID -> scene.world().modifyBlockEntityNBT(thrusterSel, LiquidVectorThrusterBlockEntity.class,
+                nbt -> nbt.putInt("RedstoneInput", 0));
+        }
     }
 
     private static void setLevelPower(CreateSceneBuilder scene,
@@ -176,13 +294,21 @@ public final class VectorThrusterFeScenes {
         setLeverState(scene, up, u);
     }
 
+    private static void resetVectorControls(CreateSceneBuilder scene, Selection linkBlocks,
+        LeverControl west, LeverControl east, LeverControl down, LeverControl up) {
+        scene.world().modifyBlocks(linkBlocks, state -> state.hasProperty(BlockStateProperties.POWERED)
+            ? state.setValue(BlockStateProperties.POWERED, false)
+            : state, false);
+        setLevelPower(scene, west, east, down, up, 0, 0, 0, 0);
+    }
+
     private static void setLeverState(CreateSceneBuilder scene, LeverControl lever, int power) {
         int clampedPower = Math.clamp(power, 0, 15);
         scene.world().modifyBlockEntityNBT(lever.selection(), AnalogLeverBlockEntity.class,
             nbt -> nbt.putInt("State", clampedPower));
     }
 
-    private static void runVectorCircle(CreateSceneBuilder scene, BlockPos thrusterPos,
+    private static void runVectorCircle(CreateSceneBuilder scene, VectorSceneType sceneType, BlockPos thrusterPos,
         LeverControl leverWest, LeverControl leverEast, LeverControl leverDown, LeverControl leverUp, int stepTicks) {
         Step[] loop = {
             new Step(15, 0, 0, 0),
@@ -196,12 +322,12 @@ public final class VectorThrusterFeScenes {
         };
         Step previous = new Step(0, 0, 0, 0);
         for (Step s : loop) {
-            animateVectorTransition(scene, thrusterPos, leverWest, leverEast, leverDown, leverUp, previous, s, stepTicks);
+            animateVectorTransition(scene, sceneType, thrusterPos, leverWest, leverEast, leverDown, leverUp, previous, s, stepTicks);
             previous = s;
         }
     }
 
-    private static void animateVectorTransition(CreateSceneBuilder scene, BlockPos thrusterPos,
+    private static void animateVectorTransition(CreateSceneBuilder scene, VectorSceneType sceneType, BlockPos thrusterPos,
         LeverControl leverWest, LeverControl leverEast, LeverControl leverDown, LeverControl leverUp,
         Step from, Step to, int ticks) {
         int frames = Math.max(1, ticks / 2);
@@ -221,12 +347,24 @@ public final class VectorThrusterFeScenes {
             }
             float vx = (w - e) / 15.0f;
             float vy = (d - u) / 15.0f;
-            scene.world().modifyBlockEntity(thrusterPos, VectorThrusterBlockEntity.class, be -> {
+            applyVectorSignalsForScene(scene, sceneType, thrusterPos, vx, vy);
+            scene.idle(ticksPerFrame);
+        }
+    }
+
+    private static void applyVectorSignalsForScene(CreateSceneBuilder scene, VectorSceneType sceneType,
+        BlockPos thrusterPos, float vx, float vy) {
+        if (sceneType == VectorSceneType.LIQUID) {
+            scene.world().modifyBlockEntity(thrusterPos, LiquidVectorThrusterBlockEntity.class, be -> {
                 be.applyVectorSignalsForScene(vx, vy);
                 be.animateVectorForScene();
             });
-            scene.idle(ticksPerFrame);
+            return;
         }
+        scene.world().modifyBlockEntity(thrusterPos, VectorThrusterBlockEntity.class, be -> {
+            be.applyVectorSignalsForScene(vx, vy);
+            be.animateVectorForScene();
+        });
     }
 
     private static void indicateLeverPower(CreateSceneBuilder scene, LeverControl lever, int power) {
