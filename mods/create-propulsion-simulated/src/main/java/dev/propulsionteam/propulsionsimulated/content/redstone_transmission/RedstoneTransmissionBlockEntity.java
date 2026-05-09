@@ -121,6 +121,21 @@ public class RedstoneTransmissionBlockEntity extends SplitShaftBlockEntity {
         return level.getSignal(getBlockPos().relative(facing.getClockWise()), facing.getClockWise());
     }
 
+    public int getMaxSignalFromAllSides() {
+        Level level = getLevel();
+        if (level == null) return 0;
+
+        int maxSignal = 0;
+        BlockPos pos = getBlockPos();
+        for (Direction direction : Direction.values()) {
+            int signal = level.getSignal(pos.relative(direction), direction);
+            if (signal > maxSignal) {
+                maxSignal = signal;
+            }
+        }
+        return maxSignal;
+    }
+
     public int get_current_shift() {
         return shift_level;
     }
@@ -141,7 +156,7 @@ public class RedstoneTransmissionBlockEntity extends SplitShaftBlockEntity {
         int shiftDown = get_shift_down();
 
         if (controlMode.get() == TransmissionMode.DIRECT) {
-            int signal = Math.max(shiftUp, shiftDown);
+            int signal = getMaxSignalFromAllSides();
             int target = (int) ((signal / 15.0f) * MAX_VALUE);
             
             attemptShiftUpdate(target);
