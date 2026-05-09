@@ -2,6 +2,7 @@ package dev.propulsionteam.propulsionsimulated;
 
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionDefaultStress;
 
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.ArrayList;
@@ -86,6 +87,9 @@ public class PropulsionConfig {
     public static final ModConfigSpec.ConfigValue<Boolean> BURNERS_SUPERHEAT_STEAM_ENGINES;
     public static final ModConfigSpec.ConfigValue<Boolean> BLAZE_BURNERS_HEAT_STIRLING_ENGINES;
     public static final Map<String, ModConfigSpec.ConfigValue<String>> CORAL_FUEL_CONVERSION_RATE_ENTRIES = new LinkedHashMap<>();
+
+    /** Extra fuel lines {@code fluid=efficiency,burnRate}; merged after defaults; duplicates override. */
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> ADDITIONAL_THRUSTER_FUEL_PROPERTY_LINES;
 
     static {
         //#region Server
@@ -269,6 +273,11 @@ public class PropulsionConfig {
             }
             SERVER_BUILDER.pop();
 
+            ADDITIONAL_THRUSTER_FUEL_PROPERTY_LINES = SERVER_BUILDER.comment(
+                    "Additional thruster fuel lines (same format as defaults: fluid_id=efficiencyPercent,burnRatePercent).",
+                    "Use for fluids that do not have a fuelProperties subsection. Entries here override matching fluids from the table above.")
+                .defineListAllowEmpty("additionalThrusterFuelLines", ArrayList::new, obj -> obj instanceof String);
+
         SERVER_BUILDER.pop();
 
         SERVER_BUILDER.push("thrusterDyeColors");
@@ -404,24 +413,55 @@ public class PropulsionConfig {
     }
 
     public static List<? extends String> getFuelPropertiesOrDefault() {
+        LinkedHashMap<String, String> merged = new LinkedHashMap<>();
+
         if (!FUEL_EFFICIENCY_ENTRIES.isEmpty() && !FUEL_BURN_RATE_ENTRIES.isEmpty()) {
-            List<String> entries = new ArrayList<>();
             for (Map.Entry<String, ModConfigSpec.IntValue> e : FUEL_EFFICIENCY_ENTRIES.entrySet()) {
                 try {
                     ModConfigSpec.IntValue burnRate = FUEL_BURN_RATE_ENTRIES.get(e.getKey());
-                    if (burnRate == null) return defaultFuelProperties();
-                    entries.add(e.getKey() + "=" + e.getValue().get() + "," + burnRate.get());
+                    if (burnRate == null) {
+                        continue;
+                    }
+                    merged.put(e.getKey(), e.getValue().get() + "," + burnRate.get());
                 } catch (IllegalStateException ignored) {
-                    return defaultFuelProperties();
+                    // Config not ready — skip entry
                 }
             }
-            return entries;
         }
+
         try {
-            return defaultFuelProperties();
+            List<? extends String> extra = ADDITIONAL_THRUSTER_FUEL_PROPERTY_LINES.get();
+            if (extra != null) {
+                for (Object o : extra) {
+                    if (!(o instanceof String raw)) {
+                        continue;
+                    }
+                    String line = raw.trim();
+                    int sep = line.indexOf('=');
+                    if (sep <= 0 || sep >= line.length() - 1) {
+                        continue;
+                    }
+                    String fluidId = line.substring(0, sep).trim();
+                    String rhs = line.substring(sep + 1).trim();
+                    if (ResourceLocation.tryParse(fluidId) == null || !rhs.contains(",")) {
+                        continue;
+                    }
+                    merged.put(fluidId, rhs);
+                }
+            }
         } catch (IllegalStateException ignored) {
+            // ignore until config load completes
+        }
+
+        if (merged.isEmpty()) {
             return defaultFuelProperties();
         }
+
+        List<String> out = new ArrayList<>(merged.size());
+        for (Map.Entry<String, String> e : merged.entrySet()) {
+            out.add(e.getKey() + "=" + e.getValue());
+        }
+        return out;
     }
 
     public static double getLiquidVectorThrusterBaseThrustOrDefault() {

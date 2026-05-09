@@ -45,6 +45,8 @@ public class ThrusterFuelManager extends SimpleJsonResourceReloadListener {
     private static Map<Fluid, FluidThrusterProperties> scriptedFuelPropertiesMap = new HashMap<>();
     private static Map<ResourceLocation, FluidThrusterProperties> scriptedFuelPropertiesById = new HashMap<>();
     private static Set<ResourceLocation> removedFuelIds = new HashSet<>();
+    /** Last merged datapack JSON for {@link #rebuildThrusterFuelsAfterCommonConfigReload()}. */
+    private static Map<ResourceLocation, JsonElement> cachedThrusterFuelDatapack = null;
     public static final TagKey<Fluid> FORGE_FUEL_TAG = TagKey.create(Registries.FLUID, ResourceLocation.fromNamespaceAndPath("forge", "fuel"));
 
     public static Map<Fluid, FluidThrusterProperties> getFuelPropertiesMap() {
@@ -119,7 +121,8 @@ public class ThrusterFuelManager extends SimpleJsonResourceReloadListener {
     protected void apply(@Nonnull Map<ResourceLocation, JsonElement> pObject, @Nonnull ResourceManager resourceManager, @Nonnull ProfilerFiller profiler) {
         //Parse datapacks
         profiler.push(CreatePropulsion.ID + ":Loading_thruster_fuels");
-        fuelPropertiesMap = parseFuelProperties(pObject);
+        cachedThrusterFuelDatapack = new HashMap<>(pObject);
+        fuelPropertiesMap = parseFuelProperties(cachedThrusterFuelDatapack);
         // Add fuels from config that might not be in datapacks
         mergeConfigProperties(fuelPropertiesMap);
         profiler.pop();
@@ -198,7 +201,20 @@ public class ThrusterFuelManager extends SimpleJsonResourceReloadListener {
         return true;
     }
 
-    private Map<Fluid, FluidThrusterProperties> parseFuelProperties(@Nonnull Map<ResourceLocation, JsonElement> pObject) {
+    /**
+     * Re-applies datapack thruster fuels using current common config (efficiency / burn rate / additional lines).
+     * Called when {@code createpropulsion-common.toml} reloads without a full datapack reload.
+     */
+    public static void rebuildThrusterFuelsAfterCommonConfigReload() {
+        if (cachedThrusterFuelDatapack == null) {
+            return;
+        }
+        fuelPropertiesMap = parseFuelProperties(cachedThrusterFuelDatapack);
+        mergeConfigProperties(fuelPropertiesMap);
+        syncFuelDataToClients();
+    }
+
+    private static Map<Fluid, FluidThrusterProperties> parseFuelProperties(@Nonnull Map<ResourceLocation, JsonElement> pObject) {
         Map<Fluid, FluidThrusterProperties> newMap = new HashMap<>();
         Map<ResourceLocation, Float> consumptionOverrides = getConfiguredConsumptionOverrides();
 

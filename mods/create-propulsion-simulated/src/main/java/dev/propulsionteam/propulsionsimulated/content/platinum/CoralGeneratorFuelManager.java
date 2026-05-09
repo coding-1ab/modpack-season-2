@@ -33,6 +33,7 @@ public class CoralGeneratorFuelManager extends SimpleJsonResourceReloadListener 
     public static final String DIRECTORY = "coral_generator_fuels";
 
     private static Map<Fluid, CoralGeneratorFuelProperties> fuelPropertiesMap = new HashMap<>();
+    private static Map<ResourceLocation, JsonElement> cachedCoralFuelDatapack = null;
 
     public CoralGeneratorFuelManager() {
         super(GSON, DIRECTORY);
@@ -41,8 +42,17 @@ public class CoralGeneratorFuelManager extends SimpleJsonResourceReloadListener 
     @Override
     protected void apply(@Nonnull Map<ResourceLocation, JsonElement> data, @Nonnull ResourceManager resourceManager, @Nonnull ProfilerFiller profiler) {
         profiler.push(CreatePropulsion.ID + ":loading_coral_generator_fuels");
+        cachedCoralFuelDatapack = new HashMap<>(data);
         fuelPropertiesMap = parseFuelProperties(data);
         profiler.pop();
+    }
+
+    /** Re-merge coral FE/mb rates from common config without a datapack reload. */
+    public static void rebuildCoralFuelsAfterCommonConfigReload() {
+        if (cachedCoralFuelDatapack == null) {
+            return;
+        }
+        fuelPropertiesMap = parseFuelProperties(cachedCoralFuelDatapack);
     }
 
     @Nullable
@@ -55,7 +65,7 @@ public class CoralGeneratorFuelManager extends SimpleJsonResourceReloadListener 
         return fuelPropertiesMap.get(fluid);
     }
 
-    private Map<Fluid, CoralGeneratorFuelProperties> parseFuelProperties(@Nonnull Map<ResourceLocation, JsonElement> entries) {
+    private static Map<Fluid, CoralGeneratorFuelProperties> parseFuelProperties(@Nonnull Map<ResourceLocation, JsonElement> entries) {
         Map<Fluid, CoralGeneratorFuelProperties> parsed = new HashMap<>();
 
         for (Map.Entry<ResourceLocation, JsonElement> entry : entries.entrySet()) {
@@ -83,7 +93,7 @@ public class CoralGeneratorFuelManager extends SimpleJsonResourceReloadListener 
         return parsed;
     }
 
-    private void applyConfigOverrides(Map<Fluid, CoralGeneratorFuelProperties> parsed) {
+    private static void applyConfigOverrides(Map<Fluid, CoralGeneratorFuelProperties> parsed) {
         for (String rawEntry : PropulsionConfig.getCoralFuelConversionRatesOrDefault()) {
             if (rawEntry == null) {
                 continue;
