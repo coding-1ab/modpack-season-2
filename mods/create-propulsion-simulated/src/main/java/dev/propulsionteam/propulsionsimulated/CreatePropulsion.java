@@ -47,8 +47,8 @@ public class CreatePropulsion {
         Mods.COMPUTERCRAFT.executeIfInstalled(() -> CCProxy::register);
 
         //Config
-        modContainer.registerConfig(ModConfig.Type.SERVER, PropulsionConfig.SERVER_SPEC, ID + "-server.toml");
+        modContainer.registerConfig(ModConfig.Type.COMMON, PropulsionConfig.COMMON_SPEC, ID + "-common.toml");
         modContainer.registerConfig(ModConfig.Type.CLIENT, PropulsionConfig.CLIENT_SPEC, ID + "-client.toml");
-        PropulsionDefaultStress.init(PropulsionConfig.SERVER_SPEC);
+        PropulsionDefaultStress.init(PropulsionConfig.COMMON_SPEC);
     }
 }

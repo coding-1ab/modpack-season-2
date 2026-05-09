@@ -10,8 +10,12 @@ import java.util.List;
 import java.util.Map;
 
 public class PropulsionConfig {
-    public static final ModConfigSpec.Builder SERVER_BUILDER = new ModConfigSpec.Builder();
+    public static final ModConfigSpec.Builder COMMON_BUILDER = new ModConfigSpec.Builder();
+    @Deprecated
+    public static final ModConfigSpec.Builder SERVER_BUILDER = COMMON_BUILDER;
     public static final ModConfigSpec.Builder CLIENT_BUILDER = new ModConfigSpec.Builder();
+    public static final ModConfigSpec COMMON_SPEC;
+    @Deprecated
     public static final ModConfigSpec SERVER_SPEC;
     public static final ModConfigSpec CLIENT_SPEC;
 
@@ -294,7 +298,8 @@ public class PropulsionConfig {
 
         PropulsionDefaultStress.INSTANCE.registerAll(SERVER_BUILDER);
 
-        SERVER_SPEC = SERVER_BUILDER.build();
+        COMMON_SPEC = COMMON_BUILDER.build();
+        SERVER_SPEC = COMMON_SPEC;
         //#endregion
 
         //#region Client
