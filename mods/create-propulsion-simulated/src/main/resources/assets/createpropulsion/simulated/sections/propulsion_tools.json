@@ -1,5 +1,5 @@
 {
-  "priority": 1,
+  "priority": 100001,
   "title": {
     "text": { "translate": "simulated.simulated_section.propulsion_tools" },
     "background": "#aa3b2b1a",
