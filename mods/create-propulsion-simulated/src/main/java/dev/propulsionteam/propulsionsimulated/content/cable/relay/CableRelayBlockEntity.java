@@ -7,8 +7,10 @@ import dev.propulsionteam.propulsionsimulated.content.cable.fe.FeCableBlock;
 import dev.propulsionteam.propulsionsimulated.content.cable.fe.FeCableBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.cable.hub.CableHubBlockEntity;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
@@ -22,6 +24,7 @@ import java.util.Set;
 
 public class CableRelayBlockEntity extends SmartBlockEntity {
     private int redstoneSignalStrength;
+    private int relayId = -1;
 
     public CableRelayBlockEntity(BlockPos pos, BlockState blockState) {
         super(PropulsionBlockEntities.CABLE_RELAY_BLOCK_ENTITY.get(), pos, blockState);
@@ -36,6 +39,19 @@ public class CableRelayBlockEntity extends SmartBlockEntity {
 
     public void setRedstoneSignalStrength(int signalStrength) {
         redstoneSignalStrength = Math.max(0, Math.min(15, signalStrength));
+    }
+
+    public int getRelayId() {
+        return relayId;
+    }
+
+    public void setRelayId(int relayId) {
+        int clampedRelayId = Math.max(0, relayId);
+        if (this.relayId == clampedRelayId) {
+            return;
+        }
+        this.relayId = clampedRelayId;
+        setChanged();
     }
 
     @Override
@@ -185,6 +201,18 @@ public class CableRelayBlockEntity extends SmartBlockEntity {
     private boolean isTransitNode(BlockPos pos) {
         var be = level != null ? level.getBlockEntity(pos) : null;
         return be instanceof FeCableBlockEntity || be instanceof CableHubBlockEntity || be instanceof CableRelayBlockEntity;
+    }
+
+    @Override
+    protected void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        tag.putInt("RelayId", relayId);
+        super.write(tag, registries, clientPacket);
+    }
+
+    @Override
+    protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        relayId = tag.contains("RelayId") ? Math.max(0, tag.getInt("RelayId")) : -1;
+        super.read(tag, registries, clientPacket);
     }
 
     private record Endpoint(BlockPos cablePos, Direction direction, IEnergyStorage storage) {
