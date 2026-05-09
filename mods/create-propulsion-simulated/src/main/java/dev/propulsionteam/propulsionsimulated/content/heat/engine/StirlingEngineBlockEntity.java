@@ -181,7 +181,10 @@ public class StirlingEngineBlockEntity extends GeneratingKineticBlockEntity impl
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        CreateLang.builder().add(getBlockState().getBlock().getName()).style(ChatFormatting.WHITE).forGoggles(tooltip);
+        CreateLang.builder()
+            .add(Component.translatable("createpropulsion.gui.goggles.title.generator_stats"))
+            .style(ChatFormatting.WHITE)
+            .forGoggles(tooltip);
         boolean active = isEngineActive();
 
         String status;

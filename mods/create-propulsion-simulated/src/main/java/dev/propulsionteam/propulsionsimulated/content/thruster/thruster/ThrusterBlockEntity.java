@@ -872,7 +872,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                 if (fuelSavePct > 0) {
                     CreateLang.builder()
                         .add(Component.literal("  "))
-                        .add(Component.literal("Fuel: ").withStyle(ChatFormatting.WHITE))
+                        .add(Component.literal("Fuel: ").withStyle(ChatFormatting.GRAY))
                         .add(Component.literal("-" + fuelSavePct + "%").withStyle(ChatFormatting.AQUA))
                         .forGoggles(tooltip);
                 }
@@ -881,7 +881,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                 if (oxSavePct > 0) {
                     CreateLang.builder()
                         .add(Component.literal("  "))
-                        .add(Component.literal("Oxidizer Bonus: ").withStyle(ChatFormatting.WHITE))
+                        .add(Component.literal("Oxidizer Bonus: ").withStyle(ChatFormatting.GRAY))
                         .add(hasOx
                             ? Component.literal("-" + oxSavePct + "%").withStyle(ChatFormatting.AQUA)
                             : Component.translatable("createpropulsion.gui.goggles.thruster.bulk_bonus_inactive").withStyle(ChatFormatting.RED))
