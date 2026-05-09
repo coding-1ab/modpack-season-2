@@ -10,8 +10,12 @@ import java.util.List;
 import java.util.Map;
 
 public class PropulsionConfig {
-    public static final ModConfigSpec.Builder SERVER_BUILDER = new ModConfigSpec.Builder();
+    public static final ModConfigSpec.Builder COMMON_BUILDER = new ModConfigSpec.Builder();
+    @Deprecated
+    public static final ModConfigSpec.Builder SERVER_BUILDER = COMMON_BUILDER;
     public static final ModConfigSpec.Builder CLIENT_BUILDER = new ModConfigSpec.Builder();
+    public static final ModConfigSpec COMMON_SPEC;
+    @Deprecated
     public static final ModConfigSpec SERVER_SPEC;
     public static final ModConfigSpec CLIENT_SPEC;
 
@@ -50,7 +54,8 @@ public class PropulsionConfig {
     public static final ModConfigSpec.DoubleValue GROUND_ROLLING_RESISTANCE;
     public static final ModConfigSpec.DoubleValue GROUNDED_SPEED_DEADZONE;
     public static final ModConfigSpec.DoubleValue GROUND_PROBE_DISTANCE;
-    public static final ModConfigSpec.ConfigValue<List<? extends String>> FUEL_PROPERTIES;
+    public static final Map<String, ModConfigSpec.IntValue> FUEL_EFFICIENCY_ENTRIES = new LinkedHashMap<>();
+    public static final Map<String, ModConfigSpec.IntValue> FUEL_BURN_RATE_ENTRIES = new LinkedHashMap<>();
     public static final Map<String, ModConfigSpec.ConfigValue<String>> THRUSTER_DYE_COLORS = new LinkedHashMap<>();
     public static final ModConfigSpec.DoubleValue TILT_ADAPTER_MAX_ANGLE;
     public static final ModConfigSpec.IntValue CABLE_ENERGY_TRANSFER;
@@ -80,7 +85,7 @@ public class PropulsionConfig {
     public static final ModConfigSpec.ConfigValue<Boolean> BURNERS_HEAT_STEAM_ENGINES;
     public static final ModConfigSpec.ConfigValue<Boolean> BURNERS_SUPERHEAT_STEAM_ENGINES;
     public static final ModConfigSpec.ConfigValue<Boolean> BLAZE_BURNERS_HEAT_STIRLING_ENGINES;
-    public static final ModConfigSpec.ConfigValue<List<? extends String>> CORAL_FUEL_CONVERSION_RATES;
+    public static final Map<String, ModConfigSpec.ConfigValue<String>> CORAL_FUEL_CONVERSION_RATE_ENTRIES = new LinkedHashMap<>();
 
     static {
         //#region Server
@@ -225,16 +230,44 @@ public class PropulsionConfig {
         SERVER_BUILDER.pop();
 
         SERVER_BUILDER.push("Fuel Configuration");
-            FUEL_PROPERTIES = SERVER_BUILDER.comment(
-                    "Fuel table entries as '<namespace:fluid>=<efficiency_percent>,<burn_rate_percent>'.",
-                    "Example: createpropulsion:turpentine=80,120")
-                .defineListAllowEmpty("fuelProperties", PropulsionConfig::defaultFuelProperties, () -> "",
-                    value -> value instanceof String);
-            CORAL_FUEL_CONVERSION_RATES = SERVER_BUILDER.comment(
-                    "Coral conversion entries as '<namespace:fluid>=<fe_per_mb>'.",
-                    "Example: createpropulsion:coral=16")
-                .defineListAllowEmpty("coralFuelConversionRates", PropulsionConfig::defaultCoralFuelConversionRates, () -> "",
-                    value -> value instanceof String);
+            SERVER_BUILDER.comment(
+                    "Fuel properties by fluid id. Configure efficiency and burn rate separately as percentages.");
+            SERVER_BUILDER.push("fuelProperties");
+            for (String entry : defaultFuelProperties()) {
+                String[] split = entry.split("=", 2);
+                if (split.length != 2) continue;
+                String fluidId = split[0];
+                String[] values = split[1].split(",", 2);
+                if (values.length != 2) continue;
+                int efficiency;
+                int burnRate;
+                try {
+                    efficiency = Integer.parseInt(values[0].trim());
+                    burnRate = Integer.parseInt(values[1].trim());
+                } catch (NumberFormatException ignored) {
+                    continue;
+                }
+                SERVER_BUILDER.push(configKeyForFluidId(fluidId));
+                FUEL_EFFICIENCY_ENTRIES.put(fluidId,
+                        SERVER_BUILDER.comment("Fuel efficiency percentage for " + fluidId + ".")
+                                .defineInRange("efficiency", efficiency, 0, 10000));
+                FUEL_BURN_RATE_ENTRIES.put(fluidId,
+                        SERVER_BUILDER.comment("Fuel burn rate percentage for " + fluidId + ".")
+                                .defineInRange("burnRate", burnRate, 0, 10000));
+                SERVER_BUILDER.pop();
+            }
+            SERVER_BUILDER.pop();
+
+            SERVER_BUILDER.comment(
+                    "Coral conversion entries. Each key is a fluid id and each value is '<fe_per_mb>'.",
+                    "Example value: 16");
+            SERVER_BUILDER.push("coralFuelConversionRates");
+            for (String entry : defaultCoralFuelConversionRates()) {
+                String[] split = entry.split("=", 2);
+                if (split.length != 2) continue;
+                CORAL_FUEL_CONVERSION_RATE_ENTRIES.put(split[0], SERVER_BUILDER.define(configKeyForFluidId(split[0]), split[1]));
+            }
+            SERVER_BUILDER.pop();
 
         SERVER_BUILDER.pop();
 
@@ -265,7 +298,8 @@ public class PropulsionConfig {
 
         PropulsionDefaultStress.INSTANCE.registerAll(SERVER_BUILDER);
 
-        SERVER_SPEC = SERVER_BUILDER.build();
+        COMMON_SPEC = COMMON_BUILDER.build();
+        SERVER_SPEC = COMMON_SPEC;
         //#endregion
 
         //#region Client
@@ -308,23 +342,31 @@ public class PropulsionConfig {
                 "tfmg:diesel=100,100",
                 "stellaris:diesel=100,100",
                 "tfmg:naphtha=95,105",
-                "tfmg:kerosene=115,90",
+                "tfmg:kerosene=230,90",
                 "createdieselgenerators:gasoline=125,80",
                 "tfmg:gasoline=125,80",
                 "tfmg:lpg=120,85",
                 "northstar:hydrocarbon=130,75",
                 "stellaris:fuel=115,100",
-                "mekanism:hydrogen=120,80",
+                "mekanism:hydrogen=230,90",
                 "createaddition:bioethanol=75,135",
                 "createaddition:seed_oil=55,170",
                 "northstar:methane=105,95",
-                "northstar:liquid_hydrogen=125,80",
+                "northstar:liquid_hydrogen=230,90",
                 "immersivepetroleum:diesel_sulfur=100,100"
         ));
     }
 
     private static List<String> defaultCoralFuelConversionRates() {
-        return new ArrayList<>(List.of("createpropulsion:coral=200"));
+        return new ArrayList<>(List.of("createpropulsion:coral=500"));
+    }
+
+    private static String configKeyForFluidId(String fluidId) {
+        return fluidId
+                .replace(':', '_')
+                .replace('/', '_')
+                .replace('.', '_')
+                .replace('-', '_');
     }
 
 
@@ -343,16 +385,40 @@ public class PropulsionConfig {
     }
 
     public static List<? extends String> getCoralFuelConversionRatesOrDefault() {
+        if (!CORAL_FUEL_CONVERSION_RATE_ENTRIES.isEmpty()) {
+            List<String> entries = new ArrayList<>();
+            for (Map.Entry<String, ModConfigSpec.ConfigValue<String>> e : CORAL_FUEL_CONVERSION_RATE_ENTRIES.entrySet()) {
+                try {
+                    entries.add(e.getKey() + "=" + e.getValue().get());
+                } catch (IllegalStateException ignored) {
+                    return defaultCoralFuelConversionRates();
+                }
+            }
+            return entries;
+        }
         try {
-            return CORAL_FUEL_CONVERSION_RATES.get();
+            return defaultCoralFuelConversionRates();
         } catch (IllegalStateException ignored) {
             return defaultCoralFuelConversionRates();
         }
     }
 
     public static List<? extends String> getFuelPropertiesOrDefault() {
+        if (!FUEL_EFFICIENCY_ENTRIES.isEmpty() && !FUEL_BURN_RATE_ENTRIES.isEmpty()) {
+            List<String> entries = new ArrayList<>();
+            for (Map.Entry<String, ModConfigSpec.IntValue> e : FUEL_EFFICIENCY_ENTRIES.entrySet()) {
+                try {
+                    ModConfigSpec.IntValue burnRate = FUEL_BURN_RATE_ENTRIES.get(e.getKey());
+                    if (burnRate == null) return defaultFuelProperties();
+                    entries.add(e.getKey() + "=" + e.getValue().get() + "," + burnRate.get());
+                } catch (IllegalStateException ignored) {
+                    return defaultFuelProperties();
+                }
+            }
+            return entries;
+        }
         try {
-            return FUEL_PROPERTIES.get();
+            return defaultFuelProperties();
         } catch (IllegalStateException ignored) {
             return defaultFuelProperties();
         }

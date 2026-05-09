@@ -22,6 +22,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.items.IItemHandler;
 
 public class SolidBurnerBlockEntity extends AbstractBurnerBlockEntity implements IBurner {
     private BurnerFuelBehaviour fuelInventory;
@@ -56,6 +57,10 @@ public class SolidBurnerBlockEntity extends AbstractBurnerBlockEntity implements
 
     public ItemStack getFuelStack() {
         return fuelInventory.fuelStack;
+    }
+
+    public IItemHandler getItemHandler(Direction side) {
+        return fuelInventory == null ? null : fuelInventory.getItemHandler();
     }
 
     @Override

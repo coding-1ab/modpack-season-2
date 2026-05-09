@@ -6,6 +6,7 @@ import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.Liquid
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.PassthroughFluidHandler;
 import dev.propulsionteam.propulsionsimulated.content.cable.hub.CableHubBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.platinum.CoralGeneratorBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.heat.burners.solid.SolidBurnerBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.ion_thruster.IonThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.liquid_vector_thruster.LiquidVectorThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
@@ -15,6 +16,7 @@ import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.items.IItemHandler;
 
 public class ModCapabilityEvents {
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
@@ -33,6 +35,11 @@ public class ModCapabilityEvents {
             Capabilities.FluidHandler.BLOCK,
             PropulsionBlockEntities.LIQUID_BURNER_BLOCK_ENTITY.get(),
             ModCapabilityEvents::getLiquidBurnerFluidHandler
+        );
+        event.registerBlockEntity(
+            Capabilities.ItemHandler.BLOCK,
+            PropulsionBlockEntities.SOLID_BURNER_BLOCK_ENTITY.get(),
+            ModCapabilityEvents::getSolidBurnerItemHandler
         );
 
         event.registerBlockEntity(
@@ -141,5 +148,9 @@ public class ModCapabilityEvents {
             return primaryHandler;
         }
         return new PassthroughFluidHandler(blockEntity, side);
+    }
+
+    private static IItemHandler getSolidBurnerItemHandler(SolidBurnerBlockEntity blockEntity, Direction side) {
+        return blockEntity.getItemHandler(side);
     }
 }

@@ -618,7 +618,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
         calculateObstruction(getLevel(), worldPosition, getBlockState().getValue(AbstractThrusterBlock.FACING));
         isThrustDirty = wasThrustDirty;
 
-        MutableComponent title = getBlockState().getBlock().getName().copy();
+        MutableComponent title = Component.translatable("createpropulsion.gui.goggles.title.thruster_stats").copy();
         if (width > 1) {
             title.append(Component.literal(" (" + width + "x" + width + "x" + width + ")").withStyle(ChatFormatting.GRAY));
         }
@@ -656,7 +656,7 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
 
         CreateLang.builder()
             .add(Component.literal("  "))
-            .add(Component.translatable("createpropulsion.tooltip.thrust1"))
+            .add(Component.translatable("createpropulsion.tooltip.thrust1").withStyle(ChatFormatting.GRAY))
             .add(Component.literal(String.format(Locale.ROOT, "%.2f", this.getDisplayedThrustPnForTooltip() / PN_PER_DISPLAY_UNIT)).withStyle(ChatFormatting.AQUA))
             .add(Component.literal(" pN").withStyle(ChatFormatting.GRAY))
             .forGoggles(tooltip);
