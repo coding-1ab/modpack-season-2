@@ -137,6 +137,18 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
         onVectorSignalChanged();
     }
 
+    /** Ponder (and similar): set redstone-derived targets while the scene advances animation manually. */
+    public void applyVectorSignalsForScene(float x, float y) {
+        setVectorCoordinates(x, y);
+    }
+
+    public void animateVectorForScene() {
+        prevVectorX = currentVectorX;
+        prevVectorY = currentVectorY;
+        currentVectorX = tweenTowards(currentVectorX, targetVectorX);
+        currentVectorY = tweenTowards(currentVectorY, targetVectorY);
+    }
+
     // -----------------------------------------------------------------------
 
     @Override

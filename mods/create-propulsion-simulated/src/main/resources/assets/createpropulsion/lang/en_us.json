@@ -151,6 +151,19 @@
     "createpropulsion.ponder.shared.thruster_3x3.back_layer_inputs": "Feed the back layer input manifold for full operation.",
     "createpropulsion.ponder.shared.thruster_3x3.valid_fuel_now": "Insert valid thruster fuel into the rear-fed manifold.",
     "createpropulsion.ponder.shared.thruster_3x3.power_thruster": "Apply redstone to the thruster and the whole multiblock works.",
+    
+    "createpropulsion.ponder.ponder_vector_thruster_normal.header": "Vector Thruster",
+    "createpropulsion.ponder.shared.vector_thruster_fe.header": "Powering a Vector Thruster",
+    "createpropulsion.ponder.shared.vector_thruster_fe.intro.main": "Vector Thruster uses Forge energy to produce thrust.",
+    "createpropulsion.ponder.shared.vector_thruster_fe.intro.fe": "Forge energy is stored in the thruster's internal energy storage.",
+    "createpropulsion.ponder.shared.vector_thruster_fe.intro.fe_storage": "Currently %s FE is able to be stored in the thruster's internal storage.",
+    "createpropulsion.ponder.shared.vector_thruster_fe.intro.generators": "Generators can power from below, this can be anything that uses forge energy system.",
+    "createpropulsion.ponder.shared.vector_thruster_fe.moving.intro": "Vector Thrusters can rotate in all directions, this is controlled by redstone signals directly embedded into the thruster itself.",
+    "createpropulsion.ponder.shared.vector_thruster_fe.moving.text_1": "A redstone power can be anything from 0-15, this will increase the distance of rotation from the base.",
+    "createpropulsion.ponder.shared.vector_thruster_fe.moving.text_3": "Each side except front and back has a redstone signal place, that direction is where it will be rotated towards when that signal is powered.",
+    
+    "createpropulsion.ponder.shared.vector_thruster_fe.powering.intro": "Powering a thruster is easy, any external signal to the thruster will be the power, this can range from 0-15, and will use power accordingly.",
+    
     "block.createpropulsion.vector_thruster": "Vector Thruster",
     "block.createpropulsion.creative_vector_thruster": "Creative Vector Thruster",
     "createpropulsion.creative_vector_thruster.tooltip.summary": "Vector thruster with configurable creative thrust and wrench-cycled particle mode.",
