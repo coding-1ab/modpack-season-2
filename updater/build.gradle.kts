@@ -5,6 +5,8 @@ plugins {
     id("maven-publish")
     id("net.neoforged.moddev")
     id("idea")
+    id("com.gradleup.shadow") version "9.4.1"
+    application
 }
 
 val mod_id: String by rootProject
@@ -17,6 +19,8 @@ repositories {
     mavenLocal()
     mavenCentral()
 }
+
+val shadowMe = configurations.create("shadowMe")
 
 neoForge {
     // Specify the version of NeoForge to use.
@@ -97,6 +101,8 @@ java {
 }
 
 dependencies {
+    val jackson = "com.fasterxml.jackson.core:jackson-databind:2.15.2"
+    shadowMe(implementation(jackson)!!)
 }
 
 publishing {
@@ -117,4 +123,24 @@ idea {
         isDownloadSources = true
         isDownloadJavadoc = true
     }
+}
+
+tasks {
+    jar {
+        manifest {
+            attributes["Main-Class"] = "dev.codinglabs.updater.Installer"
+        }
+
+        finalizedBy(shadowJar)
+    }
+
+    shadowJar {
+        configurations.set(listOf(shadowMe))
+        relocate("com.fasterxml.jackson", "dev.codinglabs.updater.com.fasterxml.jackson")
+        archiveClassifier.set("")
+    }
+}
+
+application {
+    mainClass.set("dev.codinglabs.updater.Installer")
 }

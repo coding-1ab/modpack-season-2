@@ -29,10 +29,11 @@ import java.nio.file.StandardOpenOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 import java.util.zip.CRC32;
 
-// TODO UpdatingLocator는 Self 업데이트 불가능. 해결할 것.
 public class UpdatingLocator implements IDependencyLocator {
     private static final String errorKey = "fml.modloadingissue.technical_error";
     private static final Logger LOGGER = LogManager.getLogger();
@@ -75,6 +76,9 @@ public class UpdatingLocator implements IDependencyLocator {
             ).withCause(exception));
         }
         registryProgress.complete();
+
+        checkUpdate(client, baseUrl, registry.updater());
+
         ProgressMeter modCheckProgress = StartupNotificationManager.addProgressBar(
                 "Checking for mods",
                 registry.builtMods().size() + registry.extraMods().size()
@@ -148,6 +152,49 @@ public class UpdatingLocator implements IDependencyLocator {
         }
 
         modCheckProgress.complete();
+    }
+
+    private static void checkUpdate(HttpClient client, String baseUrl, Registry.ModEntry updaterEntry) {
+        StartupNotificationManager.addModMessage("Updating updater itself");
+        Path mods = FMLPaths.MODSDIR.get();
+        try (Stream<Path> stream = Files.list(mods)) {
+            for (Iterator<Path> it = stream.iterator(); it.hasNext(); ) {
+                Path path = it.next();
+                File modFile = path.toFile();
+
+                String fileName = modFile.getName();
+                boolean isUpdater = fileName.startsWith("modpack-updater") && fileName.endsWith(".jar");
+                if (!isUpdater) {
+                    continue;
+                }
+
+                byte[] contents = Files.readAllBytes(path);
+                int size = (int) modFile.length();
+                long crc = getChecksum(contents, size);
+
+                boolean shouldUpdate = crc != updaterEntry.crc();
+
+                if (shouldUpdate) {
+                    URI uri = builtMod(baseUrl, updaterEntry.fileName());
+                    StartupNotificationManager.addModMessage("New Update for Updater itself was found.");
+                    StartupNotificationManager.addModMessage("Please restart game afterwards");
+                    downloadMod(uri, modFile, client, null);
+                    throw new ModLoadingException(ModLoadingIssue.warning(errorKey, "모드팩 자동 업데이터가 스스로를 갱신했습니다. 게임을 다시 시작해주세요."));
+                } else {
+                    LOGGER.info("Using latest modpack updater");
+                    return;
+                }
+            }
+            throw new ModLoadingException(
+                    ModLoadingIssue.error(
+                            errorKey,
+                            "모드팩 자동 업데이터가 스스로의 .jar 파일을 찾는데 실패했습니다." +
+                                    " 모드팩 자동 업데이터 파일의 이름은 무조건 modpack-updater.x.x.x.jar 형식이어야만 합니다."
+                    )
+            );
+        } catch (IOException e) {
+            throw checksumIoException(e);
+        }
     }
 
     private static URI builtMod(String baseUrl, String fileName) {

@@ -42,8 +42,14 @@ class BeforeProjectAction(
                 }
                 project.tasks.register<Copy>("createModJars") {
                     mustRunAfter(clearModJars)
+
                     val jarTask = project.tasks.named<Jar>("jar")
                     dependsOn(jarTask)
+                    project.subprojects.forEach {
+                        val subJarTask = it.tasks.named<Jar>("shadowJar")
+                        dependsOn(subJarTask)
+                        from(subJarTask.get().archiveFile)
+                    }
 
                     from(project.projectDir.resolve("extra_mods.txt"))
                     from(jarTask.get().archiveFile)

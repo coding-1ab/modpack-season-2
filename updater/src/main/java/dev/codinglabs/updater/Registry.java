@@ -11,12 +11,14 @@ import java.util.List;
 
 public record Registry(
         List<ModEntry> builtMods,
-        List<ModSource.ExternalSource> extraMods
+        List<ModSource.ExternalSource> extraMods,
+        ModEntry updater
 ) {
     public static final Codec<Registry> CODEC = RecordCodecBuilder.create(builder ->
             builder.group(
                     ModEntry.CODEC.listOf().fieldOf("built_mods").forGetter(Registry::builtMods),
-                    ModSource.ExternalSource.CODEC.listOf().fieldOf("extra_mods").forGetter(Registry::extraMods)
+                    ModSource.ExternalSource.CODEC.listOf().fieldOf("extra_mods").forGetter(Registry::extraMods),
+                    ModEntry.CODEC.fieldOf("updater").forGetter(Registry::updater)
             ).apply(builder, Registry::new)
     );
 
