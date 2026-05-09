@@ -10,6 +10,8 @@ import dev.propulsionteam.propulsionsimulated.content.platinum.CoralGeneratorBlo
 import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.creative_vector_thruster.CreativeVectorThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ion_thruster.IonThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.liquid_vector_thruster.LiquidVectorThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterBlockEntity;
@@ -30,7 +32,9 @@ public class ComputerBehaviour extends AbstractComputerBehaviour {
     }
 
     static {
+        register(IonThrusterBlockEntity.class, IonThrusterPeripheral::new);
         register(ThrusterBlockEntity.class, ThrusterPeripheral::new);
+        register(CreativeVectorThrusterBlockEntity.class, CreativeVectorThrusterPeripheral::new);
         register(VectorThrusterBlockEntity.class, VectorThrusterPeripheral::new);
         register(LiquidVectorThrusterBlockEntity.class, LiquidVectorThrusterPeripheral::new);
         register(CreativeThrusterBlockEntity.class, CreativeThrusterPeripheral::new);

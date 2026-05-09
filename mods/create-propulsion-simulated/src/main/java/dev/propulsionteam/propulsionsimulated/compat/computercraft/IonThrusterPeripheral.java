@@ -1,22 +1,26 @@
 package dev.propulsionteam.propulsionsimulated.compat.computercraft;
-import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity.ControlMode;
-import dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterBlockEntity;
+
 import com.simibubi.create.compat.computercraft.implementation.peripherals.SyncedPeripheral;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
+import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity.ControlMode;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ion_thruster.IonThrusterBlockEntity;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
-public class CreativeThrusterPeripheral extends SyncedPeripheral<CreativeThrusterBlockEntity> {
+/**
+ * Ion FE thrusters use their own peripheral type so Lua can distinguish them from fuel thrusters ({@link ThrusterPeripheral}).
+ */
+public class IonThrusterPeripheral extends SyncedPeripheral<IonThrusterBlockEntity> {
 
-    public CreativeThrusterPeripheral(CreativeThrusterBlockEntity blockEntity) {
+    public IonThrusterPeripheral(IonThrusterBlockEntity blockEntity) {
         super(blockEntity);
     }
 
     @Override
     public final String getType() {
-        return "creative_thruster";
+        return "ion_thruster";
     }
 
     @LuaFunction
@@ -37,26 +41,6 @@ public class CreativeThrusterPeripheral extends SyncedPeripheral<CreativeThruste
     @LuaFunction(mainThread = true)
     public final double getPower() {
         return blockEntity.getThrottle();
-    }
-
-    @LuaFunction(mainThread = true)
-    public final void setThrustConfig(int percent) {
-        blockEntity.setThrustConfig(percent);
-    }
-
-    @LuaFunction
-    public final int getThrustConfig() {
-        return blockEntity.getThrustConfig();
-    }
-
-    @LuaFunction
-    public final float getTargetThrustPN() {
-        return blockEntity.getCreativeTargetThrust();
-    }
-
-    @LuaFunction
-    public final float getTargetThrustKN() {
-        return getTargetThrustPN() / 1000.0f;
     }
 
     @LuaFunction
@@ -84,13 +68,22 @@ public class CreativeThrusterPeripheral extends SyncedPeripheral<CreativeThruste
         return blockEntity.getDisplayedAirflowMsForTooltip();
     }
 
-    //Boilerplate
+    @LuaFunction(mainThread = true)
+    public final int getEnergyAmountFe() {
+        return blockEntity.getEnergyStoredFe();
+    }
+
+    @LuaFunction(mainThread = true)
+    public final int getEnergyCapacityFe() {
+        return blockEntity.getEnergyCapacity();
+    }
+
     @Override
     public boolean equals(IPeripheral other) {
-        if (this == other) return true;
-        if (other instanceof CreativeThrusterPeripheral otherThruster) {
-            return this.blockEntity == otherThruster.blockEntity;
-        }
+        if (this == other)
+            return true;
+        if (other instanceof IonThrusterPeripheral ion)
+            return this.blockEntity == ion.blockEntity;
         return false;
     }
 

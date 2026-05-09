@@ -64,6 +64,7 @@ It adds three thruster types:
 
 # Wiki
 
+- [ComputerCraft (CC: Tweaked)](wiki/cc/README.md)
 - [KubeJS API](wiki/KubeJS-API.md)
-- [ComputerCraft Peripherals](wiki/ComputerCraft-Peripherals.md)
+- [ComputerCraft peripherals (full API reference)](wiki/ComputerCraft-Peripherals.md)
 - [Datapack example usage](wiki/Datapack-Example-Usage.md)

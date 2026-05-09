@@ -26,7 +26,7 @@ public class ThrusterPeripheral extends SyncedPeripheral<ThrusterBlockEntity> {
 
     @Override
     public final String getType() {
-        return "propulsion_thruster";
+        return "thruster";
     }
 
     @LuaFunction
@@ -36,13 +36,12 @@ public class ThrusterPeripheral extends SyncedPeripheral<ThrusterBlockEntity> {
 
     @LuaFunction(mainThread = true)
     public final void setPower(int redstonePower) {
-        blockEntity.setRedstonePower(redstonePower);
+        ThrusterComputerHelpers.setThrottleFromRedstone(blockEntity, redstonePower);
     }
 
     @LuaFunction(mainThread = true)
     public final void setPowerNormalized(double power) {
-        int redstonePower = Mth.floor(Mth.clamp(power, 0.0d, 1.0d) * 15.0d + 1.0e-6d);
-        blockEntity.setRedstonePower(redstonePower);
+        ThrusterComputerHelpers.setThrottleNormalized(blockEntity, power);
     }
 
     @LuaFunction(mainThread = true)
@@ -105,11 +104,9 @@ public class ThrusterPeripheral extends SyncedPeripheral<ThrusterBlockEntity> {
     }
 
     private IFluidHandler getHandler() throws LuaException {
-        if (blockEntity.isIon()) {
-            throw new LuaException("Ion thruster has no fluid tank");
-        }
         IFluidHandler handler = blockEntity.getFluidHandler(blockEntity.getFacing());
-        if (handler == null) throw new LuaException("Fluid tank not available");
+        if (handler == null)
+            throw new LuaException("Fluid tank not available");
         return handler;
     }
 

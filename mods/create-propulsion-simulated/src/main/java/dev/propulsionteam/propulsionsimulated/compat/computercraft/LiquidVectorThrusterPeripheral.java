@@ -1,7 +1,6 @@
 package dev.propulsionteam.propulsionsimulated.compat.computercraft;
 
 import com.simibubi.create.compat.computercraft.implementation.peripherals.SyncedPeripheral;
-import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity.ControlMode;
@@ -16,7 +15,7 @@ public class LiquidVectorThrusterPeripheral extends SyncedPeripheral<LiquidVecto
 
     @Override
     public String getType() {
-        return "vector_thruster";
+        return "liquid_vector_thruster";
     }
 
     @LuaFunction
@@ -56,13 +55,12 @@ public class LiquidVectorThrusterPeripheral extends SyncedPeripheral<LiquidVecto
 
     @LuaFunction(mainThread = true)
     public final void setThrust(int power) {
-        blockEntity.setRedstonePower(Mth.clamp(power, 0, 15));
+        ThrusterComputerHelpers.setThrottleFromRedstone(blockEntity, Mth.clamp(power, 0, 15));
     }
 
     @LuaFunction(mainThread = true)
     public final void setThrustNormalized(double power) {
-        int redstonePower = Mth.floor(Mth.clamp(power, 0.0d, 1.0d) * 15.0d + 1.0e-6d);
-        blockEntity.setRedstonePower(redstonePower);
+        ThrusterComputerHelpers.setThrottleNormalized(blockEntity, power);
     }
 
     @LuaFunction(mainThread = true)
@@ -83,11 +81,6 @@ public class LiquidVectorThrusterPeripheral extends SyncedPeripheral<LiquidVecto
     @LuaFunction
     public final double getPower() {
         return blockEntity.getPower();
-    }
-
-    @LuaFunction(mainThread = true)
-    public final void setThrustOutput(double thrustOutputPn) throws LuaException {
-        throw new LuaException("setThrustOutput is only available on creative vector thrusters");
     }
 
     @Override

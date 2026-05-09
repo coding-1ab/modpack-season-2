@@ -156,11 +156,29 @@ public class CreativeVectorThrusterBlockEntity extends VectorThrusterBlockEntity
         return powerBehaviour.getTargetThrust();
     }
 
+    /**
+     * Overrides base thrust from the scroll when {@code >= 0} (pN). Pass a negative value or use
+     * {@link #clearPeripheralThrustOutput()} to use scroll thrust again. Values are clamped to
+     * {@link PropulsionConfig#CREATIVE_VECTOR_THRUSTER_MAX_THRUST} (kN) converted to pN.
+     */
     public void setThrustOutput(float thrustOutputPn) {
-        this.peripheralThrustOutput = Math.max(0.0f, thrustOutputPn);
+        if (thrustOutputPn < 0.0f || Float.isNaN(thrustOutputPn)) {
+            this.peripheralThrustOutput = -1.0f;
+        } else {
+            float maxPn = (float) (PropulsionConfig.CREATIVE_VECTOR_THRUSTER_MAX_THRUST.get() * 1000.0d);
+            this.peripheralThrustOutput = Math.min(Math.max(0.0f, thrustOutputPn), maxPn);
+        }
         updateThrust(getBlockState());
         setChanged();
         notifyUpdate();
+    }
+
+    public boolean hasPeripheralThrustOverride() {
+        return peripheralThrustOutput >= 0.0f;
+    }
+
+    public void clearPeripheralThrustOutput() {
+        setThrustOutput(-1.0f);
     }
 
     @Override
@@ -184,6 +202,10 @@ public class CreativeVectorThrusterBlockEntity extends VectorThrusterBlockEntity
         }
         if (compound.contains("PeripheralThrustOutput")) {
             peripheralThrustOutput = Math.max(-1.0f, compound.getFloat("PeripheralThrustOutput"));
+            if (peripheralThrustOutput >= 0.0f) {
+                float maxPn = (float) (PropulsionConfig.CREATIVE_VECTOR_THRUSTER_MAX_THRUST.get() * 1000.0d);
+                peripheralThrustOutput = Math.min(peripheralThrustOutput, maxPn);
+            }
         }
     }
 }

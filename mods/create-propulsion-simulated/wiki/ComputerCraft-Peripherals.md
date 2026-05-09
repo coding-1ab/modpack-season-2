@@ -1,105 +1,212 @@
-# ComputerCraft Peripherals
+# ComputerCraft peripherals API
 
-Create: Propulsion registers these peripherals when CC:Tweaked is installed.
+Create Propulsion registers these peripherals when **CC: Tweaked** is installed. Peripheral types match Create’s `SyncedPeripheral` pattern (`mainThread` Lua calls run on the server).
 
-## Thruster (`propulsion_thruster`)
+**Entry point:** see also [ComputerCraft overview](cc/README.md).
 
-- `getObstruction() -> number`
-- `setPower(redstonePower)` where `redstonePower` is `0 .. 15`
-- `setPowerNormalized(power)` where `power` is `0.0 .. 1.0`
-- `getPower() -> number` returns normalized throttle `0.0 .. 1.0`
-- `getCurrentThrustPN() -> number`
-- `getCurrentThrustKN() -> number`
-- `getDisplayedThrustPN() -> number`
-- `getDisplayedThrustKN() -> number`
-- `getAirflowMs() -> number`
-- `getFuelAmountMb() -> number`
-- `getFuelCapacityMb() -> number`
-- `tanks() -> table`
-- `pushFluid(toName[, limit[, fluidName]]) -> number`
-- `pullFluid(fromName[, limit[, fluidName]]) -> number`
+---
 
-Attach/detach behavior:
-- On attach: thruster switches to peripheral control mode.
-- On detach: control returns to normal mode and peripheral power is reset.
+## Throttle control (all thrusters)
 
-Notes:
-- Ion thrusters expose the same peripheral type but fluid methods throw because ion thrusters have no fluid tank.
+While **any** computer is attached to a thruster peripheral:
 
-## Creative Thruster (`creative_thruster`)
+1. The block uses **peripheral throttle** (normalized `0.0 … 1.0`), driven by Lua (`setPower`, `setThrust`, etc.).
+2. **`getPower()`** returns that peripheral throttle (same scale redstone would use: `redstone / 15`).
+3. World **redstone signals next to the block do not drive thrust** until the computer disconnects.
 
-- `getObstruction() -> number`
-- `setPower(redstonePower)` where `redstonePower` is `0 .. 15`
-- `setPowerNormalized(power)` where `power` is `0.0 .. 1.0`
-- `getPower() -> number` returns normalized throttle `0.0 .. 1.0`
-- `setThrustConfig(percent)`
-- `getThrustConfig() -> number`
-- `getTargetThrustPN() -> number`
-- `getTargetThrustKN() -> number`
-- `getCurrentThrustPN() -> number`
-- `getCurrentThrustKN() -> number`
-- `getDisplayedThrustPN() -> number`
-- `getDisplayedThrustKN() -> number`
-- `getAirflowMs() -> number`
+When the computer **detaches**, peripheral throttle is cleared and the thruster returns to **normal** redstone-controlled behavior.
 
-Attach/detach behavior:
-- On attach: thruster switches to peripheral control mode.
-- On detach: control returns to normal mode and peripheral power is reset.
+Fuel thrusters and ion thrusters use **different peripheral type strings** (`thruster` vs `ion_thruster`) so scripts can tell them apart.
 
-## Vector Thruster (`vector_thruster`)
+---
 
-This type is used by both normal vector thrusters and liquid vector thrusters.
+## Thruster (`thruster`)
 
-- `getVectorX() -> number`
-- `getVectorY() -> number`
-- `getTargetVectorX() -> number`
-- `getTargetVectorY() -> number`
-- `setVectorX(x)` where `x` is clamped to `-1.0 .. 1.0`
-- `setVectorY(y)` where `y` is clamped to `-1.0 .. 1.0`
-- `setVector(x, y)` where each value is clamped to `-1.0 .. 1.0`
-- `setThrust(power)` where `power` is `0 .. 15`
-- `setThrustNormalized(power)` where `power` is `0.0 .. 1.0`
-- `setPower(power)` alias of `setThrust`
-- `setPowerNormalized(power)` alias of `setThrustNormalized`
-- `getThrust() -> number` returns `0 .. 15`
-- `getPower() -> number` returns normalized throttle `0.0 .. 1.0`
-- `setThrustOutput(thrustOutputPn)`
+**Fuel / chemical thrusters only** (not ion).
 
-Error behavior:
-- `setThrustOutput` only works on creative vector thrusters.
-- On non-creative vector thrusters it throws an error.
+| Method | Returns | Notes |
+|--------|---------|--------|
+| `getObstruction()` | `number` | |
+| `setPower(redstonePower)` | — | `redstonePower`: `0 … 15`; sets peripheral throttle |
+| `setPowerNormalized(power)` | — | `power`: `0.0 … 1.0` |
+| `getPower()` | `number` | Normalized throttle `0.0 … 1.0` |
+| `getCurrentThrustPN()` | `number` | |
+| `getCurrentThrustKN()` | `number` | |
+| `getDisplayedThrustPN()` | `number` | Tooltip-scale thrust |
+| `getDisplayedThrustKN()` | `number` | |
+| `getAirflowMs()` | `number` | |
+| `getFuelAmountMb()` | `number` | |
+| `getFuelCapacityMb()` | `number` | |
+| `tanks()` | `table` | |
+| `pushFluid(toName[, limit[, fluidName]])` | `number` | |
+| `pullFluid(fromName[, limit[, fluidName]])` | `number` | |
 
-Attach/detach behavior:
-- On attach: thruster switches to peripheral control mode.
-- On detach: control returns to normal mode and peripheral power is reset.
+---
 
-## Stirling Engine (`stirling_engine`)
+## Ion thruster (`ion_thruster`)
 
-- `getRpm() -> number`
-- `setSpeed(targetSpeed)` (internally clamped to supported scroll levels)
-- `setActive(active)`
+FE-powered ion thrusters: same throttle and thrust readouts as [Thruster](#thruster-thruster), but **no fluid API**. Internal buffer is exposed as FE:
 
-## Redstone Transmission (`redstone_transmission`)
+| Method | Returns | Notes |
+|--------|---------|--------|
+| `setPower` / `setPowerNormalized` | — | Same throttle semantics as [Throttle control](#throttle-control-all-thrusters) |
+| `getPower()` | `number` | |
+| `getObstruction()` | `number` | |
+| `getCurrentThrustPN()` / `getCurrentThrustKN()` | `number` | |
+| `getDisplayedThrustPN()` / `getDisplayedThrustKN()` | `number` | |
+| `getAirflowMs()` | `number` | |
+| `getEnergyAmountFe()` | `number` | Stored FE |
+| `getEnergyCapacityFe()` | `number` | Buffer capacity |
 
-- `getTransmissionMode() -> string` (`direct` or `incremental`)
-- `setTransmissionMode(mode)`
-- `getShiftLevel() -> number`
-- `setShiftLevel(level)`
+---
 
-Error behavior:
-- `setTransmissionMode` throws for invalid mode values.
+## Creative thruster (`creative_thruster`)
 
-## Tilt Adapter (`tilt_adapter`)
+Same throttle methods as the normal thruster, plus scroll-equivalent thrust configuration.
 
-- `getLeftSignal() -> number`
-- `getRightSignal() -> number`
-- `setTargetAngle(angle)`
+| Method | Returns | Notes |
+|--------|---------|--------|
+| `setPower` / `setPowerNormalized` | — | Same semantics as [Thruster](#thruster-thruster) |
+| `getPower()` | `number` | |
+| `setThrustConfig(percent)` | — | Scroll step `0 … 99` (matches on-block UI steps; capped internally) |
+| `getThrustConfig()` | `number` | Current step |
+| `getTargetThrustPN()` | `number` | Base thrust target from scroll / config (before throttle & atmosphere) |
+| `getTargetThrustKN()` | `number` | |
+| `getCurrentThrustPN()` | `number` | |
+| `getCurrentThrustKN()` | `number` | |
+| `getDisplayedThrustPN()` | `number` | |
+| `getDisplayedThrustKN()` | `number` | |
+| `getAirflowMs()` | `number` | |
+| `getObstruction()` | `number` | |
 
-When a computer is attached, tilt target is driven from the peripheral target angle.
+---
 
-## Coral Generator (`coral_generator`)
+## Vector thruster (`vector_thruster`)
 
-- `getCoralAmountMb() -> number`
-- `getCoralCapacityMb() -> number`
-- `getEnergyAmountFe() -> number`
-- `getEnergyCapacityFe() -> number`
+Standard **fuel** vector thruster (not liquid fuel cell, not creative). Direction + throttle only; attach/detach follows [Throttle control](#throttle-control-all-thrusters).
+
+### Direction (`-1 … 1` plane)
+
+| Method | Notes |
+|--------|--------|
+| `getVectorX()` / `getVectorY()` | Current nozzle direction components |
+| `getTargetVectorX()` / `getTargetVectorY()` | Target |
+| `setVectorX(x)` | `x` clamped `-1.0 … 1.0` |
+| `setVectorY(y)` | `y` clamped `-1.0 … 1.0` |
+| `setVector(x, y)` | Both clamped |
+
+### Throttle (`0 … 15` or normalized)
+
+| Method | Notes |
+|--------|--------|
+| `setThrust(power)` | `power`: `0 … 15` → peripheral throttle |
+| `setThrustNormalized(power)` | `power`: `0.0 … 1.0` |
+| `setPower(power)` | Alias of `setThrust` |
+| `setPowerNormalized(power)` | Alias of `setThrustNormalized` |
+| `getThrust()` | `0 … 15` scale |
+| `getPower()` | Normalized `0.0 … 1.0` |
+
+---
+
+## Liquid vector thruster (`liquid_vector_thruster`)
+
+Liquid-fuel vector thruster: **same direction and throttle methods** as **Vector thruster** (`vector_thruster`) above. No `setThrustOutput` / override helpers (those exist only on **Creative vector thruster**).
+
+### Direction (`-1 … 1` plane)
+
+| Method | Notes |
+|--------|--------|
+| `getVectorX()` / `getVectorY()` | Current nozzle direction components |
+| `getTargetVectorX()` / `getTargetVectorY()` | Target |
+| `setVectorX(x)` | `x` clamped `-1.0 … 1.0` |
+| `setVectorY(y)` | `y` clamped `-1.0 … 1.0` |
+| `setVector(x, y)` | Both clamped |
+
+### Throttle (`0 … 15` or normalized)
+
+| Method | Notes |
+|--------|--------|
+| `setThrust(power)` | `power`: `0 … 15` → peripheral throttle |
+| `setThrustNormalized(power)` | `power`: `0.0 … 1.0` |
+| `setPower(power)` | Alias of `setThrust` |
+| `setPowerNormalized(power)` | Alias of `setThrustNormalized` |
+| `getThrust()` | `0 … 15` scale |
+| `getPower()` | Normalized `0.0 … 1.0` |
+
+---
+
+## Creative vector thruster (`creative_vector_thruster`)
+
+Separate peripheral implementation (`CreativeVectorThrusterPeripheral`): direction + throttle match **Vector thruster**, plus override APIs below.
+
+### Direction (`-1 … 1` plane)
+
+| Method | Notes |
+|--------|--------|
+| `getVectorX()` / `getVectorY()` | Current nozzle direction components |
+| `getTargetVectorX()` / `getTargetVectorY()` | Target |
+| `setVectorX(x)` | `x` clamped `-1.0 … 1.0` |
+| `setVectorY(y)` | `y` clamped `-1.0 … 1.0` |
+| `setVector(x, y)` | Both clamped |
+
+### Throttle (`0 … 15` or normalized)
+
+| Method | Notes |
+|--------|--------|
+| `setThrust(power)` | `power`: `0 … 15` → peripheral throttle |
+| `setThrustNormalized(power)` | `power`: `0.0 … 1.0` |
+| `setPower(power)` | Alias of `setThrust` |
+| `setPowerNormalized(power)` | Alias of `setThrustNormalized` |
+| `getThrust()` | `0 … 15` scale |
+| `getPower()` | Normalized `0.0 … 1.0` |
+
+### Base thrust override (creative only)
+
+| Method | Returns | Notes |
+|--------|---------|--------|
+| `setThrustOutput(thrustOutputPn)` | — | Base thrust in **pN**. Clamped to the same maximum as the on-block scroll: `creativeVectorThrusterMaxThrust` (kN from config) × **1000**. Pass **`< 0`** (e.g. `-1`) to clear override and use scroll thrust again. |
+| `clearThrustOutput()` | — | Same as `setThrustOutput(-1)` — removes Lua thrust override |
+| `getMaxThrustOutputPn()` | `number` | Max allowed `setThrustOutput` in pN from config |
+| `isCustomThrustOutputActive()` | `boolean` | `true` if a CC thrust override is active |
+
+---
+
+## Stirling engine (`stirling_engine`)
+
+| Method | Notes |
+|--------|--------|
+| `getRpm()` | |
+| `setSpeed(targetSpeed)` | Clamped to supported scroll levels |
+| `setActive(active)` | |
+
+---
+
+## Redstone transmission (`redstone_transmission`)
+
+| Method | Notes |
+|--------|--------|
+| `getTransmissionMode()` | `"direct"` or `"incremental"` |
+| `setTransmissionMode(mode)` | Throws on invalid mode |
+| `getShiftLevel()` | |
+| `setShiftLevel(level)` | |
+
+---
+
+## Tilt adapter (`tilt_adapter`)
+
+| Method | Notes |
+|--------|--------|
+| `getLeftSignal()` | |
+| `getRightSignal()` | |
+| `setTargetAngle(angle)` | While attached, computer drives tilt target |
+
+---
+
+## Coral generator (`coral_generator`)
+
+| Method |
+|--------|
+| `getCoralAmountMb()` |
+| `getCoralCapacityMb()` |
+| `getEnergyAmountFe()` |
+| `getEnergyCapacityFe()` |

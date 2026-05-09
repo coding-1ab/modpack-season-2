@@ -1,15 +1,14 @@
 package dev.propulsionteam.propulsionsimulated.compat.computercraft;
 
 import com.simibubi.create.compat.computercraft.implementation.peripherals.SyncedPeripheral;
-import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
-import dev.propulsionteam.propulsionsimulated.content.thruster.creative_vector_thruster.CreativeVectorThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity.ControlMode;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterBlockEntity;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
+/** Fuel vector thrusters only; creative vectors use {@link CreativeVectorThrusterPeripheral}. */
 public class VectorThrusterPeripheral extends SyncedPeripheral<VectorThrusterBlockEntity> {
     public VectorThrusterPeripheral(VectorThrusterBlockEntity blockEntity) {
         super(blockEntity);
@@ -61,13 +60,12 @@ public class VectorThrusterPeripheral extends SyncedPeripheral<VectorThrusterBlo
 
     @LuaFunction(mainThread = true)
     public final void setThrust(int power) {
-        blockEntity.setRedstonePower(Mth.clamp(power, 0, 15));
+        ThrusterComputerHelpers.setThrottleFromRedstone(blockEntity, Mth.clamp(power, 0, 15));
     }
 
     @LuaFunction(mainThread = true)
     public final void setThrustNormalized(double power) {
-        int redstonePower = Mth.floor(Mth.clamp(power, 0.0d, 1.0d) * 15.0d + 1.0e-6d);
-        blockEntity.setRedstonePower(redstonePower);
+        ThrusterComputerHelpers.setThrottleNormalized(blockEntity, power);
     }
 
     @LuaFunction(mainThread = true)
@@ -88,15 +86,6 @@ public class VectorThrusterPeripheral extends SyncedPeripheral<VectorThrusterBlo
     @LuaFunction
     public final double getPower() {
         return blockEntity.getPower();
-    }
-
-    @LuaFunction(mainThread = true)
-    public final void setThrustOutput(double thrustOutputPn) throws LuaException {
-        if (blockEntity instanceof CreativeVectorThrusterBlockEntity creativeVectorThruster) {
-            creativeVectorThruster.setThrustOutput((float) Math.max(0.0d, thrustOutputPn));
-            return;
-        }
-        throw new LuaException("setThrustOutput is only available on creative vector thrusters");
     }
 
     @Override
