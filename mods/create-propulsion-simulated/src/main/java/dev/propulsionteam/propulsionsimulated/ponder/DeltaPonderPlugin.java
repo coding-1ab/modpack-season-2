@@ -35,6 +35,8 @@ public class DeltaPonderPlugin implements PonderPlugin {
                 .addStoryBoard("ponder_thruster_normal", ThrusterScenes::normal)
                 .addStoryBoard("ponder_thruster_2x2", ThrusterScenes::multiblock2x2)
                 .addStoryBoard("ponder_thruster_3x3", ThrusterScenes::multiblock3x3);
+        HELPER.forComponents(PropulsionBlocks.VECTOR_THRUSTER_BLOCK.get())
+                .addStoryBoard("ponder_vector_thruster_normal", VectorThrusterFeScenes::vectorThrusterFe);
     }
 
     @Override
