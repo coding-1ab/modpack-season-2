@@ -28,8 +28,8 @@ public class PatchConfig {
         String staticBlockContent = "";
         if (staticBlockMatcher.find()) {
             staticBlockContent = staticBlockMatcher.group(1);
-            // Replace 'builder' with 'SERVER_BUILDER'
-            staticBlockContent = staticBlockContent.replace("builder", "SERVER_BUILDER");
+            // Replace 'builder' with 'COMMON_BUILDER'
+            staticBlockContent = staticBlockContent.replace("builder", "COMMON_BUILDER");
         }
 
         // Also extract defaultFuelProperties method
@@ -43,9 +43,9 @@ public class PatchConfig {
         pConfig = pConfig.replaceFirst("//Thruster", "//Thruster\\n" + newFields.toString());
 
         // Inject into static block in PropulsionConfig
-        // Find end of SERVER_BUILDER thruster block
-        pConfig = pConfig.replaceFirst("SERVER_BUILDER\\.pop\\(\\);\\s+SERVER_BUILDER\\.push\\(\\\"Creative Thruster\\\"\\);", 
-            "SERVER_BUILDER.pop();\n" + staticBlockContent + "\n        SERVER_BUILDER.push(\"Creative Thruster\");");
+        // Find end of COMMON_BUILDER thruster block
+        pConfig = pConfig.replaceFirst("COMMON_BUILDER\\.pop\\(\\);\\s+COMMON_BUILDER\\.push\\(\\\"Creative Thruster\\\"\\);",
+            "COMMON_BUILDER.pop();\n" + staticBlockContent + "\n        COMMON_BUILDER.push(\"Creative Thruster\");");
             
         // Inject defaultFuelMethod at the end
         pConfig = pConfig.replaceFirst("\\}\\s*$", defaultFuelMethod + "}\n");

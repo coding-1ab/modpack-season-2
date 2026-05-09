@@ -12,19 +12,14 @@ import java.util.Map;
 
 public class PropulsionConfig {
     public static final ModConfigSpec.Builder COMMON_BUILDER = new ModConfigSpec.Builder();
-    @Deprecated
-    public static final ModConfigSpec.Builder SERVER_BUILDER = COMMON_BUILDER;
     public static final ModConfigSpec.Builder CLIENT_BUILDER = new ModConfigSpec.Builder();
     public static final ModConfigSpec COMMON_SPEC;
-    @Deprecated
-    public static final ModConfigSpec SERVER_SPEC;
     public static final ModConfigSpec CLIENT_SPEC;
 
     // ── Thruster (reference-style typed values for new code) ────────────────
     public static final ModConfigSpec.DoubleValue BASE_THRUST;
     public static final ModConfigSpec.IntValue OBSTRUCTION_SCAN_LENGTH;
     public static final ModConfigSpec.BooleanValue OBSTRUCTION_IGNORE_OTHER_SUBLEVELS;
-    public static final ModConfigSpec.BooleanValue REQUIRE_FUEL;
     public static final ModConfigSpec.IntValue FUEL_TANK_CAPACITY_MB;
     public static final ModConfigSpec.DoubleValue CREATIVE_THRUSTER_BASE_THRUST;
     public static final ModConfigSpec.DoubleValue CREATIVE_THRUSTER_MAX_THRUST;
@@ -45,34 +40,16 @@ public class PropulsionConfig {
     public static final ModConfigSpec.DoubleValue MULTIBLOCK_2X_OXIDIZER_EFFICIENCY;
     public static final ModConfigSpec.DoubleValue MULTIBLOCK_3X_OXIDIZER_EFFICIENCY;
     public static final ModConfigSpec.BooleanValue DAMAGE_ENTITIES;
-    public static final ModConfigSpec.IntValue DAMAGE_TICK_INTERVAL;
     public static final ModConfigSpec.DoubleValue NOZZLE_OFFSET_FROM_CENTER;
     public static final ModConfigSpec.BooleanValue USE_ATMOSPHERIC_PRESSURE;
     public static final ModConfigSpec.DoubleValue ATMOSPHERIC_PRESSURE_AMOUNT;
     public static final ModConfigSpec.IntValue CLIENT_PARTICLES_PER_TICK;
-    public static final ModConfigSpec.DoubleValue GROUND_FRICTION_COEFFICIENT;
-    public static final ModConfigSpec.DoubleValue GROUND_LINEAR_DRAG;
-    public static final ModConfigSpec.DoubleValue GROUND_ROLLING_RESISTANCE;
-    public static final ModConfigSpec.DoubleValue GROUNDED_SPEED_DEADZONE;
-    public static final ModConfigSpec.DoubleValue GROUND_PROBE_DISTANCE;
     public static final Map<String, ModConfigSpec.IntValue> FUEL_EFFICIENCY_ENTRIES = new LinkedHashMap<>();
     public static final Map<String, ModConfigSpec.IntValue> FUEL_BURN_RATE_ENTRIES = new LinkedHashMap<>();
     public static final Map<String, ModConfigSpec.ConfigValue<String>> THRUSTER_DYE_COLORS = new LinkedHashMap<>();
-    public static final ModConfigSpec.DoubleValue TILT_ADAPTER_MAX_ANGLE;
     public static final ModConfigSpec.IntValue CABLE_ENERGY_TRANSFER;
 
     public static final ModConfigSpec.BooleanValue DEBUG_THRUSTER;
-    public static final ModConfigSpec.BooleanValue DEBUG_BURNER;
-    public static final ModConfigSpec.BooleanValue DEBUG_MAGNET;
-
-    // Optical sensors
-    public static final ModConfigSpec.ConfigValue<Integer> OPTICAL_SENSOR_TICKS_PER_UPDATE;
-    public static final ModConfigSpec.ConfigValue<Integer> INLINE_OPTICAL_SENSOR_MAX_DISTANCE;
-    public static final ModConfigSpec.ConfigValue<Integer> OPTICAL_SENSOR_MAX_DISTANCE;
-
-    // Wings
-    public static final ModConfigSpec.ConfigValue<Double> BASE_WING_LIFT;
-    public static final ModConfigSpec.ConfigValue<Double> BASE_WING_DRAG;
 
     // Stirling engine
     public static final ModConfigSpec.ConfigValue<Double> STIRLING_GENERATED_SU;
@@ -92,151 +69,119 @@ public class PropulsionConfig {
     public static final ModConfigSpec.ConfigValue<List<? extends String>> ADDITIONAL_THRUSTER_FUEL_PROPERTY_LINES;
 
     static {
-        //#region Server
-        SERVER_BUILDER.push("thruster");
+        //#region Common (server)
+        COMMON_BUILDER.push("thruster");
 
-        BASE_THRUST = SERVER_BUILDER.comment("Base thrust at redstone 15 and full obstruction efficiency for the standard thruster.",
+        BASE_THRUST = COMMON_BUILDER.comment("Base thrust at redstone 15 and full obstruction efficiency for the standard thruster.",
                         "Effective thrust uses: baseThrust * fuel_thrust_percent / 100.")
                 .defineInRange("baseThrust", 800.0d, 1.0d, 10000000.0d);
-        OBSTRUCTION_SCAN_LENGTH = SERVER_BUILDER.comment("How many blocks behind the nozzle are checked for obstruction.")
+        OBSTRUCTION_SCAN_LENGTH = COMMON_BUILDER.comment("How many blocks behind the nozzle are checked for obstruction.")
                 .defineInRange("obstructionScanLength", 10, 1, 64);
-        OBSTRUCTION_IGNORE_OTHER_SUBLEVELS = SERVER_BUILDER.comment(
+        OBSTRUCTION_IGNORE_OTHER_SUBLEVELS = COMMON_BUILDER.comment(
                         "Ignore non-sublevel blocks when checking for obstruction.")
                 .define("obstructionIgnoreOtherSubLevels", false);
-        REQUIRE_FUEL = SERVER_BUILDER.comment("If true, standard thrusters require configured fluid fuel to produce force.")
-                .define("requireFuel", true);
-        FUEL_TANK_CAPACITY_MB = SERVER_BUILDER.comment("Internal fuel tank capacity in millibuckets.")
+        FUEL_TANK_CAPACITY_MB = COMMON_BUILDER.comment("Internal fuel tank capacity in millibuckets.")
                 .defineInRange("fuelTankCapacityMb", 1000, 250, 10000000);
-        FUEL_MB_PER_TICK_AT_FULL_THROTTLE = SERVER_BUILDER.comment("Fuel consumption in millibuckets per tick at full redstone throttle.")
+        FUEL_MB_PER_TICK_AT_FULL_THROTTLE = COMMON_BUILDER.comment("Fuel consumption in millibuckets per tick at full redstone throttle.")
                 .defineInRange("fuelMbPerTickAtFullThrottle", 1.0d, 0.0001d, 1000.0d);
-        DAMAGE_ENTITIES = SERVER_BUILDER.comment("If true, entities inside active thruster plume are damaged.")
+        DAMAGE_ENTITIES = COMMON_BUILDER.comment("If true, entities inside active thruster plume are damaged.")
                 .define("damageEntities", true);
 
-        CLIENT_PARTICLES_PER_TICK = SERVER_BUILDER.comment("Max client particles per tick while active.")
+        CLIENT_PARTICLES_PER_TICK = COMMON_BUILDER.comment("Max client particles per tick while active.")
                 .defineInRange("clientParticlesPerTick", 4, 0, 64);
 
-        SERVER_BUILDER.pop(); // thruster
+        COMMON_BUILDER.pop(); // thruster
 
-        SERVER_BUILDER.push("ionThruster");
-        ION_THRUSTER_ENERGY_CAPACITY_FE = SERVER_BUILDER.comment("Ion thruster internal FE capacity.")
+        COMMON_BUILDER.push("ionThruster");
+        ION_THRUSTER_ENERGY_CAPACITY_FE = COMMON_BUILDER.comment("Ion thruster internal FE capacity.")
                 .defineInRange("ionThrusterEnergyCapacityFe", 4000, 1, 100000000);
-        ION_THRUSTER_FE_PER_TICK_AT_FULL_THROTTLE = SERVER_BUILDER.comment("Ion thruster energy consumption in FE per tick at full redstone throttle.")
+        ION_THRUSTER_FE_PER_TICK_AT_FULL_THROTTLE = COMMON_BUILDER.comment("Ion thruster energy consumption in FE per tick at full redstone throttle.")
                 .defineInRange("ionThrusterFePerTickAtFullThrottle", 40.0d, 0.0001d, 1000000.0d);
-        ION_THRUSTER_BASE_THRUST = SERVER_BUILDER.comment("Ion thruster base thrust at redstone 15 and full obstruction efficiency.")
+        ION_THRUSTER_BASE_THRUST = COMMON_BUILDER.comment("Ion thruster base thrust at redstone 15 and full obstruction efficiency.")
                 .defineInRange("ionThrusterBaseThrust", 1200.d, 1.d, 10000000.d);
-        SERVER_BUILDER.pop();
+        COMMON_BUILDER.pop();
 
-        SERVER_BUILDER.push("Creative Thruster");
-            CREATIVE_THRUSTER_BASE_THRUST = SERVER_BUILDER.comment("Starting thrust value (kN) when a creative thruster is placed.")
+        COMMON_BUILDER.push("Creative Thruster");
+            CREATIVE_THRUSTER_BASE_THRUST = COMMON_BUILDER.comment("Starting thrust value (kN) when a creative thruster is placed.")
                 .defineInRange("creativeThrusterBaseThrust", 1000.0d, 1.0d, 1000000.0d);
-            CREATIVE_THRUSTER_MAX_THRUST = SERVER_BUILDER.comment("Maximum thrust (kN) the scroll can reach on a creative thruster.")
+            CREATIVE_THRUSTER_MAX_THRUST = COMMON_BUILDER.comment("Maximum thrust (kN) the scroll can reach on a creative thruster.")
                 .defineInRange("creativeThrusterMaxThrust", 10000.0d, 10.0d, 1000000.0d);
-        SERVER_BUILDER.pop();
+        COMMON_BUILDER.pop();
 
-        SERVER_BUILDER.push("vectorThruster");
-            VECTOR_THRUSTER_BASE_THRUST = SERVER_BUILDER.comment("Vector thruster base thrust at redstone 15 and full obstruction efficiency.")
+        COMMON_BUILDER.push("vectorThruster");
+            VECTOR_THRUSTER_BASE_THRUST = COMMON_BUILDER.comment("Vector thruster base thrust at redstone 15 and full obstruction efficiency.")
                 .defineInRange("vectorThrusterBaseThrust", 1100.0d, 1.0d, 10000000.0d);
-        SERVER_BUILDER.pop();
-        SERVER_BUILDER.push("liquidVectorThruster");
-            LIQUID_VECTOR_THRUSTER_BASE_THRUST = SERVER_BUILDER.comment("Liquid vector thruster base thrust at redstone 15 and full obstruction efficiency.")
+        COMMON_BUILDER.pop();
+        COMMON_BUILDER.push("liquidVectorThruster");
+            LIQUID_VECTOR_THRUSTER_BASE_THRUST = COMMON_BUILDER.comment("Liquid vector thruster base thrust at redstone 15 and full obstruction efficiency.")
                 .defineInRange("liquidVectorThrusterBaseThrust", 1100.0d, 1.0d, 10000000.0d);
-            LIQUID_VECTOR_THRUSTER_FUEL_TANK_CAPACITY_MB = SERVER_BUILDER.comment("Liquid vector thruster internal fuel tank capacity in millibuckets.")
+            LIQUID_VECTOR_THRUSTER_FUEL_TANK_CAPACITY_MB = COMMON_BUILDER.comment("Liquid vector thruster internal fuel tank capacity in millibuckets.")
                 .defineInRange("liquidVectorThrusterFuelTankCapacityMb", 1000, 250, 10000000);
-            LIQUID_VECTOR_THRUSTER_FUEL_MB_PER_TICK_AT_FULL_THROTTLE = SERVER_BUILDER.comment("Liquid vector thruster fuel consumption in millibuckets per tick at full redstone throttle.")
+            LIQUID_VECTOR_THRUSTER_FUEL_MB_PER_TICK_AT_FULL_THROTTLE = COMMON_BUILDER.comment("Liquid vector thruster fuel consumption in millibuckets per tick at full redstone throttle.")
                 .defineInRange("liquidVectorThrusterFuelMbPerTickAtFullThrottle", 1.0d, 0.0001d, 1000.0d);
-        SERVER_BUILDER.pop();
+        COMMON_BUILDER.pop();
 
-        SERVER_BUILDER.push("multiblockThruster");
-            MULTIBLOCK_2X_THRUST_MULTIPLIER = SERVER_BUILDER.comment("Thrust multiplier for a 2x2x2 multiblock thruster (e.g. 1.10 = 10% bonus).")
+        COMMON_BUILDER.push("multiblockThruster");
+            MULTIBLOCK_2X_THRUST_MULTIPLIER = COMMON_BUILDER.comment("Thrust multiplier for a 2x2x2 multiblock thruster (e.g. 1.10 = 10% bonus).")
                 .defineInRange("multiblock2xThrustMultiplier", 1.25d, 0.01d, 10.0d);
-            MULTIBLOCK_3X_THRUST_MULTIPLIER = SERVER_BUILDER.comment("Thrust multiplier for a 3x3x3 multiblock thruster (e.g. 1.25 = 25% bonus).")
+            MULTIBLOCK_3X_THRUST_MULTIPLIER = COMMON_BUILDER.comment("Thrust multiplier for a 3x3x3 multiblock thruster (e.g. 1.25 = 25% bonus).")
                 .defineInRange("multiblock3xThrustMultiplier", 1.5d, 0.01d, 10.0d);
-            MULTIBLOCK_2X_FUEL_EFFICIENCY = SERVER_BUILDER.comment("Fuel cost multiplier for a 2x2x2 multiblock thruster (e.g. 1.0 = no reduction, 0.8 = 20% cheaper).")
+            MULTIBLOCK_2X_FUEL_EFFICIENCY = COMMON_BUILDER.comment("Fuel cost multiplier for a 2x2x2 multiblock thruster (e.g. 1.0 = no reduction, 0.8 = 20% cheaper).")
                 .defineInRange("multiblock2xFuelEfficiency", 0.6d, 0.01d, 10.0d);
-            MULTIBLOCK_3X_FUEL_EFFICIENCY = SERVER_BUILDER.comment("Fuel cost multiplier for a 3x3x3 multiblock thruster (e.g. 0.95 = 5% cheaper).")
+            MULTIBLOCK_3X_FUEL_EFFICIENCY = COMMON_BUILDER.comment("Fuel cost multiplier for a 3x3x3 multiblock thruster (e.g. 0.95 = 5% cheaper).")
                 .defineInRange("multiblock3xFuelEfficiency", 0.4d, 0.01d, 10.0d);
-            MULTIBLOCK_2X_OXIDIZER_EFFICIENCY = SERVER_BUILDER.comment("Oxidizer cost multiplier for a 2x2x2 multiblock thruster. 0.85 = 15% savings.")
+            MULTIBLOCK_2X_OXIDIZER_EFFICIENCY = COMMON_BUILDER.comment("Oxidizer cost multiplier for a 2x2x2 multiblock thruster. 0.85 = 15% savings.")
                 .defineInRange("multiblock2xOxidizerEfficiency", 0.85d, 0.01d, 10.0d);
-            MULTIBLOCK_3X_OXIDIZER_EFFICIENCY = SERVER_BUILDER.comment("Oxidizer cost multiplier for a 3x3x3 multiblock thruster. 0.75 = 25% savings.")
+            MULTIBLOCK_3X_OXIDIZER_EFFICIENCY = COMMON_BUILDER.comment("Oxidizer cost multiplier for a 3x3x3 multiblock thruster. 0.75 = 25% savings.")
                 .defineInRange("multiblock3xOxidizerEfficiency", 0.75d, 0.01d, 10.0d);
-        SERVER_BUILDER.pop();
+        COMMON_BUILDER.pop();
 
-        SERVER_BUILDER.push("creativeVectorThruster");
-            CREATIVE_VECTOR_THRUSTER_BASE_THRUST = SERVER_BUILDER.comment("Starting thrust value (kN) when a creative vector thruster is placed.")
+        COMMON_BUILDER.push("creativeVectorThruster");
+            CREATIVE_VECTOR_THRUSTER_BASE_THRUST = COMMON_BUILDER.comment("Starting thrust value (kN) when a creative vector thruster is placed.")
                 .defineInRange("creativeVectorThrusterBaseThrust", 1000.0d, 1.0d, 1000000.0d);
-            CREATIVE_VECTOR_THRUSTER_MAX_THRUST = SERVER_BUILDER.comment("Maximum thrust (kN) the scroll can reach on a creative vector thruster.")
+            CREATIVE_VECTOR_THRUSTER_MAX_THRUST = COMMON_BUILDER.comment("Maximum thrust (kN) the scroll can reach on a creative vector thruster.")
                 .defineInRange("creativeVectorThrusterMaxThrust", 10000.0d, 10.0d, 1000000.0d);
-        SERVER_BUILDER.pop();
+        COMMON_BUILDER.pop();
 
-        SERVER_BUILDER.push("physics");
-            DAMAGE_TICK_INTERVAL = SERVER_BUILDER.comment("How often plume damage checks run, in ticks.")
-                .defineInRange("damageTickInterval", 5, 1, 40);
-            NOZZLE_OFFSET_FROM_CENTER = SERVER_BUILDER.comment("Offset from the block center where force is applied.")
+        COMMON_BUILDER.push("physics");
+            NOZZLE_OFFSET_FROM_CENTER = COMMON_BUILDER.comment("Offset from the block center where force is applied.")
                 .defineInRange("nozzleOffsetFromCenter", 0.45d, 0.0d, 1.5d);
-            USE_ATMOSPHERIC_PRESSURE = SERVER_BUILDER.comment("If true, atmospheric pressure affects thruster output at altitude.")
+            USE_ATMOSPHERIC_PRESSURE = COMMON_BUILDER.comment("If true, atmospheric pressure affects thruster output at altitude.")
                 .define("useAtmosphericPressure", false);
-            ATMOSPHERIC_PRESSURE_AMOUNT = SERVER_BUILDER.comment("Strength of atmospheric pressure influence. 1.0 = full effect, 0.0 = no effect.")
+            ATMOSPHERIC_PRESSURE_AMOUNT = COMMON_BUILDER.comment("Strength of atmospheric pressure influence. 1.0 = full effect, 0.0 = no effect.")
                 .defineInRange("atmosphericPressureAmount", 1.0d, 0.0d, 2.0d);
-            GROUND_FRICTION_COEFFICIENT = SERVER_BUILDER.comment("Ground friction coefficient applied while a thruster detects support under it.")
-                .defineInRange("groundFrictionCoefficient", 0.08d, 0.0d, 5.0d);
-            GROUND_LINEAR_DRAG = SERVER_BUILDER.comment("Grounded linear drag coefficient in pN per m/s.")
-                .defineInRange("groundLinearDrag", 180.0d, 0.0d, 10000.0d);
-            GROUND_ROLLING_RESISTANCE = SERVER_BUILDER.comment("Additional grounded rolling resistance in pN.")
-                .defineInRange("groundRollingResistance", 80.0d, 0.0d, 10_000.0d);
-            GROUNDED_SPEED_DEADZONE = SERVER_BUILDER.comment("Horizontal speed below this value is treated as stopped for grounded drag.")
-                .defineInRange("groundedSpeedDeadzone", 0.03d, 0.0d, 5.0d);
-            GROUND_PROBE_DISTANCE = SERVER_BUILDER.comment("How far downward a thruster probes to detect grounded support.")
-                .defineInRange("groundProbeDistance", 1.5d, 0.05d, 5.0d);
-        SERVER_BUILDER.pop();
+        COMMON_BUILDER.pop();
 
-        SERVER_BUILDER.push("Optical sensors");
-            OPTICAL_SENSOR_TICKS_PER_UPDATE = SERVER_BUILDER.comment("How many ticks between casting a ray.")
-                .defineInRange("Optical sensor tick rate", 2, 1, 100);
-            INLINE_OPTICAL_SENSOR_MAX_DISTANCE = SERVER_BUILDER.comment("Length of the raycast ray.")
-                .defineInRange("Inline optical sensor max raycast distance", 16, 4, 32);
-            OPTICAL_SENSOR_MAX_DISTANCE = SERVER_BUILDER.comment("Length of the raycast ray. Very high values may degrade performance.")
-                .defineInRange("Optical sensor max raycast distance", 32, 8, 64);
-        SERVER_BUILDER.pop();
-
-        SERVER_BUILDER.push("Wing");
-            BASE_WING_LIFT = SERVER_BUILDER.comment("Wing's lift force is multiplied by this number.")
-                .define("Base lift", 150.0);
-            BASE_WING_DRAG = SERVER_BUILDER.comment("Wing's drag force is multiplied by this number.")
-                .define("Base drag", 150.0);
-        SERVER_BUILDER.pop();
-
-        SERVER_BUILDER.push("Stirling Engine");
-            STIRLING_GENERATED_SU = SERVER_BUILDER.comment("Change this value to modify the amount of stress units produced by stirling engine. Value of 16 corresponds to 4096 SU.")
+        COMMON_BUILDER.push("Stirling Engine");
+            STIRLING_GENERATED_SU = COMMON_BUILDER.comment("Change this value to modify the amount of stress units produced by stirling engine. Value of 16 corresponds to 4096 SU.")
                 .defineInRange("Generated stress units", 16.0, 1.0, 64.0);
-        SERVER_BUILDER.pop();
+        COMMON_BUILDER.pop();
 
-        SERVER_BUILDER.push("Tilt Adapter");
-            TILT_ADAPTER_MAX_ANGLE = SERVER_BUILDER.comment("Maximum angle the tilt adapter can rotate to, in degrees.")
-                .defineInRange("tiltAdapterMaxAngle", 90.0d, 0.0d, 180.0d);
-            TILT_ADAPTER_ANGLE_RANGE = SERVER_BUILDER.comment("Maximum absolute output angle in degrees, reached at full redstone differential.")
+        COMMON_BUILDER.push("Tilt Adapter");
+            TILT_ADAPTER_ANGLE_RANGE = COMMON_BUILDER.comment("Maximum absolute output angle in degrees, reached at full redstone differential.")
                 .defineInRange("Maximum angle range", 90.0, 0.0, 180.0);
-        SERVER_BUILDER.pop();
+        COMMON_BUILDER.pop();
 
-        SERVER_BUILDER.push("Burners");
-            BURNERS_POWER_HEATED_MIXERS = SERVER_BUILDER.comment("If true - both solid and liquid burners can provide heat to heated mixers allowing for pre-nether brass.")
+        COMMON_BUILDER.push("Burners");
+            BURNERS_POWER_HEATED_MIXERS = COMMON_BUILDER.comment("If true - both solid and liquid burners can provide heat to heated mixers allowing for pre-nether brass.")
                 .define("Burners power heated mixers", true);
-            BURNERS_HEAT_STEAM_ENGINES = SERVER_BUILDER.comment("Allow propulsion burners to heat Create steam engines.")
+            BURNERS_HEAT_STEAM_ENGINES = COMMON_BUILDER.comment("Allow propulsion burners to heat Create steam engines.")
                 .define("Burners heat steam engines", true);
-            BURNERS_SUPERHEAT_STEAM_ENGINES = SERVER_BUILDER.comment("Allow seething burners to count as superheated for steam engines.")
+            BURNERS_SUPERHEAT_STEAM_ENGINES = COMMON_BUILDER.comment("Allow seething burners to count as superheated for steam engines.")
                 .define("Burners superheat steam engines", true);
-            BLAZE_BURNERS_HEAT_STIRLING_ENGINES = SERVER_BUILDER.comment("Allow vanilla blaze burners under stirling engines to provide heat.")
+            BLAZE_BURNERS_HEAT_STIRLING_ENGINES = COMMON_BUILDER.comment("Allow vanilla blaze burners under stirling engines to provide heat.")
                 .define("Blaze burners heat stirling engines", true);
-        SERVER_BUILDER.pop();
+        COMMON_BUILDER.pop();
 
-        SERVER_BUILDER.push("Cable");
-            CABLE_ENERGY_TRANSFER = SERVER_BUILDER.comment("Maximum FE moved per tick by a single cable block.")
+        COMMON_BUILDER.push("Cable");
+            CABLE_ENERGY_TRANSFER = COMMON_BUILDER.comment("Maximum FE moved per tick by a single cable block.")
                 .defineInRange("Energy transfer", 1_000, 1, 100000000);
-        SERVER_BUILDER.pop();
+        COMMON_BUILDER.pop();
 
-        SERVER_BUILDER.push("Fuel Configuration");
-            SERVER_BUILDER.comment(
+        COMMON_BUILDER.push("Fuel Configuration");
+            COMMON_BUILDER.comment(
                     "Fuel properties by fluid id. Configure efficiency and burn rate separately as percentages.");
-            SERVER_BUILDER.push("fuelProperties");
+            COMMON_BUILDER.push("fuelProperties");
             for (String entry : defaultFuelProperties()) {
                 String[] split = entry.split("=", 2);
                 if (split.length != 2) continue;
@@ -251,37 +196,37 @@ public class PropulsionConfig {
                 } catch (NumberFormatException ignored) {
                     continue;
                 }
-                SERVER_BUILDER.push(configKeyForFluidId(fluidId));
+                COMMON_BUILDER.push(configKeyForFluidId(fluidId));
                 FUEL_EFFICIENCY_ENTRIES.put(fluidId,
-                        SERVER_BUILDER.comment("Fuel efficiency percentage for " + fluidId + ".")
+                        COMMON_BUILDER.comment("Fuel efficiency percentage for " + fluidId + ".")
                                 .defineInRange("efficiency", efficiency, 0, 10000));
                 FUEL_BURN_RATE_ENTRIES.put(fluidId,
-                        SERVER_BUILDER.comment("Fuel burn rate percentage for " + fluidId + ".")
+                        COMMON_BUILDER.comment("Fuel burn rate percentage for " + fluidId + ".")
                                 .defineInRange("burnRate", burnRate, 0, 10000));
-                SERVER_BUILDER.pop();
+                COMMON_BUILDER.pop();
             }
-            SERVER_BUILDER.pop();
+            COMMON_BUILDER.pop();
 
-            SERVER_BUILDER.comment(
+            COMMON_BUILDER.comment(
                     "Coral conversion entries. Each key is a fluid id and each value is '<fe_per_mb>'.",
                     "Example value: 16");
-            SERVER_BUILDER.push("coralFuelConversionRates");
+            COMMON_BUILDER.push("coralFuelConversionRates");
             for (String entry : defaultCoralFuelConversionRates()) {
                 String[] split = entry.split("=", 2);
                 if (split.length != 2) continue;
-                CORAL_FUEL_CONVERSION_RATE_ENTRIES.put(split[0], SERVER_BUILDER.define(configKeyForFluidId(split[0]), split[1]));
+                CORAL_FUEL_CONVERSION_RATE_ENTRIES.put(split[0], COMMON_BUILDER.define(configKeyForFluidId(split[0]), split[1]));
             }
-            SERVER_BUILDER.pop();
+            COMMON_BUILDER.pop();
 
-            ADDITIONAL_THRUSTER_FUEL_PROPERTY_LINES = SERVER_BUILDER.comment(
+            ADDITIONAL_THRUSTER_FUEL_PROPERTY_LINES = COMMON_BUILDER.comment(
                     "Additional thruster fuel lines (same format as defaults: fluid_id=efficiencyPercent,burnRatePercent).",
                     "Use for fluids that do not have a fuelProperties subsection. Entries here override matching fluids from the table above.")
                 .defineListAllowEmpty("additionalThrusterFuelLines", ArrayList::new, obj -> obj instanceof String);
 
-        SERVER_BUILDER.pop();
+        COMMON_BUILDER.pop();
 
-        SERVER_BUILDER.push("thrusterDyeColors");
-        SERVER_BUILDER.comment("Particle color overrides when a dye is applied to a thruster. Values are RRGGBB hex strings.");
+        COMMON_BUILDER.push("thrusterDyeColors");
+        COMMON_BUILDER.comment("Particle color overrides when a dye is applied to a thruster. Values are RRGGBB hex strings.");
         for (String[] e : new String[][] {
             { "white",       "FFFFFF" },
             { "orange",      "FF8000" },
@@ -301,14 +246,13 @@ public class PropulsionConfig {
             { "black",       "2A2A2A" },
         }) {
             THRUSTER_DYE_COLORS.put("minecraft:" + e[0] + "_dye",
-                SERVER_BUILDER.define(e[0], e[1]));
+                COMMON_BUILDER.define(e[0], e[1]));
         }
-        SERVER_BUILDER.pop();
+        COMMON_BUILDER.pop();
 
-        PropulsionDefaultStress.INSTANCE.registerAll(SERVER_BUILDER);
+        PropulsionDefaultStress.INSTANCE.registerAll(COMMON_BUILDER);
 
         COMMON_SPEC = COMMON_BUILDER.build();
-        SERVER_SPEC = COMMON_SPEC;
         //#endregion
 
         //#region Client
@@ -323,10 +267,6 @@ public class PropulsionConfig {
         CLIENT_BUILDER.push("Debug");
             DEBUG_THRUSTER = CLIENT_BUILDER.comment("Render thruster debug overlays (plume ray, obstruction hits, damage zones).")
                 .define("Thruster", false);
-            DEBUG_BURNER = CLIENT_BUILDER.comment("Render burner debug overlays.")
-                .define("Burner", false);
-            DEBUG_MAGNET = CLIENT_BUILDER.comment("Enable magnet debug overlays.")
-                .define("Magnet", false);
         CLIENT_BUILDER.pop();
 
 
