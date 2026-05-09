@@ -385,8 +385,12 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                 FluidStack drainedStack = tank.getPrimaryHandler().drain(consumption, IFluidHandler.FluidAction.EXECUTE);
                 int fuelConsumed = drainedStack.getAmount();
 
-                if (fuelConsumed > 0) {
-                    float consumptionRatio = consumption > 0 ? (float) fuelConsumed / (float) consumption : 0.0f;
+                if (fuelConsumed > 0 || (consumption == 0 && !fluidStack().isEmpty())) {
+                    // Keep thrust continuous for sub-1 mB windows: accumulator-based drain can
+                    // legitimately round to 0 for this update while fuel is still available.
+                    float consumptionRatio = consumption > 0
+                        ? (float) fuelConsumed / (float) consumption
+                        : 1.0f;
                     float fuelEfficiency = ThrusterFuelManager.getEfficiency(fluidStack().getFluid());
                     float baseThrustPn = (float) (getBaseThrust() * 1000.0);
                     baseThrustPn *= (float) calculateAtmosphericFactor();
@@ -430,7 +434,9 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
 
                 FluidStack fuelSim = tank.getPrimaryHandler().drain(fuelNeeded, IFluidHandler.FluidAction.SIMULATE);
                 int fuelAvail = fuelSim.getAmount();
-                float fuelRatio = fuelNeeded > 0 ? (float) fuelAvail / (float) fuelNeeded : 0.0f;
+                float fuelRatio = fuelNeeded > 0
+                    ? (float) fuelAvail / (float) fuelNeeded
+                    : (fluidStack().isEmpty() ? 0.0f : 1.0f);
 
                 if (fuelRatio > 0) {
                     int fuelActual = (int) (fuelNeeded * fuelRatio);
