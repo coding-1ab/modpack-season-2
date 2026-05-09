@@ -7,6 +7,7 @@ import dev.propulsionteam.propulsionsimulated.events.ModCapabilityEvents;
 import dev.propulsionteam.propulsionsimulated.events.ModSetupEvents;
 import dev.propulsionteam.propulsionsimulated.network.PropulsionPackets;
 import dev.propulsionteam.propulsionsimulated.particles.ParticleTypes;
+import dev.propulsionteam.propulsionsimulated.assemblerstick.item.ModItems;
 import com.simibubi.create.compat.Mods;
 
 import net.neoforged.bus.api.IEventBus;
@@ -33,10 +34,11 @@ public class CreatePropulsion {
         PropulsionBlocks.register(modBus);
         PropulsionBlockEntities.register(modBus);
         PropulsionItems.register(modBus);
+        ModItems.register(modBus);
         PropulsionSoundEvents.register(modBus);
         PropulsionFluids.register(modBus);
         PropulsionPartialModels.register();
-        PropulsionCreativeTab.register(modBus);
+        PropulsionCreativeTab.registerAeronauticsSections();
         modBus.addListener(PropulsionPackets::register);
         PropulsionDisplaySources.register();
         PropulsionSableBridge.init();
