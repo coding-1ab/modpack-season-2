@@ -232,6 +232,7 @@ public class PropulsionConfig {
             for (String entry : defaultFuelProperties()) {
                 String[] split = entry.split("=", 2);
                 if (split.length != 2) continue;
+                String fluidId = split[0];
                 String[] values = split[1].split(",", 2);
                 if (values.length != 2) continue;
                 int efficiency;
@@ -242,12 +243,12 @@ public class PropulsionConfig {
                 } catch (NumberFormatException ignored) {
                     continue;
                 }
-                SERVER_BUILDER.push(split[0]);
-                FUEL_EFFICIENCY_ENTRIES.put(split[0],
-                        SERVER_BUILDER.comment("Fuel efficiency percentage for " + split[0] + ".")
+                SERVER_BUILDER.push(configKeyForFluidId(fluidId));
+                FUEL_EFFICIENCY_ENTRIES.put(fluidId,
+                        SERVER_BUILDER.comment("Fuel efficiency percentage for " + fluidId + ".")
                                 .defineInRange("efficiency", efficiency, 0, 10000));
-                FUEL_BURN_RATE_ENTRIES.put(split[0],
-                        SERVER_BUILDER.comment("Fuel burn rate percentage for " + split[0] + ".")
+                FUEL_BURN_RATE_ENTRIES.put(fluidId,
+                        SERVER_BUILDER.comment("Fuel burn rate percentage for " + fluidId + ".")
                                 .defineInRange("burnRate", burnRate, 0, 10000));
                 SERVER_BUILDER.pop();
             }
@@ -260,7 +261,7 @@ public class PropulsionConfig {
             for (String entry : defaultCoralFuelConversionRates()) {
                 String[] split = entry.split("=", 2);
                 if (split.length != 2) continue;
-                CORAL_FUEL_CONVERSION_RATE_ENTRIES.put(split[0], SERVER_BUILDER.define(split[0], split[1]));
+                CORAL_FUEL_CONVERSION_RATE_ENTRIES.put(split[0], SERVER_BUILDER.define(configKeyForFluidId(split[0]), split[1]));
             }
             SERVER_BUILDER.pop();
 
@@ -336,23 +337,31 @@ public class PropulsionConfig {
                 "tfmg:diesel=100,100",
                 "stellaris:diesel=100,100",
                 "tfmg:naphtha=95,105",
-                "tfmg:kerosene=115,90",
+                "tfmg:kerosene=230,90",
                 "createdieselgenerators:gasoline=125,80",
                 "tfmg:gasoline=125,80",
                 "tfmg:lpg=120,85",
                 "northstar:hydrocarbon=130,75",
                 "stellaris:fuel=115,100",
-                "mekanism:hydrogen=120,80",
+                "mekanism:hydrogen=230,90",
                 "createaddition:bioethanol=75,135",
                 "createaddition:seed_oil=55,170",
                 "northstar:methane=105,95",
-                "northstar:liquid_hydrogen=125,80",
+                "northstar:liquid_hydrogen=230,90",
                 "immersivepetroleum:diesel_sulfur=100,100"
         ));
     }
 
     private static List<String> defaultCoralFuelConversionRates() {
         return new ArrayList<>(List.of("createpropulsion:coral=500"));
+    }
+
+    private static String configKeyForFluidId(String fluidId) {
+        return fluidId
+                .replace(':', '_')
+                .replace('/', '_')
+                .replace('.', '_')
+                .replace('-', '_');
     }
 
 
