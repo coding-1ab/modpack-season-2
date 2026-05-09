@@ -6,7 +6,8 @@
     "refmap": "createpropulsion.refmap.json",
     "plugin": "dev.propulsionteam.propulsionsimulated.mixin.plugin.PropulsionMixinPlugin",
     "mixins": [
-        "BasinBlockEntityMixin"
+        "BasinBlockEntityMixin",
+        "FluidShellProjectileMixin"
     ],
     "client": [],
     "server": [],
