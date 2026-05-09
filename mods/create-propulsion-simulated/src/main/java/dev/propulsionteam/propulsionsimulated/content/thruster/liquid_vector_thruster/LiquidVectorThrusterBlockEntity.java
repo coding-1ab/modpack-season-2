@@ -163,20 +163,21 @@ public class LiquidVectorThrusterBlockEntity extends ThrusterBlockEntity {
 
     @Override
     public Vector3d getThrustDirectionLocal() {
-        Vector3d forward = new Vector3d(getFacing().getStepX(), getFacing().getStepY(), getFacing().getStepZ()).normalize();
-        Vector3d right = computeRight(forward);
-        Vector3d up = new Vector3d(right).cross(forward).normalize();
-
-        Vector3d combined = new Vector3d(forward)
-            .fma(currentVectorX, right)
-            .fma(currentVectorY, up);
-
-        if (combined.lengthSquared() < 1e-8) return forward;
-        return combined.normalize();
+        Vector3d localExhaust = computeExhaustDirectionLocal();
+        if (localExhaust.lengthSquared() < 1e-8) {
+            Vector3d forward = new Vector3d(getFacing().getStepX(), getFacing().getStepY(), getFacing().getStepZ()).normalize();
+            return forward;
+        }
+        return localExhaust.negate();
     }
 
     @Override
     protected Vec3 getParticleExhaustDirectionLocal() {
+        Vector3d exhaust = computeExhaustDirectionLocal();
+        return new Vec3(exhaust.x, exhaust.y, exhaust.z);
+    }
+
+    private Vector3d computeExhaustDirectionLocal() {
         Vector3d forward = new Vector3d(getFacing().getStepX(), getFacing().getStepY(), getFacing().getStepZ()).normalize();
         Vector3d right = computeRight(forward);
         Vector3d up = new Vector3d(right).cross(forward).normalize();
@@ -186,9 +187,12 @@ public class LiquidVectorThrusterBlockEntity extends ThrusterBlockEntity {
             .fma(currentVectorX * tiltScale, right)
             .fma(currentVectorY * tiltScale, up);
 
-        if (exhaust.lengthSquared() < 1e-8) exhaust.set(forward).negate();
-        else exhaust.normalize();
-        return new Vec3(exhaust.x, exhaust.y, exhaust.z);
+        if (exhaust.lengthSquared() < 1e-8) {
+            exhaust.set(forward).negate();
+        } else {
+            exhaust.normalize();
+        }
+        return exhaust;
     }
 
     @Override
