@@ -428,7 +428,11 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                 double baseConsumption = calculateFuelConsumption(currentPower, properties.consumptionMultiplier(), tickRate);
                 
                 boolean canUseOxidizer = validOxidizer();
-                double fuelEff = canUseOxidizer ? getMultiblockFuelEfficiency(width) : 1.0f;
+                // Multiblock fuel efficiency always applies; oxidizer adds an extra multiplier.
+                double fuelEff = getMultiblockFuelEfficiency(width);
+                if (canUseOxidizer) {
+                    fuelEff *= getMultiblockOxidizerEfficiency(width);
+                }
                 double fuelNeededDouble = baseConsumption * (double) n * fuelEff;
                 int fuelNeeded = consumeFuelWithAccumulator(fuelNeededDouble);
 
@@ -855,34 +859,33 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             int oxSavePct   = java.lang.Math.round((1.0f - oxEff)   * 100.0f);
             if (fuelSavePct > 0 || oxSavePct > 0) {
                 boolean hasOx = ctrl.validOxidizer();
-                // Header line: "Efficiency Bonus: (Active)"
+                // Header line for base multiblock savings (always active for multiblocks).
                 CreateLang.builder()
                     .add(Component.translatable("createpropulsion.gui.goggles.thruster.bulk_bonus"))
                     .text(":")
                     .space()
-                    .add(hasOx ? 
-                        Component.translatable("createpropulsion.gui.goggles.thruster.bulk_bonus_active").withStyle(ChatFormatting.GREEN) :
-                        Component.translatable("createpropulsion.gui.goggles.thruster.bulk_bonus_inactive").withStyle(ChatFormatting.RED))
+                    .add(Component.translatable("createpropulsion.gui.goggles.thruster.bulk_bonus_active").withStyle(ChatFormatting.GREEN))
                     .style(ChatFormatting.AQUA)
                     .forGoggles(tooltip);
-                
-                if (hasOx) {
-                    // Fuel savings: "  Fuel: -15%"
-                    if (fuelSavePct > 0) {
-                        CreateLang.builder()
-                            .add(Component.literal("  "))
-                            .add(Component.literal("Fuel: ").withStyle(ChatFormatting.WHITE))
-                            .add(Component.literal("-" + fuelSavePct + "%").withStyle(ChatFormatting.AQUA))
-                            .forGoggles(tooltip);
-                    }
-                    // Oxidizer savings: "  Oxidizer: -25%"
-                    if (oxSavePct > 0) {
-                        CreateLang.builder()
-                            .add(Component.literal("  "))
-                            .add(Component.literal("Oxidizer: ").withStyle(ChatFormatting.WHITE))
-                            .add(Component.literal("-" + oxSavePct + "%").withStyle(ChatFormatting.AQUA))
-                            .forGoggles(tooltip);
-                    }
+
+                // Base multiblock fuel savings.
+                if (fuelSavePct > 0) {
+                    CreateLang.builder()
+                        .add(Component.literal("  "))
+                        .add(Component.literal("Fuel: ").withStyle(ChatFormatting.WHITE))
+                        .add(Component.literal("-" + fuelSavePct + "%").withStyle(ChatFormatting.AQUA))
+                        .forGoggles(tooltip);
+                }
+
+                // Additional oxidizer-based fuel savings.
+                if (oxSavePct > 0) {
+                    CreateLang.builder()
+                        .add(Component.literal("  "))
+                        .add(Component.literal("Oxidizer Bonus: ").withStyle(ChatFormatting.WHITE))
+                        .add(hasOx
+                            ? Component.literal("-" + oxSavePct + "%").withStyle(ChatFormatting.AQUA)
+                            : Component.translatable("createpropulsion.gui.goggles.thruster.bulk_bonus_inactive").withStyle(ChatFormatting.RED))
+                        .forGoggles(tooltip);
                 }
             }
         }
