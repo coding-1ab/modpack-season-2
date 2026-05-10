@@ -7,6 +7,8 @@ Version 1.2.0
 - Reactors now explode upon overheating
 - Added CC:Tweaked compatibility
 - New Simplified Chinese translations from abandon0320
+#### Improvements
+- Improve wire rendering - [!68 Thank you tmvkrpxl0](https://gitlab.com/antarcticgardens/create-new-age/-/merge_requests/68)
 
 ------------------------------------------------------
 Version 1.1.7c
