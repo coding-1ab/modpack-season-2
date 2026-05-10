@@ -26,9 +26,7 @@ snapshot:
     - linux
     - self-hosted
   rules:
-    - if: $CI_PIPELINE_SOURCE == "push"
-    - if: $CI_PROJECT_NAMESPACE_SLUG == "antarcticgardens"
-    - allow_failure: true
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_PROJECT_NAMESPACE_SLUG == "antarcticgardens"
   cache:
     key: "$CI_COMMIT_REF_NAME"
     paths:
