@@ -39,6 +39,16 @@ public class FabricVeilEventPlatform implements VeilEventPlatform {
     }
 
     @Override
+    public void onVeilRegisterGlobalControllers(VeilRegisterGlobalControllersEvent event) {
+        FabricVeilRegisterGlobalControllersEvent.EVENT.register(event);
+    }
+
+    @Override
+    public void onVeilRegisterInspectors(VeilRegisterInspectorsEvent event) {
+        FabricVeilRegisterInspectorsEvent.EVENT.register(event);
+    }
+
+    @Override
     public void onVeilRendererAvailable(VeilRendererAvailableEvent event) {
         FabricVeilRendererAvailableEvent.EVENT.register(event);
     }
@@ -56,10 +66,5 @@ public class FabricVeilEventPlatform implements VeilEventPlatform {
     @Override
     public void onVeilDynamicBuffersChanged(VeilDynamicBuffersChangedEvent event) {
         FabricVeilDynamicBuffersChangedEvent.EVENT.register(event);
-    }
-
-    @Override
-    public void onVeilRegisterGlobalControllers(VeilRegisterGlobalControllersEvent event) {
-        FabricVeilRegisterGlobalControllersEvent.EVENT.register(event);
     }
 }

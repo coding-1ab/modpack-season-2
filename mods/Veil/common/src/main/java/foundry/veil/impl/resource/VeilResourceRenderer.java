@@ -56,7 +56,7 @@ public class VeilResourceRenderer {
             }
 
             ImGui.pushStyleVar(ImGuiStyleVar.ItemSpacing, 0, 0);
-            ImGui.setItemAllowOverlap();
+            ImGui.setNextItemAllowOverlap();
             ImGui.sameLine();
             VeilImGuiUtil.icon(0xEB91);
             ImGui.sameLine();
@@ -72,7 +72,7 @@ public class VeilResourceRenderer {
             }
 
             ImGui.pushStyleVar(ImGuiStyleVar.ItemSpacing, 0, 0);
-            ImGui.setItemAllowOverlap();
+            ImGui.setNextItemAllowOverlap();
             ImGui.sameLine();
             VeilImGuiUtil.icon(0xECAF);
             ImGui.sameLine();
@@ -87,7 +87,7 @@ public class VeilResourceRenderer {
                 }
 
                 ImGui.pushStyleVar(ImGuiStyleVar.ItemSpacing, 0, 0);
-                ImGui.setItemAllowOverlap();
+                ImGui.setNextItemAllowOverlap();
                 ImGui.sameLine();
                 action.getIcon().ifPresent(icon -> {
                     VeilImGuiUtil.icon(icon);

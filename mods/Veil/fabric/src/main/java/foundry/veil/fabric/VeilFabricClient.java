@@ -11,9 +11,10 @@ import foundry.veil.api.quasar.particle.ParticleEmitter;
 import foundry.veil.api.quasar.particle.ParticleSystemManager;
 import foundry.veil.fabric.util.FabricReloadListener;
 import foundry.veil.impl.ClientEnumArgument;
-import foundry.veil.impl.VeilBuiltinPacks;
 import foundry.veil.impl.VeilReloadListeners;
+import foundry.veil.impl.client.imgui.VeilImGuiCompat;
 import foundry.veil.impl.client.render.shader.VeilVanillaShaders;
+import foundry.veil.impl.network.VeilClientServerFlags;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -22,9 +23,6 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.CoreShaderRegistrationCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.commands.arguments.coordinates.WorldCoordinates;
@@ -42,13 +40,14 @@ public class VeilFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         VeilClient.init();
-        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> client.execute(VeilRenderSystem.renderer().getLightRenderer()::free));
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> client.execute(() -> {
+            VeilRenderSystem.renderer().getLightRenderer().free();
+            VeilClientServerFlags.onDisconnect();
+        }));
 
-        KeyBindingHelper.registerKeyBinding(VeilClient.EDITOR_KEY);
-
-        // Register test resource pack
-        ModContainer container = FabricLoader.getInstance().getModContainer(Veil.MODID).orElseThrow();
-        VeilBuiltinPacks.registerPacks((id, defaultEnabled) -> ResourceManagerHelper.registerBuiltinResourcePack(id, container, defaultEnabled ? ResourcePackActivationType.DEFAULT_ENABLED : ResourcePackActivationType.NORMAL));
+        if (Veil.IMGUIMC) {
+            KeyBindingHelper.registerKeyBinding(VeilImGuiCompat.EDITOR_KEY);
+        }
 
         CoreShaderRegistrationCallback.EVENT.register(context -> VeilVanillaShaders.registerShaders(context::register));
         VeilReloadListeners.registerListeners((type, id, listener) -> ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new FabricReloadListener(Veil.veilPath(id), listener)));
@@ -76,7 +75,7 @@ public class VeilFabricClient implements ClientModInitializer {
 
             if (Veil.platform().isDevelopmentEnvironment()) {
                 ResourceLocation bufferId = Veil.veilPath("forced");
-                LiteralArgumentBuilder<FabricClientCommandSource> debugBuilder = LiteralArgumentBuilder.literal("veil");
+                LiteralArgumentBuilder<FabricClientCommandSource> debugBuilder = LiteralArgumentBuilder.literal("veilc");
                 debugBuilder.then(ClientCommandManager.literal("buffers")
                         .then(ClientCommandManager.literal("enable")
                                 .then(ClientCommandManager.argument("buffer", ClientEnumArgument.enumArgument(DynamicBufferType.class)).executes(ctx -> {

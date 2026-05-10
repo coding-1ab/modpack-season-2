@@ -6,11 +6,9 @@ import foundry.veil.api.resource.VeilResourceManager;
 import foundry.veil.impl.flare.FlareManager;
 import foundry.veil.impl.resource.action.TemplateInspectAction;
 import foundry.veil.impl.resource.action.TextEditAction;
-import imgui.extension.texteditor.TextEditorLanguageDefinition;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.profiling.InactiveProfiler;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.List;
@@ -38,10 +36,5 @@ public record FlareResource(VeilResourceInfo resourceInfo) implements VeilTextRe
     @Override
     public int getIconCode() {
         return 0xEA1C;
-    }
-
-    @Override
-    public @Nullable TextEditorLanguageDefinition languageDefinition() {
-        return null;
     }
 }

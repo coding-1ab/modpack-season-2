@@ -1,32 +1,22 @@
 package foundry.veil.api.client.render.ext;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import foundry.veil.Veil;
 import foundry.veil.api.client.render.GpuVendor;
 import foundry.veil.api.client.render.VeilRenderSystem;
-import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.opengl.ARBMultiBind;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLCapabilities;
 
 import java.nio.IntBuffer;
-import java.util.concurrent.TimeUnit;
 
 import static org.lwjgl.opengl.ARBMultiBind.glBindSamplers;
 import static org.lwjgl.opengl.ARBMultiBind.glBindTextures;
-import static org.lwjgl.opengl.GL11C.*;
-import static org.lwjgl.opengl.GL12C.GL_TEXTURE_3D;
+import static org.lwjgl.opengl.GL11C.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11C.glBindTexture;
 import static org.lwjgl.opengl.GL13C.GL_TEXTURE0;
-import static org.lwjgl.opengl.GL13C.GL_TEXTURE_CUBE_MAP;
-import static org.lwjgl.opengl.GL30C.*;
-import static org.lwjgl.opengl.GL31C.*;
-import static org.lwjgl.opengl.GL32C.*;
 import static org.lwjgl.opengl.GL33C.glBindSampler;
-import static org.lwjgl.opengl.GL45C.GL_TEXTURE_TARGET;
-import static org.lwjgl.opengl.GL45C.glGetTextureParameteri;
 
 /**
  * Provides access to {@link ARBMultiBind} functionality for all platforms.
@@ -35,38 +25,6 @@ import static org.lwjgl.opengl.GL45C.glGetTextureParameteri;
  */
 public enum VeilMultiBind {
     LEGACY {
-        @Override
-        public void bindTextures(int first, IntBuffer textures) {
-            int activeTexture = GlStateManager._getActiveTexture();
-            for (int i = 0; i < textures.limit(); i++) {
-                RenderSystem.activeTexture(GL_TEXTURE0 + first + i);
-                int texture = textures.get(i);
-                int target = getTarget(texture);
-                if (target == GL_TEXTURE_2D && first + i < 12) {
-                    RenderSystem.bindTexture(texture);
-                } else {
-                    glBindTexture(target, texture);
-                }
-            }
-            RenderSystem.activeTexture(activeTexture);
-        }
-
-        @Override
-        public void bindTextures(int first, int... textures) {
-            int activeTexture = GlStateManager._getActiveTexture();
-            for (int i = 0; i < textures.length; i++) {
-                RenderSystem.activeTexture(GL_TEXTURE0 + first + i);
-                int texture = textures[i];
-                int target = getTarget(texture);
-                if (target == GL_TEXTURE_2D && first + i < 12) {
-                    RenderSystem.bindTexture(texture);
-                } else {
-                    glBindTexture(target, texture);
-                }
-            }
-            RenderSystem.activeTexture(activeTexture);
-        }
-
         @Override
         public void bindTextures(int first, IntBuffer targets, IntBuffer textures) {
             int activeTexture = GlStateManager._getActiveTexture();
@@ -115,41 +73,27 @@ public enum VeilMultiBind {
     },
     SUPPORTED {
         @Override
-        public void bindTextures(int first, IntBuffer textures) {
+        public void bindTextures(int first, IntBuffer targets, IntBuffer textures) {
             int invalidCount = Math.min(12 - first, textures.limit());
             for (int i = first; i < invalidCount; i++) {
-                int texture = textures.get(i - first);
-                int target = getTarget(texture);
-                if (target == GL_TEXTURE_2D) {
-                    GlStateManager.TEXTURES[i].binding = texture;
+                if (targets.get(i - first) == GL_TEXTURE_2D) {
+                    GlStateManager.TEXTURES[i].binding = textures.get(i - first);
                 }
             }
 
             glBindTextures(first, textures);
-        }
-
-        @Override
-        public void bindTextures(int first, int... textures) {
-            int invalidCount = Math.min(12 - first, textures.length);
-            for (int i = first; i < invalidCount; i++) {
-                int texture = textures[i - first];
-                int target = getTarget(texture);
-                if (target == GL_TEXTURE_2D) {
-                    GlStateManager.TEXTURES[i].binding = texture;
-                }
-            }
-
-            glBindTextures(first, textures);
-        }
-
-        @Override
-        public void bindTextures(int first, IntBuffer targets, IntBuffer textures) {
-            this.bindTextures(first, textures);
         }
 
         @Override
         public void bindTextures(int first, int[] targets, int[] textures) {
-            this.bindTextures(first, textures);
+            int invalidCount = Math.min(12 - first, textures.length);
+            for (int i = first; i < invalidCount; i++) {
+                if (targets[i - first] == GL_TEXTURE_2D) {
+                    GlStateManager.TEXTURES[i].binding = textures[i - first];
+                }
+            }
+
+            glBindTextures(first, textures);
         }
 
         @Override
@@ -163,107 +107,7 @@ public enum VeilMultiBind {
         }
     };
 
-    private static final int[] CHECK_BINDINGS = {
-            // These 3 are the most likely, so check them first
-            GL_TEXTURE_BINDING_2D,
-            GL_TEXTURE_BINDING_2D_ARRAY,
-            GL_TEXTURE_BINDING_CUBE_MAP,
-
-            GL_TEXTURE_BINDING_1D,
-            GL_TEXTURE_BINDING_3D,
-            GL_TEXTURE_BINDING_RECTANGLE,
-            GL_TEXTURE_BINDING_BUFFER,
-            GL_TEXTURE_BINDING_1D_ARRAY,
-            GL_TEXTURE_BINDING_2D_MULTISAMPLE,
-            GL_TEXTURE_BINDING_2D_MULTISAMPLE_ARRAY,
-    };
-    private static final int[] CHECK_TARGETS = {
-            // These 3 are the most likely, so check them first
-            GL_TEXTURE_2D,
-            GL_TEXTURE_2D_ARRAY,
-            GL_TEXTURE_CUBE_MAP,
-
-            GL_TEXTURE_1D,
-            GL_TEXTURE_3D,
-            GL_TEXTURE_RECTANGLE,
-            GL_TEXTURE_BUFFER,
-            GL_TEXTURE_1D_ARRAY,
-            GL_TEXTURE_2D_MULTISAMPLE,
-            GL_TEXTURE_2D_MULTISAMPLE_ARRAY,
-    };
-    private static final Cache<Integer, Integer> TEXTURE_TARGET_CACHE = CacheBuilder.newBuilder()
-            .maximumSize(100)
-            .expireAfterAccess(10, TimeUnit.SECONDS)
-            .build();
-
-    @ApiStatus.ScheduledForRemoval(inVersion = "4.0.0")
-    @Deprecated
-    @ApiStatus.Internal
-    public static int getTarget(int texture) {
-        Integer cached = TEXTURE_TARGET_CACHE.getIfPresent(texture);
-        if (cached != null) {
-            return cached;
-        }
-
-        GLCapabilities caps = GL.getCapabilities();
-        if (caps.glGetTextureParameteriv != 0L && caps.OpenGL45) { // Last ditch effort if the platform has the method anyways
-            int target = glGetTextureParameteri(texture, GL_TEXTURE_TARGET);
-
-            // For some reason on some Intel integrated graphics they don't follow the spec and this generates an error
-            // In that case, just continue on to the cursed path below
-            if (target != 0) {
-                TEXTURE_TARGET_CACHE.put(texture, target);
-                return target;
-            }
-        }
-
-        // Nothing else I can do, so do the dirty hack to figure out the target
-
-        // Clear errors
-        while (glGetError() != GL_NO_ERROR) {
-        }
-
-        for (int i = 0; i < CHECK_TARGETS.length; i++) {
-            int target = CHECK_TARGETS[i];
-            int old = glGetInteger(CHECK_BINDINGS[i]);
-            glBindTexture(target, texture);
-            if (glGetError() == GL_NO_ERROR) {
-                TEXTURE_TARGET_CACHE.put(texture, target);
-                glBindTexture(target, old);
-                return target;
-            }
-            glBindTexture(target, old);
-        }
-
-        // Should never happen
-        TEXTURE_TARGET_CACHE.put(texture, GL_TEXTURE_2D);
-        return GL_TEXTURE_2D;
-    }
-
-
     private static VeilMultiBind multiBind;
-
-    /**
-     * Binds the specified texture ids to sequential texture units and invalidates the GLStateManager.
-     *
-     * @param first    The first unit to bind to
-     * @param textures The textures to bind
-     * @deprecated Use {@link #bindTextures(int, IntBuffer, IntBuffer)}
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "4.0.0")
-    @Deprecated
-    public abstract void bindTextures(int first, IntBuffer textures);
-
-    /**
-     * Binds the specified texture ids to sequential texture units and invalidates the GLStateManager.
-     *
-     * @param first    The first unit to bind to
-     * @param textures The textures to bind
-     * @deprecated Use {@link #bindTextures(int, int[], int[])}
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "4.0.0")
-    @Deprecated
-    public abstract void bindTextures(int first, int... textures);
 
     /**
      * Binds the specified texture ids to sequential texture units and invalidates the GLStateManager.

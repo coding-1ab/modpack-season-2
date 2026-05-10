@@ -172,28 +172,6 @@ public interface VeilRenderBridge {
     }
 
     /**
-     * @return A render state shard to enable color dithering
-     * @since 2.0.0
-     * @deprecated This is a deprecated OpenGL feature and should be implemented using shaders
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "4.0.0")
-    @Deprecated
-    static RenderStateShard ditherState() {
-        return FlagShards.DITHER;
-    }
-
-    /**
-     * @return A render state shard to enable smooth line rendering
-     * @since 2.0.0
-     * @deprecated This is a deprecated OpenGL feature and should be implemented using shaders or {@link #multisampleState()}
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "4.0.0")
-    @Deprecated
-    static RenderStateShard lineSmoothState() {
-        return FlagShards.LINE_SMOOTH;
-    }
-
-    /**
      * @return A render state shard to enable multisampling
      * @since 2.0.0
      */

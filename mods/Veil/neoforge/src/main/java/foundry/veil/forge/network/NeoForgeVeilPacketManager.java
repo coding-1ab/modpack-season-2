@@ -40,35 +40,37 @@ public class NeoForgeVeilPacketManager implements VeilPacketManager {
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void registerHandler(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar(this.version);
+        PayloadRegistrar optionalRegistrar = registrar.optional();
 
         for (RegisteredPacket<ClientPacketContext> packet : this.clientPackets) {
             PacketHandler handler = packet.handler;
-            registrar.playToClient((CustomPacketPayload.Type<CustomPacketPayload>) packet.id, (StreamCodec<? super RegistryFriendlyByteBuf, CustomPacketPayload>) packet.codec, (payload, context) -> {
+            (packet.optional ? optionalRegistrar : registrar).playToClient((CustomPacketPayload.Type<CustomPacketPayload>) packet.id, (StreamCodec<? super RegistryFriendlyByteBuf, CustomPacketPayload>) packet.codec, (payload, context) -> {
                 handler.handlePacket(payload, new NeoForgeClientPacketContext(context));
             });
         }
 
         for (RegisteredPacket<ServerPacketContext> packet : this.serverPackets) {
             PacketHandler handler = packet.handler;
-            registrar.playToServer((CustomPacketPayload.Type<CustomPacketPayload>) packet.id, (StreamCodec<? super RegistryFriendlyByteBuf, CustomPacketPayload>) packet.codec, (payload, context) -> {
+            (packet.optional ? optionalRegistrar : registrar).playToServer((CustomPacketPayload.Type<CustomPacketPayload>) packet.id, (StreamCodec<? super RegistryFriendlyByteBuf, CustomPacketPayload>) packet.codec, (payload, context) -> {
                 handler.handlePacket(payload, new NeoForgeServerPacketContext(context));
             });
         }
     }
 
     @Override
-    public <T extends CustomPacketPayload> void registerClientbound(CustomPacketPayload.Type<T> id, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, PacketHandler<ClientPacketContext, T> handler) {
-        this.clientPackets.add(new RegisteredPacket<>(id, codec, handler));
+    public <T extends CustomPacketPayload> void registerClientbound(CustomPacketPayload.Type<T> id, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, PacketHandler<ClientPacketContext, T> handler, boolean optional) {
+        this.clientPackets.add(new RegisteredPacket<>(id, codec, handler, optional));
     }
 
     @Override
-    public <T extends CustomPacketPayload> void registerServerbound(CustomPacketPayload.Type<T> id, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, PacketHandler<ServerPacketContext, T> handler) {
-        this.serverPackets.add(new RegisteredPacket<>(id, codec, handler));
+    public <T extends CustomPacketPayload> void registerServerbound(CustomPacketPayload.Type<T> id, StreamCodec<? super RegistryFriendlyByteBuf, T> codec, PacketHandler<ServerPacketContext, T> handler, boolean optional) {
+        this.serverPackets.add(new RegisteredPacket<>(id, codec, handler, optional));
     }
 
     private record RegisteredPacket<T extends PacketContext>(
             CustomPacketPayload.Type<? extends CustomPacketPayload> id,
             StreamCodec<? super RegistryFriendlyByteBuf, ?> codec,
-            PacketHandler<T, ?> handler) {
+            PacketHandler<T, ?> handler,
+            boolean optional) {
     }
 }

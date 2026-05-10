@@ -31,7 +31,7 @@ public class PostInspector extends SingleWindowInspector {
         this.removedPipelines = new HashSet<>(1);
     }
 
-    private static boolean isInternal(ResourceLocation id) {
+    public static boolean isInternal(ResourceLocation id) {
         return Veil.MODID.equals(id.getNamespace()) && id.getPath().startsWith("core/");
     }
 

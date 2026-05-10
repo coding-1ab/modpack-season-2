@@ -3,7 +3,9 @@ package foundry.veil.api.client.render;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import foundry.veil.Veil;
+import foundry.veil.VeilClient;
 import foundry.veil.api.client.editor.EditorManager;
+import foundry.veil.api.client.editor.Inspector;
 import foundry.veil.api.client.render.dynamicbuffer.DynamicBufferType;
 import foundry.veil.api.client.render.framebuffer.FramebufferManager;
 import foundry.veil.api.client.render.light.renderer.LightRenderer;
@@ -12,6 +14,7 @@ import foundry.veil.api.client.render.post.PostProcessingManager;
 import foundry.veil.api.client.render.shader.ShaderManager;
 import foundry.veil.api.client.render.shader.ShaderModificationManager;
 import foundry.veil.api.client.render.shader.ShaderPreDefinitions;
+import foundry.veil.api.event.VeilRegisterInspectorsEvent;
 import foundry.veil.api.flare.FlareEffectManager;
 import foundry.veil.api.quasar.particle.ParticleSystemManager;
 import foundry.veil.impl.client.render.dynamicbuffer.DynamicBufferManager;
@@ -92,6 +95,15 @@ public class VeilRenderer implements ResourceManagerReloadListener {
         resourceManager.registerReloadListener(this.dynamicRenderTypeManager);
         resourceManager.registerReloadListener(this.flareEffectManager.getShellManager());
         resourceManager.registerReloadListener(this);
+
+        if (VeilRenderSystem.hasImGui()) {
+            this.registerInspectors();
+        }
+    }
+
+    @ApiStatus.Internal
+    public void registerInspectors() {
+        VeilClient.clientPlatform().onRegisterInspectors(new EditorRegistry(this.editorManager));
     }
 
     @ApiStatus.Internal
@@ -295,5 +307,12 @@ public class VeilRenderer implements ResourceManagerReloadListener {
     @Override
     public void onResourceManagerReload(@NotNull ResourceManager resourceManager) {
         VeilBloomRenderer.tryEnable();
+    }
+
+    private record EditorRegistry(EditorManager editorManager) implements VeilRegisterInspectorsEvent.Registry {
+        @Override
+        public void registerInspector(Inspector inspector) {
+            this.editorManager.add(inspector);
+        }
     }
 }

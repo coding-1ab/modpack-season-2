@@ -22,8 +22,13 @@ public class ChunkVertexConsumerMixin {
     @Shadow(remap = false)
     private int vertexIndex;
 
-    @Inject(method = "setNormal", at = @At("HEAD"))
-    public void setNormal(float x, float y, float z, CallbackInfoReturnable<VertexConsumer> cir) {
-        ((ChunkVertexEncoderVertexExtension) this.vertices[this.vertexIndex]).veil$setNormal(NormI8.pack(x, y, z));
+    @Inject(method = "setNormal", at = @At("HEAD"), require = 0)
+    public void setNormal(float normalX, float normalY, float normalZ, CallbackInfoReturnable<VertexConsumer> cir) {
+        ((ChunkVertexEncoderVertexExtension) this.vertices[this.vertexIndex]).veil$setNormal(NormI8.pack(normalX, normalY, normalZ));
+    }
+
+    @Inject(method = "setNormal", at = @At("HEAD"), remap = false, require = 0)
+    public void setNormalUnmapped(float normalX, float normalY, float normalZ, CallbackInfoReturnable<VertexConsumer> cir) {
+        ((ChunkVertexEncoderVertexExtension) this.vertices[this.vertexIndex]).veil$setNormal(NormI8.pack(normalX, normalY, normalZ));
     }
 }

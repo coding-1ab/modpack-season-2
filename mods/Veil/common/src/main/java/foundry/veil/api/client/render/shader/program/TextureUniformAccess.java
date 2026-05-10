@@ -62,35 +62,6 @@ public interface TextureUniformAccess {
      *
      * @param name     The name of the texture to set
      * @param location The name of the texture in the texture manager to bind and assign a texture unit
-     * @since 2.5.0
-     * @deprecated Use {@link #setTexture(CharSequence, ResourceLocation)} instead
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "4.0.0")
-    @Deprecated
-    default void setSampler(CharSequence name, ResourceLocation location) {
-        this.setTexture(name, location);
-    }
-
-    /**
-     * Adds a texture that is dynamically bound and sets texture units.
-     *
-     * @param name      The name of the texture to set
-     * @param location  The name of the texture in the texture manager to bind and assign a texture unit
-     * @param samplerId The id of the sampler assign a texture unit
-     * @since 2.5.0
-     * @deprecated Use {@link #setTexture(CharSequence, ResourceLocation, int)} instead
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "4.0.0")
-    @Deprecated
-    default void setSampler(CharSequence name, ResourceLocation location, int samplerId) {
-        this.setTexture(name, location, samplerId);
-    }
-
-    /**
-     * Adds a texture that is dynamically bound and sets texture units.
-     *
-     * @param name     The name of the texture to set
-     * @param location The name of the texture in the texture manager to bind and assign a texture unit
      * @since 3.6.0
      */
     default void setTexture(CharSequence name, ResourceLocation location) {
@@ -136,33 +107,6 @@ public interface TextureUniformAccess {
      * Adds a texture that is dynamically bound and sets texture units.
      *
      * @param name      The name of the texture to set
-     * @param textureId The id of the texture to bind and assign a texture unit
-     * @deprecated Use {@link #setTexture(CharSequence, int, int)} instead
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "4.0.0")
-    @Deprecated
-    default void setSampler(CharSequence name, int textureId) {
-        this.setTexture(name, VeilMultiBind.getTarget(textureId), textureId, 0);
-    }
-
-    /**
-     * Adds a texture that is dynamically bound and sets texture units.
-     *
-     * @param name      The name of the texture to set
-     * @param textureId The id of the texture to bind and assign a texture unit
-     * @param samplerId The id of the sampler assign a texture unit
-     * @deprecated Use {@link #setTexture(CharSequence, int, int, int)} instead
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "4.0.0")
-    @Deprecated
-    default void setSampler(CharSequence name, int textureId, int samplerId) {
-        this.setTexture(name, VeilMultiBind.getTarget(textureId), textureId, samplerId);
-    }
-
-    /**
-     * Adds a texture that is dynamically bound and sets texture units.
-     *
-     * @param name      The name of the texture to set
      * @param target    The target of the texture
      * @param textureId The id of the texture to bind and assign a texture unit
      * @since 3.6.0
@@ -181,18 +125,6 @@ public interface TextureUniformAccess {
      * @since 3.6.0
      */
     void setTexture(CharSequence name, int target, int textureId, int samplerId);
-
-    /**
-     * Removes the specified sampler binding. This will effectively make it a missing texture.
-     *
-     * @param name The name of the sampler to remove
-     * @deprecated Use {@link #removeTexture(CharSequence)} instead
-     */
-    @ApiStatus.ScheduledForRemoval(inVersion = "4.0.0")
-    @Deprecated
-    default void removeSampler(CharSequence name) {
-        this.removeTexture(name);
-    }
 
     /**
      * Removes the specified sampler binding. This will effectively make it a missing texture.

@@ -6,6 +6,7 @@ import foundry.veil.api.client.render.shader.ShaderManager;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
 import foundry.veil.api.event.VeilAddShaderPreProcessorsEvent;
 import foundry.veil.api.event.VeilRegisterGlobalControllersEvent;
+import foundry.veil.api.event.VeilRegisterInspectorsEvent;
 import foundry.veil.forge.event.*;
 import foundry.veil.platform.VeilClientPlatform;
 import net.minecraft.resources.ResourceLocation;
@@ -35,6 +36,16 @@ public class NeoForgeVeilClientPlatform implements VeilClientPlatform {
     }
 
     @Override
+    public void onRegisterGlobalControllers(VeilRegisterGlobalControllersEvent.Registry registry) {
+        ModLoader.postEvent(new ForgeVeilRegisterGlobalControllersEvent(registry));
+    }
+
+    @Override
+    public void onRegisterInspectors(VeilRegisterInspectorsEvent.Registry registry) {
+        ModLoader.postEvent(new ForgeVeilRegisterInspectorsEvent(registry));
+    }
+
+    @Override
     public void onVeilCompileShaders(ShaderManager shaderManager, Map<ResourceLocation, ShaderProgram> updatedPrograms) {
         ModLoader.postEvent(new ForgeVeilShaderCompileEvent(shaderManager, updatedPrograms));
     }
@@ -42,10 +53,5 @@ public class NeoForgeVeilClientPlatform implements VeilClientPlatform {
     @Override
     public void onVeilDynamicBuffersChanged(DynamicBuffersChange change) {
         ModLoader.postEvent(new ForgeVeilDynamicBuffersChangedEvent(change));
-    }
-
-    @Override
-    public void onRegisterGlobalControllers(VeilRegisterGlobalControllersEvent.Registry registry) {
-        ModLoader.postEvent(new ForgeVeilRegisterGlobalControllersEvent(registry));
     }
 }

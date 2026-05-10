@@ -1,6 +1,7 @@
 package foundry.veil.api.client.imgui;
 
 
+import foundry.imgui.api.ImGuiMC;
 import foundry.veil.Veil;
 import foundry.veil.api.client.editor.EditorManager;
 import foundry.veil.api.client.render.VeilRenderSystem;
@@ -100,7 +101,7 @@ public class VeilImGuiUtil {
      * @param code The icon code (ex. &#xED0F;)
      */
     public static void icon(int code) {
-        ImGui.pushFont(VeilRenderSystem.renderer().getEditorManager().getFont(ICON_FONT, false, false));
+        ImGui.pushFont(ImGuiMC.getFont(ICON_FONT, false, false));
         ImGui.text("" + (char) code);
         ImGui.popFont();
     }
@@ -112,7 +113,7 @@ public class VeilImGuiUtil {
      * @param color The color of the icon
      */
     public static void icon(int code, int color) {
-        ImGui.pushFont(VeilRenderSystem.renderer().getEditorManager().getFont(ICON_FONT, false, false));
+        ImGui.pushFont(ImGuiMC.getFont(ICON_FONT, false, false));
         ImGui.textColored(color, "" + (char) code);
         ImGui.popFont();
     }
@@ -150,7 +151,7 @@ public class VeilImGuiUtil {
             }
 
             ImGui.pushStyleVar(ImGuiStyleVar.ItemSpacing, 0, 0);
-            ImGui.setItemAllowOverlap();
+            ImGui.setNextItemAllowOverlap();
             ImGui.sameLine();
             VeilImGuiUtil.icon(0xEB91);
             ImGui.sameLine();
@@ -205,7 +206,7 @@ public class VeilImGuiUtil {
      * @return The ImFont to use
      */
     public static ImFont getStyleFont(Style style) {
-        return VeilRenderSystem.renderer().getEditorManager().getFont(Style.DEFAULT_FONT.equals(style.getFont()) ? EditorManager.DEFAULT_FONT : style.getFont(), style.isBold(), style.isItalic());
+        return ImGuiMC.getFont(Style.DEFAULT_FONT.equals(style.getFont()) ? EditorManager.DEFAULT_FONT : style.getFont(), style.isBold(), style.isItalic());
     }
 
     /**
