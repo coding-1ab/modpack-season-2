@@ -11,6 +11,8 @@ import javax.annotation.Nullable;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlocks;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionShapes;
+import com.simibubi.create.api.schematic.requirement.SpecialBlockItemRequirement;
+import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.simibubi.create.content.decoration.copycat.CopycatBlock;
 import com.simibubi.create.content.decoration.copycat.CopycatBlockEntity;
 
@@ -32,6 +34,7 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -45,7 +48,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
 
-public class CopycatWingBlock extends CopycatBlock implements BlockSubLevelLiftProvider, BlockSubLevelCustomCenterOfMass {
+public class CopycatWingBlock extends CopycatBlock implements BlockSubLevelLiftProvider, BlockSubLevelCustomCenterOfMass, SpecialBlockItemRequirement {
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
     private static final Vector3dc CENTER_OF_MASS = new Vector3d(0.5, 0.5, 0.5);
     private static final float BASE_LIFT_SCALAR = 0.475f;
@@ -197,5 +200,13 @@ public class CopycatWingBlock extends CopycatBlock implements BlockSubLevelLiftP
             case 12 -> BASE_LIFT_SCALAR * 2.0f;
             default -> BASE_LIFT_SCALAR;
         };
+    }
+
+    @Override
+    public ItemRequirement getRequiredItems(BlockState state, BlockEntity blockEntity) {
+        return new ItemRequirement(
+            ItemRequirement.ItemUseType.CONSUME,
+            new ItemStack(PropulsionBlocks.COPYCAT_WING.get(), Math.max(1, width / 4))
+        );
     }
 }
