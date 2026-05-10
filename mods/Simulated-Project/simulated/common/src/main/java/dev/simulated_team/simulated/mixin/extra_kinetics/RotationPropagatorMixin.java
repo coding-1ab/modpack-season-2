@@ -25,8 +25,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Mixin(RotationPropagator.class)
 public abstract class RotationPropagatorMixin {
@@ -111,18 +110,19 @@ public abstract class RotationPropagatorMixin {
 
     @Inject(method = "getPotentialNeighbourLocations", at = @At("TAIL"), remap = false)
     private static void simulated$getExtraKineticsBlockPositions(final KineticBlockEntity be, final CallbackInfoReturnable<List<BlockPos>> cir) {
+
+        //This list should NOT be getting replaced ever ever, OR made immutable... whoever is replacing the list with their own IMMUTABLE one needs to fix it on THEIR side. This method provides its own list that should be modified by mixins, OR the block, NOT replaced.
         final List<BlockPos> list = cir.getReturnValue();
-        final List<BlockPos> extraKinetics = new ArrayList<>();
         final Level level = be.getLevel();
 
-        for (final BlockPos pos : list) {
-            final Block block = level.getBlockState(pos).getBlock();
-            if (block instanceof ExtraKinetics.ExtraKineticsBlock) {
-                extraKinetics.add(new ExtraBlockPos(pos));
+        final ListIterator<BlockPos> lIter = list.listIterator();
+        while (lIter.hasNext()) {
+            final BlockPos current = lIter.next();
+            //make sure that we're not actually modifying the list unless there are extra kinetics
+            if (level.getBlockState(current).getBlock() instanceof ExtraKinetics.ExtraKineticsBlock) {
+                lIter.add(new ExtraBlockPos(current));
             }
         }
-
-        list.addAll(extraKinetics);
     }
 
     @Unique
