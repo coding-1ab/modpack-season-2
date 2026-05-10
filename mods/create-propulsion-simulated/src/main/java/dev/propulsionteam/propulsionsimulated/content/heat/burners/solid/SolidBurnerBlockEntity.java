@@ -5,6 +5,7 @@ import java.util.List;
 import com.simibubi.create.foundation.utility.CreateLang;
 import net.createmod.catnip.lang.LangBuilder;
 
+import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.AbstractBurnerBlock;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.AbstractBurnerBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.BurnerDamager;
@@ -41,7 +42,8 @@ public class SolidBurnerBlockEntity extends AbstractBurnerBlockEntity implements
 
     @Override
     public void setBurnTime(int burnTime) {
-        this.burnTime = burnTime;
+        double consumptionMultiplier = Math.max(0.01, PropulsionConfig.SOLID_BURNER_FUEL_CONSUMPTION_MULTIPLIER.get());
+        this.burnTime = Math.max(1, (int) Math.ceil(burnTime / consumptionMultiplier));
     }
 
     @Override
