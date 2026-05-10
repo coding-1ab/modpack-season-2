@@ -63,6 +63,7 @@ public class PropulsionConfig {
     public static final ModConfigSpec.ConfigValue<Boolean> BURNERS_HEAT_STEAM_ENGINES;
     public static final ModConfigSpec.ConfigValue<Boolean> BURNERS_SUPERHEAT_STEAM_ENGINES;
     public static final ModConfigSpec.ConfigValue<Boolean> BLAZE_BURNERS_HEAT_STIRLING_ENGINES;
+    public static final ModConfigSpec.ConfigValue<Double> SOLID_BURNER_FUEL_CONSUMPTION_MULTIPLIER;
     public static final Map<String, ModConfigSpec.ConfigValue<String>> CORAL_FUEL_CONVERSION_RATE_ENTRIES = new LinkedHashMap<>();
 
     /** Extra fuel lines {@code fluid=efficiency,burnRate}; merged after defaults; duplicates override. */
@@ -171,6 +172,8 @@ public class PropulsionConfig {
                 .define("Burners superheat steam engines", true);
             BLAZE_BURNERS_HEAT_STIRLING_ENGINES = COMMON_BUILDER.comment("Allow vanilla blaze burners under stirling engines to provide heat.")
                 .define("Blaze burners heat stirling engines", true);
+            SOLID_BURNER_FUEL_CONSUMPTION_MULTIPLIER = COMMON_BUILDER.comment("Fuel consumption multiplier for solid burners. Higher values make inserted items burn faster.")
+                .defineInRange("Solid burner fuel consumption multiplier", 1.0, 0.01, 100.0);
         COMMON_BUILDER.pop();
 
         COMMON_BUILDER.push("Cable");
