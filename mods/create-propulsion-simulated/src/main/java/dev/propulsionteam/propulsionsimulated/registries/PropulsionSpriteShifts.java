@@ -12,6 +12,9 @@ public class PropulsionSpriteShifts {
     public static final CTSpriteShiftEntry WING_TEXTURE = getCT(AllCTTypes.OMNIDIRECTIONAL, "wing");
     public static final CTSpriteShiftEntry TEMPERED_WING_TEXTURE = getCT(AllCTTypes.OMNIDIRECTIONAL, "tempered_wing");
     public static final CTSpriteShiftEntry PLATINUM_CASING_TEXTURE = getCT(AllCTTypes.OMNIDIRECTIONAL, "platinum_casing");
+    public static final CTSpriteShiftEntry PLATINUM_FLUID_TANK = getCT(AllCTTypes.RECTANGLE, "fluid_tank");
+    public static final CTSpriteShiftEntry PLATINUM_FLUID_TANK_TOP = getCT(AllCTTypes.RECTANGLE, "fluid_tank_top");
+    public static final CTSpriteShiftEntry PLATINUM_FLUID_TANK_INNER = getCT(AllCTTypes.RECTANGLE, "fluid_tank_inner");
 
     private static CTSpriteShiftEntry getCT(CTType type, String blockTextureName) {
         return CTSpriteShifter.getCT(type,

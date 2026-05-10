@@ -22,6 +22,7 @@
     "createpropulsion:raw_platinum_block",
     "createpropulsion:coral_generator",
     "createpropulsion:vector_thruster",
-    "createpropulsion:creative_vector_thruster"
+    "createpropulsion:creative_vector_thruster",
+    "createpropulsion:platinum_fluid_tank"
   ]
 }

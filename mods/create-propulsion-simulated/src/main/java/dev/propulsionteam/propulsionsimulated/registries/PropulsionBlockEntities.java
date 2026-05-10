@@ -7,6 +7,7 @@ import dev.propulsionteam.propulsionsimulated.content.cable.hub.CableHubBlockEnt
 import dev.propulsionteam.propulsionsimulated.content.cable.relay.CableRelayBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.heat.engine.StirlingEngineBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.platinum.CoralGeneratorBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.platinum.PlatinumFluidTankBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.creative_vector_thruster.CreativeVectorThrusterBlockEntity;
@@ -89,6 +90,9 @@ public class PropulsionBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CoralGeneratorBlockEntity>> CORAL_GENERATOR_BLOCK_ENTITY =
         BLOCK_ENTITY_TYPES.register("coral_generator_block_entity",
             () -> BlockEntityType.Builder.of((pos, state) -> new CoralGeneratorBlockEntity(pos, state), PropulsionBlocks.CORAL_GENERATOR.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PlatinumFluidTankBlockEntity>> PLATINUM_FLUID_TANK_BLOCK_ENTITY =
+        BLOCK_ENTITY_TYPES.register("platinum_fluid_tank_block_entity",
+            () -> BlockEntityType.Builder.of((pos, state) -> new PlatinumFluidTankBlockEntity(pos, state), PropulsionBlocks.PLATINUM_FLUID_TANK.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FeCableBlockEntity>> FE_CABLE_BLOCK_ENTITY =
         BLOCK_ENTITY_TYPES.register("fe_cable_block_entity",
             () -> BlockEntityType.Builder.of((pos, state) -> new FeCableBlockEntity(pos, state), PropulsionBlocks.FE_CABLE.get()).build(null));

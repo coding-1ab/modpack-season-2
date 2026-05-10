@@ -6,6 +6,7 @@ import com.simibubi.create.foundation.block.connected.CTModel;
 import com.simibubi.create.foundation.model.ModelSwapper;
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.LiquidBurnerRenderer;
+import dev.propulsionteam.propulsionsimulated.content.platinum.PlatinumFluidTankModel;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlocks;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionSpriteShifts;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.LiquidBurnerVisual;
@@ -23,6 +24,7 @@ import dev.propulsionteam.propulsionsimulated.content.thruster.ion_thruster.IonT
 import dev.propulsionteam.propulsionsimulated.content.thruster.liquid_vector_thruster.LiquidVectorThrusterRenderer;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterRenderer;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionFluids;
+import com.simibubi.create.content.fluids.tank.FluidTankRenderer;
 
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import dev.engine_room.flywheel.lib.visualization.SimpleBlockEntityVisualizer;
@@ -152,6 +154,7 @@ public class ModClientEvents {
             ItemBlockRenderTypes.setRenderLayer(PropulsionFluids.FLOWING_CORAL.get(), RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(PropulsionFluids.OXIDIZER.get(), RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(PropulsionFluids.FLOWING_OXIDIZER.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(PropulsionBlocks.PLATINUM_FLUID_TANK.get(), RenderType.cutoutMipped());
         });
 
         PonderIndex.addPlugin(new DeltaPonderPlugin());
@@ -191,6 +194,7 @@ public class ModClientEvents {
         event.registerBlockEntityRenderer(PropulsionBlockEntities.LIQUID_VECTOR_THRUSTER_BLOCK_ENTITY.get(), LiquidVectorThrusterRenderer::new);
         event.registerBlockEntityRenderer(PropulsionBlockEntities.LIQUID_BURNER_BLOCK_ENTITY.get(), LiquidBurnerRenderer::new);
         event.registerBlockEntityRenderer(PropulsionBlockEntities.TILT_ADAPTER_BLOCK_ENTITY.get(), TiltAdapterRenderer::new);
+        event.registerBlockEntityRenderer(PropulsionBlockEntities.PLATINUM_FLUID_TANK_BLOCK_ENTITY.get(), FluidTankRenderer::new);
     }
 
     @SubscribeEvent
@@ -199,5 +203,8 @@ public class ModClientEvents {
         ModelSwapper.swapModels(event.getModels(),
             ModelSwapper.getAllBlockStateModelLocations(PropulsionBlocks.PLATINUM_CASING.get()),
             model -> new CTModel(model, behaviour));
+        ModelSwapper.swapModels(event.getModels(),
+            ModelSwapper.getAllBlockStateModelLocations(PropulsionBlocks.PLATINUM_FLUID_TANK.get()),
+            PlatinumFluidTankModel::new);
     }
 }
