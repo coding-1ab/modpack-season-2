@@ -18,7 +18,13 @@ public class BasinBlockEntityMixin {
         if (cir.getReturnValue() == BlazeBurnerBlock.HeatLevel.NONE 
                 && state.getBlock() instanceof AbstractBurnerBlock
                 && PropulsionConfig.BURNERS_POWER_HEATED_MIXERS.get()) {
-            cir.setReturnValue(state.getValue(AbstractBurnerBlock.HEAT));
+            BlazeBurnerBlock.HeatLevel burnerHeat = state.getValue(AbstractBurnerBlock.HEAT);
+            if (burnerHeat == BlazeBurnerBlock.HeatLevel.SEETHING
+                    && !PropulsionConfig.BURNERS_SUPERHEAT_STEAM_ENGINES.get()) {
+                cir.setReturnValue(BlazeBurnerBlock.HeatLevel.KINDLED);
+                return;
+            }
+            cir.setReturnValue(burnerHeat);
         }
     }
 }
