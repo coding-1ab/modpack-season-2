@@ -1,13 +1,13 @@
 package com.hlysine.create_connected.content.linkedtransmitter;
 
-import com.hlysine.create_connected.CCBlockEntityTypes;
 import com.hlysine.create_connected.CCItems;
+import com.hlysine.create_connected.compat.SimCompatRegistry;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.api.schematic.requirement.SpecialBlockItemRequirement;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
-import com.simibubi.create.content.redstone.analogLever.AnalogLeverBlock;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import com.tterrag.registrate.util.nullness.NonNullSupplier;
+import dev.simulated_team.simulated.content.blocks.throttle_lever.ThrottleLeverBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -34,13 +34,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LinkedAnalogLeverBlock extends AnalogLeverBlock implements SpecialBlockItemRequirement, IWrenchable, LinkedTransmitterBlock {
+public class LinkedThrottleLeverBlock extends ThrottleLeverBlock implements SpecialBlockItemRequirement, IWrenchable, LinkedTransmitterBlock {
     public static BooleanProperty LOCKED = BlockStateProperties.LOCKED;
 
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
-    private final NonNullSupplier<AnalogLeverBlock> baseSupplier;
+    private final NonNullSupplier<ThrottleLeverBlock> baseSupplier;
 
-    public LinkedAnalogLeverBlock(Properties pProperties, NonNullSupplier<AnalogLeverBlock> baseSupplier) {
+    public LinkedThrottleLeverBlock(Properties pProperties, NonNullSupplier<ThrottleLeverBlock> baseSupplier) {
         super(pProperties);
         registerDefaultState(defaultBlockState().setValue(POWERED, false).setValue(LOCKED, false));
         this.baseSupplier = baseSupplier;
@@ -91,7 +91,7 @@ public class LinkedAnalogLeverBlock extends AnalogLeverBlock implements SpecialB
 
     @Override
     public void onRemove(@NotNull BlockState state, @NotNull Level world, @NotNull BlockPos pos, @NotNull BlockState newState, boolean isMoving) {
-        if (!state.is(newState.getBlock()) && !isMoving && getBlockEntityOptional(world, pos).map(be -> ((LinkedAnalogLeverBlockEntity) be).containsBase).orElse(false))
+        if (!state.is(newState.getBlock()) && !isMoving && getBlockEntityOptional(world, pos).map(be -> ((LinkedThrottleLeverBlockEntity) be).containsBase).orElse(false))
             Block.popResource(world, pos, new ItemStack(CCItems.LINKED_TRANSMITTER.get()));
         getBase().defaultBlockState().onRemove(world, pos, newState, isMoving);
     }
@@ -99,7 +99,7 @@ public class LinkedAnalogLeverBlock extends AnalogLeverBlock implements SpecialB
     @Override
     public InteractionResult onSneakWrenched(BlockState state, UseOnContext context) {
         onWrenched(state, context);
-        return IWrenchable.super.onSneakWrenched(state, context);
+        return super.onSneakWrenched(state, context);
     }
 
     @Override
@@ -108,7 +108,7 @@ public class LinkedAnalogLeverBlock extends AnalogLeverBlock implements SpecialB
         if (!player.isCreative()) {
             player.getInventory().placeItemBackInInventory(new ItemStack(CCItems.LINKED_TRANSMITTER.get()));
         }
-        withBlockEntityDo(context.getLevel(), context.getClickedPos(), be -> ((LinkedAnalogLeverBlockEntity) be).containsBase = false);
+        withBlockEntityDo(context.getLevel(), context.getClickedPos(), be -> ((LinkedThrottleLeverBlockEntity) be).containsBase = false);
         replaceWithBase(state, context.getLevel(), context.getClickedPos());
         return InteractionResult.SUCCESS;
     }
@@ -118,6 +118,7 @@ public class LinkedAnalogLeverBlock extends AnalogLeverBlock implements SpecialB
         world.setBlockAndUpdate(pos, defaultBlockState()
                 .setValue(FACING, baseState.getValue(FACING))
                 .setValue(FACE, baseState.getValue(FACE))
+                .setValue(ThrottleLeverBlock.INVERTED, baseState.getValue(ThrottleLeverBlock.INVERTED))
         );
         AllSoundEvents.CONTROLLER_PUT.playOnServer(world, pos);
     }
@@ -126,7 +127,9 @@ public class LinkedAnalogLeverBlock extends AnalogLeverBlock implements SpecialB
         AllSoundEvents.CONTROLLER_TAKE.playOnServer(world, pos);
         world.setBlockAndUpdate(pos, getBase().defaultBlockState()
                 .setValue(FACING, state.getValue(FACING))
-                .setValue(FACE, state.getValue(FACE)));
+                .setValue(FACE, state.getValue(FACE))
+                .setValue(ThrottleLeverBlock.INVERTED, state.getValue(ThrottleLeverBlock.INVERTED))
+        );
     }
 
     @Override
@@ -149,7 +152,7 @@ public class LinkedAnalogLeverBlock extends AnalogLeverBlock implements SpecialB
     }
 
     @Override
-    public BlockEntityType<? extends LinkedAnalogLeverBlockEntity> getBlockEntityType() {
-        return CCBlockEntityTypes.LINKED_ANALOG_LEVER.get();
+    public BlockEntityType<? extends LinkedThrottleLeverBlockEntity> getBlockEntityType() {
+        return SimCompatRegistry.LINKED_THROTTLE_LEVER_ENTITY.get();
     }
 }
