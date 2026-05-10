@@ -5,17 +5,6 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.mutable.MutableBoolean;
 
-import com.simibubi.create.api.equipment.goggles.IHaveHoveringInformation;
-import com.simibubi.create.content.logistics.packager.IdentifiedInventory;
-import com.simibubi.create.content.logistics.packager.InventorySummary;
-import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
-import com.simibubi.create.content.logistics.packager.PackagingRequest;
-import com.simibubi.create.content.logistics.packagerLink.WiFiParticle;
-import com.simibubi.create.content.logistics.stockTicker.PackageOrderWithCrafts;
-import com.simibubi.create.content.redstone.displayLink.LinkWithBulbBlockEntity;
-import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.tom.stockbridge.util.StockBridgeInventory;
-
 import net.createmod.catnip.data.Iterate;
 import net.createmod.catnip.data.Pair;
 import net.minecraft.core.BlockPos;
@@ -25,8 +14,19 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
-public abstract class AbstractStockBridgeBlockEntity extends LinkWithBulbBlockEntity
-		implements IHaveHoveringInformation {
+import com.simibubi.create.api.equipment.goggles.IHaveHoveringInformation;
+import com.simibubi.create.content.logistics.packager.IdentifiedInventory;
+import com.simibubi.create.content.logistics.packager.InventorySummary;
+import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
+import com.simibubi.create.content.logistics.packager.PackagingRequest;
+import com.simibubi.create.content.logistics.packagerLink.WiFiParticle;
+import com.simibubi.create.content.logistics.stockTicker.PackageOrderWithCrafts;
+import com.simibubi.create.content.redstone.displayLink.LinkWithBulbBlockEntity;
+import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+
+import com.tom.stockbridge.ae.AEStockBridgeBlock;
+
+public abstract class AbstractStockBridgeBlockEntity extends LinkWithBulbBlockEntity implements IHaveHoveringInformation {
 	public BridgeBehaviour behaviour;
 	public UUID placedBy;
 
@@ -43,13 +43,19 @@ public abstract class AbstractStockBridgeBlockEntity extends LinkWithBulbBlockEn
 
 	public abstract InventorySummary fetchSummaryFromPackager();
 
-	public abstract Pair<PackagerBlockEntity, PackagingRequest> processRequest(ItemStack stack, int amount,
-			String address,
+	public abstract Pair<PackagerBlockEntity, PackagingRequest> processRequest(ItemStack stack, int amount, String address,
 			int linkIndex, MutableBoolean finalLink, int orderId, PackageOrderWithCrafts context);
 
 	public abstract IdentifiedInventory getInvId();
 
 	protected PackagerBlockEntity getPackager() {
+		if (behaviour.redstonePower == 15)
+			return null;
+
+		return getPackager0();
+	}
+
+	private PackagerBlockEntity getPackager0() {
 		for (Direction d : Iterate.directions) {
 			if (!level.isLoaded(worldPosition.relative(d)))
 				continue;
@@ -65,6 +71,7 @@ public abstract class AbstractStockBridgeBlockEntity extends LinkWithBulbBlockEn
 	public void initialize() {
 		super.initialize();
 		PackagerBlockEntity packager = getPackager();
+		behaviour.redstonePowerChanged(AEStockBridgeBlock.getPower(level, worldPosition, packager != null ? packager.getBlockPos() : null));
 		if (packager != null)
 			packager.recheckIfLinksPresent();
 	}
@@ -74,8 +81,6 @@ public abstract class AbstractStockBridgeBlockEntity extends LinkWithBulbBlockEn
 	}
 
 	public abstract void pull(PackagingRequest packagingRequest);
-
-	public abstract StockBridgeInventory getInv();
 
 	@Override
 	public Direction getBulbFacing(BlockState state) {
@@ -95,5 +100,37 @@ public abstract class AbstractStockBridgeBlockEntity extends LinkWithBulbBlockEn
 
 		super.pulse();
 		level.addParticle(new WiFiParticle.Data(), vec3.x, vec3.y, vec3.z, 1, 1, 1);
+	}
+
+	public void preparePackages(List<PackagingRequest> queuedRequests) {
+		PackagingRequest firstRequest = queuedRequests.get(0);
+		String firstAddress = firstRequest.address();
+		int firstOrderId = firstRequest.orderId();
+
+		// Get all requests that can be combined (same address/orderId)
+		for (PackagingRequest request : queuedRequests) {
+			if (!request.address().equals(firstAddress) || request.orderId() != firstOrderId) {
+				break;
+			}
+
+			if (!hasInventorySpace()) {
+				break;
+			}
+
+			pull(request);
+		}
+	}
+
+	protected abstract boolean hasInventorySpace();
+
+	public void neighborChanged() {
+		PackagerBlockEntity packager = getPackager0();
+		int power = AEStockBridgeBlock.getPower(level, worldPosition, packager != null ? packager.getBlockPos() : null);
+		boolean powered = power > 0;
+		BlockState state = getBlockState();
+		boolean previouslyPowered = state.getValue(AEStockBridgeBlock.POWERED);
+		if (previouslyPowered != powered)
+			level.setBlock(worldPosition, state.cycle(AEStockBridgeBlock.POWERED), 2);
+		behaviour.redstonePowerChanged(power);
 	}
 }

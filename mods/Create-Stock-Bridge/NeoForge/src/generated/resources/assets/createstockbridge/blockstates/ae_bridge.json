@@ -1,7 +1,10 @@
 {
   "variants": {
-    "": {
+    "powered=false": {
       "model": "createstockbridge:block/ae_bridge"
+    },
+    "powered=true": {
+      "model": "createstockbridge:block/ae_bridge_powered"
     }
   }
 }

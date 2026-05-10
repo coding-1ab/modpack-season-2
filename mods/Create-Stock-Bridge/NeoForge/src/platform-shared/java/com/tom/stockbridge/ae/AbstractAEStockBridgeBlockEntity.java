@@ -4,9 +4,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.google.common.collect.ImmutableSet;
+import net.createmod.catnip.data.Pair;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+
 import com.simibubi.create.Create;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
+
+import com.google.common.collect.ImmutableSet;
+
 import com.tom.stockbridge.ae.menu.AEStockBridgeMenu;
 import com.tom.stockbridge.block.entity.AbstractStockBridgeBlockEntity;
 
@@ -16,10 +33,12 @@ import appeng.api.networking.GridFlags;
 import appeng.api.networking.GridHelper;
 import appeng.api.networking.IGridNodeListener;
 import appeng.api.networking.IManagedGridNode;
+import appeng.api.networking.IStackWatcher;
 import appeng.api.networking.crafting.ICraftingLink;
 import appeng.api.networking.crafting.ICraftingProvider;
 import appeng.api.networking.crafting.ICraftingRequester;
 import appeng.api.networking.security.IActionSource;
+import appeng.api.networking.storage.IStorageWatcherNode;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.AEKey;
 import appeng.api.stacks.KeyCounter;
@@ -37,23 +56,9 @@ import appeng.menu.ISubMenu;
 import appeng.menu.MenuOpener;
 import appeng.menu.locator.MenuLocators;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
-import net.createmod.catnip.data.Pair;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class AbstractAEStockBridgeBlockEntity extends AbstractStockBridgeBlockEntity implements
-		IGridConnectedBlockEntity, IPriorityHost, IStorageProvider, ICraftingProvider, ICraftingRequester {
+IGridConnectedBlockEntity, IPriorityHost, IStorageProvider, ICraftingProvider, ICraftingRequester, IStorageWatcherNode {
 	protected final IManagedGridNode mainNode;
 	protected final MEStorage inventory;
 	private int priority = 100;
@@ -73,16 +78,9 @@ public abstract class AbstractAEStockBridgeBlockEntity extends AbstractStockBrid
 		this.getMainNode().addService(IStorageProvider.class, this);
 		this.getMainNode().addService(ICraftingRequester.class, this);
 		this.getMainNode().addService(ICraftingProvider.class, this);
+		this.getMainNode().addService(IStorageWatcherNode.class, this);
 		this.actionSource = new MachineSource(mainNode::getNode);
 		this.onGridConnectableSidesChanged();
-	}
-
-	public void onItemInserted(AEKey what, long amount) {
-		UUID freqId = behaviour.freqId;
-		var promiseQueue = Create.LOGISTICS.getQueuedPromises(freqId);
-		if (promiseQueue != null && what instanceof AEItemKey itemKey) {
-			promiseQueue.itemEnteredSystem(itemKey.toStack((int) amount), (int) amount);
-		}
 	}
 
 	protected IManagedGridNode createMainNode() {
@@ -92,7 +90,7 @@ public abstract class AbstractAEStockBridgeBlockEntity extends AbstractStockBrid
 	@Override
 	protected void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
 		super.write(tag, registries, clientPacket);
-		if (!clientPacket) {
+		if(!clientPacket) {
 			this.getMainNode().saveToNBT(tag);
 			tag.putInt("priority", this.getPriority());
 			this.craftingTracker.writeToNBT(tag);
@@ -110,14 +108,14 @@ public abstract class AbstractAEStockBridgeBlockEntity extends AbstractStockBrid
 	@Override
 	protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
 		super.read(tag, registries, clientPacket);
-		if (!clientPacket) {
+		if(!clientPacket) {
 			this.getMainNode().loadFromNBT(tag);
 			this.priority = tag.getInt("priority");
 			this.craftingTracker.readFromNBT(tag);
 
 			itemRequests.clear();
 			ListTag list = tag.getList("requests", Tag.TAG_COMPOUND);
-			for (int i = 0; i < list.size(); ++i) {
+			for(int i = 0; i < list.size(); ++i) {
 				var t = list.getCompound(i);
 				var key = AEKey.fromTagGeneric(registries, t);
 				long value = t.getLong("cnt");
@@ -225,7 +223,7 @@ public abstract class AbstractAEStockBridgeBlockEntity extends AbstractStockBrid
 		super.tick();
 		if (!level.isClientSide && level.getGameTime() % 20 == Math.abs(worldPosition.hashCode()) % 20) {
 			items = behaviour.getItems();
-			remountStorage();// TODO improve speed
+			remountStorage();//TODO improve speed
 
 			List<Pair<AEKey, Integer>> toRemove = new ArrayList<>();
 			for (final Object2LongMap.Entry<AEKey> input : itemRequests) {
@@ -248,10 +246,7 @@ public abstract class AbstractAEStockBridgeBlockEntity extends AbstractStockBrid
 		}
 	}
 
-	public class BridgeStorage implements MEStorage {
-		public AbstractAEStockBridgeBlockEntity getBridgeBlockEntity() {
-			return AbstractAEStockBridgeBlockEntity.this;
-		}
+	private class BridgeStorage implements MEStorage {
 
 		@Override
 		public Component getDescription() {
@@ -280,8 +275,7 @@ public abstract class AbstractAEStockBridgeBlockEntity extends AbstractStockBrid
 		public void getAvailableStacks(KeyCounter out) {
 			if (items != null) {
 				for (var item : items.getStacks()) {
-					if (item.stack.isEmpty())
-						continue;
+					if (item.stack.isEmpty())continue;
 					out.add(AERemoteItemKey.of(item.stack), item.count);
 				}
 			}
@@ -309,8 +303,7 @@ public abstract class AbstractAEStockBridgeBlockEntity extends AbstractStockBrid
 
 	@Override
 	public InventorySummary fetchSummaryFromPackager() {
-		if (getPackager() == null)
-			return InventorySummary.EMPTY;
+		if (getPackager() == null)return InventorySummary.EMPTY;
 
 		InventorySummary sum = new InventorySummary();
 
@@ -323,8 +316,7 @@ public abstract class AbstractAEStockBridgeBlockEntity extends AbstractStockBrid
 				// TODO exclude loop
 			}
 		});
-		// mainNode.getGrid().getCraftingService().getCraftables(k -> k instanceof
-		// AEItemKey);
+		//mainNode.getGrid().getCraftingService().getCraftables(k -> k instanceof AEItemKey);
 
 		return sum;
 	}
@@ -334,8 +326,7 @@ public abstract class AbstractAEStockBridgeBlockEntity extends AbstractStockBrid
 		if (items != null) {
 			List<IPatternDetails> l = new ArrayList<>();
 			for (var item : items.getStacks()) {
-				if (item.stack.isEmpty())
-					continue;
+				if (item.stack.isEmpty())continue;
 				l.add(VirtualPattern.of(AEItemKey.of(item.stack)));
 			}
 			return l;
@@ -371,5 +362,19 @@ public abstract class AbstractAEStockBridgeBlockEntity extends AbstractStockBrid
 	@Override
 	public void jobStateChange(ICraftingLink link) {
 		this.craftingTracker.jobStateChange(link);
+	}
+
+	@Override
+	public void updateWatcher(IStackWatcher p0) {
+		p0.setWatchAll(true);
+	}
+
+	@Override
+	public void onStackChange(AEKey what, long amount) {
+		UUID freqId = behaviour.freqId;
+		var promiseQueue = Create.LOGISTICS.getQueuedPromises(freqId);
+		if (promiseQueue != null && what instanceof AEItemKey itemKey) {
+			promiseQueue.itemEnteredSystem(itemKey.toStack((int) amount), (int) amount);
+		}
 	}
 }

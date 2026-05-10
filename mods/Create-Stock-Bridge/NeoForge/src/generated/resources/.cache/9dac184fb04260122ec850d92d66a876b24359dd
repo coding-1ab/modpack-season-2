@@ -1,5 +1,5 @@
-// 1.21.1	2025-06-23T20:52:17.7054869	Registrate Provider for createstockbridge [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
-895ae90145f8cee803f02e95ed8eee11850c3b5b assets/createstockbridge/blockstates/ae_bridge.json
+// 1.21.1	2026-05-05T21:08:48.9809997	Registrate Provider for createstockbridge [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (blocks), Tags (enchantments), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
+1b8f928ee1e14b21c646f50a56255b57e55d4bad assets/createstockbridge/blockstates/ae_bridge.json
 3e48c4eaaf0efb6c43677ff50666cba91f0ce87a assets/createstockbridge/lang/en_ud.json
 2b4658a14052c41e0bf15d3c4a99fc675e998185 assets/createstockbridge/lang/en_us.json
 5601efa07bd19500facdced1a28846a007f34fde assets/createstockbridge/models/item/ae_bridge.json

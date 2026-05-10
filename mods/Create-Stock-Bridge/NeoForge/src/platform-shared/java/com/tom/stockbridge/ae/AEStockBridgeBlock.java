@@ -1,20 +1,37 @@
 package com.tom.stockbridge.ae;
 
+import net.createmod.catnip.data.Iterate;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition.Builder;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
 import com.simibubi.create.foundation.block.IBE;
 
 public class AEStockBridgeBlock extends Block implements IBE<AEStockBridgeBlockEntity> {
+	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
 	public AEStockBridgeBlock(Properties pProperties) {
 		super(pProperties);
+		registerDefaultState(defaultBlockState().setValue(POWERED, false));
+	}
+
+	@Override
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		BlockPos pos = context.getClickedPos();
+		BlockState placed = super.getStateForPlacement(context);
+		if (placed == null)
+			return null;
+		return placed.setValue(POWERED, getPower(context.getLevel(), pos, null) > 0);
 	}
 
 	@Override
@@ -40,5 +57,29 @@ public class AEStockBridgeBlock extends Block implements IBE<AEStockBridgeBlockE
 				e.openConfigMenu(pPlayer);
 		}
 		return InteractionResult.SUCCESS;
+	}
+
+	@Override
+	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos,
+			boolean isMoving) {
+		if (worldIn.isClientSide)
+			return;
+
+		withBlockEntityDo(worldIn, pos, link -> link.neighborChanged());
+	}
+
+	@Override
+	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
+		super.createBlockStateDefinition(builder.add(POWERED));
+	}
+
+	public static int getPower(Level level, BlockPos pos, BlockPos exclude) {
+		int power = 0;
+		for (Direction d : Iterate.directions) {
+			BlockPos from = pos.relative(d);
+			if (exclude != null && exclude.equals(from))continue;
+			power = Math.max(power, level.getSignal(from, d));
+		}
+		return power;
 	}
 }
