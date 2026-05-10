@@ -115,17 +115,6 @@ public class CNAStandardRecipeGen extends CNARecipeProvider {
                     .pattern("AC")
                     .pattern("CA")
                     .pattern("AC"));
-
-    GeneratedRecipe ELECTRICAL_CONNECTOR_MIRRORED = builder(CNABlocks.ELECTRICAL_CONNECTOR)
-            .unlockedBy(CNATags.Common.NUGGETS_COPPER)
-            .suffix("_mirrored")
-            .amount(2)
-            .shaped(b -> b
-                    .define('A', AllItems.ANDESITE_ALLOY)
-                    .define('C', CNATags.Common.NUGGETS_COPPER)
-                    .pattern("CA")
-                    .pattern("AC")
-                    .pattern("CA"));
     
     GeneratedRecipe FLUXUATED_MAGNETITE = builder(CNABlocks.FLUXUATED_MAGNETITE)
             .unlockedBy(CNAItems.OVERCHARGED_DIAMOND)
