@@ -27,13 +27,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.RegistryLayer;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack.Position;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.event.lifecycle.FMLConstructModEvent;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import plus.dragons.createdragonsplus.common.registry.CDPBlockEntities;
 import plus.dragons.createdragonsplus.common.registry.CDPBlockFreezers;
 import plus.dragons.createdragonsplus.common.registry.CDPBlocks;
@@ -49,7 +51,6 @@ import plus.dragons.createdragonsplus.common.registry.CDPRecipes;
 import plus.dragons.createdragonsplus.config.CDPConfig;
 import plus.dragons.createdragonsplus.data.internal.CDPRuntimeRecipeProvider;
 import plus.dragons.createdragonsplus.data.runtime.RuntimePackResources;
-import plus.dragons.createdragonsplus.integration.ModIntegration;
 
 @Mod(CDPCommon.ID)
 public class CDPCommon {
@@ -63,6 +64,7 @@ public class CDPCommon {
             .addLang("pack", asResource("runtime"), NAME);
     private final Component runtimePackDescription = REGISTRATE
             .addLang("pack", asResource("runtime"), "description", NAME + " Runtime Generated Resources");
+    private static final ResourceManagerReloadListener RELOAD_LISTENER = resourceManager -> CDPFanProcessingTypes.COLORING.values().forEach(t -> t.get().recreateCache());
 
     public CDPCommon(IEventBus modBus, ModContainer modContainer) {
         this.modContainer = modContainer;
@@ -80,23 +82,16 @@ public class CDPCommon {
         CDPDataMaps.register(modBus);
         modBus.register(this);
         modBus.register(new CDPConfig(modContainer));
-    }
-
-    @SubscribeEvent
-    public void construct(final FMLConstructModEvent event) {
-        for (ModIntegration integration : ModIntegration.values()) {
-            if (integration.enabled())
-                event.enqueueWork(integration::onConstructMod);
-        }
+        NeoForge.EVENT_BUS.addListener(CDPCommon::addReloadListeners);
     }
 
     @SubscribeEvent
     public void setup(final FMLCommonSetupEvent event) {
         event.enqueueWork(CDPBlockFreezers::register);
-        for (ModIntegration integration : ModIntegration.values()) {
-            if (integration.enabled())
-                event.enqueueWork(integration::onCommonSetup);
-        }
+    }
+
+    public static void addReloadListeners(AddReloadListenerEvent event) {
+        event.addListener(RELOAD_LISTENER);
     }
 
     @SubscribeEvent
