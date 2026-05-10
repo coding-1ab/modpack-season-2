@@ -79,7 +79,7 @@ public class PropulsionConfig {
                 .defineInRange("obstructionScanLength", 10, 1, 64);
         OBSTRUCTION_IGNORE_OTHER_SUBLEVELS = COMMON_BUILDER.comment(
                         "Ignore non-sublevel blocks when checking for obstruction.")
-                .define("obstructionIgnoreOtherSubLevels", false);
+                .define("obstructionIgnoreOtherSubLevels", true);
         FUEL_TANK_CAPACITY_MB = COMMON_BUILDER.comment("Internal fuel tank capacity in millibuckets.")
                 .defineInRange("fuelTankCapacityMb", 1000, 250, 10000000);
         FUEL_MB_PER_TICK_AT_FULL_THROTTLE = COMMON_BUILDER.comment("Fuel consumption in millibuckets per tick at full redstone throttle.")
