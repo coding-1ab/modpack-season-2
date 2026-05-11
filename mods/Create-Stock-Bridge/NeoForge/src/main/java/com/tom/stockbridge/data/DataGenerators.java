@@ -17,7 +17,7 @@ import com.tterrag.registrate.providers.ProviderType;
 import com.tom.stockbridge.StockBridge;
 import com.tom.stockbridge.client.ClientRegistration;
 
-@EventBusSubscriber(modid = StockBridge.MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = StockBridge.MODID)
 public class DataGenerators {
 
 	@SubscribeEvent(priority = EventPriority.HIGH)
