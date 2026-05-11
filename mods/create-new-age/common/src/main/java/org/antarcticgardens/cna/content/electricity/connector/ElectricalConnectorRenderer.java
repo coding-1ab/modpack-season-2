@@ -33,9 +33,11 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Abstract
     }
 
     public void renderAllConnections(AbstractElectricalConnector blockEntity, PoseStack poseStack, MultiBufferSource buffer) {
-        blockEntity.getConnectorPositions().forEach((key, value) ->
-                renderConnection(blockEntity.getBlockPos(), key, value, poseStack, buffer, blockEntity.getLevel())
-        );
+        blockEntity.getNetwork().getNeighbours(blockEntity).forEach(neighbour -> {
+            if (neighbour.getFirst() instanceof AbstractElectricalConnector connector) {
+                renderConnection(blockEntity.getBlockPos(), connector.getBlockPos(), neighbour.getSecond().type(), poseStack, buffer, blockEntity.getLevel());
+            }
+        });
     }
 
     //Makes sure that only one of the two connectors renders the wire
@@ -121,7 +123,7 @@ public class ElectricalConnectorRenderer implements BlockEntityRenderer<Abstract
                     return;
                 }
                 if (lookedBlockEntity instanceof AbstractElectricalConnector otherConnector) {
-                    if (otherConnector.isConnected(blockEntity.getBlockPos())) {
+                    if (otherConnector.isConnected(blockEntity)) {
                         return;
                     }
 

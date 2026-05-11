@@ -70,9 +70,9 @@ subprojects {
             }
         }
 
-        implementation(include("org.jgrapht:jgrapht-core:1.5.3"))
-        implementation(include("org.jheaps:jheaps:0.14"))
-        implementation(include("org.apfloat:apfloat:1.16.0"))
+        implementation("org.jgrapht:jgrapht-core:1.5.3")
+        implementation("org.jheaps:jheaps:0.14")
+        implementation("org.apfloat:apfloat:1.16.0")
     }
 
     loom {
