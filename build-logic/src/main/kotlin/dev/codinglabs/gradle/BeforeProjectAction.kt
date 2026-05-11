@@ -19,7 +19,7 @@ import org.gradle.language.jvm.tasks.ProcessResources
 @Suppress("UnstableApiUsage")
 class BeforeProjectAction(
     private val mods: ListProperty<ModConfig>,
-    private val extras: ListProperty<String>
+    private val extras: ListProperty<ExtraModConfig>
 ) : IsolatedAction<Project> {
     override fun execute(project: Project) {
         val archive = project.serviceOf<ArchiveOperations>()
@@ -149,7 +149,10 @@ class BeforeProjectAction(
             project.dependencies.add("localRuntime", transitiveOnly)
 
             for (extra in extras.get()) {
-                project.dependencies.add("localRuntime", extra) {
+                if (extra.devExclude) {
+                    continue
+                }
+                project.dependencies.add("localRuntime", extra.dependency) {
                     isTransitive = false
                 }
             }

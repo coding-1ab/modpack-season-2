@@ -35,7 +35,9 @@ object Blocks {
         .pushReaction(PushReaction.DESTROY)
         .noLootTable()
         .liquid()
-        .sound(SoundType.EMPTY))
+        .sound(SoundType.EMPTY)
+        .ignitedByLava()
+    )
 
     val VOID_ANCHOR: VoidAnchorBlock by BLOCKS.registerBlock(
         "void_anchor", ::VoidAnchorBlock, BlockBehaviour.Properties.of()

@@ -2,8 +2,6 @@ package dev.codinglabs.gradle
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.google.gson.stream.JsonReader
-import org.apache.http.impl.client.HttpClientBuilder
 import org.gradle.api.initialization.Settings
 import org.gradle.api.provider.ListProperty
 import java.lang.reflect.Type
@@ -15,7 +13,7 @@ import java.nio.charset.StandardCharsets
 
 abstract class AddModExtension(private val settings: Settings) {
     abstract val registeredProjects: ListProperty<ModConfig>
-    abstract val extraMods: ListProperty<String>
+    abstract val extraMods: ListProperty<ExtraModConfig>
 
     fun addMod(config: ModConfig) {
         registeredProjects.add(config)
@@ -65,7 +63,8 @@ abstract class AddModExtension(private val settings: Settings) {
                     val projectId = tokens[1]
                     val fileId = tokens[2]
                     val dependency = "curse.maven:extra-$projectId:$fileId"
-                    extraMods.add(dependency)
+                    val devExclude = tokens.size > 3 && tokens[3] == "devExclude"
+                    extraMods.add(ExtraModConfig(dependency, devExclude))
                 }
                 "modrinth" -> {
                     val version = tokens[1]
@@ -80,7 +79,8 @@ abstract class AddModExtension(private val settings: Settings) {
                         throw RuntimeException("Failed to parse modrinth json. Contents:\n$json", e)
                     }
                     val projectId = parsed["project_id"]
-                    extraMods.add("maven.modrinth:$projectId:$version")
+                    val devExclude = tokens.size > 2 && tokens[2] == "devExclude"
+                    extraMods.add(ExtraModConfig("maven.modrinth:$projectId:$version", devExclude))
                 }
                 else -> {
                     throw IllegalArgumentException("Unexpected token: $line")
@@ -107,4 +107,9 @@ data class ModProjectConfig(
     val dependencyNotations: List<String>,
     val projectPath: String,
     val shouldUnpack: Boolean,
+)
+
+data class ExtraModConfig(
+    val dependency: String,
+    val devExclude: Boolean
 )

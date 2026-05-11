@@ -24,3 +24,28 @@ gradle.properties에서 parallel execution을 임시로 비활성화 할 수 있
 추가하는 모든 모드의 소스의 서브 모듈은 무조건 branch가 설정되어야만 함.
 `attach.py`가 동작하기 위해선 .gitmodules에 브랜치각 설정되어야만 하기 때문.
 
+# 모드 업스트림 확인
+모드의 업스트림 소스에 새로운 커밋이 있는지 확인하려면 `check_update.py`를 실행하면 된다. 아래와 같은 출력이 나오면 받아올 커밋이 있는 것이다:
+```
++git fetch upstream (in mods/Veil)
+
++git log --oneline origin/1.21..upstream/1.21 (in mods/Veil)
+업스트림에서 받아와야 하는 새로운 커밋들:
+8f5db3b13 Add maven and discord badge icons
+297261046 Update README with Modrinth and CurseForge links
+76cc9c148 Fix crash with sodium
+cdf04a166 Add VeilRegisterInspectorsEvent
+d72219b74 Add command for controlling post processing
+df732f1cd Add ImGuiMC repo
+0212f03e2 Update publishing
+1cede3c1d Update changelog.md
+4a102b271 Update loom
+6985c7500 Remove unused resources
+76dbd98d6 Move test packs to example mod
+45293978f Update changelog.md
+0de6aa712 Remove deprecated features
+c1a92615d Remove ImGui hard dependency
+eca242f9f Migrate to imguimc
+fb8132930 Update VeilMixinPlugin.java
+```
+이럴 때는 `mods/Veil`에서 업스트림을 병합하면 된다.

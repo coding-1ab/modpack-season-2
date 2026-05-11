@@ -13,4 +13,4 @@ modrinth JZIT5IeN // moonlight lib
 modrinth x7kQWVju // ferrite core
 modrinth YAcQ6elZ // jei
 modrinth ouSj7NfF // emi
-modrinth NrSebcsG // KFF
+modrinth NrSebcsG devExclude // KFF

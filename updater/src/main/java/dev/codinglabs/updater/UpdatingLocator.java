@@ -9,6 +9,7 @@ import cpw.mods.jarhandling.JarContents;
 import cpw.mods.jarhandling.JarContentsBuilder;
 import net.neoforged.fml.ModLoadingException;
 import net.neoforged.fml.ModLoadingIssue;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.fml.loading.progress.ProgressMeter;
 import net.neoforged.fml.loading.progress.StartupNotificationManager;
@@ -179,7 +180,16 @@ public class UpdatingLocator implements IDependencyLocator {
                     StartupNotificationManager.addModMessage("New Update for Updater itself was found.");
                     StartupNotificationManager.addModMessage("Please restart game afterwards");
                     downloadMod(uri, modFile, client, null);
-                    throw new ModLoadingException(ModLoadingIssue.warning(errorKey, "모드팩 자동 업데이터가 스스로를 갱신했습니다. 게임을 다시 시작해주세요."));
+
+                    if (!FMLEnvironment.dist.isClient()) {
+                        LOGGER.info("Auto updater has updated itself. Please restart server");
+                        System.exit(0);
+                        throw new AssertionError("Auto updater has updated itself. Please restart server");
+                    }
+                    throw new ModLoadingException(ModLoadingIssue.warning(
+                            errorKey,
+                            "모드팩 자동 업데이터가 스스로를 갱신했습니다. 게임을 다시 시작해주세요."
+                    ));
                 } else {
                     LOGGER.info("Using latest modpack updater");
                     return;

@@ -2,95 +2,117 @@
 	path = mods/Create
 	url = https://github.com/coding-1ab/Create.git
 	branch = mc1.21.1/dev
+	upstream = https://github.com/Creators-of-Create/Create.git
 [submodule "mods/AppleSkin"]
 	path = mods/AppleSkin
 	url = https://github.com/coding-1ab/AppleSkin.git
 	branch = 1.21-neoforge
+	upstream = https://github.com/squeek502/AppleSkin.git
 [submodule "mods/Applied-Energistics-2"]
 	path = mods/Applied-Energistics-2
 	url = https://github.com/coding-1ab/Applied-Energistics-2.git
 	branch = main
+	upstream = https://github.com/AppliedEnergistics/Applied-Energistics-2.git
+	ignore-upstream = true
 [submodule "mods/create-new-age"]
 	path = mods/create-new-age
 	url = https://github.com/coding-1ab/create-new-age.git
 	branch = 1.21.1-network
+	upstream = https://gitlab.com/antarcticgardens/create-new-age.git
+	upstream-branch = 1.21.1
 [submodule "mods/create_connected"]
 	path = mods/create_connected
 	url = https://github.com/coding-1ab/create_connected.git
 	branch = main
+	upstream = https://github.com/hlysine/create_connected.git
 [submodule "mods/createaddition"]
 	path = mods/createaddition
 	url = https://github.com/coding-1ab/createaddition.git
 	branch = 1.21.1
+	upstream = https://github.com/mrh0/createaddition.git
 [submodule "mods/CC-Tweaked"]
 	path = mods/CC-Tweaked
 	url = https://github.com/coding-1ab/CC-Tweaked.git
 	branch = mc-1.21.x
+	upstream = https://github.com/cc-tweaked/CC-Tweaked.git
 [submodule "mods/NatureSpiritForge"]
 	path = mods/NatureSpiritForge
 	url = https://github.com/coding-1ab/NatureSpiritForge.git
 	branch = 1.21.1
-[submodule "mods/easyshulkerboxes"]
-	path = mods/easyshulkerboxes
-	url = https://github.com/Fuzss/easyshulkerboxes.git
-	branch = main
+	upstream = https://github.com/Team-Hibiscus/NatureSpiritForge.git
 [submodule "mods/CreateDragonPlus"]
 	path = mods/CreateDragonPlus
 	url = https://github.com/coding-1ab/CreateDragonsPlus.git
 	branch = 1.21.1/6.0.0-dev
+	upstream = https://github.com/DragonsPlusMinecraft/CreateDragonsPlus.git
 [submodule "mods/CreateEnchantmentIndustry"]
 	path = mods/CreateEnchantmentIndustry
 	url = https://github.com/coding-1ab/CreateEnchantmentIndustry.git
 	branch = 1.21.1/6.0.0-dev
+	upstream = https://github.com/DragonsPlusMinecraft/CreateEnchantmentIndustry.git
 [submodule "mods/Quicksand"]
 	path = mods/Quicksand
 	url = https://github.com/coding-1ab/Quicksand.git
 	branch = 1.21.1
+	upstream = https://github.com/DragonsPlusMinecraft/Quicksand.git
 [submodule "mods/Spice-of-Life-Carrot-Edition"]
 	path = mods/Spice-of-Life-Carrot-Edition
 	url = https://github.com/coding-1ab/Spice-of-Life-Carrot-Edition.git
 	branch = 1.21
+	upstream = https://github.com/Cazsius/Spice-of-Life-Carrot-Edition.git
 [submodule "mods/FarmersDelight"]
 	path = mods/FarmersDelight
 	url = https://github.com/coding-1ab/FarmersDelight.git
 	branch = 1.21
+	upstream = https://github.com/vectorwing/FarmersDelight.git
 [submodule "mods/iteminteractions"]
 	path = mods/iteminteractions
 	url = https://github.com/coding-1ab/iteminteractions.git
 	branch = main
+	upstream = https://github.com/Fuzss/iteminteractions.git
 [submodule "mods/Create-Stock-Bridge"]
 	path = mods/Create-Stock-Bridge
 	url = https://github.com/coding-1ab/Create-Stock-Bridge.git
 	branch = main
+	upstream = https://github.com/tom5454/Create-Stock-Bridge.git
 [submodule "mods/Veil"]
 	path = mods/Veil
 	url = https://github.com/coding-1ab/Veil.git
 	branch = 1.21
+	upstream = https://github.com/FoundryMC/Veil.git
 [submodule "mods/sable"]
 	path = mods/sable
 	url = https://github.com/coding-1ab/sable.git
 	branch = main
+	upstream = https://github.com/ryanhcode/sable.git
 [submodule "mods/Simulated-Project"]
 	path = mods/Simulated-Project
 	url = https://github.com/coding-1ab/Simulated-Project.git
 	branch = main
+	upstream = https://github.com/Creators-of-Aeronautics/Simulated-Project.git
 [submodule "mods/MapAtlases"]
 	path = mods/MapAtlases
 	url = https://github.com/coding-1ab/mapatlases-neoforge.git
 	branch = 1.21.1
+	upstream = https://github.com/MehVahdJukaar/mapatlases-neoforge.git
 [submodule "mods/create_power_loader"]
 	path = mods/create_power_loader
 	url = https://github.com/coding-1ab/create_power_loader.git
 	branch = main
+	upstream = https://github.com/hlysine/create_power_loader.git
 [submodule "mods/sable-companion"]
 	path = mods/sable-companion
 	url = https://github.com/ryanhcode/sable-companion.git
 	branch = main
+	upstream = https://github.com/ryanhcode/sable-companion.git
 [submodule "mods/ironchest"]
 	path = mods/ironchest
-	url = https://github.com/progwml6/ironchest.git
+	url = https://github.com/coding-1ab/ironchest.git
 	branch = 1.21.x-neoforge
+	upstream = https://github.com/progwml6/ironchest.git
+	ignore-upstream = true
 [submodule "mods/ironshulkerboxes"]
 	path = mods/ironshulkerboxes
-	url = https://github.com/coding-1ab/ironshulkerboxes.git
+	url = https://github.com/progwml6/ironshulkerboxes.git
 	branch = 1.21.x-neoforge
+    upstream = https://github.com/progwml6/ironshulkerboxes.git
