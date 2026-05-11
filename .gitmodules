@@ -70,6 +70,7 @@
 	url = https://github.com/coding-1ab/iteminteractions.git
 	branch = main
 	upstream = https://github.com/Fuzss/iteminteractions.git
+	ignore-upstream = true
 [submodule "mods/Create-Stock-Bridge"]
 	path = mods/Create-Stock-Bridge
 	url = https://github.com/coding-1ab/Create-Stock-Bridge.git
