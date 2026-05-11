@@ -49,8 +49,6 @@ class VoidAnchorBlock(
         val MSG_NO_CHARGES   = "block.modpack_tweaks.void_anchor.no_charges"
     }
 
-    val noPortalKey get() = MSG_NO_PORTAL
-
     init {
         registerDefaultState(stateDefinition.any().setValue(CHARGES, 0).setValue(ACTIVE, false).setValue(FACING, Direction.NORTH))
     }
@@ -58,42 +56,31 @@ class VoidAnchorBlock(
     override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
 
     override fun useWithoutItem(state: BlockState, level: Level, pos: BlockPos, player: Player, hit: BlockHitResult): InteractionResult {
-        if (!level.isClientSide && player is ServerPlayer) {
-
-            if (!VoidAnchorLogic.hasNearbyEndPortal(level as ServerLevel, pos)) {
-                //player.displayClientMessage(Component.translatable(MSG_NO_PORTAL), true)
-                for (player in level.players()) {
-                    if (player is ServerPlayer) {
-                        val currentPos = player.voidAnchorPos
-                        if (currentPos != null && currentPos == pos) {
-                            player.voidAnchorPos = null
-                            player.displayClientMessage(Component.translatable(MSG_NO_PORTAL), true)
-                        }
-                    }
-                }
-                return InteractionResult.sidedSuccess(level.isClientSide)
-            }
-
-            val refreshed = VoidAnchorLogic.refreshActivation(level, pos, state)
-            if (!refreshed.getValue(ACTIVE)) {
-                player.displayClientMessage(Component.translatable(MSG_NO_PORTAL), true)
-                return InteractionResult.sidedSuccess(level.isClientSide)
-            }
-
-            // 이미 같은곳에 등록되어있다면 생략
-            if (player.voidAnchorPos != null && player.voidAnchorPos == pos) return InteractionResult.sidedSuccess(level.isClientSide)
-
-            player.voidAnchorPos = pos
-            val charges = refreshed.getValue(CHARGES)
-            player.displayClientMessage(
-                Component.translatable(MSG_SET)
-                    .append(" ")
-                    .append(Component.translatable(MSG_CHARGES, charges, 4)),
-                true
-            )
-            level.playSound(null, pos, SoundEvents.RESPAWN_ANCHOR_SET_SPAWN, SoundSource.BLOCKS, 1.0f, 1.0f)
+        if (level.isClientSide) {
+            return InteractionResult.SUCCESS
         }
-        return InteractionResult.sidedSuccess(level.isClientSide)
+        player as ServerPlayer
+        level as ServerLevel
+
+        val refreshed = VoidAnchorLogic.refreshActivation(level, pos, state)
+        if (!refreshed.getValue(ACTIVE)) {
+            player.displayClientMessage(Component.translatable(MSG_NO_PORTAL), true)
+            return InteractionResult.FAIL
+        }
+
+        // 이미 같은곳에 등록되어있다면 생략
+        if (player.voidAnchorPos != null && player.voidAnchorPos == pos) return InteractionResult.SUCCESS
+
+        player.voidAnchorPos = pos
+        val charges = refreshed.getValue(CHARGES)
+        player.displayClientMessage(
+            Component.translatable(MSG_SET)
+                .append(" ")
+                .append(Component.translatable(MSG_CHARGES, charges, 4)),
+            true
+        )
+        level.playSound(null, pos, SoundEvents.RESPAWN_ANCHOR_SET_SPAWN, SoundSource.BLOCKS, 1.0f, 1.0f)
+        return InteractionResult.CONSUME
     }
 
     override fun useItemOn(
@@ -114,47 +101,41 @@ class VoidAnchorBlock(
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
         }
 
-        if (!VoidAnchorLogic.hasNearbyEndPortal(level as ServerLevel, pos)) {
-            //player.displayClientMessage(Component.translatable(MSG_NO_PORTAL), true)
-            for (player in level.players()) {
-                if (player is ServerPlayer) {
-                    val currentPos = player.voidAnchorPos
-                    if (currentPos != null && currentPos == pos) {
-                        player.voidAnchorPos = null
-                        player.displayClientMessage(Component.translatable(MSG_NO_PORTAL), true)
-                    }
-                }
-            }
-            return ItemInteractionResult.sidedSuccess(level.isClientSide)
+        if (level.isClientSide) {
+            return ItemInteractionResult.SUCCESS
+        }
+        player as ServerPlayer
+        level as ServerLevel
+
+        val refreshed = VoidAnchorLogic.refreshActivation(level, pos, state)
+        if (!refreshed.getValue(ACTIVE)) {
+            player.displayClientMessage(Component.translatable(MSG_NO_PORTAL), true)
+            return ItemInteractionResult.FAIL
         }
 
         // 충전
         val currentCharges = state.getValue(CHARGES)
-        if (!level.isClientSide && player is ServerPlayer) {
-            if (currentCharges >= 4) {
-                player.displayClientMessage(Component.translatable(MSG_FULL), true)
-                return ItemInteractionResult.CONSUME
-            }
-            val refreshed = VoidAnchorLogic.refreshActivation(level, pos, state)
-            if (!refreshed.getValue(ACTIVE)) {
-                player.displayClientMessage(Component.translatable(MSG_NO_PORTAL), true)
-                return ItemInteractionResult.CONSUME
-            }
-            val newCharges = currentCharges + 1
-            level.setBlock(pos, refreshed.setValue(CHARGES, newCharges), 3)
-            if (!player.isCreative) stack.shrink(1)
-            level.playSound(null, pos, SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.BLOCKS, 1.0f, 1.0f)
-            player.displayClientMessage(
-                Component.translatable(MSG_CHARGES, newCharges, 4),
-                true
-            )
+
+        if (currentCharges >= 4) {
+            player.displayClientMessage(Component.translatable(MSG_FULL), true)
+            return ItemInteractionResult.FAIL
         }
-        return ItemInteractionResult.SUCCESS
+
+        val newCharges = currentCharges + 1
+        level.setBlock(pos, refreshed.setValue(CHARGES, newCharges), 3)
+        if (!player.isCreative) stack.shrink(1)
+        level.playSound(null, pos, SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.BLOCKS, 1.0f, 1.0f)
+        player.displayClientMessage(
+            Component.translatable(MSG_CHARGES, newCharges, 4),
+            true
+        )
+        return ItemInteractionResult.CONSUME
     }
 
     override fun onPlace(state: BlockState, level: Level, pos: BlockPos, oldState: BlockState, movedByPiston: Boolean) {
         super.onPlace(state, level, pos, oldState, movedByPiston)
-        if (!level.isClientSide) {
+
+        if (level is ServerLevel) {
             VoidAnchorLogic.refreshActivation(level, pos, state)
         }
     }
@@ -172,8 +153,8 @@ class VoidAnchorBlock(
                     }
                 }
             }
-            super.onRemove(state, level, pos, newState, movedByPiston)
         }
+        super.onRemove(state, level, pos, newState, movedByPiston)
     }
 
     override fun getStateForPlacement(context: BlockPlaceContext): BlockState {

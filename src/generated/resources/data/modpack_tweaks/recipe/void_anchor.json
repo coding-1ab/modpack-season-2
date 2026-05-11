@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "E": {
+      "item": "minecraft:end_stone_bricks"
+    },
+    "T": {
+      "item": "minecraft:ghast_tear"
+    },
+    "Y": {
+      "item": "minecraft:ender_eye"
+    }
+  },
+  "pattern": [
+    "EEE",
+    "YTY",
+    "EEE"
+  ],
+  "result": {
+    "count": 1,
+    "id": "modpack_tweaks:void_anchor"
+  }
+}

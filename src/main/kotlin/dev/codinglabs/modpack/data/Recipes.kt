@@ -12,8 +12,10 @@ import dev.codinglabs.modpack.toResource
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.data.PackOutput
+import net.minecraft.data.recipes.RecipeCategory
 import net.minecraft.data.recipes.RecipeOutput
 import net.minecraft.data.recipes.RecipeProvider
+import net.minecraft.data.recipes.ShapedRecipeBuilder
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
@@ -34,6 +36,8 @@ class Recipes(output: PackOutput, registries: CompletableFuture<HolderLookup.Pro
         enderFuelRecipe(recipeOutput)
         shulkerShellRecipe(recipeOutput)
         nuggetExperienceRecipe(recipeOutput)
+        voidAnchorRecipe(recipeOutput)
+
     }
 
     @Suppress("SameParameterValue")
@@ -72,6 +76,18 @@ class Recipes(output: PackOutput, registries: CompletableFuture<HolderLookup.Pro
             .require(Ingredient.of(ItemStack(Items.AMETHYST_SHARD), ItemStack(Items.GLOWSTONE_DUST, 4)))
             .output(AllItems.EXP_NUGGET)
             .build(output)
+    }
+
+    private fun voidAnchorRecipe(output: RecipeOutput) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, MyItems.VOID_ANCHOR)
+            .define('E', Items.END_STONE_BRICKS)
+            .define('Y', Items.ENDER_EYE)
+            .define('T', Items.GHAST_TEAR)
+            .pattern("EEE")
+            .pattern("YTY")
+            .pattern("EEE")
+            .unlockedBy("has_ghast_tear", has(Items.GHAST_TEAR))
+            .save(output)
     }
 
     val Item.id: ResourceLocation

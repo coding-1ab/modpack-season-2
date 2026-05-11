@@ -13,9 +13,9 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.Vec3
 
 object VoidAnchorLogic {
-    fun refreshActivation(level: Level, pos: BlockPos, state: BlockState): BlockState {
+    fun refreshActivation(level: ServerLevel, pos: BlockPos, state: BlockState): BlockState {
         val active = if (level.dimension() == Level.OVERWORLD) {
-            hasNearbyEndPortal(level as ServerLevel, pos)
+            hasNearbyEndPortal(level, pos)
         } else {
             false
         }
