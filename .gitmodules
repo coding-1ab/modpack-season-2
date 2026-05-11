@@ -109,7 +109,7 @@
 [submodule "mods/ironchest"]
 	path = mods/ironchest
 	url = https://github.com/coding-1ab/ironchest.git
-	branch = 1.21.x-neoforge
+	branch = 1.21.1-neoforge
 	upstream = https://github.com/progwml6/ironchest.git
 	ignore-upstream = true
 [submodule "mods/ironshulkerboxes"]
