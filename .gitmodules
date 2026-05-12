@@ -134,5 +134,6 @@
 	upstream = https://github.com/Buuz135/FunctionalStorage.git
 [submodule "mods/Neo-Language-Reload"]
 	path = mods/Neo-Language-Reload
-	url = https://github.com/pynickle/Neo-Language-Reload.git
+	url = https://github.com/coding-1ab/Neo-Language-Reload.git
 	branch = 1.21.1
+	upstream = https://github.com/pynickle/Neo-Language-Reload.git
