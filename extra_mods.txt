@@ -9,7 +9,7 @@ modrinth iEE85X0w // searchables
 modrinth yd8FKCmx // jade
 modrinth 6U8JVjdw // modernfix
 modrinth yohfFbgD // curios
-modrinth JZIT5IeN // moonlight lib
+modrinth GjDWHqm5 // moonlight lib
 modrinth x7kQWVju // ferrite core
 modrinth YAcQ6elZ // jei
 modrinth ouSj7NfF // emi
@@ -26,3 +26,5 @@ modrinth C2tLycH2 // lootr
 curseforge 250419 7039849 // enchantment descriptor
 modrinth DKe4Owf4 // integrated farming
 modrinth BqB1xPS9 // structures arise
+curseforge 228525 7606240 // bookshelf
+curseforge 1023259 6961457 // prickle
