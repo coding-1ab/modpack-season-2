@@ -425,8 +425,9 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
 
         // When the config option is enabled and the thruster is on a sub-level, clip in
         // local sub-level space so only blocks belonging to the same sub-level count.
+        final dev.ryanhcode.sable.sublevel.SubLevel containingSubLevel = Sable.HELPER.getContaining(level, worldPosition);
         if (PropulsionConfig.OBSTRUCTION_IGNORE_OTHER_SUBLEVELS.get()
-                && Sable.HELPER.getContaining(level, worldPosition) != null) {
+                && containingSubLevel != null) {
             Vec3 localNozzle = getParticleDebugNozzlePositionLocal();
             Vec3 localDir = getParticleDebugExhaustDirectionLocal();
             Vec3 rayStart = localNozzle.add(localDir.scale(OBSTRUCTION_RAY_START_EPSILON));

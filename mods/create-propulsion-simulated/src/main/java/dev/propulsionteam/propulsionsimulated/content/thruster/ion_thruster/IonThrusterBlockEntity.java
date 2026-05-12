@@ -229,6 +229,8 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
                     int take = Math.min(ion.energyStored, remaining);
                     if (take > 0) {
                         ion.energyStored -= take;
+                        ion.setChanged();
+                        ion.notifyUpdate();
                         remaining -= take;
                     }
                 }
@@ -369,12 +371,12 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
 
     @Override
     public int getFuelAmountMb() {
-        return this.energyStored;
+        return this.getTotalEnergyStoredFe();
     }
 
     @Override
     public int getFuelCapacityMb() {
-        return this.getEnergyCapacity();
+        return this.getTotalEnergyCapacityFe();
     }
 
     @Override
@@ -388,7 +390,7 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
     }
 
     public int getEnergyStoredFe() {
-        return this.energyStored;
+        return this.getTotalEnergyStoredFe();
     }
 
     public int getEnergyCapacity() {
