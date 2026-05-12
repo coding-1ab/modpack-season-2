@@ -257,16 +257,12 @@ public class PropellerActorBehaviour extends BlockEntityBehaviour implements IHa
         int particleCount = this.getParticleCount();
         final SubLevel subLevel = Sable.HELPER.getContaining(this.getWorld(), this.getPos());
         final Vector3d origin = new Vector3d(this.getPos().getX() + 0.5, this.getPos().getY() + 0.5, this.getPos().getZ() + 0.5);
-
         for (int i = 0; i < particleCount; i++) {
             this.particlePositionUpdater.accept(STORED_MUT_POS, random);
             STORED_MUT_POS.add(origin);
             final double positionNudge = speed * random.nextFloat();
             STORED_MUT_POS.fma(positionNudge, this.thrustDirection);
             this.thrustDirection.mul(speed * Math.exp(-PropellerAirParticle.frictionScale * positionNudge), mutSpeed);
-
-            if (subLevel != null)
-                subLevel.logicalPose().transformNormal(mutSpeed);
 
             this.getWorld().addParticle(new PropellerAirParticleData(true, false),
                     STORED_MUT_POS.x, STORED_MUT_POS.y, STORED_MUT_POS.z,
