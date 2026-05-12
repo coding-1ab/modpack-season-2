@@ -389,7 +389,7 @@ public class UpdatingLocator implements IDependencyLocator {
     private static int downloadMod(URI uri, File modFile, HttpClient client, @Nullable byte[][] writeTo) throws ModLoadingException {
         StartupNotificationManager.addModMessage(String.format("Downloading %s", modFile.getName()));
         try {
-            byte[] buffer = new byte[1024 * 1024 * 32]; // 32MiB buffer
+            byte[] buffer = new byte[1024 * 1024 * 64]; // 64MiB buffer
             int size = IOUtils.read(
                     requestDownload(uri, client).body(),
                     buffer
