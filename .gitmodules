@@ -124,7 +124,7 @@
 	upstream = https://github.com/Aztech-Modding/Create-Bits-n-Bobs.git
 [submodule "mods/CreateCentralKitchen"]
 	path = mods/CreateCentralKitchen
-	url = https://github.com/DragonsPlusMinecraft/CreateCentralKitchen.git
+	url = https://github.com/coding-1ab/CreateCentralKitchen.git
 	branch = 1.21.1/6.0.0-dev
 	upstream = https://github.com/DragonsPlusMinecraft/CreateCentralKitchen.git
 [submodule "mods/FunctionalStorage"]
