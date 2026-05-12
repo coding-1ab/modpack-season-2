@@ -17,5 +17,4 @@ modrinth NrSebcsG devExclude // KFF
 curseforge 478559 6956811 // measurements
 curseforge 1530869 8031969 // create: compact flap
 curseforge 1519765 7968280 // create: tracks
-modrinth 5xtkKZiA // neo language reload
 modrinth mTuSMV7j // right click milk

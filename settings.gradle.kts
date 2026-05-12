@@ -402,6 +402,17 @@ addMods {
             ),
         )
     )
+    addMod(
+        filePath = "./mods/Neo-Language-Reload",
+        includeTransitive = false,
+        modProjects = listOf(
+            modProject(
+                dependencyNotations = listOf("com.euphony:neo_language_reload"),
+                projectPath = ":",
+                shouldUnpack = true
+            ),
+        )
+    )
 
     includeExtra("extra_mods.txt")
 }
