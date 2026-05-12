@@ -6,6 +6,16 @@ Fuel definitions are data-driven under:
 
 These fuels are used by both Thrusters and Liquid Burners.
 
+## Resolution rules (strict data-driven)
+
+- Only declared fuel entries are valid.
+- There is no implicit fallback for `minecraft:lava` or `forge:fuel`.
+- If a world previously relied on fallback behavior, add explicit entries (datapack, config, or KubeJS).
+- Source precedence is:
+  - removed fuel ids
+  - KubeJS scripted/override entries
+  - datapack + config merged entries
+
 ## JSON schema
 
 ```json

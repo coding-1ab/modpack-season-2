@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import org.slf4j.Logger;
 
@@ -25,9 +26,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.tags.TagKey;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
@@ -47,7 +46,6 @@ public class ThrusterFuelManager extends SimpleJsonResourceReloadListener {
     private static Set<ResourceLocation> removedFuelIds = new HashSet<>();
     /** Last merged datapack JSON for {@link #rebuildThrusterFuelsAfterCommonConfigReload()}. */
     private static Map<ResourceLocation, JsonElement> cachedThrusterFuelDatapack = null;
-    public static final TagKey<Fluid> FORGE_FUEL_TAG = TagKey.create(Registries.FLUID, ResourceLocation.fromNamespaceAndPath("forge", "fuel"));
 
     public static Map<Fluid, FluidThrusterProperties> getFuelPropertiesMap() {
         Map<Fluid, FluidThrusterProperties> merged = new HashMap<>(fuelPropertiesMap);
@@ -78,14 +76,7 @@ public class ThrusterFuelManager extends SimpleJsonResourceReloadListener {
         if (fluidId != null && removedFuelIds.contains(fluidId)) {
             return null;
         }
-        if (fluid == Fluids.LAVA || fluid == Fluids.FLOWING_LAVA) {
-            return FluidThrusterProperties.DEFAULT;
-        }
         FluidThrusterProperties props = scriptedFuelPropertiesMap.get(fluid);
-        if (props != null) {
-            return props;
-        }
-        props = fuelPropertiesMap.get(fluid);
         if (props != null) {
             return props;
         }
@@ -95,8 +86,7 @@ public class ThrusterFuelManager extends SimpleJsonResourceReloadListener {
                 return props;
             }
         }
-        if (fluid.is(FORGE_FUEL_TAG)) return FluidThrusterProperties.DEFAULT;
-        return null;
+        return fuelPropertiesMap.get(fluid);
     }
 
     public static float getEfficiency(Fluid fluid) {
@@ -122,9 +112,11 @@ public class ThrusterFuelManager extends SimpleJsonResourceReloadListener {
         //Parse datapacks
         profiler.push(CreatePropulsion.ID + ":Loading_thruster_fuels");
         cachedThrusterFuelDatapack = new HashMap<>(pObject);
-        fuelPropertiesMap = parseFuelProperties(cachedThrusterFuelDatapack);
+        ParseResult parseResult = parseFuelProperties(cachedThrusterFuelDatapack);
+        fuelPropertiesMap = parseResult.fuelMap();
         // Add fuels from config that might not be in datapacks
-        mergeConfigProperties(fuelPropertiesMap);
+        ConfigMergeStats mergeStats = mergeConfigProperties(fuelPropertiesMap);
+        logReloadSummary("datapack_reload", parseResult, mergeStats);
         profiler.pop();
         //Update clients (happens only on /reload as on server start server instance is still null)
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
@@ -209,14 +201,19 @@ public class ThrusterFuelManager extends SimpleJsonResourceReloadListener {
         if (cachedThrusterFuelDatapack == null) {
             return;
         }
-        fuelPropertiesMap = parseFuelProperties(cachedThrusterFuelDatapack);
-        mergeConfigProperties(fuelPropertiesMap);
+        ParseResult parseResult = parseFuelProperties(cachedThrusterFuelDatapack);
+        fuelPropertiesMap = parseResult.fuelMap();
+        ConfigMergeStats mergeStats = mergeConfigProperties(fuelPropertiesMap);
+        logReloadSummary("common_config_reload", parseResult, mergeStats);
         syncFuelDataToClients();
     }
 
-    private static Map<Fluid, FluidThrusterProperties> parseFuelProperties(@Nonnull Map<ResourceLocation, JsonElement> pObject) {
+    private static ParseResult parseFuelProperties(@Nonnull Map<ResourceLocation, JsonElement> pObject) {
         Map<Fluid, FluidThrusterProperties> newMap = new HashMap<>();
         Map<ResourceLocation, Float> consumptionOverrides = getConfiguredConsumptionOverrides();
+        int[] parsedEntries = {0};
+        int[] skippedMissingModEntries = {0};
+        int[] skippedMissingFluidEntries = {0};
 
         for (Map.Entry<ResourceLocation, JsonElement> entry : pObject.entrySet()) {
             ResourceLocation file = entry.getKey();
@@ -228,11 +225,13 @@ public class ThrusterFuelManager extends SimpleJsonResourceReloadListener {
                 .ifPresent(definition -> {
                     //There is a fuel that requires a mod but the mod is not present
                     if (definition.requiredMod().isPresent() && !ModList.get().isLoaded(definition.requiredMod().get())) {
+                        skippedMissingModEntries[0]++;
                         return;
                     }
                     Fluid fluid = definition.getFluid();
                     //Fluid is not in registry
                     if (fluid == Fluids.EMPTY) {
+                        skippedMissingFluidEntries[0]++;
                         return;
                     }
                     //Successfully load fuel
@@ -255,10 +254,11 @@ public class ThrusterFuelManager extends SimpleJsonResourceReloadListener {
                             properties.useFluidColor());
                     }
                     newMap.put(fluid, properties);
+                    parsedEntries[0]++;
                 });
         }
-        
-        return newMap;
+
+        return new ParseResult(newMap, parsedEntries[0], skippedMissingModEntries[0], skippedMissingFluidEntries[0]);
     }
 
     private static Map<ResourceLocation, Float> getConfiguredEfficiencyOverrides() {
@@ -329,11 +329,19 @@ public class ThrusterFuelManager extends SimpleJsonResourceReloadListener {
         return overrides;
     }
 
-    private static void mergeConfigProperties(Map<Fluid, FluidThrusterProperties> map) {
+    private static ConfigMergeStats mergeConfigProperties(Map<Fluid, FluidThrusterProperties> map) {
         Map<ResourceLocation, Float> consumptionOverrides = getConfiguredConsumptionOverrides();
+        int addedByConfig = 0;
+        int overriddenByConfig = 0;
+        int missingConfigFluidIds = 0;
+
         for (ResourceLocation fluidId : consumptionOverrides.keySet()) {
             Fluid fluid = BuiltInRegistries.FLUID.get(fluidId);
-            if (fluid == null || fluid == Fluids.EMPTY) continue;
+            if (fluid == null || fluid == Fluids.EMPTY) {
+                LOGGER.warn("[{}] Ignoring fuel config override for '{}': fluid is not registered.", CreatePropulsion.ID, fluidId);
+                missingConfigFluidIds++;
+                continue;
+            }
             
             if (!map.containsKey(fluid)) {
                 map.put(fluid, new FluidThrusterProperties(
@@ -344,6 +352,7 @@ public class ThrusterFuelManager extends SimpleJsonResourceReloadListener {
                     null,
                     false
                 ));
+                addedByConfig++;
             } else {
                 FluidThrusterProperties existing = map.get(fluid);
                 if (java.lang.Math.abs(existing.consumptionMultiplier() - consumptionOverrides.get(fluidId)) > 1e-4) {
@@ -355,9 +364,32 @@ public class ThrusterFuelManager extends SimpleJsonResourceReloadListener {
                         existing.overrideColor(),
                         existing.useFluidColor()
                     ));
+                    overriddenByConfig++;
                 }
             }
         }
+
+        return new ConfigMergeStats(addedByConfig, overriddenByConfig, missingConfigFluidIds);
+    }
+
+    private static void logReloadSummary(String context, ParseResult parseResult, ConfigMergeStats mergeStats) {
+        int totalMergedEntries = fuelPropertiesMap.size();
+        int scriptedEntries = scriptedFuelPropertiesMap.size();
+        int removedEntries = removedFuelIds.size();
+        LOGGER.info(
+            "[{}] Thruster fuel reload ({}) complete: datapackParsed={}, datapackSkippedMissingMod={}, datapackSkippedMissingFluid={}, configAdded={}, configOverridden={}, configMissingFluid={}, mergedDatapackAndConfig={}, scriptedOverrides={}, removed={}",
+            CreatePropulsion.ID,
+            context,
+            parseResult.parsedEntries(),
+            parseResult.skippedMissingModEntries(),
+            parseResult.skippedMissingFluidEntries(),
+            mergeStats.addedByConfig(),
+            mergeStats.overriddenByConfig(),
+            mergeStats.missingConfigFluidIds(),
+            totalMergedEntries,
+            scriptedEntries,
+            removedEntries
+        );
     }
 
     private static void syncFuelDataToClients() {
@@ -465,5 +497,23 @@ public class ThrusterFuelManager extends SimpleJsonResourceReloadListener {
         removedFuelIds.remove(fluidId);
         syncFuelDataToClients();
         return true;
+    }
+
+    private record ParseResult(
+        Map<Fluid, FluidThrusterProperties> fuelMap,
+        int parsedEntries,
+        int skippedMissingModEntries,
+        int skippedMissingFluidEntries
+    ) {
+        private ParseResult {
+            fuelMap = Objects.requireNonNull(fuelMap);
+        }
+    }
+
+    private record ConfigMergeStats(
+        int addedByConfig,
+        int overriddenByConfig,
+        int missingConfigFluidIds
+    ) {
     }
 }

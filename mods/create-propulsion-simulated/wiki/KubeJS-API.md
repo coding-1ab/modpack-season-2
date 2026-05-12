@@ -27,7 +27,7 @@ Both systems share the same fuel registry.
 - `overrideFuel(String fluidIdToOverride, Map<String, Object> settings)`
   - Explicit alias for overriding an existing fuel entry.
 - `removeFuel(String fuelIdToRemove)`
-  - Removes/disables a fuel id, including datapack/default/tag-based matches.
+  - Removes/disables a fuel id from all active sources (datapack/config/KubeJS).
 
 ## Particle names
 
@@ -77,6 +77,9 @@ ServerEvents.loaded(event => {
 
 ## Notes
 
+- Fuel matching is strict: only declared entries are valid.
+- There is no implicit fallback for `minecraft:lava` or `forge:fuel`.
+- Effective precedence is `removed > KubeJS > datapack+config`.
 - Invalid fluid ids are ignored and logged.
 - `particleName` falls back to `plume` if unknown.
 - `overrideTextureIds` accepts resource ids in the particle atlas (e.g. `modid:plume_0`).
