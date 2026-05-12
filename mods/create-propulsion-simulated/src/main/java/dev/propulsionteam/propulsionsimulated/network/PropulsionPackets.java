@@ -5,10 +5,16 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 public class PropulsionPackets {
     public static void register(RegisterPayloadHandlersEvent event) {
-        event.registrar("1");
+        PayloadRegistrar registrar = event.registrar("1");
+        registrar.playToClient(
+            SyncThrusterFuelsPacket.TYPE,
+            SyncThrusterFuelsPacket.STREAM_CODEC,
+            (payload, context) -> payload.handle()
+        );
     }
 
     public static <MSG> void sendToPlayer(MSG message, ServerPlayer player) {

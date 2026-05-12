@@ -4,15 +4,25 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
 import dev.propulsionteam.propulsionsimulated.content.thruster.FluidThrusterProperties;
 import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterFuelManager;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 
-public class SyncThrusterFuelsPacket {
+public class SyncThrusterFuelsPacket implements CustomPacketPayload {
+    public static final Type<SyncThrusterFuelsPacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(CreatePropulsion.ID, "sync_thruster_fuels"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, SyncThrusterFuelsPacket> STREAM_CODEC = StreamCodec.of(
+        (buf, payload) -> payload.encode(buf),
+        buf -> SyncThrusterFuelsPacket.decode(buf)
+    );
+
     private final Map<ResourceLocation, FluidThrusterProperties> fuelMap;
     private final Set<ResourceLocation> removedFuelIds;
 
@@ -45,5 +55,10 @@ public class SyncThrusterFuelsPacket {
 
     public void handle() {
         ThrusterFuelManager.updateClient(this.fuelMap, this.removedFuelIds);
+    }
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }
