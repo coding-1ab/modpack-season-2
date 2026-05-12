@@ -21,3 +21,8 @@ modrinth mTuSMV7j // right click milk
 modrinth ENONQ5aP // titanium
 modrinth RBaVkVwQ // azimuth
 modrinth QhXpdxEI // struts
+modrinth XUyNAmF2 // vista
+modrinth C2tLycH2 // lootr
+curseforge 250419 7039849 // enchantment descriptor
+modrinth DKe4Owf4 // integrated farming
+modrinth BqB1xPS9 // structures arise
