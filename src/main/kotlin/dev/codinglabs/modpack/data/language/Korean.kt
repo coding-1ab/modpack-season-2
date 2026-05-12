@@ -4,6 +4,12 @@ import net.minecraft.data.PackOutput
 import net.neoforged.neoforge.common.data.LanguageProvider
 import net.neoforged.neoforge.fluids.FluidType
 import dev.codinglabs.modpack.Blocks
+import dev.codinglabs.modpack.Commands.SPAWN_PLAYER_ONLY
+import dev.codinglabs.modpack.Commands.RTP_PLAYER_ONLY
+import dev.codinglabs.modpack.Commands.TELEPORT_START
+import dev.codinglabs.modpack.Commands.TELEPORT_INTERRUPTED
+import dev.codinglabs.modpack.Commands.TELEPORT_ON_COOLDOWN
+import dev.codinglabs.modpack.Commands.TELEPORT_OVERWORLD_ONLY
 import dev.codinglabs.modpack.Fluids
 import dev.codinglabs.modpack.Items
 import dev.codinglabs.modpack.ModPackTweaks
@@ -23,6 +29,14 @@ class Korean(output: PackOutput) : LanguageProvider(output, ModPackTweaks.ID, "k
         add(VoidAnchorBlock.MSG_FULL,       "이미 충전이 완료되었습니다.")
         add(VoidAnchorBlock.MSG_DESTROYED,  "공허 정박기가 파괴되어 앵커가 해제되었습니다")
         add(VoidAnchorBlock.MSG_NO_CHARGES, "충전량이 부족합니다")
+
+        add(SPAWN_PLAYER_ONLY, "/spawn은 플레이어 전용 명령어 입니다")
+        add(RTP_PLAYER_ONLY, "/rtp는 플레이어 전용 명령어 입니다")
+        add(TELEPORT_START, "텔레포트를 시작합니다..")
+        add(TELEPORT_INTERRUPTED, "텔레포트 중단!")
+        add(TELEPORT_ON_COOLDOWN, "텔레포트 대기시간: %s")
+        add(TELEPORT_OVERWORLD_ONLY, "텔레포트는 오버월드에서만 가능합니다")
+
         add("itemGroup.${ModPackTweaks.ID}.title", "코딩랩 모드팩 자체 컨텐츠")
     }
 

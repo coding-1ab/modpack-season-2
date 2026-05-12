@@ -11,5 +11,11 @@
   "fluid_type.modpack_tweaks.ender_fuel": "Ender Fuel",
   "item.modpack_tweaks.ender_fuel_bucket": "Ender Fuel Bucket",
   "item.modpack_tweaks.shulker_shell_fragment": "Shulker Shell Fragment",
-  "itemGroup.modpack_tweaks.title": "Coding Lab Modpack Tweaks"
+  "itemGroup.modpack_tweaks.title": "Coding Lab Modpack Tweaks",
+  "modpack_tweaks.commands.rtp.failure.player_only": "/rtp is player only command",
+  "modpack_tweaks.commands.spawn.failure.player_only": "/spawn is player only command",
+  "modpack_tweaks.commands.teleport.failure.cooldown": "Teleport Cooldown: %s",
+  "modpack_tweaks.commands.teleport.failure.interrupted": "Teleport Interrupted!",
+  "modpack_tweaks.commands.teleport.failure.overworld_only": "Teleport is only allowed in Overworld",
+  "modpack_tweaks.commands.teleport.success.timer_added": "Beginning teleport.."
 }

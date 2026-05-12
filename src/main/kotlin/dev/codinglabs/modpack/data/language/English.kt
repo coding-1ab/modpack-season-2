@@ -4,6 +4,12 @@ import net.minecraft.data.PackOutput
 import net.neoforged.neoforge.common.data.LanguageProvider
 import net.neoforged.neoforge.fluids.FluidType
 import dev.codinglabs.modpack.Blocks
+import dev.codinglabs.modpack.Commands.RTP_PLAYER_ONLY
+import dev.codinglabs.modpack.Commands.SPAWN_PLAYER_ONLY
+import dev.codinglabs.modpack.Commands.TELEPORT_INTERRUPTED
+import dev.codinglabs.modpack.Commands.TELEPORT_ON_COOLDOWN
+import dev.codinglabs.modpack.Commands.TELEPORT_OVERWORLD_ONLY
+import dev.codinglabs.modpack.Commands.TELEPORT_START
 import dev.codinglabs.modpack.Fluids
 import dev.codinglabs.modpack.Items
 import dev.codinglabs.modpack.ModPackTweaks
@@ -23,6 +29,14 @@ class English(output: PackOutput) : LanguageProvider(output, ModPackTweaks.ID, "
         add(VoidAnchorBlock.MSG_FULL,       "Void Anchor is already full")
         add(VoidAnchorBlock.MSG_DESTROYED,  "Your Void Anchor was destroyed")
         add(VoidAnchorBlock.MSG_NO_CHARGES, "Void Anchor has no charges")
+
+        add(SPAWN_PLAYER_ONLY, "/spawn is player only command")
+        add(RTP_PLAYER_ONLY, "/rtp is player only command")
+        add(TELEPORT_START, "Beginning teleport..")
+        add(TELEPORT_INTERRUPTED, "Teleport Interrupted!")
+        add(TELEPORT_ON_COOLDOWN, "Teleport Cooldown: %s")
+        add(TELEPORT_OVERWORLD_ONLY, "Teleport is only allowed in Overworld")
+
         add("itemGroup.${ModPackTweaks.ID}.title", "Coding Lab Modpack Tweaks")
     }
 
