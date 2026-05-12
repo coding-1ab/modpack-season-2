@@ -337,12 +337,12 @@ addMods {
         modProjects = listOf(
             modProject(
                 dependencyNotations = listOf("dev.ryanhcode.sable-companion:sable-companion-common-1.21.1"),
-                projectPath = ":common",
+                projectPath = ":sable-companion-common",
                 shouldUnpack = true
             ),
             modProject(
                 dependencyNotations = listOf("dev.ryanhcode.sable-companion:sable-companion-fabric-1.21.1"),
-                projectPath = ":fabric",
+                projectPath = ":sable-companion-fabric",
                 shouldUnpack = true
             ),
         )
@@ -364,6 +364,39 @@ addMods {
         modProjects = listOf(
             modProject(
                 dependencyNotations = listOf("com.progwml6.ironshulkerboxes:ironshulkerbox"),
+                projectPath = ":",
+                shouldUnpack = true
+            ),
+        )
+    )
+    addMod(
+        filePath = "./mods/Create-Bits-n-Bobs",
+        includeTransitive = false,
+        modProjects = listOf(
+            modProject(
+                dependencyNotations = listOf("com.kipti.bnb:bits_n_bobs"),
+                projectPath = ":",
+                shouldUnpack = true
+            ),
+        )
+    )
+    addMod(
+        filePath = "./mods/CreateCentralKitchen",
+        includeTransitive = false,
+        modProjects = listOf(
+            modProject(
+                dependencyNotations = listOf("plus.dragons.createcentralkitchen:create_central_kitchen"),
+                projectPath = ":",
+                shouldUnpack = true
+            ),
+        )
+    )
+    addMod(
+        filePath = "./mods/FunctionalStorage",
+        includeTransitive = false,
+        modProjects = listOf(
+            modProject(
+                dependencyNotations = listOf("com.buuz135:functionalstorage"),
                 projectPath = ":",
                 shouldUnpack = true
             ),
