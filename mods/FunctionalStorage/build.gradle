@@ -1,5 +1,5 @@
 plugins {
-    id 'net.neoforged.moddev' version '2.0.75'
+    id 'net.neoforged.moddev' version '2.0.141'
     id 'maven-publish'
 }
 
@@ -38,8 +38,8 @@ neoForge {
     version = "${neo_version}"
 
     parchment {
-        minecraftVersion = '1.21'
-        mappingsVersion = '2024.06.23'
+        minecraftVersion = '1.21.1'
+        mappingsVersion = '2024.11.17'
     }
 
     validateAccessTransformers = true
@@ -67,22 +67,27 @@ neoForge {
     }
 }
 
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
+
 dependencies {
 	compileOnly "mezz.jei:jei-1.21.1-common-api:$jei_version"
     compileOnly "mezz.jei:jei-1.21.1-neoforge-api:$jei_version"
-    runtimeOnly "mezz.jei:jei-1.21.1-neoforge:$jei_version"
+    localRuntime "mezz.jei:jei-1.21.1-neoforge:$jei_version"
     implementation project.dependencies.create('com.hrznstudio:titanium:1.21-4.0.34')
-    implementation "curse.maven:jade-324717:5444008"
+    compileOnly "curse.maven:jade-324717:5444008"
+    localRuntime "curse.maven:jade-324717:5444008"
     compileOnly "curse.maven:the-one-probe-245211:5475189"
-    runtimeOnly "curse.maven:applied-energistics-2-223794:5729094"
+    localRuntime "curse.maven:applied-energistics-2-223794:5729094"
 
     compileOnly "curse.maven:architectury-api-419699:5786327"
     compileOnly "curse.maven:ftb-library-forge-404465:6711324"
     compileOnly "curse.maven:ftb-teams-forge-404468:6119437"
     compileOnly "curse.maven:ftb-chunks-forge-314906:6504893"
 
-    runtimeOnly "curse.maven:create-328085:6641610"
-    runtimeOnly "curse.maven:pipez-443900:5757713"
+    localRuntime "curse.maven:create-328085:6641610"
+    localRuntime "curse.maven:pipez-443900:5757713"
 }
 
 jar {
