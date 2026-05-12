@@ -73,7 +73,8 @@ class Recipes(output: PackOutput, registries: CompletableFuture<HolderLookup.Pro
         val builder = StandardProcessingRecipe.Builder(::CompactingRecipe, id)
 
         builder.requiresHeat(HeatCondition.HEATED)
-            .require(Ingredient.of(ItemStack(Items.AMETHYST_SHARD), ItemStack(Items.GLOWSTONE_DUST, 4)))
+            .require(Ingredient.of(Items.AMETHYST_SHARD))
+            .require(Ingredient.of(ItemStack(Items.GLOWSTONE_DUST, 4)))
             .output(AllItems.EXP_NUGGET)
             .build(output)
     }
