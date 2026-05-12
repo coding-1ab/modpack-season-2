@@ -413,6 +413,17 @@ addMods {
             ),
         )
     )
+    addMod(
+        filePath = "./mods/CreateBigCannons",
+        includeTransitive = false,
+        modProjects = listOf(
+            modProject(
+                dependencyNotations = listOf("com.rbasamoyai:createbigcannons"),
+                projectPath = ":",
+                shouldUnpack = true
+            ),
+        )
+    )
 
     includeExtra("extra_mods.txt")
 }

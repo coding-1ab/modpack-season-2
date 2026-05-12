@@ -30,3 +30,4 @@ curseforge 228525 7606240 // bookshelf
 curseforge 1023259 6961457 // prickle
 modrinth Pb3OXVqC devExclude // sodium
 curseforge 627196 6426184 // item showcase
+modrinth hZ6B2Z0x // projectile lib

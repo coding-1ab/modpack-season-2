@@ -137,3 +137,8 @@
 	url = https://github.com/coding-1ab/Neo-Language-Reload.git
 	branch = 1.21.1
 	upstream = https://github.com/pynickle/Neo-Language-Reload.git
+[submodule "mods/CreateBigCannons"]
+	path = mods/CreateBigCannons
+	url = https://github.com/coding-1ab/CreateBigCannons.git
+	branch = create-v6-1.21.1
+	upstream = https://github.com/Cannoneers-of-Create/CreateBigCannons.git
