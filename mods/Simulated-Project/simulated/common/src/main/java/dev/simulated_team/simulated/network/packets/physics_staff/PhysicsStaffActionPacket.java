@@ -53,7 +53,7 @@ public class PhysicsStaffActionPacket implements CustomPacketPayload {
         final ServerLevel level = (ServerLevel) context.level();
         final Player player = context.player();
 
-        if (!player.getMainHandItem().is(SimItems.PHYSICS_STAFF) ||
+        if (!player.getMainHandItem().is(SimItems.PHYSICS_STAFF) &&
                 !player.getOffhandItem().is(SimItems.PHYSICS_STAFF)) {
             context.disconnect(Component.literal("Invalid packet"));
             return;

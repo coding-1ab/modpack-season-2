@@ -1,6 +1,5 @@
 package dev.simulated_team.simulated.content.physics_staff;
 
-import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -14,11 +13,7 @@ import dev.simulated_team.simulated.index.SimPartialModels;
 import dev.simulated_team.simulated.index.SimRenderTypes;
 import dev.simulated_team.simulated.util.SimDistUtil;
 import dev.simulated_team.simulated.util.SimMathUtils;
-import foundry.imgui.api.ImGuiMC;
 import foundry.veil.Veil;
-import foundry.veil.api.client.imgui.VeilImGuiUtil;
-import foundry.veil.api.client.render.framebuffer.AdvancedFbo;
-import imgui.ImGui;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.irisshaders.iris.Iris;
 import net.minecraft.client.Camera;
