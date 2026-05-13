@@ -12,6 +12,7 @@
     "accessor.DebugGameRendererAccessor",
     "accessor.DebugLevelRendererAccessor",
     "accessor.DebugPostChainAccessor",
+    "client.DebugActiveProfilerMixin",
     "client.DebugAutoStorageIndexBufferMixin",
     "client.DebugGlDebugMixin",
     "client.DebugKeyboardHandlerMixin",

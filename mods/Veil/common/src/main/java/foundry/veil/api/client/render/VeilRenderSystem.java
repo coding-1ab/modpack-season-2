@@ -1255,9 +1255,9 @@ public final class VeilRenderSystem {
 
     @ApiStatus.Internal
     public static void renderPost(@Nullable VeilRenderLevelStageEvent.Stage stage) {
-        if (stage == VeilRenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES || stage == VeilRenderLevelStageEvent.Stage.AFTER_LEVEL) {
+        if (VeilBloomRenderer.hasRendered() && (stage == VeilRenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES || stage == VeilRenderLevelStageEvent.Stage.AFTER_LEVEL)) {
             VeilDebug debug = VeilDebug.get();
-            debug.pushDebugGroup("Veil Draw Bloom");
+            debug.pushDebugGroup("Veil Draw Bloom (" + stage + ")");
             VeilBloomRenderer.flush();
             debug.popDebugGroup();
         }
