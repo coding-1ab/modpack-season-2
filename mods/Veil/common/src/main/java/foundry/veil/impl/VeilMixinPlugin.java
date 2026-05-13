@@ -17,7 +17,6 @@ public abstract class VeilMixinPlugin implements IMixinConfigPlugin {
             "foundry.veil." + PACKAGE_NAME + ".mixin.client.perspective",
             "foundry.veil." + PACKAGE_NAME + ".mixin.client.debug"
     );
-    private static final Set<String> SODIUM_WITHOUT_IRIS_COMPAT = Set.of();
     private static final Map<String, Set<String>> INCOMPATIBLE_MIXINS = new Object2ObjectArrayMap<>();
     private final Map<String, Boolean> loadedMods = new HashMap<>();
 
@@ -51,10 +50,10 @@ public abstract class VeilMixinPlugin implements IMixinConfigPlugin {
                 return Veil.SODIUM ? !mixinClassName.startsWith(compat + ".vanilla") : !mixinClassName.startsWith(compat + ".sodium");
             }
         }
+        if (Veil.IRIS && mixinClassName.startsWith("foundry.veil.mixin.dynamicbuffer")) {
+            return false;
+        }
         if (mixinClassName.startsWith("foundry.veil." + PACKAGE_NAME + ".mixin.compat")) {
-            if (Veil.IRIS && SODIUM_WITHOUT_IRIS_COMPAT.contains(mixinClassName)) {
-                return false;
-            }
             String[] parts = mixinClassName.split("\\.", 7);
             return this.isModLoaded(parts[5]);
         }
