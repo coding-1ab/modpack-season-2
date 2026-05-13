@@ -105,6 +105,10 @@ public class DynamicBufferManager implements NativeResource {
     }
 
     public boolean setActiveBuffers(ResourceLocation name, int activeBuffers) {
+        if (Veil.IRIS) {
+            return false;
+        }
+
         int buffers = this.activeBufferLayers.getOrDefault(name, 0);
         if (buffers == activeBuffers) {
             return false;
@@ -153,14 +157,14 @@ public class DynamicBufferManager implements NativeResource {
         return true;
     }
 
-    @ApiStatus.Internal
     public boolean isEnabled() {
         return this.activeBuffers != 0 && this.enabled;
     }
 
-    @ApiStatus.Internal
     public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+        if (!Veil.IRIS) {
+            this.enabled = enabled;
+        }
     }
 
     @Override
@@ -184,7 +188,6 @@ public class DynamicBufferManager implements NativeResource {
      * @param renderTarget The render target to wrap or <code>null</code> to free
      * @param setViewport  Whether the viewport should also be set
      */
-    @ApiStatus.Internal
     public void setupRenderState(ResourceLocation name, @Nullable RenderTarget renderTarget, boolean setViewport) {
         if (!this.isEnabled()) {
             return;
@@ -228,7 +231,7 @@ public class DynamicBufferManager implements NativeResource {
      * @return The created buffer or <code>null</code> to use the input value
      */
     public AdvancedFbo getDynamicFbo(AdvancedFbo framebuffer) {
-        if (this.activeBuffers == 0 || !this.enabled) {
+        if (!this.isEnabled()) {
             return framebuffer;
         }
 
@@ -289,7 +292,6 @@ public class DynamicBufferManager implements NativeResource {
         return this.clearBuffers;
     }
 
-    @ApiStatus.Internal
     public void endFrame() {
         for (AdvancedFbo framebuffer : this.framebuffers.values()) {
             framebuffer.clear(0.0F, 0.0F, 0.0F, 0.0F, GL_COLOR_BUFFER_BIT, this.clearBuffers);
@@ -332,12 +334,10 @@ public class DynamicBufferManager implements NativeResource {
         }
     }
 
-    @ApiStatus.Internal
     public void markRecompiled(ShaderInstance shaderInstance) {
         this.swapShaders.add(shaderInstance);
     }
 
-    @ApiStatus.Internal
     public void resizeFramebuffers(int width, int height) {
         this.deleteFramebuffers();
         for (DynamicBuffer buffer : this.dynamicBuffers.values()) {
