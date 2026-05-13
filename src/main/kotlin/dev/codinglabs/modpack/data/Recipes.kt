@@ -62,7 +62,9 @@ class Recipes(output: PackOutput, registries: CompletableFuture<HolderLookup.Pro
 
         builder.requiresHeat(HeatCondition.HEATED)
             .require(CEIFluids.EXPERIENCE.get(), 100)
-            .require(Ingredient.of(*Array(3){ MyItems.SHULKER_SHELL_FRAGMENT }))
+            .require(Ingredient.of(MyItems.SHULKER_SHELL_FRAGMENT))
+            .require(Ingredient.of(MyItems.SHULKER_SHELL_FRAGMENT))
+            .require(Ingredient.of(MyItems.SHULKER_SHELL_FRAGMENT))
             .output(Items.SHULKER_SHELL)
             .build(output)
     }
@@ -73,7 +75,10 @@ class Recipes(output: PackOutput, registries: CompletableFuture<HolderLookup.Pro
 
         builder.requiresHeat(HeatCondition.HEATED)
             .require(Ingredient.of(Items.AMETHYST_SHARD))
-            .require(Ingredient.of(*Array(4) { Items.GLOWSTONE_DUST }))
+            .require(Ingredient.of(Items.GLOWSTONE_DUST))
+            .require(Ingredient.of(Items.GLOWSTONE_DUST))
+            .require(Ingredient.of(Items.GLOWSTONE_DUST))
+            .require(Ingredient.of(Items.GLOWSTONE_DUST))
             .output(AllItems.EXP_NUGGET)
             .build(output)
     }
