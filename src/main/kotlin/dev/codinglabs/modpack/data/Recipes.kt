@@ -17,6 +17,7 @@ import net.minecraft.data.recipes.RecipeOutput
 import net.minecraft.data.recipes.RecipeProvider
 import net.minecraft.data.recipes.ShapedRecipeBuilder
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.tags.ItemTags
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
@@ -36,7 +37,29 @@ class Recipes(output: PackOutput, registries: CompletableFuture<HolderLookup.Pro
         shulkerShellRecipe(recipeOutput)
         nuggetExperienceRecipe(recipeOutput)
         voidAnchorRecipe(recipeOutput)
+        quadChest(recipeOutput)
+        quadSticks(recipeOutput)
+    }
 
+    private fun quadChest(output: RecipeOutput) {
+        val id = "quad_chest".toResource()
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Items.CHEST, 4)
+            .define('W', ItemTags.LOGS)
+            .pattern("WWW")
+            .pattern("W W")
+            .pattern("WWW")
+            .unlockedBy("has_log", has(ItemTags.LOGS))
+            .save(output, id)
+    }
+
+    private fun quadSticks(output: RecipeOutput) {
+        val id = "quad_sticks".toResource()
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Items.STICK, 16)
+            .define('W', ItemTags.LOGS)
+            .pattern("W")
+            .pattern("W")
+            .unlockedBy("has_log", has(ItemTags.LOGS))
+            .save(output, id)
     }
 
     @Suppress("SameParameterValue")
