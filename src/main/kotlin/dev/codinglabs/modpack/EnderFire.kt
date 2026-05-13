@@ -4,7 +4,6 @@ import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.server.level.ServerLevel
-import net.minecraft.tags.BiomeTags
 import net.minecraft.util.RandomSource
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
@@ -99,14 +98,17 @@ class EnderFire(blockProperties: Properties) : BaseFireBlock(blockProperties, 2.
             return
         }
 
-        if (!level.getBiome(pos).`is`(BiomeTags.IS_END)) {
-            val nextAge = min(15, currentAge + random.nextInt(3) / 2)
-            if (nextAge != currentAge) {
-                val newState = state.setValue(AGE, nextAge)
-                level.setBlock(pos, newState, 4)
-            }
+        val isEnd = level.dimension() == Level.END
+        val nextAge = if (isEnd) {
+            min(15, currentAge + random.nextInt(16) / 15)
+        } else {
+            min(15, currentAge + random.nextInt(3) / 2)
         }
 
+        if (nextAge != currentAge) {
+            val newState = state.setValue(AGE, nextAge)
+            level.setBlock(pos, newState, 4)
+        }
     }
 
     override fun animateTick(state: BlockState, level: Level, pos: BlockPos, random: RandomSource) {

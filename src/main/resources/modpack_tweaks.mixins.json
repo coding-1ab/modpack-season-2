@@ -1,11 +1,13 @@
 {
-  "required": true,
-  "minVersion": "0.8",
-  "priority": 1000,
-  "package": "dev.codinglabs.modpack.mixin",
-  "compatibilityLevel": "JAVA_21",
-  "mixins": [
-      "FireBlockMixin"
-  ],
-  "client": []
+    "required": true,
+    "minVersion": "0.8",
+    "priority": 1000,
+    "package": "dev.codinglabs.modpack.mixin",
+    "compatibilityLevel": "JAVA_21",
+    "mixins": [
+        "BaseFireBlockMixin",
+        "FireBlockMixin",
+        "ItemStackMixin"
+    ],
+    "client": []
 }
