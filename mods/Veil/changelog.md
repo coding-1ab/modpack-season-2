@@ -1,3 +1,2 @@
-- Add more renderdoc debug tools
-- Disable bloom and dynamic buffers when Iris is loaded
-- Add support for Veil shaders when shaders are active ([#88](https://github.com/FoundryMC/Veil/issues/88))
+- Fix inspectors not being registered properly
+- Disable veil resource manager when imguimc is not installed
