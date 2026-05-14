@@ -5,9 +5,7 @@ use jni::JNIEnv;
 use jni::objects::{JClass, JDoubleArray};
 use jni::sys::{jboolean, jdouble, jint, jlong};
 use marten::Real;
-use rapier3d::dynamics::{
-    GenericJointBuilder, JointAxesMask, JointAxis, RevoluteJointBuilder, SpringCoefficients,
-};
+use rapier3d::dynamics::{GenericJointBuilder, JointAxesMask, JointAxis, RevoluteJointBuilder, SphericalJointBuilder, SpringCoefficients};
 use rapier3d::glamx::Quat;
 use rapier3d::math::Vector;
 use rapier3d::na::Vector3;
@@ -313,6 +311,88 @@ pub extern "system" fn Java_dev_ryanhcode_sable_physics_impl_rapier_Rapier3D_add
 
             fixed: false,
             contacts_enabled: true,
+        },
+    );
+
+    handle_long
+}
+
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_dev_ryanhcode_sable_physics_impl_rapier_Rapier3D_addSphericalConstraint<
+    'local,
+>(
+    _env: JNIEnv<'local>,
+    _class: JClass<'local>,
+    scene_id: jint,
+    id_a: jint,
+    id_b: jint,
+    local_x_a: jdouble,
+    local_y_a: jdouble,
+    local_z_a: jdouble,
+    local_x_b: jdouble,
+    local_y_b: jdouble,
+    local_z_b: jdouble,
+    contacts_enabled: jboolean,
+) -> SableJointHandle {
+    let scene = get_scene_mut_ref(scene_id);
+
+    let rb_a = if id_a == -1 {
+        scene.ground_handle.unwrap()
+    } else {
+        scene.rigid_bodies[&(id_a as LevelColliderID)]
+    };
+
+    let rb_b = if id_b == -1 {
+        scene.ground_handle.unwrap()
+    } else {
+        scene.rigid_bodies[&(id_b as LevelColliderID)]
+    };
+    
+    let contacts_enabled = contacts_enabled != 0;
+
+    let sphere = SphericalJointBuilder::new()
+    .local_anchor1(Vector::ZERO)
+    .local_anchor2(Vector::ZERO)
+    .contacts_enabled(contacts_enabled)
+    .softness(SpringCoefficients::new(
+        JOINT_SPRING_FREQUENCY,
+        JOINT_SPRING_DAMPING_RATIO,
+    ));
+
+    let handle = scene
+        .impulse_joint_set
+        .insert(rb_a, rb_b, sphere.build(), true);
+
+    let (index, generation) = handle.0.into_raw_parts();
+    let handle_long: SableJointHandle = index as jlong | (generation as jlong) << 32;
+
+    scene.joint_set.joints.insert(
+        handle_long,
+        SubLevelJoint {
+            id_a: if id_a == -1 {
+                None
+            } else {
+                Some(id_a as LevelColliderID)
+            },
+            id_b: if id_b == -1 {
+                None
+            } else {
+                Some(id_b as LevelColliderID)
+            },
+
+            pos_a: Vector3::new(local_x_a, local_y_a, local_z_a),
+            pos_b: Vector3::new(local_x_b, local_y_b, local_z_b),
+
+            normal_a: Vector3::new(0.0, 0.0, 0.0),
+            normal_b: Vector3::new(0.0, 0.0, 0.0),
+
+            rotation_a: None,
+            rotation_b: None,
+
+            handle,
+
+            fixed: false,
+            contacts_enabled,
         },
     );
 

@@ -9,6 +9,7 @@ import dev.ryanhcode.sable.api.physics.constraint.fixed.FixedConstraintConfigura
 import dev.ryanhcode.sable.api.physics.constraint.free.FreeConstraintConfiguration;
 import dev.ryanhcode.sable.api.physics.constraint.generic.GenericConstraintConfiguration;
 import dev.ryanhcode.sable.api.physics.constraint.rotary.RotaryConstraintConfiguration;
+import dev.ryanhcode.sable.api.physics.constraint.spherical.SphericalConstraintConfiguration;
 import dev.ryanhcode.sable.api.physics.mass.MassTracker;
 import dev.ryanhcode.sable.api.physics.object.box.BoxHandle;
 import dev.ryanhcode.sable.api.physics.object.box.BoxPhysicsObject;
@@ -26,6 +27,7 @@ import dev.ryanhcode.sable.physics.impl.rapier.constraint.fixed.RapierFixedConst
 import dev.ryanhcode.sable.physics.impl.rapier.constraint.free.RapierFreeConstraintHandle;
 import dev.ryanhcode.sable.physics.impl.rapier.constraint.generic.RapierGenericConstraintHandle;
 import dev.ryanhcode.sable.physics.impl.rapier.constraint.rotary.RapierRotaryConstraintHandle;
+import dev.ryanhcode.sable.physics.impl.rapier.constraint.spherical.RapierSphericalConstraintHandle;
 import dev.ryanhcode.sable.physics.impl.rapier.rope.RapierRopeHandle;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.SubLevel;
@@ -644,6 +646,10 @@ public class RapierPhysicsPipeline implements PhysicsPipeline {
 
         if (configuration instanceof final FreeConstraintConfiguration config) {
             return (T) RapierFreeConstraintHandle.create(this.level, sublevelA, sublevelB, config);
+        }
+
+        if (configuration instanceof final SphericalConstraintConfiguration config) {
+            return (T) RapierSphericalConstraintHandle.create(this.level, sublevelA, sublevelB, config);
         }
 
         if (configuration instanceof final GenericConstraintConfiguration config) {

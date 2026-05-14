@@ -341,6 +341,18 @@ public class Rapier3D {
                                                   double localAxisYB,
                                                   double localAxisZB);
 
+    @ApiStatus.Internal
+    public static native long addSphericalConstraint(final int dimensionID,
+                                                     int id,
+                                                     int otherId,
+                                                     double local_x_a,
+                                                     double local_y_a,
+                                                     double local_z_a,
+                                                     double local_x_b,
+                                                     double local_y_b,
+                                                     double local_z_b,
+                                                     boolean contacts_enabled);
+
     /**
      * Adds a fixed constraint between two objects.
      *
