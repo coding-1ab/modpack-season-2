@@ -1,5 +1,6 @@
 package foundry.veil.impl;
 
+import foundry.veil.Veil;
 import foundry.veil.VeilClient;
 import foundry.veil.api.quasar.data.QuasarParticles;
 import foundry.veil.impl.flare.FlareManager;
@@ -12,7 +13,9 @@ public final class VeilReloadListeners {
     public static void registerListeners(Context context) {
         context.register(PackType.CLIENT_RESOURCES, "quasar", new QuasarParticles.Reloader());
         context.register(PackType.CLIENT_RESOURCES, "flare", FlareManager.Reloader.INSTANCE);
-        context.register(PackType.CLIENT_RESOURCES, "resources", VeilClient.resourceManager().createReloadListener());
+        if (Veil.IMGUIMC) {
+            context.register(PackType.CLIENT_RESOURCES, "resources", VeilClient.resourceManager().createReloadListener());
+        }
     }
 
     @FunctionalInterface
