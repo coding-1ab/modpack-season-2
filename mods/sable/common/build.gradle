@@ -3,12 +3,6 @@ import net.jpountz.lz4.LZ4FrameOutputStream
 
 import java.nio.file.Files
 
-buildscript {
-    dependencies {
-        classpath 'at.yawk.lz4:lz4-java:1.11.0'
-    }
-}
-
 plugins {
     id 'multiloader-common'
     id 'net.neoforged.moddev'
@@ -116,7 +110,7 @@ def commandLineForTarget(target) {
     }
 }
 
-def nativesNameForTarget(target) {
+static def nativesNameForTarget(Map<String, Object> target) {
     "sable_rapier_${target.arch}_${target.os}.${target.ext}"
 }
 
@@ -125,7 +119,7 @@ supportedTargets.forEach { target ->
         group = 'rust'
         workingDir rustProjectDir
         description = "Cross-compiles natives for the ${target.triple} target"
-        def commands= commandLineForTarget(target)
+        def commands = commandLineForTarget(target)
         commands.add('--release')
         commandLine = commands
     }
@@ -160,8 +154,9 @@ tasks.register('copyRustNatives', Copy) {
     mustRunAfter(buildRustNatives)
 
     supportedTargets.forEach { target ->
+        def nativeName = nativesNameForTarget(target)
         from(file("$rustRootDir/target/${target.triple}/release/${if (target.lib) { "lib" } else { "" }}sable_rapier.${target.ext}")) {
-            rename { nativesNameForTarget(target) }
+            rename { nativeName }
         }
     }
     finalizedBy packRustNatives
@@ -194,16 +189,24 @@ tasks.register('packRustNatives', Zip) {
         // No, you can't use rename here in case you were wondering.
         from(file("${nativesDir}/${f}")) { eachFile { setPath f } }
     }
-    doLast {
-        byte[] bytes = Files.readAllBytes(getArchiveFile().get().asFile.toPath())
-        try (var f = new FileOutputStream(getArchiveFile().get().asFile)) {
-            try (var x = new LZ4FrameOutputStream(f, LZ4FrameOutputStream.BLOCKSIZE.SIZE_4MB, bytes.length, LZ4FrameOutputStream.FLG.Bits.BLOCK_INDEPENDENCE)) {
-                x.write(bytes)
-            }
-        }
-        supportedTargets.forEach { t ->
-            delete(file("${nativesDir}/${nativesNameForTarget(t)}"))
-        }
+
+    finalizedBy(compressLZ4)
+}
+
+tasks.register('compressLZ4', Lz4CompressTask) {
+    dependsOn cleanOldNatives
+
+    def packTask = tasks.named("packRustNatives")
+    dependsOn packTask
+    def file = packTask.get().getArchiveFile()
+
+    inputJar.set(file)
+    outputJar.set(file)
+}
+
+tasks.register('cleanOldNatives', Delete) {
+    supportedTargets.forEach { t ->
+        delete(nativesDir.toPath().resolve(nativesNameForTarget(t)))
     }
 }
 
