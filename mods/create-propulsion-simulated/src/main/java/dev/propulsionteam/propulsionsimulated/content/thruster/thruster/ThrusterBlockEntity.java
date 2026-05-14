@@ -88,6 +88,29 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         return controllerPos == null;
     }
 
+    @Override
+    public String getDyeId() {
+        if (!isController() && isMultiblock()) {
+            ThrusterBlockEntity ctrl = getControllerBE();
+            if (ctrl != null) {
+                return ctrl.dyeId;
+            }
+        }
+        return super.getDyeId();
+    }
+
+    @Override
+    public void setDyeId(String id) {
+        if (!isController() && isMultiblock()) {
+            ThrusterBlockEntity ctrl = getControllerBE();
+            if (ctrl != null) {
+                ctrl.setDyeId(id);
+                return;
+            }
+        }
+        super.setDyeId(id);
+    }
+
     @Nullable
     public ThrusterBlockEntity getControllerBE() {
         if (isController() || !hasLevel()) return this;
