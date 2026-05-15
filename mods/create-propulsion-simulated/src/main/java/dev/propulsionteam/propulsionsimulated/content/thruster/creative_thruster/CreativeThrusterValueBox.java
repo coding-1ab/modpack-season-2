@@ -12,6 +12,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
+// Original single-block creative thruster value box behavior.
 public class CreativeThrusterValueBox extends ValueBoxTransform.Sided {
     @Override
     protected Vec3 getSouthLocation() {
@@ -27,7 +28,6 @@ public class CreativeThrusterValueBox extends ValueBoxTransform.Sided {
     @Override
     public void rotate(final LevelAccessor level, final BlockPos pos, final BlockState state, final PoseStack ms) {
         super.rotate(level, pos, state, ms);
-
         final Direction facing = state.getValue(CreativeThrusterBlock.FACING);
         if (this.getSide().getAxis() == Axis.Y) {
             TransformStack.of(ms).rotateZDegrees(-AngleHelper.horizontalAngle(facing) + 180);

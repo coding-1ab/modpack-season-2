@@ -7,6 +7,7 @@ import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionShapes;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlock;
 import com.mojang.serialization.MapCodec;
 
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntityTicker;
@@ -28,6 +29,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class CreativeThrusterBlock extends AbstractThrusterBlock implements IWrenchable {
@@ -45,7 +47,9 @@ public class CreativeThrusterBlock extends AbstractThrusterBlock implements IWre
 
     public CreativeThrusterBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.defaultBlockState().setValue(PLACEMENT_FACING, Direction.DOWN));
+        this.registerDefaultState(this.defaultBlockState()
+                .setValue(PLACEMENT_FACING, Direction.DOWN)
+                .setValue(ThrusterBlock.MULTIBLOCK, false));
     }
 
     @Override
@@ -57,6 +61,7 @@ public class CreativeThrusterBlock extends AbstractThrusterBlock implements IWre
     protected void createBlockStateDefinition(@Nonnull StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(PLACEMENT_FACING);
+        builder.add(ThrusterBlock.MULTIBLOCK);
     }
 
     @Override
@@ -78,9 +83,26 @@ public class CreativeThrusterBlock extends AbstractThrusterBlock implements IWre
         if (pState == null) {
             return PropulsionShapes.CREATIVE_THRUSTER.get(Direction.NORTH);
         }
+        if (pState.hasProperty(ThrusterBlock.MULTIBLOCK) && pState.getValue(ThrusterBlock.MULTIBLOCK)) {
+            return Shapes.block();
+        }
         Direction direction = pState.getValue(FACING);
         if (direction == Direction.UP || direction == Direction.DOWN) direction = direction.getOpposite();
         return PropulsionShapes.CREATIVE_THRUSTER.get(direction);
+    }
+
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!state.is(newState.getBlock())) {
+            BlockEntity be = level.getBlockEntity(pos);
+            if (be instanceof CreativeThrusterBlockEntity thruster) {
+                CreativeThrusterBlockEntity controller = thruster.isController() ? thruster : thruster.getControllerBE();
+                if (controller != null) {
+                    controller.disassembleMulti();
+                }
+            }
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
     @Override
@@ -88,7 +110,14 @@ public class CreativeThrusterBlock extends AbstractThrusterBlock implements IWre
         if (!context.getLevel().isClientSide) {
             BlockEntity be = context.getLevel().getBlockEntity(context.getClickedPos());
             if (be instanceof CreativeThrusterBlockEntity creativeBe) {
-                creativeBe.cyclePlumeType();
+                CreativeThrusterBlockEntity target = creativeBe;
+                if (creativeBe.isMultiblock() && !creativeBe.isController()) {
+                    CreativeThrusterBlockEntity ctrl = creativeBe.getControllerBE();
+                    if (ctrl != null) {
+                        target = ctrl;
+                    }
+                }
+                target.cyclePlumeType();
                 IWrenchable.playRotateSound(context.getLevel(), context.getClickedPos());
             }
         }

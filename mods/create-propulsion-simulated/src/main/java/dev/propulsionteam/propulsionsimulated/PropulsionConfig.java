@@ -23,6 +23,8 @@ public class PropulsionConfig {
     public static final ModConfigSpec.IntValue FUEL_TANK_CAPACITY_MB;
     public static final ModConfigSpec.DoubleValue CREATIVE_THRUSTER_BASE_THRUST;
     public static final ModConfigSpec.DoubleValue CREATIVE_THRUSTER_MAX_THRUST;
+    public static final ModConfigSpec.DoubleValue CREATIVE_THRUSTER_MULTIBLOCK_2X2X2_MAX_THRUST;
+    public static final ModConfigSpec.DoubleValue CREATIVE_THRUSTER_MULTIBLOCK_3X3X3_MAX_THRUST;
     public static final ModConfigSpec.DoubleValue CREATIVE_VECTOR_THRUSTER_BASE_THRUST;
     public static final ModConfigSpec.DoubleValue CREATIVE_VECTOR_THRUSTER_MAX_THRUST;
     public static final ModConfigSpec.DoubleValue FUEL_MB_PER_TICK_AT_FULL_THROTTLE;
@@ -118,6 +120,10 @@ public class PropulsionConfig {
             CREATIVE_THRUSTER_MAX_THRUST = COMMON_BUILDER.comment("Maximum thrust (kN) the scroll can reach on a creative thruster.",
                 "Default tuned for 1000-unit thrust scale parity with Sable physics.")
                 .defineInRange("creativeThrusterMaxThrust", 6666.666666667d, 10.0d, 1000000.0d);
+            CREATIVE_THRUSTER_MULTIBLOCK_2X2X2_MAX_THRUST = COMMON_BUILDER.comment("Maximum thrust (kN) the scroll can reach on a 2x2x2 creative thruster multiblock.")
+                .defineInRange("creativeThrusterMultiblock2x2x2MaxThrust", 100000.0d, 10.0d, 100000000.0d);
+            CREATIVE_THRUSTER_MULTIBLOCK_3X3X3_MAX_THRUST = COMMON_BUILDER.comment("Maximum thrust (kN) the scroll can reach on a 3x3x3 creative thruster multiblock.")
+                .defineInRange("creativeThrusterMultiblock3x3x3MaxThrust", 5000000.0d, 10.0d, 100000000.0d);
         COMMON_BUILDER.pop();
 
         COMMON_BUILDER.push("vectorThruster");

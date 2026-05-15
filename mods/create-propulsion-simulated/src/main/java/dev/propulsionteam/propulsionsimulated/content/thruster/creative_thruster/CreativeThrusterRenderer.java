@@ -7,6 +7,7 @@ import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRende
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterDebugRenderer;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionPartialModels;
 import dev.engine_room.flywheel.api.visualization.VisualizationManager;
+import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -29,11 +30,14 @@ public class CreativeThrusterRenderer extends SmartBlockEntityRenderer<CreativeT
                               final int light,
                               final int overlay) {
         VectorThrusterDebugRenderer.render(be);
+        final BlockState state = be.getBlockState();
+        if (be.isController() && be.isMultiblock()) {
+            renderMultiblock(be, ms, buffer, light, overlay, state);
+            return;
+        }
         if (VisualizationManager.supportsVisualization(be.getLevel())) {
             return;
         }
-
-        final BlockState state = be.getBlockState();
         if (!state.hasProperty(CreativeThrusterBlock.PLACEMENT_FACING)) {
             return;
         }
@@ -57,6 +61,48 @@ public class CreativeThrusterRenderer extends SmartBlockEntityRenderer<CreativeT
 
         bracket.light(light).overlay(overlay).renderInto(ms, vb);
         ms.popPose();
+    }
+
+    private void renderMultiblock(final CreativeThrusterBlockEntity be,
+                                  final PoseStack ms,
+                                  final MultiBufferSource buffer,
+                                  final int light,
+                                  final int overlay,
+                                  final BlockState state) {
+        PartialModel model = getMultiblockModel(be.width);
+        if (model == null) return;
+
+        final Direction facing = state.getValue(CreativeThrusterBlock.FACING);
+        final int w = be.width;
+        final SuperByteBuffer mb = CachedBuffers.partial(model, state);
+        final VertexConsumer vb = buffer.getBuffer(RenderType.cutoutMipped());
+
+        ms.pushPose();
+        float cx = w * 0.5f;
+        ms.translate(cx, cx, cx);
+        applyFacingRotation(ms, facing);
+        ms.translate(-cx, -cx, -cx);
+        ms.scale(w, w, w);
+        mb.light(light).overlay(overlay).renderInto(ms, vb);
+        ms.popPose();
+    }
+
+    private static PartialModel getMultiblockModel(int width) {
+        if (width == 2) return PropulsionPartialModels.CREATIVE_THRUSTER_MULTIBLOCK_2X2X2;
+        if (width == 3) return PropulsionPartialModels.CREATIVE_THRUSTER_MULTIBLOCK_3X3X3;
+        return null;
+    }
+
+    private static void applyFacingRotation(PoseStack ms, Direction facing) {
+        switch (facing) {
+            case NORTH -> {
+            }
+            case SOUTH -> ms.mulPose(Axis.YP.rotationDegrees(-180));
+            case WEST -> ms.mulPose(Axis.YP.rotationDegrees(-270));
+            case EAST -> ms.mulPose(Axis.YP.rotationDegrees(-90));
+            case UP -> ms.mulPose(Axis.XP.rotationDegrees(-270));
+            case DOWN -> ms.mulPose(Axis.XP.rotationDegrees(-90));
+        }
     }
 
     private float getBracketAngle(final Direction facing, final Direction placementFacing) {

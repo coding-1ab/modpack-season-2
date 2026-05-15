@@ -19,7 +19,6 @@ import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionInstanceTypes;
 import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterRenderer;
 import dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterRenderer;
-import dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterVisual;
 import dev.propulsionteam.propulsionsimulated.content.thruster.ion_thruster.IonThrusterRenderer;
 import dev.propulsionteam.propulsionsimulated.content.thruster.liquid_vector_thruster.LiquidVectorThrusterRenderer;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterRenderer;
@@ -169,11 +168,6 @@ public class ModClientEvents {
 
         SimpleBlockEntityVisualizer.builder(PropulsionBlockEntities.REDSTONE_TRANSMISSION_BLOCK_ENTITY.get())
             .factory(RedstoneTransmissionVisual::new)
-            .skipVanillaRender(be -> VisualizationManager.supportsVisualization(be.getLevel()))
-            .apply();
-
-        SimpleBlockEntityVisualizer.builder(PropulsionBlockEntities.CREATIVE_THRUSTER_BLOCK_ENTITY.get())
-            .factory(CreativeThrusterVisual::new)
             .skipVanillaRender(be -> VisualizationManager.supportsVisualization(be.getLevel()))
             .apply();
 
