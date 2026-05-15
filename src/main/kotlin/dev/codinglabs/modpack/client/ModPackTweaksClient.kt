@@ -1,12 +1,12 @@
 package dev.codinglabs.modpack.client
 
+import dev.codinglabs.modpack.ID
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.fml.common.Mod
-import dev.codinglabs.modpack.ModPackTweaks
 import thedarkcolour.kotlinforforge.neoforge.forge.FORGE_BUS
 import thedarkcolour.kotlinforforge.neoforge.forge.MOD_BUS
 
-@Mod(ModPackTweaks.ID, dist = [Dist.CLIENT])
+@Mod(ID, dist = [Dist.CLIENT])
 object ModPackTweaksClient {
     init {
         MOD_BUS.addListener(::registerClientExtensions)

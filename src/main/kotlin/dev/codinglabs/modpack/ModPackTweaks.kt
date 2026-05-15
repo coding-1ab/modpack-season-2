@@ -1,18 +1,26 @@
 package dev.codinglabs.modpack
 
+import dev.codinglabs.modpack.config.Config
 import net.minecraft.resources.ResourceLocation
 import net.neoforged.fml.common.Mod
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import dev.codinglabs.modpack.data.gatherData
+import net.neoforged.fml.ModContainer
+import net.neoforged.fml.config.ModConfig
+import thedarkcolour.kotlinforforge.neoforge.KotlinModContainer
 import thedarkcolour.kotlinforforge.neoforge.forge.FORGE_BUS
 import thedarkcolour.kotlinforforge.neoforge.forge.MOD_BUS
 
-@Mod(ModPackTweaks.ID)
-object ModPackTweaks {
-    const val ID = "modpack_tweaks"
+const val ID = "modpack_tweaks"
 
-    val LOGGER: Logger = LogManager.getLogger(ID)
+@Mod(ID)
+class ModPackTweaks(
+    val container: ModContainer
+) {
+    companion object {
+        val LOGGER: Logger = LogManager.getLogger(ID)
+    }
 
     init {
         LOGGER.info("Starting Coding Lab Modpack Tweaks")
@@ -30,7 +38,9 @@ object ModPackTweaks {
         FORGE_BUS.addListener(Commands::onHurt)
         FORGE_BUS.addListener(Commands::onLeave)
         FORGE_BUS.addListener(Commands::onTick)
+
+        container.registerConfig(ModConfig.Type.COMMON, Config.SPEC)
     }
 }
 
-fun String.toResource() = ResourceLocation.fromNamespaceAndPath(ModPackTweaks.ID, this)
+fun String.toResource(): ResourceLocation = ResourceLocation.fromNamespaceAndPath(ID, this)

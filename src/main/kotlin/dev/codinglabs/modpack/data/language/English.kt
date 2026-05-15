@@ -12,10 +12,10 @@ import dev.codinglabs.modpack.Commands.TELEPORT_OVERWORLD_ONLY
 import dev.codinglabs.modpack.Commands.TELEPORT_START
 import dev.codinglabs.modpack.Fluids
 import dev.codinglabs.modpack.Items
-import dev.codinglabs.modpack.ModPackTweaks
+import dev.codinglabs.modpack.ID
 import dev.codinglabs.modpack.VoidAnchorBlock
 
-class English(output: PackOutput) : LanguageProvider(output, ModPackTweaks.ID, "en_us") {
+class English(output: PackOutput) : LanguageProvider(output, ID, "en_us") {
     override fun addTranslations() {
         add(Fluids.ENDER_FUEL_TYPE, "Ender Fuel")
         add(Items.ENDER_FUEL_BUCKET, "Ender Fuel Bucket")
@@ -37,7 +37,7 @@ class English(output: PackOutput) : LanguageProvider(output, ModPackTweaks.ID, "
         add(TELEPORT_ON_COOLDOWN, "Teleport Cooldown: %s")
         add(TELEPORT_OVERWORLD_ONLY, "Teleport is only allowed in Overworld")
 
-        add("itemGroup.${ModPackTweaks.ID}.title", "Coding Lab Modpack Tweaks")
+        add("itemGroup.${ID}.title", "Coding Lab Modpack Tweaks")
     }
 
     fun add(fluidType: FluidType, name: String) {

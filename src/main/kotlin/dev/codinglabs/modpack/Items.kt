@@ -13,8 +13,8 @@ import java.util.function.Supplier
 
 @Suppress("unused")
 object Items {
-    private val ITEMS = DeferredRegister.createItems(ModPackTweaks.ID)
-    private val TABS = DeferredRegister.create(BuiltInRegistries.CREATIVE_MODE_TAB, ModPackTweaks.ID)
+    private val ITEMS = DeferredRegister.createItems(ID)
+    private val TABS = DeferredRegister.create(BuiltInRegistries.CREATIVE_MODE_TAB, ID)
 
     val ENDER_FUEL_BUCKET: BucketItem by ITEMS.registerItem("ender_fuel_bucket") {
         BucketItem(Fluids.ENDER_FUEL, it)
@@ -28,7 +28,7 @@ object Items {
 
     val CREATIVE_TAB: CreativeModeTab by TABS.register("creative_tab", Supplier {
         CreativeModeTab.builder()
-            .title(Component.translatable("itemGroup.${ModPackTweaks.ID}.title"))
+            .title(Component.translatable("itemGroup.${ID}.title"))
             .displayItems { param, output ->
                 output.accept(ENDER_FUEL_BUCKET)
                 output.accept(SHULKER_SHELL_FRAGMENT)

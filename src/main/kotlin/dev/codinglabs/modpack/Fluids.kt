@@ -11,8 +11,8 @@ import thedarkcolour.kotlinforforge.neoforge.forge.getValue
 import java.util.function.Supplier
 
 object Fluids {
-    private val FLUIDS = DeferredRegister.create(BuiltInRegistries.FLUID, ModPackTweaks.ID)
-    private val FLUID_TYPES = DeferredRegister.create(NeoForgeRegistries.FLUID_TYPES, ModPackTweaks.ID)
+    private val FLUIDS = DeferredRegister.create(BuiltInRegistries.FLUID, ID)
+    private val FLUID_TYPES = DeferredRegister.create(NeoForgeRegistries.FLUID_TYPES, ID)
 
     val ENDER_FUEL_TYPE: FluidType by FLUID_TYPES.register("ender_fuel", Supplier {
         FluidType(

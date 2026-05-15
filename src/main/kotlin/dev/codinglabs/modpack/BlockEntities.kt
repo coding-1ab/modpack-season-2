@@ -8,7 +8,7 @@ import thedarkcolour.kotlinforforge.neoforge.forge.getValue
 import java.util.function.Supplier
 
 object BlockEntities {
-    private val BLOCK_ENTITY_TYPES = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, ModPackTweaks.ID)
+    private val BLOCK_ENTITY_TYPES = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, ID)
 
     val VOID_ANCHOR: BlockEntityType<VoidAnchorBlockEntity> by BLOCK_ENTITY_TYPES.register("void_anchor", Supplier {
         BlockEntityType.Builder.of(::VoidAnchorBlockEntity, Blocks.VOID_ANCHOR).build(null)

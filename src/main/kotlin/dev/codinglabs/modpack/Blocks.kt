@@ -11,7 +11,7 @@ import net.neoforged.neoforge.registries.DeferredRegister
 import thedarkcolour.kotlinforforge.neoforge.forge.getValue
 
 object Blocks {
-    private val BLOCKS = DeferredRegister.createBlocks(ModPackTweaks.ID)
+    private val BLOCKS = DeferredRegister.createBlocks(ID)
 
     val ENDER_FIRE: EnderFire by BLOCKS.registerBlock(
         "ender_fire", ::EnderFire, BlockBehaviour.Properties.of()

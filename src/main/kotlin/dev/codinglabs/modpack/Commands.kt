@@ -4,6 +4,9 @@ import com.mojang.brigadier.CommandDispatcher
 import com.mojang.serialization.Codec
 import com.mojang.serialization.DataResult
 import com.mojang.serialization.codecs.RecordCodecBuilder
+import dev.ryanhcode.sable.api.physics.`object`.box.BoxPhysicsObject
+import dev.ryanhcode.sable.api.sublevel.SubLevelContainer
+import dev.ryanhcode.sable.companion.math.Pose3d
 import net.minecraft.ChatFormatting
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.core.BlockPos
@@ -21,15 +24,21 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent
 import net.neoforged.neoforge.event.tick.LevelTickEvent
+import org.joml.Vector3d
+import java.util.UUID
 import net.minecraft.commands.Commands as MinecraftCommands
 
 object Commands {
-    const val SPAWN_PLAYER_ONLY: String = "${ModPackTweaks.ID}.commands.spawn.failure.player_only"
-    const val RTP_PLAYER_ONLY: String = "${ModPackTweaks.ID}.commands.rtp.failure.player_only"
-    const val TELEPORT_START: String = "${ModPackTweaks.ID}.commands.teleport.success.timer_added"
-    const val TELEPORT_INTERRUPTED: String = "${ModPackTweaks.ID}.commands.teleport.failure.interrupted"
-    const val TELEPORT_ON_COOLDOWN: String = "${ModPackTweaks.ID}.commands.teleport.failure.cooldown"
-    const val TELEPORT_OVERWORLD_ONLY: String = "${ModPackTweaks.ID}.commands.teleport.failure.overworld_only"
+    const val SPAWN_PLAYER_ONLY: String = "${ID}.commands.spawn.failure.player_only"
+    const val RTP_PLAYER_ONLY: String = "${ID}.commands.rtp.failure.player_only"
+    const val TELEPORT_START: String = "${ID}.commands.teleport.success.timer_added"
+    const val TELEPORT_INTERRUPTED: String = "${ID}.commands.teleport.failure.interrupted"
+    const val TELEPORT_ON_COOLDOWN: String = "${ID}.commands.teleport.failure.cooldown"
+    const val TELEPORT_OVERWORLD_ONLY: String = "${ID}.commands.teleport.failure.overworld_only"
+
+    val DEVELOPERS = listOf(
+        UUID.fromString("b6c7411f-15e2-48f6-b53f-876ec0577e82")
+    )
 
     val TIMER_COOLDOWN_RULE: GameRules.Key<GameRules.IntegerValue> = GameRules.register(
         "teleport_cooldown_ticks",
@@ -44,6 +53,26 @@ object Commands {
     fun register(event: RegisterCommandsEvent) {
         teleport(event.dispatcher, TeleportType.Spawn)
         teleport(event.dispatcher, TeleportType.Random)
+        testDragon(event.dispatcher)
+    }
+
+    fun testDragon(dispatcher: CommandDispatcher<CommandSourceStack>) {
+        dispatcher.register(MinecraftCommands.literal("testDragon").executes { context ->
+            val source = context.source
+            val player = source.entity as? ServerPlayer
+            if (player == null || !DEVELOPERS.contains(player.uuid)) {
+                source.sendFailure(Component.literal("Developer Only Command"))
+                return@executes -1
+            }
+
+            val level = player.level() as ServerLevel
+            val container = SubLevelContainer.getContainer(level)!!
+            val pipeline = container.physicsSystem().pipeline
+
+            pipeline.addBox(BoxPhysicsObject(Pose3d(), Vector3d(0.5, 0.5, 0.5), 1.0))
+
+            return@executes 0
+        })
     }
 
     fun teleport(dispatcher: CommandDispatcher<CommandSourceStack>, type: TeleportType) {

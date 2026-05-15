@@ -12,10 +12,10 @@ import dev.codinglabs.modpack.Commands.TELEPORT_ON_COOLDOWN
 import dev.codinglabs.modpack.Commands.TELEPORT_OVERWORLD_ONLY
 import dev.codinglabs.modpack.Fluids
 import dev.codinglabs.modpack.Items
-import dev.codinglabs.modpack.ModPackTweaks
+import dev.codinglabs.modpack.ID
 import dev.codinglabs.modpack.VoidAnchorBlock
 
-class Korean(output: PackOutput) : LanguageProvider(output, ModPackTweaks.ID, "ko_kr") {
+class Korean(output: PackOutput) : LanguageProvider(output, ID, "ko_kr") {
     override fun addTranslations() {
         add(Fluids.ENDER_FUEL_TYPE, "엔더 연료")
         add(Items.ENDER_FUEL_BUCKET, "엔더 연료 양동이")
@@ -37,7 +37,7 @@ class Korean(output: PackOutput) : LanguageProvider(output, ModPackTweaks.ID, "k
         add(TELEPORT_ON_COOLDOWN, "텔레포트 대기시간: %s")
         add(TELEPORT_OVERWORLD_ONLY, "텔레포트는 오버월드에서만 가능합니다")
 
-        add("itemGroup.${ModPackTweaks.ID}.title", "코딩랩 모드팩 자체 컨텐츠")
+        add("itemGroup.${ID}.title", "코딩랩 모드팩 자체 컨텐츠")
     }
 
     fun add(fluidType: FluidType, name: String) {

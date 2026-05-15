@@ -15,7 +15,7 @@ import kotlin.jvm.optionals.getOrNull
 
 object Attachments {
     val ATTACHMENTS: DeferredRegister<AttachmentType<*>> =
-        DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, ModPackTweaks.ID)
+        DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, ID)
 
     val VOID_ANCHOR_POSITION: AttachmentType<BlockPos> by ATTACHMENTS.register("void_anchor_position", Supplier {
         AttachmentType.builder(Supplier { BlockPos.ZERO })

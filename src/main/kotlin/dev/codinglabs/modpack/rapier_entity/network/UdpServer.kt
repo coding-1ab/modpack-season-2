@@ -1,7 +1,10 @@
-package dev.codinglabs.modpack.rapier_entity
+package dev.codinglabs.modpack.rapier_entity.network
 
 import dev.ryanhcode.sable.network.udp.SableUDPServer
 import io.netty.channel.Channel
+import io.netty.channel.ChannelHandlerContext
+import io.netty.channel.SimpleChannelInboundHandler
+import net.minecraft.server.MinecraftServer
 
 /**
  * 엔티티 모델을 동기화 하기 위한 UDP 채널
@@ -9,6 +12,7 @@ import io.netty.channel.Channel
  * @author RyanH, Ocelot, tmvkrpxl0
  */
 class UdpServer(
+    private val server: MinecraftServer,
     private val channel: Channel
 ) {
     companion object {
@@ -17,3 +21,12 @@ class UdpServer(
     }
 }
 
+class UdpChannelFilter: SimpleChannelInboundHandler<AddressedUdpPacket>(AddressedUdpPacket::class.java) {
+    override fun channelRead0(
+        ctx: ChannelHandlerContext?,
+        msg: AddressedUdpPacket?
+    ) {
+        TODO("Not yet implemented")
+    }
+
+}

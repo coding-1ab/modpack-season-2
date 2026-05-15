@@ -14,9 +14,10 @@ import dev.codinglabs.modpack.EnderFire
 import dev.codinglabs.modpack.ModPackTweaks
 import dev.codinglabs.modpack.VoidAnchorBlock
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
+import dev.codinglabs.modpack.ID
 
 class BlockStates(output: PackOutput, helper: ExistingFileHelper) :
-    BlockStateProvider(output, ModPackTweaks.ID, helper) {
+    BlockStateProvider(output, ID, helper) {
     override fun registerStatesAndModels() {
 
         fire(
