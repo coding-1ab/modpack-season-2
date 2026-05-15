@@ -11,7 +11,14 @@ def is_valid_repo(url):
 def run_command(workdir, command_array):
     command_string = " ".join(command_array)
     print(f"+{command_string} (in {workdir})")
-    output = subprocess.check_output(command_array, cwd=workdir).decode().strip()
+    process = subprocess.run(command_array, cwd=workdir, capture_output=True, text=True)
+    output = process.stdout.decode().strip()
+    error = process.stderr.decode().strip()
+    code = process.returncode
+    print(stdout)
+    if code != 0:
+        print(f"프로세스 실행 도중 오류 발생. 오류 코드: {code}")
+        print(error)
     return output
 
 for project in os.listdir("mods"):
@@ -42,6 +49,6 @@ for project in os.listdir("mods"):
 
 print("Subprojects are now probably corrected (hopefully)")
 
-run_command("./", ["git", "submodule", "update", "--recursive", "--init" "--remote"])
+run_command("./", ["git", "submodule", "update", "--recursive", "--init", "--remote"])
 run_command("./", ["git", "pull"])
-run_command("./", ["git", "submodule", "update", "--recursive", "--init" "--remote"])
+run_command("./", ["git", "submodule", "update", "--recursive", "--init", "--remote"])
