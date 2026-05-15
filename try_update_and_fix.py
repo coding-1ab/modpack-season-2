@@ -40,5 +40,6 @@ for project in os.listdir("mods"):
 
 print("Subprojects are now probably corrected (hopefully)")
 
+run_command("./", ["git", "submodule", "update", "--recursive", "--init" "--remote"])
 run_command("./", ["git", "pull"])
 run_command("./", ["git", "submodule", "update", "--recursive", "--init" "--remote"])
