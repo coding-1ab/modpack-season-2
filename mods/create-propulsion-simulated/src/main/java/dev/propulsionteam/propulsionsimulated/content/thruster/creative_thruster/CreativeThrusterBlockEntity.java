@@ -42,7 +42,6 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
     private static final int DISASSEMBLY_GRACE_TICKS = 5;
     private int disassemblyCooldown = 0;
     private CreativeThrusterPowerScrollValueBehaviour powerBehaviour;
-    private CreativeThrusterPowerScrollValueBehaviour multiblockBackPowerBehaviour;
 
     public enum PlumeType {
         PLASMA, ION, PLUME, NONE
@@ -61,18 +60,14 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         super.addBehaviours(behaviours);
-        powerBehaviour = new CreativeThrusterPowerScrollValueBehaviour(this);
-        multiblockBackPowerBehaviour = new CreativeThrusterPowerScrollValueBehaviour(this, new CreativeThrusterMultiblockBackValueBox(), this::getConfiguredMaxThrustKn);
+        powerBehaviour = new CreativeThrusterPowerScrollValueBehaviour(this, new CreativeThrusterValueBox(), this::getConfiguredMaxThrustKn);
         // Start scroll at the configured base thrust value
         double base = PropulsionConfig.CREATIVE_THRUSTER_BASE_THRUST.get();
         double max = PropulsionConfig.CREATIVE_THRUSTER_MAX_THRUST.get();
         int startStep = (int) Math.round((base / max) * (CreativeThrusterPowerScrollValueBehaviour.TOTAL_STEPS - 1));
         powerBehaviour.value = Math.max(0, Math.min(CreativeThrusterPowerScrollValueBehaviour.TOTAL_STEPS - 1, startStep));
-        multiblockBackPowerBehaviour.value = powerBehaviour.value;
         powerBehaviour.withCallback(this::onAnyPowerBehaviourChanged);
-        multiblockBackPowerBehaviour.withCallback(this::onAnyPowerBehaviourChanged);
         behaviours.add(powerBehaviour);
-        behaviours.add(multiblockBackPowerBehaviour);
     }
 
     private void onAnyPowerBehaviourChanged(int value) {
@@ -89,9 +84,6 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
     private void applyPowerValue(int value) {
         if (powerBehaviour != null && powerBehaviour.getValue() != value) {
             powerBehaviour.value = value;
-        }
-        if (multiblockBackPowerBehaviour != null && multiblockBackPowerBehaviour.getValue() != value) {
-            multiblockBackPowerBehaviour.value = value;
         }
         updateThrust(getBlockState());
         setChanged();
@@ -181,9 +173,6 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
                 int v = ctrl.powerBehaviour.getValue();
                 if (powerBehaviour.getValue() != v) {
                     powerBehaviour.value = v;
-                }
-                if (multiblockBackPowerBehaviour != null && multiblockBackPowerBehaviour.getValue() != v) {
-                    multiblockBackPowerBehaviour.value = v;
                 }
             }
         }

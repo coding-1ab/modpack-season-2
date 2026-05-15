@@ -36,12 +36,28 @@ public class CreativeThrusterValueBox extends ValueBoxTransform.Sided {
 
     @Override
     protected boolean isSideActive(final BlockState state, final Direction side) {
+        if (state.hasProperty(dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlock.MULTIBLOCK)
+                && state.getValue(dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlock.MULTIBLOCK)) {
+            return side == state.getValue(CreativeThrusterBlock.FACING);
+        }
         final Direction thrusterFacing = state.getValue(CreativeThrusterBlock.FACING);
         final Direction placementFacing = state.getValue(CreativeThrusterBlock.PLACEMENT_FACING);
         if (side.getAxis() == thrusterFacing.getAxis()) {
             return false;
         }
-        return side != placementFacing;
+        if (side == placementFacing) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean testHit(LevelAccessor level, BlockPos pos, BlockState state, Vec3 localHit) {
+        if (level.getBlockEntity(pos) instanceof CreativeThrusterBlockEntity be
+                && be.isMultiblock()
+                && !be.isBaseLayerMember()) {
+            return false;
+        }
+        return super.testHit(level, pos, state, localHit);
     }
 }
-

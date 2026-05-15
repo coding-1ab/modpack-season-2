@@ -11,6 +11,7 @@ import net.minecraft.core.Direction.Axis;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlock;
 
 // Multiblock-only valuebox attached per base-layer block on back face.
 public class CreativeThrusterMultiblockBackValueBox extends ValueBoxTransform.Sided {
@@ -40,6 +41,9 @@ public class CreativeThrusterMultiblockBackValueBox extends ValueBoxTransform.Si
 
     @Override
     protected boolean isSideActive(BlockState state, Direction side) {
+        if (!state.hasProperty(ThrusterBlock.MULTIBLOCK) || !state.getValue(ThrusterBlock.MULTIBLOCK)) {
+            return false;
+        }
         return side == state.getValue(CreativeThrusterBlock.FACING);
     }
 

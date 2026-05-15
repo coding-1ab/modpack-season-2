@@ -119,7 +119,7 @@ public class PropulsionConfig {
                 .defineInRange("creativeThrusterBaseThrust", 666.666666667d, 1.0d, 1000000.0d);
             CREATIVE_THRUSTER_MAX_THRUST = COMMON_BUILDER.comment("Maximum thrust (kN) the scroll can reach on a creative thruster.",
                 "Default tuned for 1000-unit thrust scale parity with Sable physics.")
-                .defineInRange("creativeThrusterMaxThrust", 6666.666666667d, 10.0d, 1000000.0d);
+                .defineInRange("creativeThrusterMaxThrust", 10000.0d, 10.0d, 1000000.0d);
             CREATIVE_THRUSTER_MULTIBLOCK_2X2X2_MAX_THRUST = COMMON_BUILDER.comment("Maximum thrust (kN) the scroll can reach on a 2x2x2 creative thruster multiblock.")
                 .defineInRange("creativeThrusterMultiblock2x2x2MaxThrust", 100000.0d, 10.0d, 100000000.0d);
             CREATIVE_THRUSTER_MULTIBLOCK_3X3X3_MAX_THRUST = COMMON_BUILDER.comment("Maximum thrust (kN) the scroll can reach on a 3x3x3 creative thruster multiblock.")
