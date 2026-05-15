@@ -12,10 +12,10 @@ def run_command(workdir, command_array):
     command_string = " ".join(command_array)
     print(f"+{command_string} (in {workdir})")
     process = subprocess.run(command_array, cwd=workdir, capture_output=True, text=True)
-    output = process.stdout.decode().strip()
-    error = process.stderr.decode().strip()
+    output = process.stdout.strip()
+    error = process.stderr.strip()
     code = process.returncode
-    print(stdout)
+    print(output)
     if code != 0:
         print(f"프로세스 실행 도중 오류 발생. 오류 코드: {code}")
         print(error)
