@@ -23,9 +23,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.Clearable;
 import net.neoforged.neoforge.items.IItemHandler;
 
-public class SolidBurnerBlockEntity extends AbstractBurnerBlockEntity implements IBurner {
+public class SolidBurnerBlockEntity extends AbstractBurnerBlockEntity implements IBurner,Clearable {
     private BurnerFuelBehaviour fuelInventory;
     private BurnerDamager damager;
     
@@ -136,4 +137,9 @@ public class SolidBurnerBlockEntity extends AbstractBurnerBlockEntity implements
         super.read(tag, registries, clientPacket);
         burnTime = tag.getInt("burnTime");
     }
+    
+    @Override
+	  public void clearContent() {
+        fuelInventory.fuelStack = ItemStack.EMPTY;
+	  }
 }
