@@ -28,7 +28,7 @@ Fuel thrusters and ion thrusters use **different peripheral type strings** (`thr
 
 | Method | Returns | Notes |
 |--------|---------|--------|
-| `getObstruction()` | `number` | |
+| `getObstruction()` | `number` | Returns unobstructed-block count from the obstruction scan |
 | `setPower(redstonePower)` | — | `redstonePower`: `0 … 15`; sets peripheral throttle |
 | `setPowerNormalized(power)` | — | `power`: `0.0 … 1.0` |
 | `getPower()` | `number` | Normalized throttle `0.0 … 1.0` |
@@ -53,7 +53,7 @@ FE-powered ion thrusters: same throttle and thrust readouts as [Thruster](#thrus
 |--------|---------|--------|
 | `setPower` / `setPowerNormalized` | — | Same throttle semantics as [Throttle control](#throttle-control-all-thrusters) |
 | `getPower()` | `number` | |
-| `getObstruction()` | `number` | |
+| `getObstruction()` | `number` | Returns unobstructed-block count from the obstruction scan |
 | `getCurrentThrustPN()` / `getCurrentThrustKN()` | `number` | |
 | `getDisplayedThrustPN()` / `getDisplayedThrustKN()` | `number` | |
 | `getAirflowMs()` | `number` | |
@@ -79,7 +79,7 @@ Same throttle methods as the normal thruster, plus scroll-equivalent thrust conf
 | `getDisplayedThrustPN()` | `number` | |
 | `getDisplayedThrustKN()` | `number` | |
 | `getAirflowMs()` | `number` | |
-| `getObstruction()` | `number` | |
+| `getObstruction()` | `number` | Returns unobstructed-block count from the obstruction scan |
 
 ---
 
@@ -112,7 +112,7 @@ Standard **fuel** vector thruster (not liquid fuel cell, not creative). Directio
 
 ## Liquid vector thruster (`liquid_vector_thruster`)
 
-Liquid-fuel vector thruster: **same direction and throttle methods** as **Vector thruster** (`vector_thruster`) above. No `setThrustOutput` / override helpers (those exist only on **Creative vector thruster**).
+Liquid-fuel vector thruster: **same direction and throttle methods** as **Vector thruster** (`vector_thruster`) above, **plus fluid tank passthrough methods**. No `setThrustOutput` / override helpers (those exist only on **Creative vector thruster**).
 
 ### Direction (`-1 … 1` plane)
 
@@ -135,8 +135,15 @@ Liquid-fuel vector thruster: **same direction and throttle methods** as **Vector
 | `getThrust()` | `0 … 15` scale |
 | `getPower()` | Normalized `0.0 … 1.0` |
 
----
+### Fluid passthrough (`IFluidHandler`)
 
+| Method | Returns | Notes |
+|--------|---------|--------|
+| `tanks()` | `table` | |
+| `pushFluid(toName[, limit[, fluidName]])` | `number` | |
+| `pullFluid(fromName[, limit[, fluidName]])` | `number` | |
+
+---
 ## Creative vector thruster (`creative_vector_thruster`)
 
 Separate peripheral implementation (`CreativeVectorThrusterPeripheral`): direction + throttle match **Vector thruster**, plus override APIs below.
@@ -212,3 +219,4 @@ Separate peripheral implementation (`CreativeVectorThrusterPeripheral`): directi
 | `getCoralCapacityMb()` |
 | `getEnergyAmountFe()` |
 | `getEnergyCapacityFe()` |
+
