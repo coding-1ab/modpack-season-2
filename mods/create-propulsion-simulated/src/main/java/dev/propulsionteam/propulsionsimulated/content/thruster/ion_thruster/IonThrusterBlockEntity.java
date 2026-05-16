@@ -350,12 +350,8 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
     }
 
     public IEnergyStorage getEnergyHandler(final Direction side) {
-        if (side == null) {
-            return this.energyHandler;
-        }
-        if (side != this.getEnergyInputSide()) {
-            return null;
-        }
+        // Expose FE on every side for broad cable/interface compatibility.
+        // Some networks probe or pull from arbitrary faces instead of the nominal input face.
         return this.energyHandler;
     }
 

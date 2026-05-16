@@ -72,6 +72,11 @@ public class PropulsionShapes {
             .add(Block.box(0, 0, 0, 16, 14, 16))
             .add(Block.box(1, 14, 1, 15, 16, 15))
             .forDirectional(),
+
+        CORAL_GENERATOR = ShapeBuilder.shape()
+            .add(Block.box(1, 0, 1, 15, 16, 15))
+            .add(Block.box(0, 1, 0, 16, 15, 16))
+            .forDirectional(Direction.UP),
         
         PROPELLER = ShapeBuilder.shape()
             .add(Block.box(0, 0, 4, 16, 16, 16))

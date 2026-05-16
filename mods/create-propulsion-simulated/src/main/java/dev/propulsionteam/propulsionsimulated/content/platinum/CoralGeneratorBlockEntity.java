@@ -15,6 +15,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -88,33 +89,60 @@ public class CoralGeneratorBlockEntity extends SmartBlockEntity {
         if (level == null || level.isClientSide) {
             return;
         }
-        if (energyStored >= ENERGY_CAPACITY || tank == null || tank.isEmpty()) {
+        if (energyStored < ENERGY_CAPACITY && tank != null && !tank.isEmpty()) {
+            FluidStack fluidStack = tank.getPrimaryHandler().getFluidInTank(0);
+            CoralGeneratorFuelProperties properties = CoralGeneratorFuelManager.getProperties(fluidStack.getFluid());
+            if (properties != null && properties.fePerMb() > 0 && fluidStack.getAmount() >= FLUID_CONSUMPTION_PER_TICK_MB) {
+                int fePerConversion = properties.fePerMb() * FLUID_CONSUMPTION_PER_TICK_MB;
+                if (energyStored + fePerConversion <= ENERGY_CAPACITY) {
+                    FluidStack drained = tank.getPrimaryHandler().drain(FLUID_CONSUMPTION_PER_TICK_MB, IFluidHandler.FluidAction.EXECUTE);
+                    if (drained.getAmount() >= FLUID_CONSUMPTION_PER_TICK_MB) {
+                        energyStored = Math.min(ENERGY_CAPACITY, energyStored + fePerConversion);
+                        setChanged();
+                        notifyUpdate();
+                    }
+                }
+            }
+        }
+
+        pushEnergyToNeighbors();
+    }
+
+    private void pushEnergyToNeighbors() {
+        if (level == null || energyStored <= 0) {
             return;
         }
 
-        FluidStack fluidStack = tank.getPrimaryHandler().getFluidInTank(0);
-        CoralGeneratorFuelProperties properties = CoralGeneratorFuelManager.getProperties(fluidStack.getFluid());
-        if (properties == null || properties.fePerMb() <= 0) {
-            return;
+        int remaining = energyStored;
+        for (Direction direction : Direction.values()) {
+            if (!isEnergySide(direction)) {
+                continue;
+            }
+            if (remaining <= 0) {
+                break;
+            }
+            BlockPos neighborPos = worldPosition.relative(direction);
+            IEnergyStorage target = level.getCapability(Capabilities.EnergyStorage.BLOCK, neighborPos, direction.getOpposite());
+            if (target == null || !target.canReceive()) {
+                continue;
+            }
+
+            int offer = Math.min(remaining, target.receiveEnergy(remaining, true));
+            if (offer <= 0) {
+                continue;
+            }
+            int accepted = target.receiveEnergy(offer, false);
+            if (accepted <= 0) {
+                continue;
+            }
+            remaining -= accepted;
         }
 
-        if (fluidStack.getAmount() < FLUID_CONSUMPTION_PER_TICK_MB) {
-            return;
+        if (remaining != energyStored) {
+            energyStored = remaining;
+            setChanged();
+            notifyUpdate();
         }
-
-        int fePerConversion = properties.fePerMb() * FLUID_CONSUMPTION_PER_TICK_MB;
-        if (energyStored + fePerConversion > ENERGY_CAPACITY) {
-            return;
-        }
-
-        FluidStack drained = tank.getPrimaryHandler().drain(FLUID_CONSUMPTION_PER_TICK_MB, IFluidHandler.FluidAction.EXECUTE);
-        if (drained.getAmount() < FLUID_CONSUMPTION_PER_TICK_MB) {
-            return;
-        }
-
-        energyStored = Math.min(ENERGY_CAPACITY, energyStored + fePerConversion);
-        setChanged();
-        notifyUpdate();
     }
 
     public IFluidHandler getFluidHandler(Direction side) {
@@ -124,14 +152,30 @@ public class CoralGeneratorBlockEntity extends SmartBlockEntity {
         if (side == null) {
             return tank.getPrimaryHandler();
         }
-        return side.getAxis().isHorizontal() ? tank.getPrimaryHandler() : null;
+        return isFluidSide(side) ? tank.getPrimaryHandler() : null;
     }
 
     public IEnergyStorage getEnergyHandler(Direction side) {
         if (side == null) {
             return energyHandler;
         }
-        return side.getAxis() == Direction.Axis.Y ? energyHandler : null;
+        return isEnergySide(side) ? energyHandler : null;
+    }
+
+    private boolean isEnergySide(Direction side) {
+        return side.getAxis() == getFacingAxis();
+    }
+
+    private boolean isFluidSide(Direction side) {
+        return side.getAxis() != getFacingAxis();
+    }
+
+    private Direction.Axis getFacingAxis() {
+        BlockState state = getBlockState();
+        if (state.hasProperty(CoralGeneratorBlock.FACING)) {
+            return state.getValue(CoralGeneratorBlock.FACING).getAxis();
+        }
+        return Direction.Axis.Y;
     }
 
     public int getCoralAmountMb() {

@@ -2,27 +2,54 @@ package dev.propulsionteam.propulsionsimulated.content.platinum;
 
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntityTicker;
+import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
+import dev.propulsionteam.propulsionsimulated.registries.PropulsionShapes;
 
-public class CoralGeneratorBlock extends Block implements IBE<CoralGeneratorBlockEntity> {
-    private static final VoxelShape SHAPE = Shapes.or(
-        Block.box(1, 0, 1, 15, 16, 15),
-        Block.box(0, 1, 0, 16, 15, 16)
-    );
+public class CoralGeneratorBlock extends Block implements IBE<CoralGeneratorBlockEntity>, IWrenchable {
+    public static final DirectionProperty FACING = BlockStateProperties.FACING;
 
     public CoralGeneratorBlock(Properties properties) {
         super(properties);
+        registerDefaultState(defaultBlockState().setValue(FACING, Direction.UP));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
+        builder.add(FACING);
+    }
+
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite());
+    }
+
+    @Override
+    public BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
+    }
+
+    @Override
+    public BlockState mirror(BlockState state, Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
     @Override
@@ -37,12 +64,12 @@ public class CoralGeneratorBlock extends Block implements IBE<CoralGeneratorBloc
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE;
+        return PropulsionShapes.CORAL_GENERATOR.get(state.getValue(FACING));
     }
 
     @Override
     protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE;
+        return PropulsionShapes.CORAL_GENERATOR.get(state.getValue(FACING));
     }
 
     @Override
