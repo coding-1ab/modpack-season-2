@@ -55,10 +55,10 @@ dependencies {
 
     compileOnly "foundry.imguimc:imguimc-neoforge-${minecraft_version}:$imguimc_version"
 
-    compileOnly "maven.modrinth:sodium:mc1.21.1-${sodium_version}-neoforge"
+    compileOnly "net.caffeinemc:sodium-neoforge-mod:${sodium_version}"
     compileOnly "maven.modrinth:iris:1.8.8+1.21.1-neoforge"
 //    compileOnly "maven.modrinth:tacz-1.21.1:1.1.7-hotfix-r3"
-//    runtimeOnly "maven.modrinth:sodium:mc1.21.1-${sodium_version}-neoforge"
+//    runtimeOnly "net.caffeinemc:sodium-neoforge:${sodium_version}"
 //    runtimeOnly "maven.modrinth:iris:1.8.8+1.21.1-neoforge"
 //    runtimeOnly "maven.modrinth:tacz-1.21.1:1.1.7-hotfix-r3"
 

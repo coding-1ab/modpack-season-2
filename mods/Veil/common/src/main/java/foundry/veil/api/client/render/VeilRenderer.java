@@ -122,7 +122,8 @@ public class VeilRenderer implements ResourceManagerReloadListener {
         if (buffers.length == 0) {
             return false;
         }
-        return this.dynamicBufferManager.setActiveBuffers(name, DynamicBufferType.encode(buffers));
+        int active = this.dynamicBufferManager.getActiveBuffers(name) | DynamicBufferType.encode(buffers);
+        return this.dynamicBufferManager.setActiveBuffers(name, active);
     }
 
     /**

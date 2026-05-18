@@ -84,7 +84,7 @@ public class VeilChunkVertex implements ChunkVertexType {
     }
 
     private static int packTexture(int u, int v) {
-        return (u & 65535) | (v & 65535) << 16;
+        return (u & 0xFFFF) | (v & 0xFFFF) << 16;
     }
 
     private static int encodeTexture(float center, float x) {
@@ -100,7 +100,7 @@ public class VeilChunkVertex implements ChunkVertexType {
     }
 
     private static int packLightAndData(int light, int material, int section) {
-        return (light & 65535) | (material & 0xFF) << 16 | (section & 0xFF) << 24;
+        return (light & 0xFFFF) | (material & 0xFF) << 16 | (section & 0xFF) << 24;
     }
 
     private static int sign(int x) {

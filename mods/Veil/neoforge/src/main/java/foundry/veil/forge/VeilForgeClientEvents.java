@@ -5,6 +5,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import foundry.veil.Veil;
 import foundry.veil.api.client.render.VeilRenderSystem;
+import foundry.veil.api.client.render.VeilRenderer;
 import foundry.veil.api.client.render.dynamicbuffer.DynamicBufferType;
 import foundry.veil.api.quasar.data.QuasarParticles;
 import foundry.veil.api.quasar.particle.ParticleEmitter;
@@ -90,7 +91,8 @@ public class VeilForgeClientEvents {
                     .then(Commands.literal("enable")
                             .then(Commands.argument("buffer", ClientEnumArgument.enumArgument(DynamicBufferType.class)).executes(ctx -> {
                                 DynamicBufferType value = ctx.getArgument("buffer", DynamicBufferType.class);
-                                VeilRenderSystem.renderer().enableBuffers(bufferId, value);
+                                VeilRenderer renderer = VeilRenderSystem.renderer();
+                                renderer.enableBuffers(bufferId, value);
                                 ctx.getSource().sendSuccess(() -> Component.translatable("commands.veil.buffers.enable", value.name().toLowerCase(Locale.ROOT)), true);
                                 return Command.SINGLE_SUCCESS;
                             }))

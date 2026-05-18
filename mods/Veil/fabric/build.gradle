@@ -46,7 +46,7 @@ dependencies {
     modImplementation fabricApi.module("fabric-renderer-api-v1", project.fabric_version)
     implementation 'org.jetbrains:annotations:24.0.1'
 
-    modCompileOnly "maven.modrinth:sodium:mc1.21.1-${sodium_version}-fabric"
+    modCompileOnly "net.caffeinemc:sodium-fabric:${sodium_version}"
     modCompileOnly "maven.modrinth:iris:1.8.8+1.21.1-fabric"
     modCompileOnly "maven.modrinth:replaymod:1.21-2.6.20"
     modCompileOnly "maven.modrinth:flashback:0.32.0"

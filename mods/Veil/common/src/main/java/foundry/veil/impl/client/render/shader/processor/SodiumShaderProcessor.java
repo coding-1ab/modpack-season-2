@@ -31,6 +31,15 @@ public class SodiumShaderProcessor {
 
     private static final ThreadLocal<ShaderProcessorList> PROCESSOR = new ThreadLocal<>();
     private static final ThreadLocal<Map<String, Object>> CUSTOM_PROGRAM_DATA = new ThreadLocal<>();
+    private static final ThreadLocal<Integer> SHADER_TYPE = new ThreadLocal<>();
+    private static final ThreadLocal<ResourceLocation> SHADER_NAME = new ThreadLocal<>();
+    private static final ThreadLocal<GLCapabilities> GL_CAPABILITIES = new ThreadLocal<>();
+
+    public static void setShaderType(int type, ResourceLocation shaderName, GLCapabilities glCapabilities) {
+        SHADER_TYPE.set(type);
+        SHADER_NAME.set(shaderName);
+        GL_CAPABILITIES.set(glCapabilities);
+    }
 
     public static void setup(ResourceProvider provider) {
         ShaderProcessorList list = new ShaderProcessorList(provider);
@@ -45,9 +54,17 @@ public class SodiumShaderProcessor {
     public static void free() {
         PROCESSOR.remove();
         CUSTOM_PROGRAM_DATA.remove();
+        SHADER_TYPE.remove();
+        SHADER_NAME.remove();
+        GL_CAPABILITIES.remove();
     }
 
-    public static String modify(@Nullable ResourceLocation name, int activeBuffers, int type, String source) throws IOException, GlslSyntaxException, LexerException {
+    public static String modify(int activeBuffers, String source) throws IOException, GlslSyntaxException, LexerException {
+        ResourceLocation shaderName = SHADER_NAME.get();
+        if (shaderName == null) {
+            return source;
+        }
+
         ShaderProcessorList processor = PROCESSOR.get();
         if (processor == null) {
             throw new NullPointerException("Processor not initialized");
@@ -58,10 +75,14 @@ public class SodiumShaderProcessor {
         DynamicBufferType.addMacros(activeBuffers, macros);
         VeilRenderSystem.renderer().getShaderManager().addMacros(macros);
         GlslTree tree = GlslParser.preprocessParse(source, macros);
-        processor.getProcessor().modify(new Context(CUSTOM_PROGRAM_DATA.get(), processor, name, activeBuffers, type, GL.getCapabilities(), macros, true), tree);
+        processor.getProcessor().modify(new Context(CUSTOM_PROGRAM_DATA.get(), processor, shaderName.withPrefix("shaders/"), activeBuffers, SHADER_TYPE.get(), GL_CAPABILITIES.get(), macros, true), tree);
         GlslTree.stripGLMacros(macros);
         tree.getMacros().putAll(macros);
         return tree.toSourceString();
+    }
+
+    public static @Nullable ResourceLocation getActiveShaderName() {
+        return SHADER_NAME.get();
     }
 
     private record Context(Map<String, Object> customProgramData,
