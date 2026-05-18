@@ -31,8 +31,15 @@ public class SodiumShaderPreProcessor implements ShaderPreProcessor {
         List<GlslNode> mainBody = Objects.requireNonNull(tree.mainFunction().orElseThrow().getBody());
         GlslNodeList treeBody = tree.getBody();
 
+        boolean iris = IrisCompat.INSTANCE != null && IrisCompat.INSTANCE.areShadersLoaded();
         GlslNodeStringWriter writer = new GlslNodeStringWriter(true);
         boolean modified = false;
+
+        if (ctx.isVertex() && !iris) {
+            treeBody.add(GlslInjectionPoint.BEFORE_MAIN, GlslParser.parseExpression("layout(location = 4) in uvec4 a_VeilNormal"));
+            modified = true;
+        }
+
         for (int i = 0; i < buffers.length; i++) {
             DynamicBufferType type = buffers[i];
             String sourceName = type.getSourceName();
@@ -57,13 +64,11 @@ public class SodiumShaderPreProcessor implements ShaderPreProcessor {
                 }
                 case NORMAL -> {
                     if (ctx.isVertex()) {
-                        boolean iris = IrisCompat.INSTANCE != null && IrisCompat.INSTANCE.areShadersLoaded();
                         if (!iris) {
                             treeBody.add(GlslInjectionPoint.BEFORE_MAIN, GlslParser.parseExpression("uniform mat3 VeilNormalMatrix"));
-                            treeBody.add(GlslInjectionPoint.BEFORE_MAIN, GlslParser.parseExpression("layout(location = 4) in vec4 VeilNormal"));
                         }
                         treeBody.add(GlslInjectionPoint.BEFORE_MAIN, GlslParser.parseExpression("out vec3 PassVeilNormal"));
-                        mainBody.add(GlslParser.parseExpression("PassVeilNormal = %s * %s".formatted(iris ? "iris_NormalMatrix" : "VeilNormalMatrix", iris ? "iris_Normal" : "VeilNormal.xyz")));
+                        mainBody.add(GlslParser.parseExpression("PassVeilNormal = %s * %s".formatted(iris ? "iris_NormalMatrix" : "VeilNormalMatrix", iris ? "iris_Normal" : "vec3(a_VeilNormal.xyz * vec3(0.007874016))")));
                         modified = true;
                     }
 

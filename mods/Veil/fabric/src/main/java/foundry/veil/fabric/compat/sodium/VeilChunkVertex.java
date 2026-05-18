@@ -19,7 +19,7 @@ public class VeilChunkVertex implements ChunkVertexType {
             .addElement(DefaultChunkMeshAttributes.COLOR, 1, 8)
             .addElement(DefaultChunkMeshAttributes.TEXTURE, 2, 12)
             .addElement(DefaultChunkMeshAttributes.LIGHT_MATERIAL_INDEX, 3, 16)
-            .addElement(new VertexFormatAttribute("NORMAL_INDEX", GlVertexAttributeFormat.BYTE, 4, true, false), 4, 20)
+            .addElement(new VertexFormatAttribute("NORMAL_INDEX", GlVertexAttributeFormat.BYTE, 4, false, true), 4, 20)
             .build();
     private static final int POSITION_MAX_VALUE = 1048576;
     private static final int TEXTURE_MAX_VALUE = 32768;
