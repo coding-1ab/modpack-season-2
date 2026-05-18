@@ -58,8 +58,9 @@ public class Rapier3D {
         } else if (os == OS.OSX) {
             return LIB_NAME + "_" + arch + "_macos.dylib";
         } else {
-            if (os != OS.LINUX)
+            if (os != OS.LINUX) {
                 Sable.LOGGER.error("Unknown platform '{}' detected, sable will attempt to use linux natives, this may or may not work.", System.getProperty("os.name"));
+            }
             return LIB_NAME + "_" + arch + "_linux.so";
         }
     }
@@ -82,6 +83,9 @@ public class Rapier3D {
                 while ((entry = ti.getNextEntry()) != null) {
                     if (entry.getName().equals(NATIVE_NAME)) {
                         final Path tempFile = dir.resolve(NATIVE_NAME);
+                        if (!Files.exists(tempFile)) {
+                            Files.createFile(tempFile);
+                        }
                         Files.copy(ti, tempFile, StandardCopyOption.REPLACE_EXISTING);
                         System.load(tempFile.toAbsolutePath().toString());
                         return;
