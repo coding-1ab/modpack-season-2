@@ -295,6 +295,7 @@
   "simulated.gui.altitude_sensor.title": "ǝbuɐᴚ ןɐubıS ǝɹnbıɟuoƆ",
   "simulated.gui.assembly.exception.couldNotAlign": "¡ǝןqɯǝssɐsıp oʇ uoıʇdɐɹʇuoƆ pǝʇɐןnɯıS ubıןɐ ʇou pןnoƆ",
   "simulated.gui.assembly.exception.outOfWorld": "¡pןɹoʍ ǝɥʇ ɟo ʇno ǝןqɯǝssɐsıp ʇouuɐƆ",
+  "simulated.gui.assembly.exception.sameSubLevel": "¡uoıʇdɐɹʇuoƆ pǝʇɐןnɯıS ǝɯɐs ǝɥʇ oʇuo ǝןqɯǝssɐsıp ʇouuɐƆ",
   "simulated.gui.assembly.exception.tooFarFromGround": "¡ǝןqɯǝssɐsıp oʇ punoɹb ǝɥʇ ɯoɹɟ ɹɐɟ oo⟘",
   "simulated.gui.assembly.exception.tooFast": "¡ǝןqɯǝssɐsıp oʇ ʇsɐɟ ooʇ buıʌoW",
   "simulated.gui.hold_tip.hold_to_adjust": "ʇsnظpɐ oʇ bɐɹp puɐ pןoH",

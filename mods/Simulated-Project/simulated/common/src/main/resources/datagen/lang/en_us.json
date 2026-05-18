@@ -111,7 +111,8 @@
         "couldNotAlign": "Could not align Simulated Contraption to disassemble!",
         "outOfWorld": "Cannot disassemble out of the world!",
         "tooFarFromGround": "Too far from the ground to disassemble!",
-        "tooFast": "Moving too fast to disassemble!"
+        "tooFast": "Moving too fast to disassemble!",
+        "sameSubLevel": "Cannot disassemble onto the same Simulated Contraption!"
       },
 
       "hold_tip": {
