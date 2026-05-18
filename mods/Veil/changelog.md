@@ -1,2 +1,3 @@
-- Fix inspectors not being registered properly
-- Disable veil resource manager when imguimc is not installed
+- Fix vertex format. ([#117](https://github.com/FoundryMC/Veil/issues/117))
+- Cast gl_InstanceID to uint. ([#133](https://github.com/FoundryMC/Veil/issues/133))
+- Fix refmap console spam. ([#140](https://github.com/FoundryMC/Veil/issues/140))
