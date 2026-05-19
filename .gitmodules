@@ -142,3 +142,8 @@
 	url = https://github.com/coding-1ab/CreateBigCannons.git
 	branch = create-v6-1.21.1
 	upstream = https://github.com/Cannoneers-of-Create/CreateBigCannons.git
+[submodule "create-propulsion-simulated"]
+	path = mods/create-propulsion-simulated
+	url = https://github.com/coding-1ab/create-propulsion-simulated
+	branch = main
+	upstream = https://github.com/Propulsion-Team/create-propulsion-simulated.git

@@ -424,6 +424,17 @@ addMods {
             ),
         )
     )
+    addMod(
+        filePath = "./mods/create-propulsion-simulated",
+        includeTransitive = false,
+        modProjects = listOf(
+            modProject(
+                dependencyNotations = listOf("dev.propulsionteam.propulsionsimulated:createpropulsion"),
+                projectPath = ":",
+                shouldUnpack = true
+            )
+        )
+    )
 
     includeExtra("extra_mods.txt")
 }
