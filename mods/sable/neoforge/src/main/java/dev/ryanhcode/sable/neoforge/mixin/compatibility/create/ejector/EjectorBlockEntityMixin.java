@@ -45,13 +45,11 @@ public abstract class EjectorBlockEntityMixin extends SmartBlockEntity {
     @Unique
     private static final int SUB_LEVEL_SCAN_TIME = 2;
     @Shadow
-    private boolean launch;
+    EjectorBlockEntity.State state;
     @Shadow
-    private EjectorBlockEntity.State state;
+    boolean powered;
     @Shadow
-    private boolean powered;
-    @Shadow
-    private EntityLauncher launcher;
+    EntityLauncher launcher;
     @Unique
     private int sable$scanTimer = SUB_LEVEL_SCAN_TIME;
     @Unique
@@ -117,6 +115,7 @@ public abstract class EjectorBlockEntityMixin extends SmartBlockEntity {
         original.call(instance, projected.x, projected.y, projected.z);
     }
 
+    @Unique
     private @Nullable SubLevelScanResult sable$lookForLaunchableSubLevels() {
         final ActiveSableCompanion helper = Sable.HELPER;
         final SubLevel containingSubLevel = helper.getContaining(this);
