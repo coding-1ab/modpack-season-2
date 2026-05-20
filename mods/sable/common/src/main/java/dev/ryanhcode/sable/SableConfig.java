@@ -56,7 +56,7 @@ public final class SableConfig {
                 .comment("If the entire Sable UDP Networking pipeline should be disabled. This can improve compatibility with certain mods like Replay mod and certain networking setups, but will have worse performance and latency for networking sub-levels.")
                 .define("disable_udp_pipeline", false);
         ATTEMPT_UDP_NETWORKING = builder
-                .comment("If Sable should attempt to authenticate with clients and send them sub-level data over UDP")
+                .comment("If Sable should attempt to authenticate with clients and send them sub-level movement data over UDP")
                 .define("attempt_udp_networking", true);
         SUB_LEVEL_SAVING_LOG_MESSAGE = builder
                 .comment("If Sable should log when saving sub-levels for a dimension.")
