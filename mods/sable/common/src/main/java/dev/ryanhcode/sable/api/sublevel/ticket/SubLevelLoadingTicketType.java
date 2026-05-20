@@ -15,7 +15,7 @@ public record SubLevelLoadingTicketType<T>(ResourceLocation name, Codec<T> codec
 
     public static final SubLevelLoadingTicketType<Unit> COMMAND_FORCED = create(Sable.sablePath("command_forced"), Unit.CODEC);
 
-    private static <T> SubLevelLoadingTicketType<T> create(final ResourceLocation name, final Codec<T> codec) {
+    public static <T> SubLevelLoadingTicketType<T> create(final ResourceLocation name, final Codec<T> codec) {
         final SubLevelLoadingTicketType<T> type = new SubLevelLoadingTicketType<>(name, codec);
         REGISTRY.put(name, type);
         return type;
