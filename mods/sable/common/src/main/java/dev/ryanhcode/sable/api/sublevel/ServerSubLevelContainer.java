@@ -1,6 +1,7 @@
 package dev.ryanhcode.sable.api.sublevel;
 
 import dev.ryanhcode.sable.Sable;
+import dev.ryanhcode.sable.SableConfig;
 import dev.ryanhcode.sable.api.SubLevelHelper;
 import dev.ryanhcode.sable.api.sublevel.ticket.SubLevelLoadingTicket;
 import dev.ryanhcode.sable.api.sublevel.ticket.SubLevelLoadingTicketType;
@@ -315,7 +316,7 @@ public class ServerSubLevelContainer extends SubLevelContainer {
             final Map<UUID, SubLevelTicketInfo> tickets = this.getAllTickets();
 
             for (final ServerSubLevel subLevel : subLevels) {
-                if (!tickets.containsKey(subLevel.getUniqueId())) {
+                if (SableConfig.VERBOSE_SERIALIZATION_LOGGING.get() && !tickets.containsKey(subLevel.getUniqueId())) {
                     Sable.LOGGER.error("Sub-level {} was present after world closing, but is not force-loaded.", subLevel);
                 }
 
