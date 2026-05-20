@@ -864,13 +864,12 @@ public class SimBlocks {
 
     public static final BlockEntry<SpringBlock> SPRING =
             REGISTRATE.block("spring", SpringBlock::new)
-                    .tag(AllTags.AllBlockTags.SAFE_NBT.tag)
                     .transform(pickaxeOnly())
                     .initialProperties(SharedProperties::softMetal)
                     .blockstate((ctx, prov) -> prov.directionalBlock(ctx.getEntry(),
                             blockState -> prov.models().getExistingFile(
                                     prov.modLoc("block/spring/" + (blockState.getValue(SpringBlock.SIZE) == SpringBlock.Size.MEDIUM ? "" : (blockState.getValue(SpringBlock.SIZE).getSerializedName() + "_")) + "block"))))
-                    .tag(AllTags.AllBlockTags.SAFE_NBT.tag, AllTags.AllBlockTags.BRITTLE.tag, SimTags.Blocks.LIGHT)
+                    .tag(AllTags.AllBlockTags.SAFE_NBT.tag, AllTags.AllBlockTags.BRITTLE.tag, AllTags.AllBlockTags.NON_MOVABLE.tag, SimTags.Blocks.LIGHT)
                     .loot((tables, block) -> {
                         tables.add(block, tables.createSingleItemTable(SimItems.SPRING));
                     })
