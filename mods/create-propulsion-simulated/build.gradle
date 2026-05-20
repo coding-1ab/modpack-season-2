@@ -156,6 +156,8 @@ dependencies {
     compileOnly "curse.maven:createdieselgenerators-869316:6920093"
     compileOnly "curse.maven:createindustry-693815:7236535"
     //CC
+    compileOnly "cc.tweaked:cc-tweaked-${minecraft_version}-core-api:${cc_version}"
+    compileOnly "cc.tweaked:cc-tweaked-${minecraft_version}-forge-api:${cc_version}"
     compileOnly "cc.tweaked:cc-tweaked-${minecraft_version}-forge:${cc_version}"
     //JEI
     runtimeOnly "mezz.jei:jei-${minecraft_version}-neoforge:19.25.0.322"
