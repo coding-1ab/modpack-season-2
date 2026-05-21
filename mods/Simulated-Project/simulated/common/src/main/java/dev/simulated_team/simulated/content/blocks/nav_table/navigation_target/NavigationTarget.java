@@ -36,7 +36,7 @@ public interface NavigationTarget {
      * Ignored if range is 0 or below.
      */
     default float getMaxRange() {
-        return 200;
+        return 0;
     }
 
     default float getModulatingRange() {
