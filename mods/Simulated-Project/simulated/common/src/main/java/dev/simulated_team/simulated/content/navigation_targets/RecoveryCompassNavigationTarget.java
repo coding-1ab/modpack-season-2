@@ -17,10 +17,9 @@ import java.util.UUID;
 public class RecoveryCompassNavigationTarget implements NavigationTarget {
 	@Override
 	public @Nullable Vec3 getTarget(final NavTableBlockEntity navBE, final ItemStack self) {
-		final String lastPlayer = self.getComponents().get(SimDataComponents.COMPASS_PLACER_UUID);
+		final UUID lastPlayer = self.getComponents().get(SimDataComponents.COMPASS_PLACER_UUID);
 		if(lastPlayer != null) {
-			final UUID uuid = UUID.fromString(lastPlayer);
-			final Player player = navBE.getLevel().getPlayerByUUID(uuid);
+			final Player player = navBE.getLevel().getPlayerByUUID(lastPlayer);
 			if(player == null) {
                 return null;
             }
@@ -44,7 +43,7 @@ public class RecoveryCompassNavigationTarget implements NavigationTarget {
 	@Override
 	public void onInsert(final ItemStack itemStack, final NavTableBlockEntity be, final Player player) {
 		itemStack.applyComponents(DataComponentMap.builder()
-				.set(SimDataComponents.COMPASS_PLACER_UUID, player.getUUID().toString())
+				.set(SimDataComponents.COMPASS_PLACER_UUID, player.getUUID())
 				.build());
 	}
 }
