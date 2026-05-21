@@ -335,8 +335,13 @@ public class NavTableBlockEntity extends SmartBlockEntity implements Clearable {
     }
 
     public void dropHeldItem() {
+        NavigationTarget target = this.getNavTableItem();
+        ItemStack heldItem = this.getHeldItem();
+        if (target != null) {
+            target.onExtract(heldItem, this, null);
+        }
         final ItemEntity itementity = new ItemEntity(this.level,
-                this.worldPosition.getX() + 0.5, this.worldPosition.getY() + 0.5, this.worldPosition.getZ() + 0.5, this.getHeldItem());
+                this.worldPosition.getX() + 0.5, this.worldPosition.getY() + 0.5, this.worldPosition.getZ() + 0.5, heldItem);
         itementity.setDefaultPickUpDelay();
         this.level.addFreshEntity(itementity);
         this.inventory.clearContent();

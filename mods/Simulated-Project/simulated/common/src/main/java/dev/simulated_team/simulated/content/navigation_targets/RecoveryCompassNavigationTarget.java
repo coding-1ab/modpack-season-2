@@ -51,14 +51,16 @@ public class RecoveryCompassNavigationTarget implements NavigationTarget {
     }
 
     @Override
-    public void onInsert(final ItemStack itemStack, final NavTableBlockEntity be, final Player player) {
-        DataComponentMap.Builder builder = DataComponentMap.builder().set(SimDataComponents.COMPASS_PLACER_UUID, player.getUUID());
-        player.getLastDeathLocation().ifPresent(globalPos -> builder.set(SimDataComponents.LAST_PLAYER_DEATH_LOCATION, globalPos));
-        itemStack.applyComponents(builder.build());
+    public void onInsert(final ItemStack itemStack, final NavTableBlockEntity be, @Nullable final Player player) {
+        if (player != null) {
+            DataComponentMap.Builder builder = DataComponentMap.builder().set(SimDataComponents.COMPASS_PLACER_UUID, player.getUUID());
+            player.getLastDeathLocation().ifPresent(globalPos -> builder.set(SimDataComponents.LAST_PLAYER_DEATH_LOCATION, globalPos));
+            itemStack.applyComponents(builder.build());
+        }
     }
 
     @Override
-    public void onExtract(ItemStack itemStack, NavTableBlockEntity be, Player player) {
+    public void onExtract(final ItemStack itemStack, final NavTableBlockEntity be, @Nullable final Player player) {
         itemStack.remove(SimDataComponents.COMPASS_PLACER_UUID);
         itemStack.remove(SimDataComponents.LAST_PLAYER_DEATH_LOCATION);
     }
