@@ -17,6 +17,7 @@ import dev.propulsionteam.propulsionsimulated.content.redstone_converter.Redston
 import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.liquid_vector_thruster.LiquidVectorThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.solid_fuel_thruster.SolidFuelThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.wing.PropulsionCopycatWingBlockEntity;
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
@@ -54,6 +55,10 @@ public class PropulsionBlockEntities {
         BLOCK_ENTITY_TYPES.register("liquid_vector_thruster_block_entity",
             () -> BlockEntityType.Builder.of((pos, state) -> new LiquidVectorThrusterBlockEntity(pos, state),
                 PropulsionBlocks.LIQUID_VECTOR_THRUSTER_BLOCK.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SolidFuelThrusterBlockEntity>> SOLID_FUEL_THRUSTER_BLOCK_ENTITY =
+        BLOCK_ENTITY_TYPES.register("solid_fuel_thruster_block_entity",
+            () -> BlockEntityType.Builder.of(SolidFuelThrusterBlockEntity::new, PropulsionBlocks.SOLID_FUEL_THRUSTER_BLOCK.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RedstoneConverterBlockEntity>> REDSTONE_CONVERTER_BLOCK_ENTITY =
         BLOCK_ENTITY_TYPES.register("redstone_converter_block_entity",

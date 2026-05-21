@@ -46,4 +46,11 @@ public enum ThrusterParticleType {
             case NONE, PLUME -> new PlumeParticleData(properties.overrideTextures(), properties.overrideColor());
         };
     }
+
+    public ParticleOptions createParticleOptions(ItemThrusterProperties properties) {
+        return switch (this) {
+            case PLASMA -> new PlasmaParticleData(properties.overrideTextures(), properties.overrideColor());
+            case NONE, PLUME -> new PlumeParticleData(properties.overrideTextures(), properties.overrideColor());
+        };
+    }
 }

@@ -85,3 +85,52 @@ ServerEvents.loaded(event => {
 - `overrideTextureIds` accepts resource ids in the particle atlas (e.g. `modid:plume_0`).
 - `overrideColor` is optional and clamped to `0x000000..0xFFFFFF`.
 - `useFluidColor` tints particles using the actual fluid color from the fluid stack.
+
+## Solid Fuel Thruster (`SolidThrusterFuelManager`)
+
+Solid fuel thrusters use item-based fuels under `data/<namespace>/solid_thruster_fuels/`.
+
+Full block + datapack reference: [Solid Fuel Thruster](Solid-Fuel-Thruster.md).
+
+### Global
+
+- `SolidThrusterFuelManager`
+
+### Methods
+
+- `registerScriptedFuel(String itemId, Map<String, Object> settings)`
+  - Same keys as fluid fuels, but `itemId` is an **item** id (e.g. `minecraft:coal`).
+  - Additional datapack-only field `burn_ticks` is resolved from smelting time × `consumption_multiplier` unless you set burn behavior via datapack.
+- `overrideFuel(String itemId, Map<String, Object> settings)` — alias for override registration
+- `removeFuel(String itemId)` — disables an item fuel everywhere
+- `clearScriptedFuels()` — clears all KubeJS solid fuel overrides
+
+Supported settings keys:
+
+- `thrustMultiplier` / `thrust_multiplier`
+- `consumptionMultiplier` / `consumption_multiplier`
+- `particle` — `plume`, `plasma`, `none`
+- `overrideTextures` / `override_textures`
+- `overrideColor` / `override_color`
+- `useItemColor` / `use_item_color`
+
+### Precedence
+
+`removed > KubeJS > datapack`
+
+### Example (`kubejs/server_scripts/solid_thruster_fuels.js`)
+
+```js
+ServerEvents.loaded(event => {
+  SolidThrusterFuelManager.clearScriptedFuels()
+
+  SolidThrusterFuelManager.registerScriptedFuel('minecraft:blaze_rod', {
+    thrust_multiplier: 1.2,
+    consumption_multiplier: 0.8,
+    particle: 'plasma',
+    override_color: 0xFF8000
+  })
+
+  SolidThrusterFuelManager.removeFuel('minecraft:charcoal')
+})
+```

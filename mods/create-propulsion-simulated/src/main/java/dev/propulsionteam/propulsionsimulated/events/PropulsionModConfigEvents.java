@@ -3,6 +3,7 @@ package dev.propulsionteam.propulsionsimulated.events;
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import dev.propulsionteam.propulsionsimulated.content.platinum.CoralGeneratorFuelManager;
+import dev.propulsionteam.propulsionsimulated.content.thruster.SolidThrusterFuelManager;
 import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterFuelManager;
 
 import net.neoforged.bus.api.SubscribeEvent;
@@ -20,6 +21,7 @@ public final class PropulsionModConfigEvents {
             return;
         }
         ThrusterFuelManager.rebuildThrusterFuelsAfterCommonConfigReload();
+        SolidThrusterFuelManager.rebuildAfterCommonConfigReload();
         CoralGeneratorFuelManager.rebuildCoralFuelsAfterCommonConfigReload();
     }
 }

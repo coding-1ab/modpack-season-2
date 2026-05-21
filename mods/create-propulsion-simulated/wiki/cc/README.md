@@ -13,4 +13,5 @@ Create Propulsion registers block peripherals when **CC: Tweaked** (`computercra
 ### Related wiki pages
 
 - [KubeJS API](../KubeJS-API.md)
-- [Datapack example usage](../Datapack-Example-Usage.md)
+- [Datapack example usage (liquid fuels)](../Datapack-Example-Usage.md)
+- [Solid Fuel Thruster](../Solid-Fuel-Thruster.md)

@@ -10,6 +10,7 @@ import dev.propulsionteam.propulsionsimulated.content.heat.burners.solid.SolidBu
 import dev.propulsionteam.propulsionsimulated.content.thruster.ion_thruster.IonThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.liquid_vector_thruster.LiquidVectorThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
+import dev.propulsionteam.propulsionsimulated.content.thruster.solid_fuel_thruster.SolidFuelThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
 import net.minecraft.core.Direction;
 import net.neoforged.neoforge.capabilities.BlockCapability;
@@ -40,6 +41,11 @@ public class ModCapabilityEvents {
             Capabilities.ItemHandler.BLOCK,
             PropulsionBlockEntities.SOLID_BURNER_BLOCK_ENTITY.get(),
             ModCapabilityEvents::getSolidBurnerItemHandler
+        );
+        event.registerBlockEntity(
+            Capabilities.ItemHandler.BLOCK,
+            PropulsionBlockEntities.SOLID_FUEL_THRUSTER_BLOCK_ENTITY.get(),
+            ModCapabilityEvents::getSolidFuelThrusterItemHandler
         );
 
         event.registerBlockEntity(
@@ -113,6 +119,11 @@ public class ModCapabilityEvents {
             );
             event.registerBlockEntity(
                 capability,
+                PropulsionBlockEntities.SOLID_FUEL_THRUSTER_BLOCK_ENTITY.get(),
+                (be, side) -> be.computerBehaviour == null ? null : be.computerBehaviour.getPeripheralCapability()
+            );
+            event.registerBlockEntity(
+                capability,
                 PropulsionBlockEntities.STIRLING_ENGINE_BLOCK_ENTITY.get(),
                 (be, side) -> be.computerBehaviour == null ? null : be.computerBehaviour.getPeripheralCapability()
             );
@@ -156,6 +167,10 @@ public class ModCapabilityEvents {
     }
 
     private static IItemHandler getSolidBurnerItemHandler(SolidBurnerBlockEntity blockEntity, Direction side) {
+        return blockEntity.getItemHandler(side);
+    }
+
+    private static IItemHandler getSolidFuelThrusterItemHandler(SolidFuelThrusterBlockEntity blockEntity, Direction side) {
         return blockEntity.getItemHandler(side);
     }
 }

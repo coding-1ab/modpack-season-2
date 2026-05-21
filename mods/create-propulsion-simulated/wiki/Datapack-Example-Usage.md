@@ -1,10 +1,12 @@
-# Datapack Example Usage
+# Datapack Example Usage (liquid fuels)
 
 Fuel definitions are data-driven under:
 
 `data/<namespace>/thruster_fuels/<path>.json`
 
-These fuels are used by both Thrusters and Liquid Burners.
+These fuels are used by **Thrusters**, **Liquid Vector Thrusters**, and **Liquid Burners**.
+
+For the **Solid Fuel Thruster** (item-based fuels), see [Solid Fuel Thruster](Solid-Fuel-Thruster.md#solid-thruster-fuels).
 
 ## Resolution rules (strict data-driven)
 
