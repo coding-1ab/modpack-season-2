@@ -20,6 +20,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -71,15 +72,16 @@ public class TiltAdapterBlockEntity extends SplitShaftBlockEntity {
         if (activeMoveDirection != 0 && speed > 0 && activeSequenceLimit > 0) {
             float step = KineticBlockEntity.convertToAngular(speed);
             float actualStep = Math.min(step, activeSequenceLimit);
-            
+
             currentAngle += actualStep * activeMoveDirection;
             activeSequenceLimit -= actualStep;
 
             if (activeSequenceLimit <= 0) {
                 activeSequenceLimit = 0;
-                currentAngle = networkTargetAngle;
+                currentAngle = clampToAngleLimits(targetAngle);
                 flickerTicker.scheduleUpdate(this::syncNetworkState);
             }
+            sendData();
         }
 
         checkRedstoneAndSpeed();
@@ -87,27 +89,20 @@ public class TiltAdapterBlockEntity extends SplitShaftBlockEntity {
 
     public int getLeft() { return redstoneLeft; }
     public int getRight() { return redstoneRight; }
+    public float getCurrentAngle() { return currentAngle; }
+    public float getTargetAngle() { return targetAngle; }
 
     public void setComputerTargetAngle(float angle) {
         computerTargetAngle = angle;
     }
 
-    private void checkRedstoneAndSpeed() {
+    protected void checkRedstoneAndSpeed() {
         Level level = getLevel();
         if (level == null) return;
 
         BlockState state = getBlockState();
-        Axis axis = state.getValue(RotatedPillarKineticBlock.AXIS);
-        Direction facing = TiltAdapterBlock.getDirection(state);
-        boolean positiveDir = facing.getAxisDirection() == Direction.AxisDirection.POSITIVE;
-        boolean alignedX = TiltAdapterBlock.isAxisAlongFirst(state);
-
-        Direction posSignalSide = (axis == Axis.X) ? Direction.SOUTH : (axis == Axis.Z ? Direction.WEST : (alignedX ? Direction.NORTH : Direction.EAST));
-        Direction negSignalSide = (axis == Axis.X) ? Direction.NORTH : (axis == Axis.Z ? Direction.EAST : (alignedX ? Direction.SOUTH : Direction.WEST));
-
-        if (!positiveDir) {
-            Direction temp = posSignalSide; posSignalSide = negSignalSide; negSignalSide = temp;
-        }
+        Direction posSignalSide = AbstractTiltAdapterBlock.getRedstoneSide(state, true);
+        Direction negSignalSide = AbstractTiltAdapterBlock.getRedstoneSide(state, false);
 
         int newLeft = level.getSignal(worldPosition.relative(posSignalSide), posSignalSide);
         int newRight = level.getSignal(worldPosition.relative(negSignalSide), negSignalSide);
@@ -118,49 +113,88 @@ public class TiltAdapterBlockEntity extends SplitShaftBlockEntity {
             sendData();
         }
 
-        if (getTheoreticalSpeed() == 0) {
-            if (activeMoveDirection != 0) {
+        float newTarget = clampToAngleLimits(computeTargetAngle());
+
+        if (Math.abs(newTarget - targetAngle) > 0.001f) {
+            targetAngle = newTarget;
+            if (Math.abs(getTheoreticalSpeed()) > 0) {
+                beginOrExtendKineticMove();
+            } else {
                 flickerTicker.scheduleUpdate(this::syncNetworkState);
             }
-            return;
-        }
-
-        double newTarget;
-
-        if (PropulsionCompatibility.CC_ACTIVE && computerBehaviour != null && computerBehaviour.hasAttachedComputer()) {
-            newTarget = computerTargetAngle;
-        } else {
-            int diff = redstoneLeft - redstoneRight; 
-            newTarget = (diff / SIGNAL_RANGE) * PropulsionConfig.TILT_ADAPTER_ANGLE_RANGE.get();
-        }
-        
-        if (Math.abs(newTarget - targetAngle) > 0.001f) {
-            targetAngle = (float)newTarget;
-            flickerTicker.scheduleUpdate(this::syncNetworkState);
         }
     }
 
-    private void syncNetworkState() {
+    /** Starts or extends a kinetic move toward {@link #targetAngle} (call when speed &gt; 0). */
+    protected void beginOrExtendKineticMove() {
         float speed = Math.abs(getTheoreticalSpeed());
         float delta = targetAngle - currentAngle;
-
-        if (Math.abs(delta) > 0.001f && speed > 0) {
-            activeMoveDirection = (int) Math.signum(delta);
-            activeSequenceLimit = Math.abs(delta);
-            networkTargetAngle = targetAngle;
-            
-            float kineticSpeed = speed * activeMoveDirection;
-            sequenceContext = new SequenceContext(SequencerInstructions.TURN_ANGLE, activeSequenceLimit / Math.abs(kineticSpeed));
-        } else {
-            activeMoveDirection = 0;
-            activeSequenceLimit = 0;
-            sequenceContext = null;
-            currentAngle = targetAngle;
+        if (speed <= 0 || Math.abs(delta) <= 0.001f) {
+            return;
         }
+
+        networkTargetAngle = targetAngle;
+        activeMoveDirection = (int) Math.signum(delta);
+        activeSequenceLimit = Math.abs(delta);
+
+        float kineticSpeed = speed * activeMoveDirection;
+        sequenceContext = new SequenceContext(
+            SequencerInstructions.TURN_ANGLE,
+            activeSequenceLimit / Math.abs(kineticSpeed)
+        );
 
         detachKinetics();
         attachKinetics();
         sendData();
+    }
+
+    protected float getNeutralTargetAngle() {
+        return 0f;
+    }
+
+    protected float computeTargetAngle() {
+        if (PropulsionCompatibility.CC_ACTIVE && computerBehaviour != null && computerBehaviour.hasAttachedComputer()) {
+            return clampToAngleLimits(computerTargetAngle);
+        }
+
+        if (redstoneLeft == 0 && redstoneRight == 0) {
+            return getNeutralTargetAngle();
+        }
+
+        // Each redstone face scales to its own limit (matches left/right value boxes).
+        float fromLeft = (redstoneLeft / SIGNAL_RANGE) * getPositiveSideAngleRange();
+        float fromRight = (redstoneRight / SIGNAL_RANGE) * getNegativeSideAngleRange();
+        return getNeutralTargetAngle() + fromLeft - fromRight;
+    }
+
+    protected float clampToAngleLimits(float angle) {
+        float neutral = getNeutralTargetAngle();
+        return Mth.clamp(angle, neutral - getNegativeSideAngleRange(), neutral + getPositiveSideAngleRange());
+    }
+
+    protected float getPositiveSideAngleRange() {
+        return PropulsionConfig.TILT_ADAPTER_ANGLE_RANGE.get().floatValue();
+    }
+
+    protected float getNegativeSideAngleRange() {
+        return getPositiveSideAngleRange();
+    }
+
+    protected void syncNetworkState() {
+        float speed = Math.abs(getTheoreticalSpeed());
+        float delta = targetAngle - currentAngle;
+
+        if (Math.abs(delta) > 0.001f && speed > 0) {
+            beginOrExtendKineticMove();
+        } else {
+            activeMoveDirection = 0;
+            activeSequenceLimit = 0;
+            sequenceContext = null;
+            currentAngle = clampToAngleLimits(targetAngle);
+            detachKinetics();
+            attachKinetics();
+            sendData();
+        }
     }
 
     @Override
@@ -172,17 +206,17 @@ public class TiltAdapterBlockEntity extends SplitShaftBlockEntity {
 
     @Override
     public float getRotationSpeedModifier(Direction face) {
-        if (face == TiltAdapterBlock.getDirection(getBlockState())) return activeMoveDirection;
+        if (face == AbstractTiltAdapterBlock.getDirection(getBlockState())) return activeMoveDirection;
         if (hasSource() && getSourceFacing() != getBackFace(getBlockState())) return 0;
         return 1;
     }
 
-    private Direction getBackFace(BlockState state) {
+    protected Direction getBackFace(BlockState state) {
         if (state.hasProperty(DirectionalKineticBlock.FACING)) {
             return state.getValue(DirectionalKineticBlock.FACING).getOpposite();
         }
         Axis axis = state.getValue(RotatedPillarKineticBlock.AXIS);
-        boolean positive = state.hasProperty(TiltAdapterBlock.POSITIVE) ? state.getValue(TiltAdapterBlock.POSITIVE) : true;
+        boolean positive = state.hasProperty(AbstractTiltAdapterBlock.POSITIVE) ? state.getValue(AbstractTiltAdapterBlock.POSITIVE) : true;
         return Direction.get(positive ? Direction.AxisDirection.NEGATIVE : Direction.AxisDirection.POSITIVE, axis);
     }
 

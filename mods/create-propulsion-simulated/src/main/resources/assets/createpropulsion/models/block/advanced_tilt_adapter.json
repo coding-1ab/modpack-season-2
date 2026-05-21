@@ -1,10 +1,11 @@
 {
-	"format_version": "1.9.0",
+	"format_version": "1.21.6",
 	"credit": "Made with Blockbench",
+	"render_type": "cutout",
 	"texture_size": [64, 64],
 	"textures": {
-		"0": "main2",
-		"particle": "main2"
+		"0": "createpropulsion:block/advanced_tilt_adapter",
+		"particle": "createpropulsion:block/advanced_tilt_adapter"
 	},
 	"elements": [
 		{

@@ -7,7 +7,10 @@ import dev.propulsionteam.propulsionsimulated.registries.PropulsionPartialModels
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.simibubi.create.content.kinetics.base.IRotate;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
+
+import net.minecraft.util.Mth;
 
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.render.CachedBuffers;
@@ -44,25 +47,37 @@ public class TiltAdapterRenderer extends KineticBlockEntityRenderer<TiltAdapterB
 		final net.minecraft.core.Direction.Axis axis = ((IRotate) block).getRotationAxis(blockEntity.getBlockState());
 		final BlockPos pos = blockEntity.getBlockPos();
         final BlockState blockState = blockEntity.getBlockState();
-        final Direction direction = TiltAdapterBlock.getDirection(blockState);
+        final Direction direction = AbstractTiltAdapterBlock.getDirection(blockState);
         final Direction invDirection = direction.getOpposite();
-        final boolean alignedX = TiltAdapterBlock.isAxisAlongFirst(blockState);
+        final boolean alignedX = AbstractTiltAdapterBlock.isAxisAlongFirst(blockState);
         final boolean positive = direction.getAxisDirection() == Direction.AxisDirection.POSITIVE;
 		float time = AnimationTickHolder.getRenderTime(level);
 
         SuperByteBuffer inputShaft = CachedBuffers.partialFacing(PropulsionPartialModels.TILT_ADAPTER_INPUT_SHAFT, blockState, invDirection);
         SuperByteBuffer outputShaft = CachedBuffers.partialFacing(PropulsionPartialModels.TILT_ADAPTER_OUTPUT_SHAFT, blockState, invDirection);
-        
+
         float angle = (time * blockEntity.getSpeed() * 3f / 10) % 360;
         float offset = getRotationOffsetForPosition(blockEntity, pos, axis);
         float outputModifier = blockEntity.getRotationSpeedModifier(direction);
-        
+
         AOM_INPUT.set(angle, offset, 1);
         AOM_OUTPUT.set(angle, offset, outputModifier);
 
         renderShaft(AOM_INPUT, inputShaft, blockEntity, axis, light, ms, buffer);
         renderShaft(AOM_OUTPUT, outputShaft, blockEntity, axis, light, ms, buffer);
-        renderOverlays(blockEntity, blockState, invDirection, AOM_INPUT, light, ms, buffer, direction, alignedX, positive);
+        renderOverlays(blockEntity, blockState, invDirection, getGantryTiltRadians(blockEntity, partialTicks), light, ms, buffer, direction, alignedX, positive);
+    }
+
+    /** Smooth client display between synced {@link TiltAdapterBlockEntity#getCurrentAngle()} updates. */
+    private static float getGantryTiltRadians(TiltAdapterBlockEntity blockEntity, float partialTicks) {
+        float degrees = blockEntity.getCurrentAngle();
+        float target = blockEntity.getTargetAngle();
+        float speed = Math.abs(blockEntity.getSpeed());
+        if (speed > 0 && Math.abs(target - degrees) > 0.001f) {
+            float maxStep = KineticBlockEntity.convertToAngular(speed) * partialTicks;
+            degrees += Mth.clamp(target - degrees, -maxStep, maxStep);
+        }
+        return degrees / 180f * (float) Math.PI;
     }
 
     private void renderShaft(Vector3f aom, SuperByteBuffer shaft, TiltAdapterBlockEntity blockEntity, net.minecraft.core.Direction.Axis axis, int light, PoseStack ms, MultiBufferSource buffer) {
@@ -71,20 +86,18 @@ public class TiltAdapterRenderer extends KineticBlockEntityRenderer<TiltAdapterB
         shaft.renderInto(ms, buffer.getBuffer(RenderType.solid()));
     }
 
-    private void renderOverlays(TiltAdapterBlockEntity blockEntity, BlockState blockState, Direction invDirection, Vector3f aom, int light, PoseStack ms, MultiBufferSource buffer, Direction direction, boolean alignedX, boolean positive) {
+    private void renderOverlays(TiltAdapterBlockEntity blockEntity, BlockState blockState, Direction invDirection, float gantryTilt, int light, PoseStack ms, MultiBufferSource buffer, Direction direction, boolean alignedX, boolean positive) {
         float redstoneLeft = blockEntity.getLeft() / 15.0f;
         float redstoneRight = blockEntity.getRight() / 15.0f;
-
-        float angle = getAngle(aom);
 
         SuperByteBuffer gantry = CachedBuffers.partialFacing(PropulsionPartialModels.TILT_ADAPTER_GANTRY, blockState, invDirection);
         SuperByteBuffer sideOverlay = CachedBuffers.partialFacing(PropulsionPartialModels.TILT_ADAPTER_SIDE_INDICATOR, blockState, invDirection);
 
-        renderOverlaySide(redstoneLeft, angle, gantry, sideOverlay, light, ms, buffer, direction, true, alignedX, positive);
-        renderOverlaySide(redstoneRight, angle, gantry, sideOverlay, light, ms, buffer, direction, false, alignedX, positive);
+        renderOverlaySide(redstoneLeft, gantryTilt, gantry, sideOverlay, light, ms, buffer, direction, true, alignedX, positive);
+        renderOverlaySide(redstoneRight, gantryTilt, gantry, sideOverlay, light, ms, buffer, direction, false, alignedX, positive);
     }
 
-    private void renderOverlaySide(float redstoneSignal, float angle, SuperByteBuffer gantry, SuperByteBuffer sideOverlay, int light, PoseStack ms, MultiBufferSource buffer, Direction direction, boolean isRight, boolean alignedX, boolean positive) {
+    private void renderOverlaySide(float redstoneSignal, float gantryTilt, SuperByteBuffer gantry, SuperByteBuffer sideOverlay, int light, PoseStack ms, MultiBufferSource buffer, Direction direction, boolean isRight, boolean alignedX, boolean positive) {
         int color = Color.mixColors(0x470102, 0xCD0000, redstoneSignal);
         boolean isHorizontal = direction.getAxis().isHorizontal();
         Axis rotationAxis = isHorizontal ? Axis.YP : Axis.ZP;
@@ -103,7 +116,7 @@ public class TiltAdapterRenderer extends KineticBlockEntityRenderer<TiltAdapterB
 
         offset = -(0.5f + 4) / 16.0f;
         translateInDirection(ms, offsetDirection, offset);
-        gantry.rotateCentered(angle, rotationDirection).color(color).light(light).renderInto(ms, buffer.getBuffer(RenderType.solid()));
+        gantry.rotateCentered(gantryTilt, rotationDirection).color(color).light(light).renderInto(ms, buffer.getBuffer(RenderType.solid()));
 
         ms.popPose();
     }
