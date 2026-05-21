@@ -90,11 +90,14 @@ public class NavTableBlock extends DirectionalBlock implements IBE<NavTableBlock
             this.withBlockEntityDo(level, pos, nav -> {
                 final ContainerSlot slot = nav.inventory.slot;
                 final ItemStack save = slot.getStack().copy();
-                final ItemStack oldSlotItem = save.copy();
 
                 if(navigationTarget != null) {
+                    navigationTarget.onExtract(save, nav, player);
                     navigationTarget.onInsert(heldItem, nav, player);
                 }
+
+                final ItemStack oldSlotItem = save.copy();
+
                 slot.setStack(heldItem.copyWithCount(1));
                 if (!player.hasInfiniteMaterials()) {
                     heldItem.shrink(1);
