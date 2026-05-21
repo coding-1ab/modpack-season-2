@@ -22,7 +22,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.createmod.catnip.math.VecHelper;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -120,6 +122,95 @@ public abstract class AbstractTiltAdapterBlock<T extends TiltAdapterBlockEntity>
             state.getValue(AXIS),
             positiveAlongAxis ? Direction.AxisDirection.POSITIVE : Direction.AxisDirection.NEGATIVE
         );
+    }
+
+    /**
+     * Applies the same rotations as {@code advanced_tilt_adapter.json} / {@code tilt_adapter.json} blockstates.
+     */
+    public static Vec3 applyBlockstateModelRotation(Vec3 vec, BlockState state) {
+        Axis axis = state.getValue(AXIS);
+        Direction facing = getDirection(state);
+        boolean alongFirst = isAxisAlongFirst(state);
+
+        if (axis == Axis.Z) {
+            if (facing == Direction.SOUTH) {
+                vec = VecHelper.rotateCentered(vec, 180, Axis.Y);
+            }
+        } else if (axis == Axis.X) {
+            if (facing == Direction.WEST) {
+                vec = VecHelper.rotateCentered(vec, 270, Axis.Y);
+            } else if (facing == Direction.EAST) {
+                vec = VecHelper.rotateCentered(vec, 90, Axis.Y);
+            }
+        } else if (axis == Axis.Y) {
+            if (facing == Direction.UP) {
+                vec = VecHelper.rotateCentered(vec, 270, Axis.X);
+                if (alongFirst) {
+                    vec = VecHelper.rotateCentered(vec, 90, Axis.Y);
+                }
+            } else if (facing == Direction.DOWN) {
+                vec = VecHelper.rotateCentered(vec, 90, Axis.X);
+                if (alongFirst) {
+                    vec = VecHelper.rotateCentered(vec, 90, Axis.Y);
+                }
+            }
+        }
+        return vec;
+    }
+
+    /** Extra Y rotation from blockstate (degrees), for value-box label alignment. */
+    public static float getBlockstateModelYRotation(BlockState state) {
+        Axis axis = state.getValue(AXIS);
+        Direction facing = getDirection(state);
+        if (axis == Axis.Z && facing == Direction.SOUTH) {
+            return 180;
+        }
+        if (axis == Axis.X) {
+            if (facing == Direction.WEST) {
+                return 270;
+            }
+            if (facing == Direction.EAST) {
+                return 90;
+            }
+        }
+        if (axis == Axis.Y && isAxisAlongFirst(state)) {
+            return 90;
+        }
+        return 0;
+    }
+
+    /** Voxel Y of the model top surface (+Y) before blockstate rotation. */
+    public static final float VALUE_BOX_MODEL_TOP = 16f;
+
+    /** World face carrying the advanced value boxes (model +Y after blockstate rotation). */
+    public static Direction getValueBoxFace(BlockState state) {
+        Vec3 onModelTop = VecHelper.voxelSpace(8, VALUE_BOX_MODEL_TOP, 8);
+        Vec3 rotated = applyBlockstateModelRotation(onModelTop, state);
+        return faceFromLocalPosition(rotated);
+    }
+
+    private static Direction faceFromLocalPosition(Vec3 local) {
+        Direction best = Direction.UP;
+        double bestDist = Double.MAX_VALUE;
+        for (Direction face : Direction.values()) {
+            double dist = distanceToFacePlane(local, face);
+            if (dist < bestDist) {
+                bestDist = dist;
+                best = face;
+            }
+        }
+        return best;
+    }
+
+    private static double distanceToFacePlane(Vec3 local, Direction face) {
+        return switch (face) {
+            case WEST -> local.x;
+            case EAST -> 1.0 - local.x;
+            case DOWN -> local.y;
+            case UP -> 1.0 - local.y;
+            case NORTH -> local.z;
+            case SOUTH -> 1.0 - local.z;
+        };
     }
 
     public static Direction getRedstoneSide(BlockState state, boolean left) {

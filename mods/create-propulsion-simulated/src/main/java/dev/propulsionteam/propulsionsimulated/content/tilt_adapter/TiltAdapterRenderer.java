@@ -65,7 +65,9 @@ public class TiltAdapterRenderer extends KineticBlockEntityRenderer<TiltAdapterB
 
         renderShaft(AOM_INPUT, inputShaft, blockEntity, axis, light, ms, buffer);
         renderShaft(AOM_OUTPUT, outputShaft, blockEntity, axis, light, ms, buffer);
-        renderOverlays(blockEntity, blockState, invDirection, getGantryTiltRadians(blockEntity, partialTicks), light, ms, buffer, direction, alignedX, positive);
+        if (!(blockEntity instanceof AdvancedTiltAdapterBlockEntity)) {
+            renderOverlays(blockEntity, blockState, invDirection, getGantryTiltRadians(blockEntity, partialTicks), light, ms, buffer, direction, alignedX, positive);
+        }
     }
 
     /** Smooth client display between synced {@link TiltAdapterBlockEntity#getCurrentAngle()} updates. */

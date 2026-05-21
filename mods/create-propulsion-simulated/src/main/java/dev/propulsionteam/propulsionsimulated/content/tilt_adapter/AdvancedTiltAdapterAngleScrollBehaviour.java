@@ -21,7 +21,7 @@ public class AdvancedTiltAdapterAngleScrollBehaviour extends ScrollValueBehaviou
     public static final BehaviourType<AdvancedTiltAdapterAngleScrollBehaviour> LEFT_TYPE = new BehaviourType<>();
     public static final BehaviourType<AdvancedTiltAdapterAngleScrollBehaviour> RIGHT_TYPE = new BehaviourType<>();
 
-    /** {@code true} = left redstone face angle limit. */
+    /** {@code true} = left value box on the top face (left limit). */
     private final boolean controlsLeftLimit;
 
     public AdvancedTiltAdapterAngleScrollBehaviour(Component label, SmartBlockEntity be, boolean controlsLeftLimit) {
