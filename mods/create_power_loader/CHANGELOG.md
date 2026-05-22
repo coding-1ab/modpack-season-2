@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.0.5 - 2026-05-22
+
+### Fixed
+
+- Chunk leakage when a chunk loader is used on a Sable contraption (#78)
+- Compatibility with other mods that patch Create trains (#67)
+
 ## 2.0.4 - 2026-04-27
 
 ### Added
