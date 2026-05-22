@@ -1,5 +1,6 @@
 package com.hlysine.create_power_loader.content;
 
+import com.hlysine.create_power_loader.compat.SableCompat;
 import com.hlysine.create_power_loader.config.CPLConfigs;
 import com.hlysine.create_power_loader.content.trains.CPLGlobalStation;
 import com.hlysine.create_power_loader.content.trains.StationChunkLoader;
@@ -68,7 +69,7 @@ public abstract class AbstractChunkLoaderBlockEntity extends KineticBlockEntity 
 
     @Override
     public @Nullable Pair<ResourceLocation, BlockPos> getLocation() {
-        return Pair.of(getLevel().dimension().location(), getRealBlockPos());
+        return Pair.of(getLevel().dimension().location(), getBlockPos());
     }
 
     public void updateAttachedStation(StationBlockEntity be) {
@@ -151,22 +152,28 @@ public abstract class AbstractChunkLoaderBlockEntity extends KineticBlockEntity 
 
     private boolean needsUpdate() {
         if (lastBlockPos == null) return true;
-        return !lastBlockPos.equals(getRealBlockPos()) || lastEnabled != canLoadChunks() || lastRange != getLoadingRange() || chunkUnloadCooldown > 0;
+        return !lastBlockPos.equals(getProjectedBlockPos()) || lastEnabled != canLoadChunks() || lastRange != getLoadingRange() || chunkUnloadCooldown > 0;
     }
 
     protected void updateForcedChunks() {
         boolean resetStates = true;
         if (canLoadChunks()) {
-            ChunkLoadManager.updateForcedChunks(level.getServer(), new LoadedChunkPos(getLevel(), getRealBlockPos()), getRealBlockPos(), getLoadingRange(), forcedChunks);
+            ChunkLoadManager.updateForcedChunks(
+                    (ServerLevel) level,
+                    new ChunkLoadManager.DimensionalBlockPos(getLevel().dimension().location(), getBlockPos()),
+                    getBlockPos(),
+                    getLoadingRange(),
+                    forcedChunks
+            );
         } else if (chunkUnloadCooldown >= CPLConfigs.server().getFor(type).unloadGracePeriod.get()) {
-            unforceAllChunks(level.getServer(), getRealBlockPos(), forcedChunks);
+            unforceAllChunks(level.getServer(), getBlockPos(), forcedChunks);
         } else {
             chunkUnloadCooldown += CPLConfigs.server().getFor(type).chunkUpdateInterval.get();
             resetStates = false;
         }
         if (resetStates) {
             chunkUnloadCooldown = 0;
-            lastBlockPos = getRealBlockPos().immutable();
+            lastBlockPos = getProjectedBlockPos();
             lastEnabled = canLoadChunks();
             lastRange = getLoadingRange();
         }
@@ -197,7 +204,7 @@ public abstract class AbstractChunkLoaderBlockEntity extends KineticBlockEntity 
         super.destroy();
         boolean server = (!level.isClientSide || isVirtual()) && (level instanceof ServerLevel);
         if (server)
-            unforceAllChunks(level.getServer(), getRealBlockPos(), forcedChunks);
+            unforceAllChunks(level.getServer(), getBlockPos(), forcedChunks);
         updateAttachedStation(null);
         removeFromManager();
     }
@@ -207,7 +214,7 @@ public abstract class AbstractChunkLoaderBlockEntity extends KineticBlockEntity 
         super.remove();
         boolean server = (!level.isClientSide || isVirtual()) && (level instanceof ServerLevel);
         if (server)
-            unforceAllChunks(level.getServer(), getRealBlockPos(), forcedChunks);
+            unforceAllChunks(level.getServer(), getBlockPos(), forcedChunks);
         updateAttachedStation(null);
         removeFromManager();
     }
@@ -251,10 +258,7 @@ public abstract class AbstractChunkLoaderBlockEntity extends KineticBlockEntity 
         level.addParticle(ParticleTypes.PORTAL, v2.x, v2.y, v2.z, motion.x, motion.y, motion.z);
     }
 
-    protected BlockPos getRealBlockPos() {
-        if (SableCompanion.INSTANCE.getContaining(getLevel(), getBlockPos().getCenter()) != null) {
-            return BlockPos.containing(SableCompanion.INSTANCE.projectOutOfSubLevel(getLevel(), getBlockPos().getCenter()));
-        }
-        return getBlockPos();
+    protected BlockPos getProjectedBlockPos() {
+        return SableCompat.projectOutOfSubLevel(getLevel(), getBlockPos());
     }
 }

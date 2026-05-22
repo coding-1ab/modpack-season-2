@@ -15,6 +15,7 @@ import net.createmod.catnip.data.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -66,6 +67,7 @@ public class CarriageChunkLoader implements ChunkLoader {
     }
 
     public void tick(Level level) {
+        if (level.isClientSide()) return;
         if (!known) updateCarriage();
         if (!known) return;
         if (!canLoadChunks()) {
@@ -74,32 +76,38 @@ public class CarriageChunkLoader implements ChunkLoader {
             return;
         }
 
-        Set<LoadedChunkPos> loadTargets = new HashSet<>();
+        Set<ChunkLoadManager.DimensionalBlockPos> loadTargets = new HashSet<>();
 
         addLoadTargets(loadTargets, carriage.leadingBogey().trailing());
         addLoadTargets(loadTargets, carriage.trailingBogey().leading());
 
-        ChunkLoadManager.updateForcedChunks(level.getServer(), loadTargets, carriage.train.id, CPLConfigs.server().getFor(getLoaderType()).rangeOnTrain.get(), forcedChunks);
+        ChunkLoadManager.updateForcedChunks(
+                (ServerLevel) level,
+                loadTargets,
+                carriage.train.id,
+                CPLConfigs.server().getFor(getLoaderType()).rangeOnTrain.get(),
+                forcedChunks
+        );
     }
 
     public void onRemove() {
         ChunkLoadManager.enqueueUnforceAll(carriage.train.id, forcedChunks);
     }
 
-    private void addLoadTargets(Set<LoadedChunkPos> loadTargets, TravellingPoint point) {
+    private void addLoadTargets(Set<ChunkLoadManager.DimensionalBlockPos> loadTargets, TravellingPoint point) {
         if (point.edge.isInterDimensional()) {
-            loadTargets.add(new LoadedChunkPos(
+            loadTargets.add(new ChunkLoadManager.DimensionalBlockPos(
                     point.node1.getLocation().getDimension().location(),
-                    new ChunkPos(BlockPos.containing(point.node1.getLocation().getLocation()))
+                    BlockPos.containing(point.node1.getLocation().getLocation())
             ));
-            loadTargets.add(new LoadedChunkPos(
+            loadTargets.add(new ChunkLoadManager.DimensionalBlockPos(
                     point.node2.getLocation().getDimension().location(),
-                    new ChunkPos(BlockPos.containing(point.node2.getLocation().getLocation()))
+                    BlockPos.containing(point.node2.getLocation().getLocation())
             ));
         } else {
-            loadTargets.add(new LoadedChunkPos(
+            loadTargets.add(new ChunkLoadManager.DimensionalBlockPos(
                     point.node1.getLocation().getDimension().location(),
-                    new ChunkPos(BlockPos.containing(point.getPosition(carriage.train.graph)))
+                    BlockPos.containing(point.getPosition(carriage.train.graph))
             ));
         }
     }
