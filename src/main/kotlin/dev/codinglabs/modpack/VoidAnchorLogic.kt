@@ -113,16 +113,12 @@ object VoidAnchorLogic {
             for (z in -1..1) {
                 val chunk = level.getChunk(chunkPos.x + x, chunkPos.z + z)
                 chunk.blockEntities.forEach { (_, entity) ->
-                    if (isEndPortalBlock(entity.blockState)) {
+                    if (entity.blockState.`is`(Blocks.END_PORTAL)) {
                         return true
                     }
                 }
             }
         }
         return false
-    }
-
-    private fun isEndPortalBlock(state: BlockState): Boolean {
-        return state.`is`(Blocks.END_PORTAL)
     }
 }
