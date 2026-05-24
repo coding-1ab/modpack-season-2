@@ -104,7 +104,7 @@ public abstract class LevelPlot {
      * @param logSize       the log_2 of the side length of a plot
      * @param subLevel      the sub-level using this plot
      */
-    public LevelPlot(final SubLevelContainer container, final int x, final int z, final int logSize, final SubLevel subLevel) {
+    public LevelPlot(final SubLevelContainer container, final int x, final int z, final int logSize, final @NotNull SubLevel subLevel) {
         this.container = container;
         this.plotPos = new ChunkPos(x, z);
         this.logSize = logSize;
@@ -132,7 +132,9 @@ public abstract class LevelPlot {
     public BlockPos getCenterBlock() {
         // TODO make this the actual center
         final ChunkPos centerChunk = this.getCenterChunk();
-        return new BlockPos(centerChunk.getMinBlockX() + 8, 128, centerChunk.getMinBlockZ() + 8);
+        final Level level = this.subLevel.getLevel();
+        
+        return new BlockPos(centerChunk.getMinBlockX() + 8, (level.getMinBuildHeight() + level.getMaxBuildHeight()) / 2, centerChunk.getMinBlockZ() + 8);
     }
 
     /**
