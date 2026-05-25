@@ -25,8 +25,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -35,8 +33,9 @@ public enum ModIntegration {
     //TODO: Keep an eye on Create Garnished 2. Wait it add back Fan Processing
     CREATE_GARNISHED(Constants.CREATE_GARNISHED),
     CREATE_DND(Constants.CREATE_DND),
+    IMMERSIVE_ENGINEERING(Constants.IMMERSIVE_ENGINEERING),
     QUICKSAND(Constants.QUICKSAND),
-    AERONAUTICS(Constants.AERONAUTICS),;
+    SABLE(Constants.SABLE),;
 
     private final String id;
 
@@ -63,8 +62,9 @@ public enum ModIntegration {
     public static class Constants {
         public static final String CREATE_GARNISHED = "garnished";
         public static final String CREATE_DND = "dndesires";
+        public static final String IMMERSIVE_ENGINEERING = "immersiveengineering";
         public static final String QUICKSAND = "quicksand";
-        public static final String AERONAUTICS = "aeronautics";
+        public static final String SABLE = "sable";
     }
 
     public DeferredHolder<FanProcessingType, FanProcessingType> fanType(String path) {

@@ -16,16 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package plus.dragons.createdragonsplus.integration.simulated.api.kinetics.fan;
+package plus.dragons.createdragonsplus.integration;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
+import plus.dragons.createdragonsplus.integration.immersive_engineering.ImmersiveEngineeringFluidHatchCompat;
 
-public interface FanProcessingTypeSimulatedExtension {
-    boolean active();
-
-    boolean canAffectBlock(Level level, BlockPos pos, BlockState blockState);
-
-    void affectBlock(Level level, BlockPos pos, BlockState blockState);
+public class CDPIntegrations {
+    public static void register() {
+        if (ModIntegration.IMMERSIVE_ENGINEERING.enabled())
+            ImmersiveEngineeringFluidHatchCompat.register();
+    }
 }
