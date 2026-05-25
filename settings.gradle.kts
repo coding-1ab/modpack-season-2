@@ -435,6 +435,17 @@ addMods {
             )
         )
     )
+    addMod(
+        filePath = "./mods/Climbable-Ropes",
+        includeTransitive = false,
+        modProjects = listOf(
+            modProject(
+                dependencyNotations = listOf("dev.matejhozlar.climbableropes:climbable_ropes"),
+                projectPath = ":",
+                shouldUnpack = true
+            )
+        )
+    )
 
     includeExtra("extra_mods.txt")
 }

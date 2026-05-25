@@ -147,3 +147,8 @@
 	url = https://github.com/coding-1ab/create-propulsion-simulated
 	branch = main
 	upstream = https://github.com/Propulsion-Team/create-propulsion-simulated.git
+[submodule "mods/Climbable-Ropes"]
+	path = mods/Climbable-Ropes
+	url = https://github.com/coding-1ab/Create-Aeronautics-Climbable-Ropes.git
+	branch = 1.21.1
+	upstream = https://github.com/matejhozlar/Create-Aeronautics-Climbable-Ropes.git
