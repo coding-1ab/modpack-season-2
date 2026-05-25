@@ -46,6 +46,7 @@ import net.minecraft.world.level.block.state.properties.PistonType;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
 import net.minecraft.world.level.material.PushReaction;
+import rbasamoyai.createbigcannons.cannon_control.fixed_cannon_mount.FixedCannonMountBlock;
 import rbasamoyai.createbigcannons.cannon_loading.CBCModifiedContraptionRegistry;
 import rbasamoyai.createbigcannons.cannon_loading.CanLoadBigCannon;
 import rbasamoyai.createbigcannons.cannons.CannonContraptionProviderBlock;
@@ -111,7 +112,7 @@ public class ContraptionRemix {
 				Direction vertical = state.getValue(BlockStateProperties.VERTICAL_DIRECTION);
 				assemblyPos = pos.relative(vertical, -2);
 			} else if (CBCBlocks.FIXED_CANNON_MOUNT.has(state)) {
-				assemblyPos = pos.above();
+				assemblyPos = pos.relative(state.getValue(FixedCannonMountBlock.FACING));
 			} else if (CBCBlocks.CANNON_CARRIAGE.has(state)) {
 				assemblyPos = pos.above();
 			}
@@ -401,6 +402,8 @@ public class ContraptionRemix {
 		boolean flag = !stickFlag;
 		Direction.Axis forcedAxis = forcedDirection.getAxis();
 
+        boolean purePush = offset == forcedDirection && !BlockMovementChecks.isNotSupportive(state, forcedDirection);
+
 		if (offsetState.getBlock() instanceof BigCannonBlock cBlock
 			&& cBlock.getFacing(offsetState).getAxis() == forcedAxis
 			&& offsetBE instanceof IBigCannonBlockEntity cbe) {
@@ -426,8 +429,10 @@ public class ContraptionRemix {
 				} else if (contraption instanceof PulleyContraption && pos.equals(contraption.anchor) && offset == Direction.DOWN) {
 					prevInfo = new StructureBlockInfo(BlockPos.ZERO, AllBlocks.PULLEY_MAGNET.getDefaultState(), null);
 				}
-				if (!IBigCannonBlockEntity.isValidMunitionState(forcedAxis, state)
-					&& state.getBlock() instanceof BigCannonBlock cBlock1
+                boolean pusherMunition = IBigCannonBlockEntity.isValidMunitionState(forcedAxis, state);
+                if (pusherMunition) {
+                    purePush = false;
+                } else if (state.getBlock() instanceof BigCannonBlock cBlock1
 					&& level.getBlockEntity(pos) instanceof IBigCannonBlockEntity cbe1
 					&& cBlock1.getFacing(state).getAxis() == forcedAxis
 					&& prevInfo != null
@@ -449,6 +454,9 @@ public class ContraptionRemix {
 				}
 			}
 		}
+
+        if (purePush)
+            return false;
 
 		if (IBigCannonBlockEntity.isValidMunitionState(forcedAxis, offsetState) && forcedAxis != offset.getAxis() && stickFlag) {
 			addPosToCannonColliders(contraption, localOffset, forcedDirection);

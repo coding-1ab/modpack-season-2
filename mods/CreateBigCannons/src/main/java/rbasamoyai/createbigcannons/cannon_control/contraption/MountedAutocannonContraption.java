@@ -274,6 +274,7 @@ public class MountedAutocannonContraption extends AbstractMountedCannonContrapti
         };
 		Vec3 ejectPos = entity.toGlobalVector(Vec3.atCenterOf(this.startPos.relative(this.isHandle ? handleEjectDirection : this.initialOrientation.getOpposite())), 0);
 		Vec3 centerPos = entity.toGlobalVector(Vec3.atCenterOf(BlockPos.ZERO), 0);
+		Vec3 endPos = entity.toGlobalVector(Vec3.atCenterOf(this.startPos.relative(this.initialOrientation)), 0);
 		ItemStack ejectStack = round.getSpentItem(foundProjectile);
 		if (!ejectStack.isEmpty()) {
 			//ItemStack output = breech.insertOutput(ejectStack);
@@ -363,8 +364,6 @@ public class MountedAutocannonContraption extends AbstractMountedCannonContrapti
 			projectile.setTracer(isTracer);
 			projectile.setLifetime(properties.projectileLifetime());
 			projectile.shoot(vec1.x, vec1.y, vec1.z, speed, spread);
-			projectile.xRotO = projectile.getXRot();
-			projectile.yRotO = projectile.getYRot();
 
 			projectile.addUntouchableEntity(entity, 1);
 			Entity vehicle = entity.getVehicle();
@@ -372,11 +371,15 @@ public class MountedAutocannonContraption extends AbstractMountedCannonContrapti
 				projectile.addUntouchableEntity(vehicle, 1);
 
 			level.addFreshEntity(projectile);
+
+            projectile.xRotO = projectile.getXRot();
+            projectile.yRotO = projectile.getYRot();
+
 			if (roundProperties != null) recoilMagnitude += roundProperties.addedRecoil();
 		}
 
 		recoilMagnitude *= CBCConfigs.server().cannons.autocannonRecoilScale.getF();
-		if (controller != null) controller.onRecoil(vec1.scale(-recoilMagnitude), entity);
+		if (controller != null) controller.onRecoil(vec1.scale(-recoilMagnitude), centerPos, entity);
 
         Vec3 particlePos = CBCCompatTransformers.transformVec3(level, spawnPos, this.entity.position());
 		Vec3 particleVel = vec1.scale(1.25);
@@ -429,7 +432,7 @@ public class MountedAutocannonContraption extends AbstractMountedCannonContrapti
                 entity.pitch = flag ? -controller.xRotO : controller.xRotO;
                 entity.yaw = Mth.wrapDegrees(controller.yRotO);
             } else {
-                entity.pitch = controller.xRotO;
+                entity.pitch = -controller.xRotO;
                 entity.yaw = Mth.wrapDegrees(controller.yRotO + 180);
             }
             controller.setYBodyRot(controller.getYRot());

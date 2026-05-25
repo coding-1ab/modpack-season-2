@@ -28,6 +28,7 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.common.Tags;
 import rbasamoyai.createbigcannons.CBCTags;
 import rbasamoyai.createbigcannons.ModGroup;
 import rbasamoyai.createbigcannons.cannon_control.cannon_mount.CannonMountBlock;
@@ -925,6 +926,7 @@ public class CBCBlocks {
 	public static final BlockEntry<CannonBuilderHeadBlock> CANNON_BUILDER_HEAD = REGISTRATE
 		.block("cannon_builder_head", CannonBuilderHeadBlock::new)
 		.initialProperties(() -> Blocks.PISTON_HEAD)
+        .properties(p -> p.pushReaction(PushReaction.NORMAL))
 		.properties(p -> p.mapColor(MapColor.STONE))
 		.transform(axeOrPickaxe())
 		.transform(CBCBuilderTransformers.cannonBuilderHead())
@@ -946,6 +948,7 @@ public class CBCBlocks {
 		.tag(BlockTags.MINEABLE_WITH_PICKAXE)
 		.tag(BlockTags.NEEDS_STONE_TOOL)
         .tag(CBCCommonMetal.CAST_IRON.storageBlocks.blocks())
+        .tag(Tags.Blocks.STORAGE_BLOCKS)
 		.lang("Block of Cast Iron")
 		.item()
 		.tag(CBCCommonMetal.CAST_IRON.storageBlocks.items())
@@ -961,6 +964,7 @@ public class CBCBlocks {
         .tag(BlockTags.MINEABLE_WITH_PICKAXE)
         .tag(BlockTags.NEEDS_IRON_TOOL)
         .tag(CBCCommonMetal.BRONZE.storageBlocks.blocks())
+        .tag(Tags.Blocks.STORAGE_BLOCKS)
         .lang("Block of Bronze")
         .item()
         .tag(CBCCommonMetal.BRONZE.storageBlocks.items())
@@ -976,6 +980,7 @@ public class CBCBlocks {
         .tag(BlockTags.MINEABLE_WITH_PICKAXE)
         .tag(BlockTags.NEEDS_IRON_TOOL)
         .tag(CommonMetal.STEEL.storageBlocks.blocks())
+        .tag(Tags.Blocks.STORAGE_BLOCKS)
         .lang("Block of Steel")
         .item()
         .tag(CommonMetal.STEEL.storageBlocks.items())
@@ -991,6 +996,7 @@ public class CBCBlocks {
 		.tag(BlockTags.MINEABLE_WITH_PICKAXE)
 		.tag(BlockTags.NEEDS_DIAMOND_TOOL)
         .tag(CBCCommonMetal.NETHERSTEEL.storageBlocks.blocks())
+        .tag(Tags.Blocks.STORAGE_BLOCKS)
 		.lang("Block of Nethersteel")
 		.item()
 		.tag(CBCCommonMetal.NETHERSTEEL.storageBlocks.items())

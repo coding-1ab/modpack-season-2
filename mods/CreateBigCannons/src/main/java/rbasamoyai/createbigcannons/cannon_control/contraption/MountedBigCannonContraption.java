@@ -432,7 +432,8 @@ public class MountedBigCannonContraption extends AbstractMountedCannonContraptio
 		}
 
 		Vec3 spawnPos = entity.toGlobalVector(Vec3.atCenterOf(currentPos.relative(this.initialOrientation)), 0);
-		Vec3 vec = spawnPos.subtract(entity.toGlobalVector(Vec3.atCenterOf(BlockPos.ZERO), 0)).normalize();
+        Vec3 centerPos = entity.toGlobalVector(Vec3.atCenterOf(BlockPos.ZERO), 0);
+		Vec3 vec = spawnPos.subtract(centerPos).normalize();
 		spawnPos = spawnPos.subtract(vec.scale(2));
 
 		if (propelCtx.chargesUsed < minimumSpread) propelCtx.chargesUsed = minimumSpread;
@@ -454,8 +455,6 @@ public class MountedBigCannonContraption extends AbstractMountedCannonContraptio
 			projectile.setPos(spawnPos);
 			projectile.setChargePower(propelCtx.chargesUsed);
 			projectile.shoot(vec.x, vec.y, vec.z, propelCtx.chargesUsed, propelCtx.spread);
-			projectile.xRotO = projectile.getXRot();
-			projectile.yRotO = projectile.getYRot();
 
 			projectile.addUntouchableEntity(entity, 1);
 			Entity vehicle = entity.getVehicle();
@@ -463,12 +462,17 @@ public class MountedBigCannonContraption extends AbstractMountedCannonContraptio
 				projectile.addUntouchableEntity(vehicle, 1);
 
 			level.addFreshEntity(projectile);
+
+            projectile.xRotO = projectile.getXRot();
+            projectile.yRotO = projectile.getYRot();
+
 			recoilMagnitude += projectile.addedRecoil();
 		}
 
 		recoilMagnitude += propelCtx.recoil;
 		recoilMagnitude *= CBCConfigs.server().cannons.bigCannonRecoilScale.getF();
-		if (controller != null) controller.onRecoil(vec.scale(-recoilMagnitude), entity);
+		if (controller != null)
+            controller.onRecoil(vec.scale(-recoilMagnitude), centerPos, entity);
 
 		this.hasFired = true;
 
@@ -684,14 +688,13 @@ public class MountedBigCannonContraption extends AbstractMountedCannonContraptio
 		float spread = properties.mortarSpread();
 
 		Vec3 spawnPos = this.entity.toGlobalVector(Vec3.atCenterOf(currentPos.relative(this.initialOrientation)), 1.0f);
-		Vec3 vec = spawnPos.subtract(this.entity.toGlobalVector(Vec3.atCenterOf(BlockPos.ZERO), 1.0f)).normalize();
+        Vec3 centerPos = this.entity.toGlobalVector(Vec3.atCenterOf(BlockPos.ZERO), 1.0f);
+		Vec3 vec = spawnPos.subtract(centerPos).normalize();
 		spawnPos = spawnPos.subtract(vec.scale(2));
 
 		projectile.setPos(spawnPos);
 		projectile.setChargePower(power);
 		projectile.shoot(vec.x, vec.y, vec.z, power, spread);
-		projectile.xRotO = projectile.getXRot();
-		projectile.yRotO = projectile.getYRot();
 
 		projectile.addUntouchableEntity(this.entity, 1);
 		Entity vehicle = this.entity.getVehicle();
@@ -700,8 +703,12 @@ public class MountedBigCannonContraption extends AbstractMountedCannonContraptio
 
 		slevel.addFreshEntity(projectile);
 
+        projectile.xRotO = projectile.getXRot();
+        projectile.yRotO = projectile.getYRot();
+
 		recoilMagnitude *= CBCConfigs.server().cannons.bigCannonRecoilScale.getF();
-		if (controller != null) controller.onRecoil(vec.scale(-recoilMagnitude), this.entity);
+		if (controller != null)
+            controller.onRecoil(vec.scale(-recoilMagnitude), centerPos, this.entity);
 
 		Vec3 plumePos = CBCCompatTransformers.transformVec3(slevel, spawnPos.add(vec), this.entity.position());
         Vec3 plumeDir = CBCCompatTransformers.transformLocationNormal(slevel, this.entity.blockPosition(), vec);

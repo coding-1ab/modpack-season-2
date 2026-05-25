@@ -229,7 +229,7 @@ public abstract class AbstractBigCannonProjectile extends AbstractCannonProjecti
 			Vec3 spallLoc = hitLoc.add(curVel.normalize().scale(2));
 			if (!this.level().isClientSide) {
 				ImpactExplosion explosion = new ImpactExplosion(this.level(), this, this.indirectArtilleryFire(false),
-                    spallLoc.x, spallLoc.y, spallLoc.z, 2, Explosion.BlockInteraction.KEEP);
+                    spallLoc.x, spallLoc.y, spallLoc.z, 2, 2, Explosion.BlockInteraction.KEEP);
 				CreateBigCannons.handleCustomExplosion(this.level(), explosion);
 			}
 			SoundType sound = state.getSoundType();
@@ -237,6 +237,7 @@ public abstract class AbstractBigCannonProjectile extends AbstractCannonProjecti
 				this.level().playSound(null, spallLoc.x, spallLoc.y, spallLoc.z, sound.getBreakSound(), SoundSource.BLOCKS,
 					sound.getVolume(), sound.getPitch());
 		}
+        this.massLost = (float) (mass - this.getProjectileMass()) / ballistics.durabilityMass();
 		shatter |= this.onImpact(blockHitResult, new ImpactResult(outcome, shatter), projectileContext);
 		return new ImpactResult(outcome, shatter);
 	}
@@ -253,7 +254,12 @@ public abstract class AbstractBigCannonProjectile extends AbstractCannonProjecti
 
 	@Nonnull protected abstract BigCannonProjectilePropertiesComponent getBigCannonProjectileProperties();
 
-	public enum TrailType {
+    @Override
+    public double impactPower(ProjectileContext context) {
+        return this.getDeltaMovement().length() * CBCConfigs.server().munitions.bigCannonProjectileImpactForceMultiplier.getF();
+    }
+
+    public enum TrailType {
 		NONE,
 		LONG,
 		SHORT
