@@ -45,7 +45,6 @@ public class TrainMixin implements CPLTrain {
     private void cpl$write(DimensionPalette dimensions, HolderLookup.Provider registries, CallbackInfoReturnable<CompoundTag> cir) {
         CompoundTag nbt = cir.getReturnValue();
         nbt.put("CPLData", getLoader().write());
-        cir.setReturnValue(nbt);
     }
 
     @Inject(
@@ -56,7 +55,6 @@ public class TrainMixin implements CPLTrain {
     private static void cpl$read(CompoundTag tag, HolderLookup.Provider registries, Map<UUID, TrackGraph> trackNetworks, DimensionPalette dimensions, CallbackInfoReturnable<Train> cir) {
         Train train = cir.getReturnValue();
         ((CPLTrain) train).setLoader(TrainChunkLoader.read(train, tag.getCompound("CPLData")));
-        cir.setReturnValue(train);
     }
 
     @Inject(

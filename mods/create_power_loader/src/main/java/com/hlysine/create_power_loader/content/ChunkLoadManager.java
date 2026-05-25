@@ -2,7 +2,9 @@ package com.hlysine.create_power_loader.content;
 
 import com.hlysine.create_power_loader.CPLBlockEntityTypes;
 import com.hlysine.create_power_loader.CreatePowerLoader;
+import com.hlysine.create_power_loader.compat.SableCompat;
 import com.mojang.logging.LogUtils;
+import dev.ryanhcode.sable.companion.SableCompanion;
 import net.createmod.catnip.data.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -69,20 +71,20 @@ public class ChunkLoadManager {
         }
     }
 
-    public static <T extends Comparable<? super T>> void updateForcedChunks(MinecraftServer server, LoadedChunkPos center, T owner, int loadingRange, Set<LoadedChunkPos> forcedChunks) {
-        Set<LoadedChunkPos> targetChunks = getChunksAroundCenter(center, loadingRange);
-        updateForcedChunks(server, targetChunks, owner, forcedChunks);
+    public static <T extends Comparable<? super T>> void updateForcedChunks(ServerLevel level, DimensionalBlockPos center, T owner, int loadingRange, Set<LoadedChunkPos> forcedChunks) {
+        Set<LoadedChunkPos> targetChunks = getChunksAroundCenter(level, center, loadingRange);
+        updateForcedChunks(level.getServer(), targetChunks, owner, forcedChunks);
     }
 
-    public static <T extends Comparable<? super T>> void updateForcedChunks(MinecraftServer server, Collection<LoadedChunkPos> centers, T owner, int loadingRange, Set<LoadedChunkPos> forcedChunks) {
+    public static <T extends Comparable<? super T>> void updateForcedChunks(ServerLevel level, Collection<DimensionalBlockPos> centers, T owner, int loadingRange, Set<LoadedChunkPos> forcedChunks) {
         Set<LoadedChunkPos> targetChunks = new HashSet<>();
-        for (LoadedChunkPos center : centers) {
-            targetChunks.addAll(getChunksAroundCenter(center, loadingRange));
+        for (DimensionalBlockPos center : centers) {
+            targetChunks.addAll(getChunksAroundCenter(level, center, loadingRange));
         }
-        updateForcedChunks(server, targetChunks, owner, forcedChunks);
+        updateForcedChunks(level.getServer(), targetChunks, owner, forcedChunks);
     }
 
-    public static <T extends Comparable<? super T>> void updateForcedChunks(MinecraftServer server, Collection<LoadedChunkPos> newChunks, T owner, Set<LoadedChunkPos> forcedChunks) {
+    private static <T extends Comparable<? super T>> void updateForcedChunks(MinecraftServer server, Collection<LoadedChunkPos> newChunks, T owner, Set<LoadedChunkPos> forcedChunks) {
         Set<LoadedChunkPos> unforcedChunks = new HashSet<>();
         for (LoadedChunkPos chunk : forcedChunks) {
             if (newChunks.contains(chunk)) {
@@ -114,10 +116,20 @@ public class ChunkLoadManager {
         forcedChunks.clear();
     }
 
-    private static Set<LoadedChunkPos> getChunksAroundCenter(LoadedChunkPos center, int radius) {
+    private static Set<LoadedChunkPos> getChunksAroundCenter(Level level, DimensionalBlockPos center, int radius) {
         Set<LoadedChunkPos> ret = new HashSet<>();
-        for (int i = center.x() - radius + 1; i <= center.x() + radius - 1; i++) {
-            for (int j = center.z() - radius + 1; j <= center.z() + radius - 1; j++) {
+        // TODO: Unable to save world if chunks at sub-level plots are loaded. Possible Sable bug?
+//        ChunkPos centerChunk = new ChunkPos(center.pos);
+//        for (int i = centerChunk.x - radius + 1; i <= centerChunk.x + radius - 1; i++) {
+//            for (int j = centerChunk.z - radius + 1; j <= centerChunk.z + radius - 1; j++) {
+//                ret.add(new LoadedChunkPos(center.dimension(), i, j));
+//            }
+//        }
+        BlockPos projected = SableCompat.projectOutOfSubLevel(level, center.pos);
+//        if (projected.equals(center.pos)) return ret;
+        ChunkPos projectedChunk = new ChunkPos(projected);
+        for (int i = projectedChunk.x - radius + 1; i <= projectedChunk.x + radius - 1; i++) {
+            for (int j = projectedChunk.z - radius + 1; j <= projectedChunk.z + radius - 1; j++) {
                 ret.add(new LoadedChunkPos(center.dimension(), i, j));
             }
         }
@@ -145,6 +157,7 @@ public class ChunkLoadManager {
                     blockPos.toShortString(),
                     tickets.nonTicking().size(),
                     tickets.ticking().size());
+            // TODO: Cannot find block entities in sub-level plots
             AbstractChunkLoaderBlockEntity blockEntity = level.getBlockEntity(blockPos, CPLBlockEntityTypes.BRASS_CHUNK_LOADER.get()).orElse(null);
             if (blockEntity == null)
                 blockEntity = level.getBlockEntity(blockPos, CPLBlockEntityTypes.ANDESITE_CHUNK_LOADER.get()).orElse(null);
@@ -232,6 +245,30 @@ public class ChunkLoadManager {
         modBus.addListener(ChunkLoadManager::registerTicketControllers);
     }
 
+    public record DimensionalBlockPos(@NotNull ResourceLocation dimension, @NotNull BlockPos pos) {
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (!(obj instanceof DimensionalBlockPos(ResourceLocation dimension1, BlockPos pos1))) return false;
+            if (!Objects.equals(dimension1, this.dimension)) return false;
+            if (!Objects.equals(pos1, this.pos)) return false;
+            return true;
+        }
+
+        public boolean chunkEquals(Object obj) {
+            if (this == obj) return true;
+            if (!(obj instanceof DimensionalBlockPos(ResourceLocation dimension1, BlockPos pos1))) return false;
+            if (!Objects.equals(dimension1, this.dimension)) return false;
+            if (!Objects.equals(new ChunkPos(pos1), new ChunkPos(this.pos))) return false;
+            return true;
+        }
+
+        @Override
+        public @NotNull String toString() {
+            return dimension + ":" + pos;
+        }
+    }
+
     public record LoadedChunkPos(@NotNull ResourceLocation dimension, @NotNull ChunkPos chunkPos) {
 
         public LoadedChunkPos(@NotNull Level level, long chunkPos) {
@@ -264,7 +301,7 @@ public class ChunkLoadManager {
         }
 
         @Override
-        public String toString() {
+        public @NotNull String toString() {
             return dimension + ":" + chunkPos;
         }
     }

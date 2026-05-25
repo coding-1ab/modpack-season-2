@@ -16,6 +16,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -87,12 +88,18 @@ public class StationChunkLoader implements ChunkLoader {
         // sanitize in case of read/write errors
         attachments.removeIf(a -> a.pos.distManhattan(station.blockEntityPos) > 1);
 
-        Set<LoadedChunkPos> loadTargets = new HashSet<>();
+        Set<ChunkLoadManager.DimensionalBlockPos> loadTargets = new HashSet<>();
         for (AttachedLoader attachment : attachments) {
             if (isEnabledForStation(attachment.type()))
-                loadTargets.add(new LoadedChunkPos(station.blockEntityDimension.location(), new ChunkPos(attachment.pos())));
+                loadTargets.add(new ChunkLoadManager.DimensionalBlockPos(station.blockEntityDimension.location(), attachment.pos()));
         }
-        ChunkLoadManager.updateForcedChunks(level.getServer(), loadTargets, station.id, CPLConfigs.server().getFor(getLoaderType()).rangeOnStation.get(), forcedChunks);
+        ChunkLoadManager.updateForcedChunks(
+                (ServerLevel) level,
+                loadTargets,
+                station.id,
+                CPLConfigs.server().getFor(getLoaderType()).rangeOnStation.get(),
+                forcedChunks
+        );
     }
 
     public static boolean isEnabledForStation(LoaderType type) {

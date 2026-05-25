@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.ChunkPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -45,20 +46,22 @@ public class ChunkLoaderMovementBehaviour implements MovementBehaviour {
 
         SavedState savedState = (SavedState) tempState;
 
-        savedState.chunkPos = null;
+        savedState.dimension = null;
+        savedState.blockPos = null;
 
         context.temporaryData = savedState;
     }
 
     @Override
     public void visitNewPosition(MovementContext context, BlockPos pos) {
-        if (context.world.isClientSide || !(context.world instanceof ServerLevel))
+        if (context.world.isClientSide || !(context.world instanceof ServerLevel serverLevel))
             return;
         if (context.contraption.entity == null)
             return;
 
-        LoadedChunkPos entityChunkPos = new LoadedChunkPos(context.world.dimension().location(), context.contraption.entity.chunkPosition());
+        ResourceLocation dimension = serverLevel.dimension().location();
         BlockPos entityBlockPos = context.contraption.entity.blockPosition();
+        ChunkPos entityChunkPos = context.contraption.entity.chunkPosition();
         Object tempState = context.temporaryData;
 
         if (!(tempState instanceof SavedState)) {
@@ -68,15 +71,15 @@ public class ChunkLoaderMovementBehaviour implements MovementBehaviour {
 
         SavedState savedState = (SavedState) tempState;
 
-        if (entityChunkPos.equals(savedState.chunkPos))
+        if (dimension.equals(savedState.dimension) && savedState.blockPos != null && entityChunkPos.equals(new ChunkPos(savedState.blockPos)))
             return;
 
-        savedState.chunkPos = entityChunkPos;
+        savedState.dimension = dimension;
         savedState.blockPos = entityBlockPos;
 
         if (shouldFunction(context)) {
-            updateForcedChunks(context.world.getServer(),
-                    entityChunkPos,
+            updateForcedChunks(serverLevel,
+                    new DimensionalBlockPos(dimension, entityBlockPos),
                     context.contraption.entity.getUUID(),
                     CPLConfigs.server().getFor(savedState.loaderType).rangeOnContraption.get(),
                     savedState.forcedChunks);
@@ -90,18 +93,17 @@ public class ChunkLoaderMovementBehaviour implements MovementBehaviour {
 
     @Override
     public void tick(MovementContext context) {
-        if (context.world.isClientSide || !(context.world instanceof ServerLevel))
+        if (context.world.isClientSide || !(context.world instanceof ServerLevel serverLevel))
             return;
         if (context.contraption.entity == null)
             return;
 
         ResourceLocation dimension = context.world.dimension().location();
-        LoadedChunkPos entityChunkPos = new LoadedChunkPos(dimension, context.contraption.entity.chunkPosition());
         BlockPos entityBlockPos = context.contraption.entity.blockPosition();
         Object tempState = context.temporaryData;
 
         if (!(tempState instanceof SavedState)) {
-            tempState = new SavedState(type, entityChunkPos, entityBlockPos, context.contraption instanceof CarriageContraption, new HashSet<>());
+            tempState = new SavedState(type, dimension, entityBlockPos, context.contraption instanceof CarriageContraption, new HashSet<>());
             context.temporaryData = tempState;
 
             SavedState savedState = (SavedState) tempState;
@@ -113,15 +115,20 @@ public class ChunkLoaderMovementBehaviour implements MovementBehaviour {
             }
 
             if (shouldFunction(context)) {
-                updateForcedChunks(context.world.getServer(),
-                        entityChunkPos,
+                updateForcedChunks(serverLevel,
+                        new DimensionalBlockPos(dimension, entityBlockPos),
                         context.contraption.entity.getUUID(),
                         CPLConfigs.server().getFor(savedState.loaderType).rangeOnContraption.get(),
                         savedState.forcedChunks);
-                LOGGER.debug("CPL: Entity {} starts moving at chunk {}, loaded {} chunks", context.contraption.entity, entityChunkPos, savedState.forcedChunks.size());
+                LOGGER.debug("CPL: Entity {} starts moving at chunk {}:{}, loaded {} chunks",
+                        context.contraption.entity,
+                        dimension,
+                        new ChunkPos(entityBlockPos),
+                        savedState.forcedChunks.size()
+                );
             } else
                 unforceAllChunks(context.world.getServer(), context.contraption.entity.getUUID(), savedState.forcedChunks);
-            savedState.chunkPos = entityChunkPos;
+            savedState.dimension = dimension;
             savedState.blockPos = entityBlockPos;
         }
     }
@@ -139,12 +146,17 @@ public class ChunkLoaderMovementBehaviour implements MovementBehaviour {
             return;
 
         if (shouldFunction(context)) // no need to log if we don't expect it to function
-            LOGGER.debug("CPL: Entity {} stops moving in {}, unloaded {} chunks", context.contraption.entity, savedState.chunkPos, savedState.forcedChunks.size());
+            LOGGER.debug("CPL: Entity {} stops moving in {}:{}, unloaded {} chunks",
+                    context.contraption.entity,
+                    savedState.dimension,
+                    savedState.blockPos == null ? null : new ChunkPos(savedState.blockPos),
+                    savedState.forcedChunks.size()
+            );
         unforceAllChunks(context.world.getServer(), context.contraption.entity.getUUID(), savedState.forcedChunks);
 
         // remove chunk pos to force a loaded chunk check when this movement context is reused
         // required when the chunk loader travels through a nether portal, then comes out of the same portal later
-        savedState.chunkPos = null;
+        savedState.dimension = null;
         savedState.blockPos = null;
         savedState.removeFromManager();
 
@@ -172,16 +184,16 @@ public class ChunkLoaderMovementBehaviour implements MovementBehaviour {
     public static class SavedState implements ChunkLoader {
         private final LoaderType loaderType;
         @Nullable
-        public LoadedChunkPos chunkPos;
+        public ResourceLocation dimension;
         @Nullable
         public BlockPos blockPos;
         public final boolean isTrain;
         public Set<LoadedChunkPos> forcedChunks;
         public boolean registered = false;
 
-        public SavedState(LoaderType type, @Nullable LoadedChunkPos chunkPos, @Nullable BlockPos blockPos, boolean isTrain, Set<LoadedChunkPos> forcedChunks) {
+        public SavedState(LoaderType type, @Nullable ResourceLocation dimension, @Nullable BlockPos blockPos, boolean isTrain, Set<LoadedChunkPos> forcedChunks) {
             loaderType = type;
-            this.chunkPos = chunkPos;
+            this.dimension = dimension;
             this.blockPos = blockPos;
             this.isTrain = isTrain;
             this.forcedChunks = forcedChunks;
@@ -211,8 +223,8 @@ public class ChunkLoaderMovementBehaviour implements MovementBehaviour {
 
         @Override
         public @Nullable Pair<ResourceLocation, BlockPos> getLocation() {
-            if (chunkPos == null || blockPos == null) return null;
-            return Pair.of(chunkPos.dimension(), blockPos);
+            if (dimension == null || blockPos == null) return null;
+            return Pair.of(dimension, blockPos);
         }
     }
 }
