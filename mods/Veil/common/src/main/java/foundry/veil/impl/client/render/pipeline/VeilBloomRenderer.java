@@ -73,6 +73,10 @@ public final class VeilBloomRenderer {
             return;
         }
 
+        if (IrisCompat.INSTANCE != null && IrisCompat.INSTANCE.areShadersLoaded()) {
+            return;
+        }
+
         FramebufferStack.pop(null);
     }
 
@@ -82,6 +86,10 @@ public final class VeilBloomRenderer {
             Veil.LOGGER.error("Failed to apply bloom pipeline");
         }
         return pipeline;
+    }
+
+    public static boolean hasRendered() {
+        return rendered && enabled;
     }
 
     public static void flush() {

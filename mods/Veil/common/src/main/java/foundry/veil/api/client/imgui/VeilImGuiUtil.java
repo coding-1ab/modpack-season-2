@@ -212,8 +212,8 @@ public class VeilImGuiUtil {
     /**
      * Retrieves the ARGB color for the specified ImGui style color.
      *
-     * @param color The
-     * @return The ImFont to use
+     * @param color The ImGui color index
+     * @return The ARGB ImGui color
      */
     public static int getColor(int color) {
         ImVec4 colors = ImGui.getStyle().getColors()[color];

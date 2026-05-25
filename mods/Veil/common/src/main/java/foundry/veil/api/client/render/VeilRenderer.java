@@ -95,15 +95,6 @@ public class VeilRenderer implements ResourceManagerReloadListener {
         resourceManager.registerReloadListener(this.dynamicRenderTypeManager);
         resourceManager.registerReloadListener(this.flareEffectManager.getShellManager());
         resourceManager.registerReloadListener(this);
-
-        if (VeilRenderSystem.hasImGui()) {
-            this.registerInspectors();
-        }
-    }
-
-    @ApiStatus.Internal
-    public void registerInspectors() {
-        VeilClient.clientPlatform().onRegisterInspectors(new EditorRegistry(this.editorManager));
     }
 
     @ApiStatus.Internal
@@ -131,7 +122,8 @@ public class VeilRenderer implements ResourceManagerReloadListener {
         if (buffers.length == 0) {
             return false;
         }
-        return this.dynamicBufferManager.setActiveBuffers(name, DynamicBufferType.encode(buffers));
+        int active = this.dynamicBufferManager.getActiveBuffers(name) | DynamicBufferType.encode(buffers);
+        return this.dynamicBufferManager.setActiveBuffers(name, active);
     }
 
     /**
@@ -307,12 +299,5 @@ public class VeilRenderer implements ResourceManagerReloadListener {
     @Override
     public void onResourceManagerReload(@NotNull ResourceManager resourceManager) {
         VeilBloomRenderer.tryEnable();
-    }
-
-    private record EditorRegistry(EditorManager editorManager) implements VeilRegisterInspectorsEvent.Registry {
-        @Override
-        public void registerInspector(Inspector inspector) {
-            this.editorManager.add(inspector);
-        }
     }
 }

@@ -3,6 +3,7 @@ package foundry.veil.forge.mixin.client.perspective.sodium;
 import foundry.veil.api.client.render.VeilLevelPerspectiveRenderer;
 import foundry.veil.forge.ext.RenderSectionExtension;
 import net.caffeinemc.mods.sodium.client.render.chunk.RenderSection;
+import net.caffeinemc.mods.sodium.client.render.chunk.lists.RenderSectionVisitor;
 import net.caffeinemc.mods.sodium.client.render.chunk.occlusion.OcclusionCuller;
 import net.caffeinemc.mods.sodium.client.render.chunk.occlusion.VisibilityEncoding;
 import net.caffeinemc.mods.sodium.client.render.viewport.Viewport;
@@ -37,6 +38,7 @@ public abstract class OcclusionCullerMixin {
         RenderSectionExtension ext = (RenderSectionExtension) render;
         if (ext.veil$hasNotRendered()) {
             ext.veil$markRendered();
+            render.setIncomingDirections(0);
             queue.enqueue(render);
         }
 
@@ -44,7 +46,7 @@ public abstract class OcclusionCullerMixin {
     }
 
     @Inject(method = "addNearbySections", at = @At("HEAD"), cancellable = true, remap = false)
-    public void addNearbySections(OcclusionCuller.Visitor visitor, Viewport viewport, float searchDistance, int frame, CallbackInfo ci) {
+    public void addNearbySections(RenderSectionVisitor visitor, Viewport viewport, int frame, CallbackInfo ci) {
         if (!VeilLevelPerspectiveRenderer.isRenderingPerspective()) {
             return;
         }
@@ -72,7 +74,7 @@ public abstract class OcclusionCullerMixin {
     }
 
     @Inject(method = "initWithinWorld", at = @At("HEAD"), cancellable = true, remap = false)
-    public void initWithinWorld(OcclusionCuller.Visitor visitor, WriteQueue<RenderSection> queue, Viewport viewport, boolean useOcclusionCulling, int frame, CallbackInfo ci) {
+    public void initWithinWorld(RenderSectionVisitor visitor, WriteQueue<RenderSection> queue, Viewport viewport, boolean useOcclusionCulling, int frame, CallbackInfo ci) {
         if (!VeilLevelPerspectiveRenderer.isRenderingPerspective()) {
             return;
         }

@@ -2,9 +2,9 @@ package foundry.veil.fabric.mixin.client.perspective.sodium;
 
 import foundry.veil.fabric.ext.SodiumWorldRendererExtension;
 import net.caffeinemc.mods.sodium.client.render.SodiumWorldRenderer;
-import net.caffeinemc.mods.sodium.client.render.chunk.ChunkUpdateType;
 import net.caffeinemc.mods.sodium.client.render.chunk.RenderSection;
 import net.caffeinemc.mods.sodium.client.render.chunk.RenderSectionManager;
+import net.caffeinemc.mods.sodium.client.render.chunk.TaskQueueType;
 import net.caffeinemc.mods.sodium.client.render.chunk.lists.SortedRenderLists;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -24,7 +24,7 @@ public class SodiumWorldRendererMixin implements SodiumWorldRendererExtension {
     }
 
     @Override
-    public Map<ChunkUpdateType, ArrayDeque<RenderSection>> veil$getTaskLists() {
+    public Map<TaskQueueType, ArrayDeque<RenderSection>> veil$getTaskLists() {
         return ((RenderSectionManagerAccessor) this.renderSectionManager).getTaskLists();
     }
 
@@ -34,7 +34,7 @@ public class SodiumWorldRendererMixin implements SodiumWorldRendererExtension {
     }
 
     @Override
-    public void veil$setTaskLists(Map<ChunkUpdateType, ArrayDeque<RenderSection>> taskLists) {
+    public void veil$setTaskLists(Map<TaskQueueType, ArrayDeque<RenderSection>> taskLists) {
         ((RenderSectionManagerAccessor) this.renderSectionManager).setTaskLists(taskLists);
     }
 }

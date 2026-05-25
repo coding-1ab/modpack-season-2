@@ -29,12 +29,6 @@ public final class VeilImGuiCompat {
             VeilRenderSystem.renderer().getEditorManager().renderLast();
             AdvancedFboImGuiAreaImpl.end();
         });
-        ImGuiMCEvents.INSTANCE.onImGuiLoad(() -> {
-            VeilRenderer renderer = VeilRenderSystem.renderer();
-            if (renderer != null) {
-                renderer.registerInspectors();
-            }
-        });
         VeilEventPlatform.INSTANCE.onVeilRegisterInspectors(registry -> {
             // Example for devs
             if (Veil.platform().isDevelopmentEnvironment()) {

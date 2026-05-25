@@ -3,7 +3,6 @@
   "minVersion": "0.8",
   "package": "foundry.veil.mixin.debug",
   "compatibilityLevel": "JAVA_21",
-  "refmap": "${mod_id}.refmap.json",
   "plugin": "foundry.veil.VeilMixinPluginImpl",
   "mixins": [
     "SimpleReloadInstanceMixin"
@@ -12,6 +11,7 @@
     "accessor.DebugGameRendererAccessor",
     "accessor.DebugLevelRendererAccessor",
     "accessor.DebugPostChainAccessor",
+    "client.DebugActiveProfilerMixin",
     "client.DebugAutoStorageIndexBufferMixin",
     "client.DebugGlDebugMixin",
     "client.DebugKeyboardHandlerMixin",

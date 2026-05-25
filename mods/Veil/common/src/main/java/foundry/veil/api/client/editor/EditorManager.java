@@ -3,22 +3,25 @@ package foundry.veil.api.client.editor;
 import foundry.imgui.api.ImGuiMC;
 import foundry.veil.Veil;
 import foundry.veil.VeilClient;
+import foundry.veil.api.event.VeilRegisterInspectorsEvent;
 import foundry.veil.api.resource.VeilEditorEnvironment;
 import foundry.veil.api.resource.VeilResource;
 import foundry.veil.api.resource.VeilResourceManager;
 import foundry.veil.api.resource.editor.ResourceFileEditor;
 import foundry.veil.api.util.CompositeReloadListener;
-import foundry.veil.impl.client.imgui.VeilImGuiStylesheet;
 import imgui.ImFont;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
 import imgui.type.ImBoolean;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.profiling.InactiveProfiler;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -40,12 +43,14 @@ public class EditorManager implements VeilEditorEnvironment, PreparableReloadLis
     private final Map<Inspector, ImBoolean> editors;
     private final Map<ResourceLocation, ResourceFileEditor<?>> resourceFileEditors;
     private boolean enabled;
+    private boolean registered;
 
     @ApiStatus.Internal
     public EditorManager(ReloadableResourceManager resourceManager) {
         this.editors = new TreeMap<>(Comparator.comparing(inspector -> inspector.getClass().getSimpleName()));
         this.resourceFileEditors = new Object2ObjectArrayMap<>();
         this.enabled = false;
+        this.registered = false;
 
         resourceManager.registerReloadListener(this);
     }
@@ -54,6 +59,18 @@ public class EditorManager implements VeilEditorEnvironment, PreparableReloadLis
     public void render() {
         if (!this.enabled) {
             return;
+        }
+
+        if (!this.registered) {
+            this.registered = true;
+            VeilClient.clientPlatform().onRegisterInspectors(new EditorRegistry(this));
+            this.reload(
+                    CompletableFuture::completedFuture,
+                    Minecraft.getInstance().getResourceManager(),
+                    InactiveProfiler.INSTANCE,
+                    InactiveProfiler.INSTANCE,
+                    Util.backgroundExecutor(),
+                    Minecraft.getInstance());
         }
 
         ImGui.pushFont(ImGuiMC.getFont(DEFAULT_FONT, false, false));
@@ -265,5 +282,12 @@ public class EditorManager implements VeilEditorEnvironment, PreparableReloadLis
     @Override
     public VeilResourceManager getResourceManager() {
         return VeilClient.resourceManager();
+    }
+
+    private record EditorRegistry(EditorManager editorManager) implements VeilRegisterInspectorsEvent.Registry {
+        @Override
+        public void registerInspector(Inspector inspector) {
+            this.editorManager.add(inspector);
+        }
     }
 }

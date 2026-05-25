@@ -72,6 +72,17 @@ repositories {
             includeGroup("foundry.imguimc")
         }
     }
+    exclusiveContent { // ImGuiMC
+        forRepository {
+            maven {
+                name "CaffeineMC"
+                url "https://maven.caffeinemc.net/releases" // or /snapshots
+            }
+        }
+        filter {
+            includeGroup("net.caffeinemc")
+        }
+    }
 }
 
 // Declare capabilities on the outgoing configurations.

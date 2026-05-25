@@ -13,13 +13,13 @@ import org.lwjgl.system.MemoryUtil;
 
 public class VeilChunkVertex implements ChunkVertexType {
 
-    public static final int STRIDE = 23;
+    public static final int STRIDE = 24;
     public static final GlVertexFormat VERTEX_FORMAT = GlVertexFormat.builder(STRIDE)
             .addElement(DefaultChunkMeshAttributes.POSITION, 0, 0)
             .addElement(DefaultChunkMeshAttributes.COLOR, 1, 8)
             .addElement(DefaultChunkMeshAttributes.TEXTURE, 2, 12)
             .addElement(DefaultChunkMeshAttributes.LIGHT_MATERIAL_INDEX, 3, 16)
-            .addElement(new VertexFormatAttribute("NORMAL_INDEX", GlVertexAttributeFormat.BYTE, 3, true, false), 4, 20)
+            .addElement(new VertexFormatAttribute("NORMAL_INDEX", GlVertexAttributeFormat.BYTE, 4, false, true), 4, 20)
             .build();
     private static final int POSITION_MAX_VALUE = 1048576;
     private static final int TEXTURE_MAX_VALUE = 32768;
@@ -84,7 +84,7 @@ public class VeilChunkVertex implements ChunkVertexType {
     }
 
     private static int packTexture(int u, int v) {
-        return (u & 65535) | (v & 65535) << 16;
+        return (u & 0xFFFF) | (v & 0xFFFF) << 16;
     }
 
     private static int encodeTexture(float center, float x) {
@@ -100,7 +100,7 @@ public class VeilChunkVertex implements ChunkVertexType {
     }
 
     private static int packLightAndData(int light, int material, int section) {
-        return (light & 65535) | (material & 0xFF) << 16 | (section & 0xFF) << 24;
+        return (light & 0xFFFF) | (material & 0xFF) << 16 | (section & 0xFF) << 24;
     }
 
     private static int sign(int x) {

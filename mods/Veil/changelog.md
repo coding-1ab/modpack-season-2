@@ -1,13 +1,1 @@
-- Remove ImGui as a dependency. Instead, [ImGuiMC](https://modrinth.com/mod/imguimc) can optionally be installed for
-  Veil editors.
-- When ImGui is not installed the editor key is removed
-- Remove deprecated features
-- Move example resourcepacks to the [example mod](https://github.com/FoundryMC/veil-example-mod)
-- Remove unused legacy shaders
-- When vanilla shaders fail to locate an import, the shader is now skipped. This prevents the shader from being placed
-  in an invalid state when Veil is installed
-- Add support for optional packet channels
-- Add `/veil post_processing <target> add <pipeline> [priority]`, `/veil post_processing <target> remove <pipeline>`,
-  and `/veil post_processing <target> clear` commands. They can only be sent if Veil is installed on the server and
-  client, otherwise clients will not be sent packets.
-- Add `VeilRegisterInspectorsEvent` to register ImGui inspectors
+- Fix ImGuiMC, Light Buffer Startup, NVIDIA Shader Issues, and Sodium 0.8.13 Issues ([#142](https://github.com/FoundryMC/Veil/pull/142))

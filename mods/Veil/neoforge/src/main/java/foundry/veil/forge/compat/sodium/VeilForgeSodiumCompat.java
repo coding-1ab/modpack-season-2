@@ -6,13 +6,15 @@ import foundry.veil.forge.ext.SodiumWorldRendererExtension;
 import foundry.veil.forge.mixin.compat.sodium.RenderSectionManagerAccessor;
 import foundry.veil.forge.mixin.compat.sodium.SodiumWorldRendererAccessor;
 import it.unimi.dsi.fastutil.longs.Long2ReferenceMap;
+import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMaps;
 import net.caffeinemc.mods.sodium.client.gl.shader.GlProgram;
 import net.caffeinemc.mods.sodium.client.render.SodiumWorldRenderer;
-import net.caffeinemc.mods.sodium.client.render.chunk.ChunkUpdateType;
 import net.caffeinemc.mods.sodium.client.render.chunk.RenderSection;
+import net.caffeinemc.mods.sodium.client.render.chunk.RenderSectionManager;
+import net.caffeinemc.mods.sodium.client.render.chunk.TaskQueueType;
 import net.caffeinemc.mods.sodium.client.render.chunk.lists.SortedRenderLists;
 import net.caffeinemc.mods.sodium.client.render.chunk.shader.ChunkFogMode;
 import net.caffeinemc.mods.sodium.client.render.chunk.shader.ChunkShaderInterface;
@@ -89,13 +91,13 @@ public class VeilForgeSodiumCompat implements SodiumCompat {
     public void markChunksDirty() {
         SodiumWorldRenderer worldRenderer = SodiumWorldRenderer.instanceNullable();
         if (worldRenderer != null) {
-            RenderSectionManagerAccessor renderSectionManager = (RenderSectionManagerAccessor) ((SodiumWorldRendererAccessor) worldRenderer).getRenderSectionManager();
+            RenderSectionManager renderSectionManager = ((SodiumWorldRendererAccessor) worldRenderer).getRenderSectionManager();
 
             if (renderSectionManager != null) {
-                Long2ReferenceMap<RenderSection> map = renderSectionManager.getSectionByPosition();
-                for (long longPos : map.keySet()) {
-                    SectionPos sectionPos = SectionPos.of(longPos);
-                    ((SodiumWorldRendererAccessor) worldRenderer).getRenderSectionManager().scheduleRebuild(sectionPos.x(), sectionPos.y(), sectionPos.z(), true);
+                Long2ReferenceMap<RenderSection> map = ((RenderSectionManagerAccessor) renderSectionManager).getSectionByPosition();
+                for (LongIterator iterator = map.keySet().iterator(); iterator.hasNext(); ) {
+                    long sectionPos = iterator.nextLong();
+                    renderSectionManager.scheduleRebuild(SectionPos.x(sectionPos), SectionPos.y(sectionPos), SectionPos.z(sectionPos), true);
                 }
             }
         }
@@ -126,8 +128,8 @@ public class VeilForgeSodiumCompat implements SodiumCompat {
             return ((SodiumWorldRendererExtension) worldRenderer).veil$getTaskLists();
         }
 
-        Map<ChunkUpdateType, ArrayDeque<?>> taskLists = new EnumMap<>(ChunkUpdateType.class);
-        for (ChunkUpdateType type : ChunkUpdateType.values()) {
+        Map<TaskQueueType, ArrayDeque<?>> taskLists = new EnumMap<>(TaskQueueType.class);
+        for (TaskQueueType type : TaskQueueType.values()) {
             taskLists.put(type, new ArrayDeque<>());
         }
         return taskLists;
@@ -139,10 +141,10 @@ public class VeilForgeSodiumCompat implements SodiumCompat {
         SodiumWorldRenderer worldRenderer = SodiumWorldRenderer.instanceNullable();
         if (worldRenderer != null) {
             if (taskList != null) {
-                ((SodiumWorldRendererExtension) worldRenderer).veil$setTaskLists((Map<ChunkUpdateType, ArrayDeque<RenderSection>>) taskList);
+                ((SodiumWorldRendererExtension) worldRenderer).veil$setTaskLists((Map<TaskQueueType, ArrayDeque<RenderSection>>) taskList);
             } else {
-                Map<ChunkUpdateType, ArrayDeque<RenderSection>> taskLists = new EnumMap<>(ChunkUpdateType.class);
-                for (ChunkUpdateType type : ChunkUpdateType.values()) {
+                Map<TaskQueueType, ArrayDeque<RenderSection>> taskLists = new EnumMap<>(TaskQueueType.class);
+                for (TaskQueueType type : TaskQueueType.values()) {
                     taskLists.put(type, new ArrayDeque<>());
                 }
                 ((SodiumWorldRendererExtension) worldRenderer).veil$setTaskLists(taskLists);
