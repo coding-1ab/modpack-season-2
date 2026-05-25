@@ -1,29 +1,31 @@
 # Solid Fuel Thruster
 
-The **Solid Fuel Thruster** is a compact 1×1 thruster that burns **items** instead of fluids. It is tuned weaker than liquid thrusters by default (lower base thrust and smaller, slower exhaust particles).
+The **Solid Fuel Thruster** is a compact 1×1 thruster that burns **items** instead of fluids. Default tuning is weaker than liquid thrusters (lower base thrust and smaller, slower exhaust particles).
 
 ## Block behavior
 
 ### Fuel input
 
-- Accepts items from the **back** of the block (the `facing` side — same side as the funnel on the model). Right-click with a valid fuel to insert; right-click empty-handed to take queued fuel back.
+- Accepts items from the **back** of the block (the `facing` side — same side as the funnel on the model).
+- Right-click with valid fuel to insert one item; right-click empty-handed to remove the stored item (only while not burning).
 - Compatible with Create **funnels**, **hoppers**, chests, and other item handlers on that face.
-- Only **data-driven fuels** are accepted (see [Solid thruster fuels](#solid-thruster-fuels) below). There is no implicit `minecraft:coal` or furnace-fuel-tag fallback unless you add it in a datapack.
+- **Wrench** the block to open the fuel hatch. While open, the thruster pulls valid fuel from item containers placed behind the hatch (same face as the funnel).
+- Internal storage holds **one** fuel item. The item remains in the slot for the whole burn.
 
-### Burn pipeline
+### Accepted fuels
 
-The thruster keeps up to **two** items internally:
+Valid fuels come from [solid thruster fuel](#solid-thruster-fuels) datapacks and KubeJS, plus:
 
-| Slot | Role |
-|------|------|
-| Burning | The item currently being consumed |
-| Queued | The next item waiting to burn |
+- **Create blaze cake** — uses Create’s superheated blaze-burner burn time; **2×** thrust multiplier while burning.
+- **Create creative blaze cake** — infinite burn duration.
+- Any other item listed in Create’s `SUPERHEATED_BLAZE_BURNER_FUELS` datamap (if not overridden by a solid thruster fuel entry).
 
-### Redstone and thrust
+### Burn and thrust
 
-- Throttle follows redstone strength **1–15** (0–100% power), like other thrusters.
-- Thrust scales with: base thrust (config) × throttle × obstruction × fuel `thrust_multiplier` × fuel efficiency (config, if added later).
-- Exhaust **particle count and velocity** scale with throttle and are further reduced by config multipliers (weaker plume than liquid thrusters).
+- Fuel is armed when inserted (burn duration is calculated from the fuel definition or blaze-burner data).
+- The burn timer **only decreases while the thruster is powered on** (redstone signal present). Power off pauses consumption; thrust and exhaust particles also require power.
+- When the burn finishes, the fuel item is consumed (except infinite fuels) and a new item can be inserted.
+- Redstone is **on/off only**: any strength ≥ 1 is full throttle; no signal is off. Partial redstone levels do not scale thrust.
 
 ### Crafting
 
@@ -33,11 +35,11 @@ A B A
 I P I
 ```
 
-- `C` — copper sheet (top left & right)  
-- `I` — iron sheet (top center, bottom left & right)  
-- `A` — andesite alloy (middle left & right)  
-- `B` — chute (center)  
-- `P` — fluid pipe (bottom center; exhaust / output)  
+- `C` — copper sheet (top left & right)
+- `I` — iron sheet (top center, bottom left & right)
+- `A` — andesite alloy (middle left & right)
+- `B` — chute (center)
+- `P` — fluid pipe (bottom center; exhaust / output)
 
 ## Config
 
@@ -50,7 +52,7 @@ Section: **`solidFuelThruster`** in `createpropulsion-common.toml`
 | `solidFuelThrusterParticleCountMultiplier` | `0.35` | Scales exhaust particle count |
 | `solidFuelThrusterParticleVelocityMultiplier` | `0.4` | Scales exhaust particle speed |
 
-Shared physics/display settings (`thrustUnitsPerKn`, obstruction scan, atmospheric pressure, etc.) use the global **thruster** / **physics** sections like other thrusters.
+Obstruction scan, atmospheric pressure, and thrust unit display use the global **thruster** and **physics** config sections.
 
 ---
 
@@ -60,9 +62,9 @@ Fuel definitions live under:
 
 `data/<namespace>/solid_thruster_fuels/<path>.json`
 
-Only the **Solid Fuel Thruster** uses these files. Liquid thrusters still use [`thruster_fuels`](Datapack-Example-Usage.md).
+Only the **Solid Fuel Thruster** reads these files. Liquid thrusters use [`thruster_fuels`](Datapack-Example-Usage.md).
 
-### Resolution rules (strict data-driven)
+### Resolution rules
 
 - Only declared entries are valid fuels.
 - No automatic furnace-fuel or coal-only fallback.
@@ -123,39 +125,39 @@ Tag example:
 ### Burn time
 
 - Default: `item.getBurnTime(SMELTING) / consumption_multiplier` (minimum 1 tick), unless `burn_ticks` is set.
-- **Coal / charcoal** use explicit longer burns (`coal` 4000 ticks, `charcoal` 3600 ticks). Blocks stay at `burn_ticks: 16000`.
+- **Coal / charcoal** use explicit longer burns (`coal` 4000 ticks, `charcoal` 3600 ticks). Blocks use `burn_ticks: 16000`.
 - **Logs and planks** use normal smelting burn time at `consumption_multiplier: 1.0`.
-- **Other wood** (stairs, slabs, fences, trapdoors, doors) use `consumption_multiplier: 8.0` so they burn much faster than logs/planks.
+- **Other wood** (stairs, slabs, fences, trapdoors, doors) use `consumption_multiplier: 8.0` for a much shorter burn than logs/planks.
 
-### Particle names
+### Particle types
 
-- `plume` (default) — standard exhaust
-- `plasma` — plasma-style exhaust
-- `none` — no particles for this fuel
+| Value | Effect |
+|-------|--------|
+| `plume` | Standard exhaust (default) |
+| `plasma` | Plasma-style exhaust |
+| `none` | No particles for this fuel |
 
 ### Default pack (`createpropulsion`)
 
-Shipped under `data/createpropulsion/solid_thruster_fuels/minecraft/`:
+**`data/createpropulsion/solid_thruster_fuels/minecraft/`**
 
-**Items**
+| Type | Entries |
+|------|---------|
+| Items | `coal`, `coal_block`, `charcoal`, `charcoal_block` |
+| Tags | `logs`, `planks`, `wooden_stairs`, `wooden_slabs`, `wooden_fences`, `wooden_trapdoors`, `wooden_doors` |
 
-- `coal`, `coal_block`, `charcoal`, `charcoal_block`
+Wood fuels use lower `thrust_multiplier` values (~0.25–0.35) than coal. Logs and planks use a normal smelting-length burn; other wooden parts burn ~8× faster via `consumption_multiplier`.
 
-**Tags** (wood and variants)
+**`data/createpropulsion/solid_thruster_fuels/create/`** (requires Create)
 
-- `minecraft:logs`
-- `minecraft:planks`
-- `minecraft:wooden_stairs`
-- `minecraft:wooden_slabs`
-- `minecraft:wooden_fences`
-- `minecraft:wooden_trapdoors`
-- `minecraft:wooden_doors`
+| Item | Notes |
+|------|--------|
+| `create:blaze_cake` | `thrust_multiplier` 1.5, plasma particles; also receives superheated burn time and 2× thrust while burning |
+| `create:creative_blaze_cake` | `thrust_multiplier` 2.0, `burn_ticks` 51840000 (infinite), plasma particles |
 
-Wood fuels use lower `thrust_multiplier` values (~0.25–0.35) than coal. Logs/planks last a normal smelting-length burn; other wooden parts burn ~8× faster via `consumption_multiplier`.
+### Custom datapack example
 
-### Example: custom datapack fuel
-
-Path: `data/my_pack/solid_thruster_fuels/blaze_rod.json`
+`data/my_pack/solid_thruster_fuels/blaze_rod.json`
 
 ```json
 {
@@ -168,9 +170,9 @@ Path: `data/my_pack/solid_thruster_fuels/blaze_rod.json`
 }
 ```
 
-### Example: mod wood via tag
+### Tag example (mod wood)
 
-Path: `data/my_pack/solid_thruster_fuels/c_wood.json`
+`data/my_pack/solid_thruster_fuels/c_wood.json`
 
 ```json
 {
@@ -182,8 +184,7 @@ Path: `data/my_pack/solid_thruster_fuels/c_wood.json`
 
 ### Reload
 
-- Run `/reload` to re-read datapack files.
-- Fuel data is synced to clients automatically (same as liquid thruster fuels).
+Run `/reload` to re-read datapack files. Fuel data is synced to clients automatically.
 
 ---
 
@@ -191,9 +192,7 @@ Path: `data/my_pack/solid_thruster_fuels/c_wood.json`
 
 Global: **`SolidThrusterFuelManager`**
 
-Same method names as [`ThrusterFuelManager`](KubeJS-API.md), but ids are **items**, not fluids.
-
-Example (`kubejs/server_scripts/solid_thruster_fuels.js`):
+Method names match [`ThrusterFuelManager`](KubeJS-API.md), but fuel ids are **items**, not fluids.
 
 ```js
 ServerEvents.loaded(event => {
@@ -220,11 +219,11 @@ See [KubeJS API — Solid Fuel Thruster](KubeJS-API.md#solid-fuel-thruster-solid
 
 ## ComputerCraft
 
-When **CC: Tweaked** is installed, the block exposes peripheral type **`solid_fuel_thruster`**.
+With **CC: Tweaked**, peripheral type **`solid_fuel_thruster`**.
 
-- Throttle: `setPower` / `setPowerNormalized` / `getPower` (same [peripheral control rules](cc/README.md) as other thrusters)
+- Throttle: `setPower` / `setPowerNormalized` / `getPower`
 - Thrust: `getCurrentThrustPN`, `getCurrentThrustKN`, `getDisplayedThrustPN`, `getDisplayedThrustKN`, `getAirflowMs`, `getObstruction`
-- Fuel: `getFuelAmount`, `getFuelCapacity`, `getBurnTimeRemaining`, `isBurning`
+- Fuel: `getFuelAmount` (`0` or `1`), `getFuelCapacity` (`1`), `getBurnTimeRemaining`, `isBurning`
 - Items: `list`, `pushItems`, `pullItems` on the back-side fuel slot
 
 Full method list: [ComputerCraft peripherals — Solid fuel thruster](ComputerCraft-Peripherals.md#solid-fuel-thruster-solid_fuel_thruster).

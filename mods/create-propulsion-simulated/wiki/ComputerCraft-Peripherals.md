@@ -47,7 +47,7 @@ Fluid thrusters, solid fuel thrusters, and ion thrusters use **different periphe
 
 ## Solid fuel thruster (`solid_fuel_thruster`)
 
-**Item-fuel** thrusters: same throttle and thrust readouts as [Thruster](#thruster-thruster), but **no fluid API**. Fuel is tracked as items (burning + queued, max 2). Item I/O uses the fuel-input slot (back face) via generic inventory methods.
+**Item-fuel** thrusters: same throttle and thrust readouts as [Thruster](#thruster-thruster), but **no fluid API**. One fuel item in a single slot on the back face. Item I/O uses generic inventory methods on that face.
 
 | Method | Returns | Notes |
 |--------|---------|--------|
@@ -57,13 +57,13 @@ Fluid thrusters, solid fuel thrusters, and ion thrusters use **different periphe
 | `getCurrentThrustPN()` / `getCurrentThrustKN()` | `number` | |
 | `getDisplayedThrustPN()` / `getDisplayedThrustKN()` | `number` | |
 | `getAirflowMs()` | `number` | |
-| `getFuelAmount()` | `number` | Items stored (`0 … 2`: burning + queued) |
-| `getFuelCapacity()` | `number` | Always `2` |
-| `getBurnTimeRemaining()` | `number` | Ticks left on current burn (while powered) |
-| `isBurning()` | `boolean` | |
-| `list()` | `table` | Queued fuel slot (automation-facing inventory) |
-| `pushItems(toName, fromSlot[, limit[, toSlot]])` | `number` | Push from thruster slot to another peripheral |
-| `pullItems(fromName, toSlot[, limit[, fromSlot]])` | `number` | Pull into queued fuel slot from another peripheral |
+| `getFuelAmount()` | `number` | `0` or `1` |
+| `getFuelCapacity()` | `number` | Always `1` |
+| `getBurnTimeRemaining()` | `number` | Ticks left on current burn (only decreases while powered) |
+| `isBurning()` | `boolean` | `true` when powered and a burn is active |
+| `list()` | `table` | Fuel slot inventory |
+| `pushItems(toName, fromSlot[, limit[, toSlot]])` | `number` | Push from thruster to another peripheral |
+| `pullItems(fromName, toSlot[, limit[, fromSlot]])` | `number` | Pull into fuel slot from another peripheral |
 
 Block overview: [Solid Fuel Thruster](Solid-Fuel-Thruster.md).
 

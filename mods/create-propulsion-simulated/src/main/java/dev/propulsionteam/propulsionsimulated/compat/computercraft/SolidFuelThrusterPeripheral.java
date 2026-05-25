@@ -78,19 +78,12 @@ public class SolidFuelThrusterPeripheral extends SyncedPeripheral<SolidFuelThrus
 
     @LuaFunction(mainThread = true)
     public final int getFuelAmount() {
-        int amount = 0;
-        if (!blockEntity.getBurningFuel().isEmpty()) {
-            amount++;
-        }
-        if (!blockEntity.getQueuedFuel().isEmpty()) {
-            amount++;
-        }
-        return amount;
+        return blockEntity.getFuelStack().isEmpty() ? 0 : 1;
     }
 
     @LuaFunction(mainThread = true)
     public final int getFuelCapacity() {
-        return 2;
+        return 1;
     }
 
     @LuaFunction(mainThread = true)
@@ -100,7 +93,8 @@ public class SolidFuelThrusterPeripheral extends SyncedPeripheral<SolidFuelThrus
 
     @LuaFunction(mainThread = true)
     public final boolean isBurning() {
-        return blockEntity.getBurnTime() > 0 && !blockEntity.getBurningFuel().isEmpty();
+        return blockEntity.getBurnTime() > 0 && !blockEntity.getBurningFuel().isEmpty()
+            && blockEntity.getThrottle() > 0;
     }
 
     @LuaFunction(mainThread = true)
@@ -121,7 +115,7 @@ public class SolidFuelThrusterPeripheral extends SyncedPeripheral<SolidFuelThrus
     }
 
     private IItemHandler getHandler() throws LuaException {
-        IItemHandler handler = blockEntity.getItemHandler(blockEntity.getFuelInputSide());
+        IItemHandler handler = blockEntity.inventory;
         if (handler == null) {
             throw new LuaException("Item inventory not available");
         }

@@ -1,9 +1,7 @@
 package dev.propulsionteam.propulsionsimulated.content.thruster.solid_fuel_thruster;
 
-import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.utility.CreateLang;
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
-import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.ItemThrusterProperties;
 import dev.propulsionteam.propulsionsimulated.content.thruster.SolidThrusterFuelManager;
@@ -15,6 +13,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Clearable;
 import net.minecraft.world.InteractionHand;
@@ -23,23 +23,25 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 import java.util.List;
-import java.util.Locale;
 
 public class SolidFuelThrusterBlockEntity extends AbstractThrusterBlockEntity implements Clearable {
-    private static final double TICKS_PER_MINUTE = 20.0d * 60.0d;
+    private static final float SUPERHEATED_THRUST_MULTIPLIER = 2.0f;
+    private static final int BURN_SYNC_INTERVAL_TICKS = 20;
 
-    private final SolidFuelThrusterItemHandler itemHandler = new SolidFuelThrusterItemHandler(this);
+    public final SolidFuelThrusterItemHandler inventory = new SolidFuelThrusterItemHandler(this);
 
-    private ItemStack burningFuel = ItemStack.EMPTY;
-    private ItemStack queuedFuel = ItemStack.EMPTY;
     private int burnTime = 0;
-    private double lastConsumedItemsPerTick = 0.0d;
-    private int syncedFuelCount = 0;
+    private int totalBurnTicks = 0;
+    private boolean superHeated = false;
+    private boolean hatchOpen = false;
+    private boolean wasPoweredLastTick = false;
 
     public SolidFuelThrusterBlockEntity(BlockPos pos, BlockState state) {
         super(PropulsionBlockEntities.SOLID_FUEL_THRUSTER_BLOCK_ENTITY.get(), pos, state);
@@ -53,45 +55,107 @@ public class SolidFuelThrusterBlockEntity extends AbstractThrusterBlockEntity im
     public void tick() {
         if (level != null && !level.isClientSide) {
             tickFuel();
+            if (hatchOpen) {
+                tryPullFuelFromBehind();
+            }
         }
         super.tick();
     }
 
     private void tickFuel() {
-        if (burnTime > 0 && isPowered()) {
+        boolean powered = isPowered();
+
+        if (burnTime > 0 && powered && !SolidFuelThrusterFuelHelper.isInfiniteBurnTime(burnTime)) {
             burnTime--;
-            updateConsumptionRate();
-        } else if (burnTime > 0) {
-            lastConsumedItemsPerTick = 0.0d;
         }
 
+        if (burnTime > 0 && powered != wasPoweredLastTick) {
+            syncBurnStateToClient();
+        } else if (burnTime > 0 && powered && level != null
+            && level.getGameTime() % BURN_SYNC_INTERVAL_TICKS == 0) {
+            syncBurnStateToClient();
+        }
+        wasPoweredLastTick = powered;
+
         if (burnTime <= 0) {
-            burningFuel = ItemStack.EMPTY;
-            lastConsumedItemsPerTick = 0.0d;
-            if (!queuedFuel.isEmpty() && isPowered()) {
-                startBurning(queuedFuel);
-                queuedFuel = ItemStack.EMPTY;
-                markFuelChanged();
+            ItemStack fuel = getFuelStack();
+            if (!fuel.isEmpty() && !SolidFuelThrusterFuelHelper.isInfiniteFuel(fuel)) {
+                setFuelStack(ItemStack.EMPTY);
+            }
+            superHeated = false;
+            totalBurnTicks = 0;
+            tryStartBurning();
+        }
+    }
+
+    private void syncBurnStateToClient() {
+        setChanged();
+        notifyUpdate();
+    }
+
+    private void tryStartBurning() {
+        if (burnTime > 0) {
+            return;
+        }
+        ItemStack fuel = getFuelStack();
+        if (fuel.isEmpty() || !canAcceptFuel(fuel)) {
+            return;
+        }
+        if (SolidFuelThrusterFuelHelper.isInfiniteFuel(fuel)) {
+            burnTime = SolidFuelThrusterFuelHelper.INFINITE_THRESHOLD;
+        } else {
+            totalBurnTicks = SolidFuelThrusterFuelHelper.resolveTotalBurnTicks(fuel);
+            burnTime = totalBurnTicks;
+        }
+        totalBurnTicks = burnTime;
+        superHeated = SolidFuelThrusterFuelHelper.isSuperheatedFuel(fuel);
+        markFuelChanged();
+        dirtyThrust();
+    }
+
+    /** Remaining burn ticks (only decreases while the thruster is powered on). */
+    public int getDisplayBurnTimeRemaining() {
+        return burnTime;
+    }
+
+    void onInventoryChanged(int slot) {
+        markFuelChanged();
+        if (burnTime <= 0) {
+            tryStartBurning();
+        }
+    }
+
+    private void tryPullFuelFromBehind() {
+        if (level == null || !getFuelStack().isEmpty() || burnTime > 0) {
+            return;
+        }
+        Direction inputSide = getFuelInputSide();
+        BlockPos behind = worldPosition.relative(inputSide);
+        IItemHandler source = level.getCapability(
+            Capabilities.ItemHandler.BLOCK,
+            behind,
+            inputSide.getOpposite()
+        );
+        if (source == null) {
+            return;
+        }
+        for (int i = 0; i < source.getSlots(); i++) {
+            ItemStack candidate = source.getStackInSlot(i);
+            if (!canAcceptFuel(candidate)) {
+                continue;
+            }
+            ItemStack extracted = source.extractItem(i, 1, false);
+            if (!extracted.isEmpty()) {
+                ItemStack remainder = ItemHandlerHelper.insertItem(inventory, extracted, false);
+                if (!remainder.isEmpty()) {
+                    source.insertItem(i, remainder, false);
+                }
+                break;
             }
         }
     }
 
-    private void updateConsumptionRate() {
-        if (burningFuel.isEmpty()) {
-            lastConsumedItemsPerTick = 0.0d;
-            return;
-        }
-        int totalBurn = Math.max(1, SolidThrusterFuelManager.resolveBurnTicks(burningFuel));
-        float throttle = Math.min(getPower(), calculateObstructionEffect());
-        lastConsumedItemsPerTick = throttle > 0 ? throttle / (double) totalBurn : 0.0d;
-    }
-
-    private int getInternalFuelCount() {
-        return (burningFuel.isEmpty() ? 0 : 1) + (queuedFuel.isEmpty() ? 0 : 1);
-    }
-
     public void markFuelChanged() {
-        syncedFuelCount = getInternalFuelCount();
         setChanged();
         notifyUpdate();
         if (level != null && !level.isClientSide()) {
@@ -100,42 +164,69 @@ public class SolidFuelThrusterBlockEntity extends AbstractThrusterBlockEntity im
         }
     }
 
-    private void startBurning(ItemStack stack) {
-        if (stack.isEmpty() || !canAcceptFuel(stack)) {
-            return;
+    public boolean canAcceptFuel(ItemStack stack) {
+        if (stack.isEmpty()) {
+            return false;
         }
-        burningFuel = stack.copyWithCount(1);
-        burnTime = SolidThrusterFuelManager.resolveBurnTicks(burningFuel);
-        updateConsumptionRate();
-        markFuelChanged();
-        dirtyThrust();
+        return SolidThrusterFuelManager.getProperties(stack) != null
+            || SolidFuelThrusterFuelHelper.isSuperheatedFuel(stack)
+            || SolidFuelThrusterFuelHelper.isCreativeBlazeCake(stack);
     }
 
-    public boolean canAcceptFuel(ItemStack stack) {
-        return !stack.isEmpty() && SolidThrusterFuelManager.getProperties(stack) != null;
+    public ItemStack getFuelStack() {
+        return inventory.getStackInSlot(SolidFuelThrusterItemHandler.FUEL_SLOT);
+    }
+
+    public void setFuelStack(ItemStack stack) {
+        inventory.setStackInSlot(
+            SolidFuelThrusterItemHandler.FUEL_SLOT,
+            stack.isEmpty() ? ItemStack.EMPTY : stack.copyWithCount(1)
+        );
     }
 
     public ItemStack getQueuedFuel() {
-        return queuedFuel;
+        return burnTime > 0 ? ItemStack.EMPTY : getFuelStack();
     }
 
     public void setQueuedFuel(ItemStack stack) {
-        queuedFuel = stack.isEmpty() ? ItemStack.EMPTY : stack.copyWithCount(1);
+        if (burnTime <= 0) {
+            setFuelStack(stack);
+        }
     }
 
     public int getBurnTime() {
         return burnTime;
     }
 
+    public int getTotalBurnTicks() {
+        return totalBurnTicks;
+    }
+
+    public boolean isSuperHeated() {
+        return superHeated;
+    }
+
+    public boolean isHatchOpen() {
+        return hatchOpen;
+    }
+
+    public void toggleHatch() {
+        hatchOpen = !hatchOpen;
+        setChanged();
+        notifyUpdate();
+    }
+
     public ItemStack getBurningFuel() {
-        return burningFuel;
+        return burnTime > 0 ? getFuelStack() : ItemStack.EMPTY;
     }
 
     public IItemHandler getItemHandler(Direction side) {
-        return itemHandler;
+        if (side != null && side != getFuelInputSide()) {
+            return null;
+        }
+        return inventory;
     }
 
-    /** Same side as fluid thruster input: the block {@code facing} (back / funnel). */
     public Direction getFuelInputSide() {
         return getFacing();
     }
@@ -147,19 +238,22 @@ public class SolidFuelThrusterBlockEntity extends AbstractThrusterBlockEntity im
         ItemStack held = player.getItemInHand(hand);
 
         if (held.isEmpty()) {
-            ItemStack queued = getQueuedFuel();
-            if (queued.isEmpty()) {
+            if (burnTime > 0 || getFuelStack().isEmpty()) {
                 return false;
             }
-            if (!player.getInventory().add(queued.copy())) {
-                player.drop(queued.copy(), false);
+            ItemStack fuel = getFuelStack();
+            if (!player.getInventory().add(fuel.copy())) {
+                player.drop(fuel.copy(), false);
             }
-            setQueuedFuel(ItemStack.EMPTY);
-            markFuelChanged();
+            setFuelStack(ItemStack.EMPTY);
             return true;
         }
 
-        ItemStack remainder = itemHandler.insertItem(SolidFuelThrusterItemHandler.QUEUE_SLOT, held, false);
+        if (burnTime > 0) {
+            return false;
+        }
+
+        ItemStack remainder = inventory.insertItem(SolidFuelThrusterItemHandler.FUEL_SLOT, held, false);
         if (remainder.getCount() == held.getCount()) {
             return false;
         }
@@ -168,28 +262,42 @@ public class SolidFuelThrusterBlockEntity extends AbstractThrusterBlockEntity im
     }
 
     @Override
+    public float getPower() {
+        if (controlMode == ControlMode.PERIPHERAL) {
+            return digitalInput > 0.0f ? 1.0f : 0.0f;
+        }
+        return redstoneInput > 0 ? 1.0f : 0.0f;
+    }
+
+    private boolean hasActiveBurn() {
+        return burnTime > 0 && !getFuelStack().isEmpty();
+    }
+
+    @Override
     protected boolean isWorking() {
-        return burnTime > 0 && !burningFuel.isEmpty();
+        return isPowered() && hasActiveBurn();
     }
 
     @Override
     public void updateThrust(BlockState currentBlockState) {
         float thrust = 0;
         float currentPower = getPower();
-        lastConsumedItemsPerTick = 0.0d;
 
         if (isWorking() && currentPower > 0) {
-            ItemThrusterProperties properties = SolidThrusterFuelManager.getProperties(burningFuel);
+            ItemStack fuel = getFuelStack();
+            ItemThrusterProperties properties = SolidThrusterFuelManager.getProperties(fuel);
             float obstructionEffect = calculateObstructionEffect();
             float thrustPercentage = Math.min(currentPower, obstructionEffect);
 
             if (thrustPercentage > 0 && properties != null) {
-                float fuelEfficiency = SolidThrusterFuelManager.getEfficiency(burningFuel.getItem());
+                float fuelEfficiency = SolidThrusterFuelManager.getEfficiency(fuel.getItem());
+                float thrustMultiplier = properties.thrustMultiplier();
+                if (superHeated) {
+                    thrustMultiplier *= SUPERHEATED_THRUST_MULTIPLIER;
+                }
                 float baseThrustPn = (float) (getBaseThrust() * getThrustUnitsPerKn());
                 baseThrustPn *= (float) calculateAtmosphericFactor();
-                thrust = baseThrustPn * thrustPercentage * properties.thrustMultiplier() * fuelEfficiency;
-                int totalBurn = Math.max(1, SolidThrusterFuelManager.resolveBurnTicks(burningFuel));
-                lastConsumedItemsPerTick = thrustPercentage / (double) totalBurn;
+                thrust = baseThrustPn * thrustPercentage * thrustMultiplier * fuelEfficiency;
             }
         }
 
@@ -227,13 +335,13 @@ public class SolidFuelThrusterBlockEntity extends AbstractThrusterBlockEntity im
         if (!super.shouldEmitParticles()) {
             return false;
         }
-        ItemThrusterProperties properties = SolidThrusterFuelManager.getProperties(burningFuel);
+        ItemThrusterProperties properties = SolidThrusterFuelManager.getProperties(getFuelStack());
         return properties != null && properties.particleType() != ThrusterParticleType.NONE;
     }
 
     @Override
     protected ParticleOptions createParticleOptions() {
-        ItemThrusterProperties properties = SolidThrusterFuelManager.getProperties(burningFuel);
+        ItemThrusterProperties properties = SolidThrusterFuelManager.getProperties(getFuelStack());
         if (properties == null) {
             return super.createParticleOptions();
         }
@@ -242,7 +350,7 @@ public class SolidFuelThrusterBlockEntity extends AbstractThrusterBlockEntity im
 
     @Override
     protected LangBuilder getGoggleStatus() {
-        if (burningFuel.isEmpty() && queuedFuel.isEmpty()) {
+        if (getFuelStack().isEmpty()) {
             return CreateLang.builder()
                 .add(Component.translatable("createpropulsion.gui.goggles.thruster.status.no_fuel"))
                 .style(ChatFormatting.RED);
@@ -275,45 +383,49 @@ public class SolidFuelThrusterBlockEntity extends AbstractThrusterBlockEntity im
             .style(ChatFormatting.WHITE)
             .forGoggles(tooltip);
 
-        int stored = syncedFuelCount;
-        CreateLang.builder()
-            .add(Component.literal("  "))
-            .add(Component.literal(Integer.toString(stored)).withStyle(ChatFormatting.AQUA))
-            .add(Component.literal(" / 2").withStyle(ChatFormatting.GRAY))
-            .forGoggles(tooltip);
+        if (hasActiveBurn()) {
+            appendBurnTimeLine(tooltip, getDisplayBurnTimeRemaining(), totalBurnTicks, superHeated);
+        } else if (!getFuelStack().isEmpty()) {
+            int nextBurn = SolidFuelThrusterFuelHelper.resolveTotalBurnTicks(getFuelStack());
+            appendBurnTimeLine(tooltip, nextBurn, nextBurn, SolidFuelThrusterFuelHelper.isSuperheatedFuel(getFuelStack()));
+        }
 
-        CreateLang.builder()
-            .add(Component.literal("  "))
-            .add(Component.literal(String.format(Locale.ROOT, "%.2f", getDisplayedItemsPerMinute())).withStyle(ChatFormatting.AQUA))
-            .add(Component.translatable("createpropulsion.gui.goggles.solid_fuel_thruster.items_per_minute")
-                .withStyle(ChatFormatting.GRAY))
-            .forGoggles(tooltip);
-
-        if (!queuedFuel.isEmpty()) {
+        if (!getFuelStack().isEmpty()) {
             CreateLang.builder()
                 .add(Component.literal("  "))
-                .add(queuedFuel.getHoverName().copy().withStyle(ChatFormatting.GRAY))
-                .forGoggles(tooltip);
-        } else if (!burningFuel.isEmpty()) {
-            CreateLang.builder()
-                .add(Component.literal("  "))
-                .add(burningFuel.getHoverName().copy().withStyle(ChatFormatting.GRAY))
+                .add(getFuelStack().getHoverName().copy().withStyle(ChatFormatting.GRAY))
                 .forGoggles(tooltip);
         }
     }
 
-    private double getDisplayedItemsPerMinute() {
-        return lastConsumedItemsPerTick * TICKS_PER_MINUTE;
+    private static void appendBurnTimeLine(List<Component> tooltip, int remaining, int total, boolean superheated) {
+        boolean infinite = SolidFuelThrusterFuelHelper.isInfiniteBurnTime(remaining)
+            || SolidFuelThrusterFuelHelper.isInfiniteBurnTime(total);
+        LangBuilder time = CreateLang.builder().add(Component.literal("  "));
+        if (infinite) {
+            time.add(Component.translatable("createpropulsion.gui.goggles.solid_fuel_thruster.infinite")
+                .withStyle(ChatFormatting.LIGHT_PURPLE));
+        } else {
+            String formatted = SolidFuelThrusterFuelHelper.formatBurnTime(remaining);
+            if (formatted != null) {
+                time.add(Component.literal(formatted).withStyle(superheated ? ChatFormatting.GOLD : ChatFormatting.AQUA));
+            }
+        }
+        time.add(Component.translatable("createpropulsion.gui.goggles.solid_fuel_thruster.burn_time")
+            .withStyle(ChatFormatting.GRAY));
+        time.forGoggles(tooltip);
+
+        if (superheated) {
+            CreateLang.builder()
+                .add(Component.literal("  "))
+                .add(Component.translatable("createpropulsion.gui.goggles.solid_fuel_thruster.superheated")
+                    .withStyle(ChatFormatting.GOLD))
+                .forGoggles(tooltip);
+        }
     }
 
     public boolean validFuel() {
-        if (!burningFuel.isEmpty()) {
-            return SolidThrusterFuelManager.getProperties(burningFuel) != null;
-        }
-        if (!queuedFuel.isEmpty()) {
-            return SolidThrusterFuelManager.getProperties(queuedFuel) != null;
-        }
-        return false;
+        return !getFuelStack().isEmpty() && canAcceptFuel(getFuelStack());
     }
 
     @Override
@@ -333,49 +445,64 @@ public class SolidFuelThrusterBlockEntity extends AbstractThrusterBlockEntity im
 
     @Override
     public void clearContent() {
-        burningFuel = ItemStack.EMPTY;
-        queuedFuel = ItemStack.EMPTY;
+        setFuelStack(ItemStack.EMPTY);
         burnTime = 0;
+        totalBurnTicks = 0;
+        superHeated = false;
     }
 
     @Override
     protected void write(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
         super.write(compound, registries, clientPacket);
-        syncedFuelCount = getInternalFuelCount();
         compound.putInt("BurnTime", burnTime);
-        compound.putDouble("LastConsumedItemsPerTick", lastConsumedItemsPerTick);
-        compound.putInt("SyncedFuelCount", syncedFuelCount);
-        if (!burningFuel.isEmpty()) {
-            compound.put("BurningFuel", burningFuel.save(registries));
-        } else {
-            compound.remove("BurningFuel");
-        }
-        if (!queuedFuel.isEmpty()) {
-            compound.put("QueuedFuel", queuedFuel.save(registries));
-        } else {
-            compound.remove("QueuedFuel");
-        }
+        compound.putInt("TotalBurnTicks", totalBurnTicks);
+        compound.putBoolean("SuperHeated", superHeated);
+        compound.putBoolean("HatchOpen", hatchOpen);
+        compound.put("Inventory", inventory.serializeNBT(registries));
     }
 
     @Override
     protected void read(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound, registries, clientPacket);
         burnTime = compound.getInt("BurnTime");
-        lastConsumedItemsPerTick = compound.getDouble("LastConsumedItemsPerTick");
-        burningFuel = compound.contains("BurningFuel")
-            ? ItemStack.parse(registries, compound.getCompound("BurningFuel")).orElse(ItemStack.EMPTY)
-            : ItemStack.EMPTY;
-        queuedFuel = compound.contains("QueuedFuel")
-            ? ItemStack.parse(registries, compound.getCompound("QueuedFuel")).orElse(ItemStack.EMPTY)
-            : ItemStack.EMPTY;
-        syncedFuelCount = compound.contains("SyncedFuelCount")
-            ? compound.getInt("SyncedFuelCount")
-            : getInternalFuelCount();
+        totalBurnTicks = compound.contains("TotalBurnTicks")
+            ? compound.getInt("TotalBurnTicks")
+            : burnTime;
+        superHeated = compound.getBoolean("SuperHeated");
+        hatchOpen = compound.getBoolean("HatchOpen");
+        if (compound.contains("Inventory")) {
+            CompoundTag inventoryTag = compound.getCompound("Inventory");
+            if (inventoryTag.contains("Items")) {
+                ListTag items = inventoryTag.getList("Items", Tag.TAG_COMPOUND);
+                ItemStack merged = ItemStack.EMPTY;
+                if (items.size() > 1) {
+                    ItemStack burning = ItemStack.parse(registries, items.getCompound(1)).orElse(ItemStack.EMPTY);
+                    ItemStack queued = ItemStack.parse(registries, items.getCompound(0)).orElse(ItemStack.EMPTY);
+                    merged = !burning.isEmpty() ? burning.copyWithCount(1) : queued.copyWithCount(1);
+                } else if (!items.isEmpty()) {
+                    merged = ItemStack.parse(registries, items.getCompound(0)).orElse(ItemStack.EMPTY);
+                }
+                setFuelStack(merged);
+            } else {
+                inventory.deserializeNBT(registries, inventoryTag);
+            }
+        } else {
+            ItemStack legacy = ItemStack.EMPTY;
+            if (compound.contains("BurningFuel")) {
+                legacy = ItemStack.parse(registries, compound.getCompound("BurningFuel")).orElse(ItemStack.EMPTY);
+            }
+            if (legacy.isEmpty() && compound.contains("QueuedFuel")) {
+                legacy = ItemStack.parse(registries, compound.getCompound("QueuedFuel")).orElse(ItemStack.EMPTY);
+            }
+            setFuelStack(legacy);
+        }
     }
 
     @Override
     public void initialize() {
         super.initialize();
-        syncedFuelCount = getInternalFuelCount();
+        if (level != null && !level.isClientSide && burnTime <= 0) {
+            tryStartBurning();
+        }
     }
 }
