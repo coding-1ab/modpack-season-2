@@ -91,11 +91,6 @@
 	url = https://github.com/coding-1ab/Simulated-Project.git
 	branch = main
 	upstream = https://github.com/Creators-of-Aeronautics/Simulated-Project.git
-[submodule "mods/MapAtlases"]
-	path = mods/MapAtlases
-	url = https://github.com/coding-1ab/mapatlases-neoforge.git
-	branch = 1.21.1
-	upstream = https://github.com/MehVahdJukaar/mapatlases-neoforge.git
 [submodule "mods/create_power_loader"]
 	path = mods/create_power_loader
 	url = https://github.com/coding-1ab/create_power_loader.git
