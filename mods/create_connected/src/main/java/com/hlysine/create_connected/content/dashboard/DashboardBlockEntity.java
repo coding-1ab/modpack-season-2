@@ -5,9 +5,7 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import net.createmod.catnip.annotations.ClientOnly;
 import net.createmod.catnip.data.Iterate;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -22,7 +20,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -33,8 +30,8 @@ public class DashboardBlockEntity extends SmartBlockEntity {
     SignText text = new SignText().setColor(DyeColor.WHITE);
     int cycleTimer = 0;
     boolean wasDisplaying;
-    private static final int LAZY_TICK_RATE = 4;
-    private static final int CYCLE_INTERVAL = 40;
+    static final int LAZY_TICK_RATE = 4;
+    static final int CYCLE_INTERVAL = 40;
 
     public DashboardBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -96,7 +93,7 @@ public class DashboardBlockEntity extends SmartBlockEntity {
         return status;
     }
 
-    private @Nullable List<Component> getAllDisplays(BlockPos seatPos) {
+    @Nullable List<Component> getAllDisplays(BlockPos seatPos) {
         List<Component> list = new ArrayList<>(4);
         for (Direction direction : Iterate.horizontalDirections) {
             BlockPos dashboardPos = seatPos.relative(direction);
@@ -120,29 +117,7 @@ public class DashboardBlockEntity extends SmartBlockEntity {
         return list;
     }
 
-    @ClientOnly
-    private boolean displayStatus() {
-        BlockPos seatPos = getSeatPos();
-        if (seatPos == null)
-            return false;
 
-        Player player = Minecraft.getInstance().player;
-        if (player == null)
-            return false;
-        if (!player.isPassenger())
-            return false;
-
-        Vec3 center = Vec3.atCenterOf(seatPos);
-        if (player.distanceToSqr(center) > 1.2)
-            return false;
-        List<Component> list = getAllDisplays(seatPos);
-        if (list == null || list.isEmpty()) return false;
-
-        Component status = list.get((cycleTimer / CYCLE_INTERVAL) % list.size());
-        player.displayClientMessage(status, true);
-        cycleTimer += LAZY_TICK_RATE;
-        return true;
-    }
 
     static void displayOpenStatus(Player player, boolean open) {
         ConnectedLang
@@ -155,17 +130,7 @@ public class DashboardBlockEntity extends SmartBlockEntity {
         super.lazyTick();
 
         if (getLevel().isClientSide()) {
-            boolean success = displayStatus();
-            if (!success && wasDisplaying) {
-                Player player = Minecraft.getInstance().player;
-                if (player != null) {
-                    if (!getBlockState().getValue(DashboardBlock.OPEN))
-                        displayOpenStatus(player, false); // avoid flickering on wrench by displaying the open status instead of empty
-                    else
-                        player.displayClientMessage(Component.empty(), true);
-                }
-            }
-            wasDisplaying = success;
+            DashboardClientLogic.tryDisplay(this);
         }
     }
 
