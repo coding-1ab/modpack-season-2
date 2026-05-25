@@ -19,7 +19,7 @@ curseforge 1530869 8031969 // create: compact flap
 curseforge 1519765 7968280 // create: tracks
 modrinth mTuSMV7j // right click milk
 modrinth ENONQ5aP // titanium
-modrinth RBaVkVwQ // azimuth
+modrinth kiXQn8Gx // azimuth
 modrinth QhXpdxEI // struts
 modrinth XUyNAmF2 // vista
 modrinth C2tLycH2 // lootr
@@ -28,7 +28,7 @@ modrinth DKe4Owf4 // integrated farming
 modrinth BqB1xPS9 // structures arise
 curseforge 228525 7606240 // bookshelf
 curseforge 1023259 6961457 // prickle
-modrinth Pb3OXVqC devExclude // sodium
+modrinth hSgrV2wa devExclude // sodium
 curseforge 627196 6426184 // item showcase
 modrinth hZ6B2Z0x // projectile lib
 modrinth LKsY0cFi // Create: Aeroworks
