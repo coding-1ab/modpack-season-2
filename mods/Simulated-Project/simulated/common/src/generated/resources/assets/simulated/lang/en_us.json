@@ -295,6 +295,7 @@
   "simulated.gui.altitude_sensor.title": "Configure Signal Range",
   "simulated.gui.assembly.exception.couldNotAlign": "Could not align Simulated Contraption to disassemble!",
   "simulated.gui.assembly.exception.outOfWorld": "Cannot disassemble out of the world!",
+  "simulated.gui.assembly.exception.sameSubLevel": "Cannot disassemble onto the same Simulated Contraption!",
   "simulated.gui.assembly.exception.tooFarFromGround": "Too far from the ground to disassemble!",
   "simulated.gui.assembly.exception.tooFast": "Moving too fast to disassemble!",
   "simulated.gui.hold_tip.hold_to_adjust": "Hold and drag to adjust",
