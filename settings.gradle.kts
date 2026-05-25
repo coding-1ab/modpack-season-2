@@ -305,22 +305,6 @@ addMods {
         )
     )
     addMod(
-        filePath = "./mods/MapAtlases",
-        includeTransitive = false,
-        modProjects = listOf(
-            modProject(
-                dependencyNotations = listOf("maven.modrinth:mapatlases"),
-                projectPath = ":neoforge",
-                shouldUnpack = true
-            ),
-            modProject(
-                dependencyNotations = listOf("maven.modrinth:mapatlases-common"),
-                projectPath = ":common",
-                shouldUnpack = false
-            )
-        )
-    )
-    addMod(
         filePath = "./mods/create_power_loader",
         includeTransitive = false,
         modProjects = listOf(
