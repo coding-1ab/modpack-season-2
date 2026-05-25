@@ -67,4 +67,5 @@ It adds three thruster types:
 - [ComputerCraft (CC: Tweaked)](wiki/cc/README.md)
 - [KubeJS API](wiki/KubeJS-API.md)
 - [ComputerCraft peripherals (full API reference)](wiki/ComputerCraft-Peripherals.md)
-- [Datapack example usage](wiki/Datapack-Example-Usage.md)
+- [Datapack example usage (liquid thruster fuels)](wiki/Datapack-Example-Usage.md)
+- [Solid Fuel Thruster (block, item fuels, datapack)](wiki/Solid-Fuel-Thruster.md)

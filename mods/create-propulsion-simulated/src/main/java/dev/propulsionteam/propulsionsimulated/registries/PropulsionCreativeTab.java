@@ -23,6 +23,7 @@ public class PropulsionCreativeTab {
         registerSectionItem(MAIN_SECTION, "vector_thruster", () -> PropulsionBlocks.VECTOR_THRUSTER_BLOCK.get().asItem());
         registerSectionItem(MAIN_SECTION, "creative_vector_thruster", () -> PropulsionBlocks.CREATIVE_VECTOR_THRUSTER_BLOCK.get().asItem());
         registerSectionItem(MAIN_SECTION, "liquid_vector_thruster", () -> PropulsionBlocks.LIQUID_VECTOR_THRUSTER_BLOCK.get().asItem());
+        registerSectionItem(MAIN_SECTION, "solid_fuel_thruster", () -> PropulsionBlocks.SOLID_FUEL_THRUSTER_BLOCK.get().asItem());
         registerSectionItem(MAIN_SECTION, "redstone_transmission", () -> PropulsionBlocks.REDSTONE_TRANSMISSION_BLOCK.get().asItem());
         registerSectionItem(MAIN_SECTION, "redstone_converter", () -> PropulsionBlocks.REDSTONE_CONVERTER_BLOCK.get().asItem());
         registerSectionItem(MAIN_SECTION, "turpentine_bucket", () -> PropulsionItems.TURPENTINE_BUCKET.get());
@@ -34,6 +35,7 @@ public class PropulsionCreativeTab {
         registerSectionItem(MAIN_SECTION, "liquid_burner", () -> PropulsionBlocks.LIQUID_BURNER.get().asItem());
         registerSectionItem(MAIN_SECTION, "stirling_engine", () -> PropulsionBlocks.STIRLING_ENGINE_BLOCK.get().asItem());
         registerSectionItem(MAIN_SECTION, "tilt_adapter", () -> PropulsionBlocks.TILT_ADAPTER_BLOCK.get().asItem());
+        registerSectionItem(MAIN_SECTION, "advanced_tilt_adapter", () -> PropulsionBlocks.ADVANCED_TILT_ADAPTER_BLOCK.get().asItem());
         registerSectionItem(MAIN_SECTION, "platinum_ore", () -> PropulsionBlocks.PLATINUM_ORE.get().asItem());
         registerSectionItem(MAIN_SECTION, "deepslate_platinum_ore", () -> PropulsionBlocks.DEEPSLATE_PLATINUM_ORE.get().asItem());
         registerSectionItem(MAIN_SECTION, "platinum_block", () -> PropulsionBlocks.PLATINUM_BLOCK.get().asItem());

@@ -156,7 +156,10 @@ public abstract class AbstractThrusterBlockEntity extends SmartBlockEntity
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         if (PropulsionCompatibility.CC_ACTIVE) {
-            behaviours.add(computerBehaviour = new ComputerBehaviour(this));
+            ComputerBehaviour behaviour = ComputerBehaviour.tryCreate(this);
+            if (behaviour != null) {
+                behaviours.add(computerBehaviour = behaviour);
+            }
         }
         behaviours.add(new ThrusterDamager(this));
     }

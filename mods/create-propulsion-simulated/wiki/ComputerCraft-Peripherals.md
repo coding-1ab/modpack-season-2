@@ -18,7 +18,7 @@ While **any** computer is attached to a thruster peripheral:
 
 When the computer **detaches**, peripheral throttle is cleared and the thruster returns to **normal** redstone-controlled behavior.
 
-Fuel thrusters and ion thrusters use **different peripheral type strings** (`thruster` vs `ion_thruster`) so scripts can tell them apart.
+Fluid thrusters, solid fuel thrusters, and ion thrusters use **different peripheral type strings** (`thruster`, `solid_fuel_thruster`, `ion_thruster`) so scripts can tell them apart.
 
 ---
 
@@ -42,6 +42,30 @@ Fuel thrusters and ion thrusters use **different peripheral type strings** (`thr
 | `tanks()` | `table` | |
 | `pushFluid(toName[, limit[, fluidName]])` | `number` | |
 | `pullFluid(fromName[, limit[, fluidName]])` | `number` | |
+
+---
+
+## Solid fuel thruster (`solid_fuel_thruster`)
+
+**Item-fuel** thrusters: same throttle and thrust readouts as [Thruster](#thruster-thruster), but **no fluid API**. Fuel is tracked as items (burning + queued, max 2). Item I/O uses the fuel-input slot (back face) via generic inventory methods.
+
+| Method | Returns | Notes |
+|--------|---------|--------|
+| `setPower` / `setPowerNormalized` | — | Same throttle semantics as [Throttle control](#throttle-control-all-thrusters) |
+| `getPower()` | `number` | |
+| `getObstruction()` | `number` | |
+| `getCurrentThrustPN()` / `getCurrentThrustKN()` | `number` | |
+| `getDisplayedThrustPN()` / `getDisplayedThrustKN()` | `number` | |
+| `getAirflowMs()` | `number` | |
+| `getFuelAmount()` | `number` | Items stored (`0 … 2`: burning + queued) |
+| `getFuelCapacity()` | `number` | Always `2` |
+| `getBurnTimeRemaining()` | `number` | Ticks left on current burn (while powered) |
+| `isBurning()` | `boolean` | |
+| `list()` | `table` | Queued fuel slot (automation-facing inventory) |
+| `pushItems(toName, fromSlot[, limit[, toSlot]])` | `number` | Push from thruster slot to another peripheral |
+| `pullItems(fromName, toSlot[, limit[, fromSlot]])` | `number` | Pull into queued fuel slot from another peripheral |
+
+Block overview: [Solid Fuel Thruster](Solid-Fuel-Thruster.md).
 
 ---
 

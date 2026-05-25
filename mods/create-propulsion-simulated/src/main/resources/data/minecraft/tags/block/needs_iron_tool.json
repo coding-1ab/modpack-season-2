@@ -12,6 +12,7 @@
     "createpropulsion:deepslate_platinum_ore",
     "createpropulsion:platinum_block",
     "createpropulsion:raw_platinum_block",
-    "createpropulsion:coral_generator"
+    "createpropulsion:coral_generator",
+    "createpropulsion:advanced_tilt_adapter"
   ]
 }

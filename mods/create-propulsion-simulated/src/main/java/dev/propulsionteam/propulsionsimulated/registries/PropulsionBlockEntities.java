@@ -8,6 +8,7 @@ import dev.propulsionteam.propulsionsimulated.content.cable.relay.CableRelayBloc
 import dev.propulsionteam.propulsionsimulated.content.heat.engine.StirlingEngineBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.platinum.CoralGeneratorBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.platinum.PlatinumFluidTankBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.AdvancedTiltAdapterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.creative_vector_thruster.CreativeVectorThrusterBlockEntity;
@@ -16,6 +17,7 @@ import dev.propulsionteam.propulsionsimulated.content.redstone_converter.Redston
 import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.liquid_vector_thruster.LiquidVectorThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.solid_fuel_thruster.SolidFuelThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.wing.PropulsionCopycatWingBlockEntity;
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
@@ -54,6 +56,10 @@ public class PropulsionBlockEntities {
             () -> BlockEntityType.Builder.of((pos, state) -> new LiquidVectorThrusterBlockEntity(pos, state),
                 PropulsionBlocks.LIQUID_VECTOR_THRUSTER_BLOCK.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SolidFuelThrusterBlockEntity>> SOLID_FUEL_THRUSTER_BLOCK_ENTITY =
+        BLOCK_ENTITY_TYPES.register("solid_fuel_thruster_block_entity",
+            () -> BlockEntityType.Builder.of(SolidFuelThrusterBlockEntity::new, PropulsionBlocks.SOLID_FUEL_THRUSTER_BLOCK.get()).build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RedstoneConverterBlockEntity>> REDSTONE_CONVERTER_BLOCK_ENTITY =
         BLOCK_ENTITY_TYPES.register("redstone_converter_block_entity",
             () -> BlockEntityType.Builder.of((pos, state) -> new RedstoneConverterBlockEntity(pos, state),
@@ -78,6 +84,10 @@ public class PropulsionBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TiltAdapterBlockEntity>> TILT_ADAPTER_BLOCK_ENTITY =
         BLOCK_ENTITY_TYPES.register("tilt_adapter_block_entity",
             () -> BlockEntityType.Builder.of((pos, state) -> new TiltAdapterBlockEntity(pos, state), PropulsionBlocks.TILT_ADAPTER_BLOCK.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AdvancedTiltAdapterBlockEntity>> ADVANCED_TILT_ADAPTER_BLOCK_ENTITY =
+        BLOCK_ENTITY_TYPES.register("advanced_tilt_adapter_block_entity",
+            () -> BlockEntityType.Builder.of(AdvancedTiltAdapterBlockEntity::new, PropulsionBlocks.ADVANCED_TILT_ADAPTER_BLOCK.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PropulsionCopycatWingBlockEntity>> COPYCAT_WING_BLOCK_ENTITY =
         BLOCK_ENTITY_TYPES.register("copycat_wing_block_entity",

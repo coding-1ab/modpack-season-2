@@ -15,6 +15,11 @@ public class PropulsionPackets {
             SyncThrusterFuelsPacket.STREAM_CODEC,
             (payload, context) -> payload.handle()
         );
+        registrar.playToClient(
+            SyncSolidThrusterFuelsPacket.TYPE,
+            SyncSolidThrusterFuelsPacket.STREAM_CODEC,
+            (payload, context) -> payload.handle()
+        );
     }
 
     public static <MSG> void sendToPlayer(MSG message, ServerPlayer player) {
