@@ -6,9 +6,9 @@ import net.neoforged.fml.common.Mod
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import dev.codinglabs.modpack.data.gatherData
+import dev.codinglabs.modpack.rapier_entity.network.registerTcpPackets
 import net.neoforged.fml.ModContainer
 import net.neoforged.fml.config.ModConfig
-import thedarkcolour.kotlinforforge.neoforge.KotlinModContainer
 import thedarkcolour.kotlinforforge.neoforge.forge.FORGE_BUS
 import thedarkcolour.kotlinforforge.neoforge.forge.MOD_BUS
 
@@ -30,10 +30,12 @@ class ModPackTweaks(
         Items.register(MOD_BUS)
         Fluids.register(MOD_BUS)
         Attachments.register(MOD_BUS)
+        Entities.register(MOD_BUS)
 
         MOD_BUS.addListener(::gatherData)
-        FORGE_BUS.addListener(::onLivingDeath)
+        MOD_BUS.addListener(::registerTcpPackets)
 
+        FORGE_BUS.addListener(::onLivingDeath)
         FORGE_BUS.addListener(Commands::register)
         FORGE_BUS.addListener(Commands::onHurt)
         FORGE_BUS.addListener(Commands::onLeave)

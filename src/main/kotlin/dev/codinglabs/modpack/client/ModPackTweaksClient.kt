@@ -10,7 +10,7 @@ import thedarkcolour.kotlinforforge.neoforge.forge.MOD_BUS
 object ModPackTweaksClient {
     init {
         MOD_BUS.addListener(::registerClientExtensions)
-        MOD_BUS.addListener(::registerBlockEntityRenderers)
+        MOD_BUS.addListener(::registerRenderers)
         FORGE_BUS.addListener(::modifyFov)
         FORGE_BUS.addListener(::playWaterAmbient)
     }

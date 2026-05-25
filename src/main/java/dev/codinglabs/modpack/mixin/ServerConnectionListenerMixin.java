@@ -3,14 +3,15 @@ package dev.codinglabs.modpack.mixin;
 import dev.codinglabs.modpack.ModPackTweaks;
 import dev.codinglabs.modpack.config.Config;
 import dev.codinglabs.modpack.mixin_interfaces.ServerConnectionListenerExtension;
-import dev.codinglabs.modpack.rapier_entity.network.UdpPacket;
 import dev.codinglabs.modpack.rapier_entity.network.UdpPacketKt;
 import dev.codinglabs.modpack.rapier_entity.network.UdpServer;
-import dev.ryanhcode.sable.network.udp.handler.SableUDPChannelHandlerServer;
+import dev.codinglabs.modpack.rapier_entity.network.UdpHandlerServer;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollDatagramChannel;
+import io.netty.channel.local.LocalAddress;
+import io.netty.channel.local.LocalServerChannel;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerConnectionListener;
@@ -22,8 +23,10 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.net.InetAddress;
+import java.net.SocketAddress;
 import java.util.List;
 
 /**
@@ -69,7 +72,7 @@ public class ServerConnectionListenerMixin implements ServerConnectionListenerEx
                         @Override
                         protected void initChannel(Channel channel) throws Exception {
                             UdpPacketKt.setupSerialization(channel.pipeline(), false);
-                            codinglab$setupUdpServer(channel);
+                            codinglab$setupChannel(channel);
                         }
                     })
                     .group(eventLoopGroup)
@@ -80,11 +83,36 @@ public class ServerConnectionListenerMixin implements ServerConnectionListenerEx
         }
     }
 
+    @Inject(method = "startMemoryChannel", at = @At("TAIL"))
+    private void startMemoryChannel(CallbackInfoReturnable<SocketAddress> cir)  {
+        if (!Config.INSTANCE.getENABLE_UDP().get()) {
+            return;
+        }
+
+        synchronized (this.channels) {
+            this.channels.add(new Bootstrap()
+                    .channel(LocalServerChannel.class)
+                    .option(ChannelOption.SO_BROADCAST, true)
+                    .handler(new ChannelInitializer<>() {
+                        @Override
+                        protected void initChannel(Channel channel) {
+                            UdpPacketKt.setupSerialization(channel.pipeline(), true);
+                            codinglab$setupChannel(channel);
+                        }
+                    })
+                    .group(ServerConnectionListener.SERVER_EVENT_GROUP.get())
+                    .localAddress(LocalAddress.ANY)
+                    .bind()
+                    .syncUninterruptibly()
+            );
+        }
+    }
+
     @Unique
     private void codinglab$setupChannel(final Channel channel) {
         final ChannelPipeline pipeline = channel.pipeline();
 
-        // pipeline.addLast(????);
+        pipeline.addLast(new UdpHandlerServer(this.server, (ServerConnectionListener) (Object) this));
     }
 
     @Override

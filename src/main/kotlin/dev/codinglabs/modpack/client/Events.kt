@@ -9,16 +9,17 @@ import net.neoforged.neoforge.client.event.ClientTickEvent
 import net.neoforged.neoforge.client.event.ViewportEvent
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent
 import dev.codinglabs.modpack.BlockEntities
+import dev.codinglabs.modpack.Entities
 import dev.codinglabs.modpack.Fluids
-import dev.codinglabs.modpack.client.VoidAnchorRenderer
+import dev.codinglabs.modpack.rapier_entity.dragon.Renderer as DragonRenderer
 
 fun registerClientExtensions(event: RegisterClientExtensionsEvent) {
     event.registerFluidType(EnderFuelExtension, Fluids.ENDER_FUEL_TYPE)
 }
 
-// 블록 엔티티 랜더러 등록
-fun registerBlockEntityRenderers(event: EntityRenderersEvent.RegisterRenderers) {
+fun registerRenderers(event: EntityRenderersEvent.RegisterRenderers) {
     event.registerBlockEntityRenderer(BlockEntities.VOID_ANCHOR, ::VoidAnchorRenderer)
+    event.registerEntityRenderer(Entities.ENDER_DRAGON_PROTOTYPE, ::DragonRenderer)
 }
 
 fun modifyFov(event: ViewportEvent.ComputeFov) {

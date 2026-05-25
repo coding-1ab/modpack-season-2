@@ -8,6 +8,8 @@ import org.joml.Quaterniond
 import org.joml.Quaterniondc
 import org.joml.Vector3d
 import org.joml.Vector3dc
+import java.util.*
+import java.util.UUID as JUUID
 
 object StreamCodecs {
     val VECTOR3D: StreamCodec<ByteBuf, Vector3d> = StreamCodec.composite(
@@ -42,5 +44,13 @@ object StreamCodecs {
         VECTOR3D,
         Pose3d::scale,
         ::Pose3d
+    )
+
+    val UUID: StreamCodec<ByteBuf, JUUID> = StreamCodec.composite(
+        ByteBufCodecs.VAR_LONG,
+        JUUID::getLeastSignificantBits,
+        ByteBufCodecs.VAR_LONG,
+        JUUID::getMostSignificantBits,
+        ::JUUID
     )
 }

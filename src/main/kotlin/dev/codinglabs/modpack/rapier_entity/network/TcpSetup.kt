@@ -8,6 +8,6 @@ fun registerTcpPackets(event: RegisterPayloadHandlersEvent) {
     registrar.playToClient(
         AttachBoxes.PAYLOAD_TYPE,
         AttachBoxes.STREAM_CODEC,
-        AttachBoxes::onReceive
+        AttachBoxes::onTcpReceive
     )
 }

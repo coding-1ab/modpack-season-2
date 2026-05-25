@@ -1,16 +1,14 @@
 package dev.codinglabs.modpack.rapier_entity.network.packets
 
-import dev.codinglabs.modpack.rapier_entity.network.UdpPacket
-import net.minecraft.network.FriendlyByteBuf
+import dev.codinglabs.modpack.rapier_entity.network.UdpHandlerServer
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 
 enum class PacketTypes {
-    CREATE;
+    ATTACH,;
+}
 
-    fun encode(buffer: FriendlyByteBuf) {
+sealed interface UdpEncodable: CustomPacketPayload {
+    val type: PacketTypes
 
-    }
-
-    fun decode(buffer: FriendlyByteBuf): UdpPacket {
-        throw AssertionError("unimplemented")
-    }
+    fun onReceive(context: UdpHandlerServer.UdpPacketContext)
 }
