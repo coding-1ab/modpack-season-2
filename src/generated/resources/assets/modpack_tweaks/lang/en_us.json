@@ -11,6 +11,7 @@
   "fluid_type.modpack_tweaks.ender_fuel": "Ender Fuel",
   "item.modpack_tweaks.ender_fuel_bucket": "Ender Fuel Bucket",
   "item.modpack_tweaks.shulker_shell_fragment": "Shulker Shell Fragment",
+  "item.modpack_tweaks.something_hawk": "Hawk of §k****§r",
   "itemGroup.modpack_tweaks.title": "Coding Lab Modpack Tweaks",
   "modpack_tweaks.commands.rtp.failure.player_only": "/rtp is player only command",
   "modpack_tweaks.commands.spawn.failure.player_only": "/spawn is player only command",

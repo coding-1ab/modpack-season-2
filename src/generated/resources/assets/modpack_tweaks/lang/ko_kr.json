@@ -11,6 +11,7 @@
   "fluid_type.modpack_tweaks.ender_fuel": "엔더 연료",
   "item.modpack_tweaks.ender_fuel_bucket": "엔더 연료 양동이",
   "item.modpack_tweaks.shulker_shell_fragment": "셜커 껍데기 조각",
+  "item.modpack_tweaks.something_hawk": "§k****§r의 매아리",
   "itemGroup.modpack_tweaks.title": "코딩랩 모드팩 자체 컨텐츠",
   "modpack_tweaks.commands.rtp.failure.player_only": "/rtp는 플레이어 전용 명령어 입니다",
   "modpack_tweaks.commands.spawn.failure.player_only": "/spawn은 플레이어 전용 명령어 입니다",

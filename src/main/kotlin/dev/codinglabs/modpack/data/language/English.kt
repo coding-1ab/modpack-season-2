@@ -23,6 +23,8 @@ class English(output: PackOutput) : LanguageProvider(output, ID, "en_us") {
         add(Blocks.ENDER_FUEL, "Ender Fuel")
         add(Blocks.VOID_ANCHOR, "Void Anchor")
         add(Items.SHULKER_SHELL_FRAGMENT, "Shulker Shell Fragment")
+        add(Items.SOMETHING_HAWK, "Hawk of \u00A7k****\u00A7r")
+
         add(VoidAnchorBlock.MSG_NO_PORTAL,  "Must be near an active End Portal")
         add(VoidAnchorBlock.MSG_SET,        "Void Anchor set.")
         add(VoidAnchorBlock.MSG_CHARGES,    "Charges: %s / %s")

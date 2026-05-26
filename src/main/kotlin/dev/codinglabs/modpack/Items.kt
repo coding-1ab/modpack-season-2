@@ -26,6 +26,9 @@ object Items {
         BlockItem(Blocks.VOID_ANCHOR, it)
     }
 
+    // ####의 매아리
+    val SOMETHING_HAWK: Item by ITEMS.registerSimpleItem("something_hawk")
+
     val CREATIVE_TAB: CreativeModeTab by TABS.register("creative_tab", Supplier {
         CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.${ID}.title"))
@@ -33,6 +36,7 @@ object Items {
                 output.accept(ENDER_FUEL_BUCKET)
                 output.accept(SHULKER_SHELL_FRAGMENT)
                 output.accept(VOID_ANCHOR)
+                output.accept(SOMETHING_HAWK)
             }.build()
     })
 

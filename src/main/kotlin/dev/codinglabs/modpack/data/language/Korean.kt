@@ -23,6 +23,8 @@ class Korean(output: PackOutput) : LanguageProvider(output, ID, "ko_kr") {
         add(Blocks.ENDER_FUEL, "엔더 연료")
         add(Blocks.VOID_ANCHOR, "공허 정박기")
         add(Items.SHULKER_SHELL_FRAGMENT, "셜커 껍데기 조각")
+        add(Items.SOMETHING_HAWK, "\u00A7k****\u00A7r의 매아리")
+
         add(VoidAnchorBlock.MSG_NO_PORTAL,  "엔드 포탈 근처에서만 사용할 수 있습니다")
         add(VoidAnchorBlock.MSG_SET,        "공허 정박기가 등록되었습니다.")
         add(VoidAnchorBlock.MSG_CHARGES,    "충전량: %s / %s")

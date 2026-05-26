@@ -5,10 +5,9 @@
   "package": "dev.codinglabs.modpack.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "BaseFireBlockMixin",
-    "FireBlockMixin",
-    "ItemStackMixin"
-
+      "BaseFireBlockMixin",
+      "FireBlockMixin",
+      "ItemStackMixin"
   ],
   "client": []
 }

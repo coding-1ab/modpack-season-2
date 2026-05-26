@@ -18,5 +18,9 @@ class ItemModels(output: PackOutput, existingFileHelper: ExistingFileHelper) :
             "layer0",
             "item/shulker_shell_fragment".toResource()
         )
+        withExistingParent("something_hawk", "minecraft:item/generated").texture(
+            "layer0",
+            "item/something_hawk".toResource()
+        )
     }
 }
