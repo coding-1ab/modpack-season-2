@@ -109,8 +109,11 @@ public abstract class AbstractElectricalConnector extends SmartBlockEntity {
 
     private void updateConnections() {
         for (Map.Entry<BlockPos, WireType> e : connectorPositions.entrySet()) {
-            if (getLevel().getBlockEntity(e.getKey()) instanceof AbstractElectricalConnector connector)
-                connect(connector, e.getValue());
+            if (getLevel().isLoaded(e.getKey())) {
+                if (getLevel().getBlockEntity(e.getKey()) instanceof AbstractElectricalConnector connector) {
+                    connect(connector, e.getValue());
+                }
+            }
         }
 
         needsInstanceUpdate = true;
