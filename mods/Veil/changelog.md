@@ -1,2 +1,3 @@
 - Fix crash when drawing quasar trails
 - Allow trail texture to be null for no texture
+- Fix correct a_VeilNormal type casting and decoding ([#150](https://github.com/FoundryMC/Veil/pull/150))
