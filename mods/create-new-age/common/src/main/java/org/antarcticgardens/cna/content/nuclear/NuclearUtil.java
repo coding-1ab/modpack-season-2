@@ -53,7 +53,7 @@ public class NuclearUtil {
 
                     irradiate(le);
                     break;
-                } else if (entity instanceof ItemEntity ie) {
+                } /*else if (entity instanceof ItemEntity ie) {
                     // TODO: Create particles
 //                    world.addParticle(ParticleTypes.ANGRY_VILLAGER,
 //                            true,
@@ -63,7 +63,7 @@ public class NuclearUtil {
 //                            0.0, 0.5, 0.0);
                     // TODO: Maybe make this a recipe type
                     ie.setItem(CNAItems.NUCLEAR_FUEL.asStack());
-                }
+                }*/
             }
         }
     }
@@ -77,9 +77,9 @@ public class NuclearUtil {
                 if (!piece.is(CNATags.Item.HAZMAT_SUIT.tag))
                     return false;
             }
-        } else if (entity instanceof ItemEntity ie) {
+        }/* else if (entity instanceof ItemEntity ie) {
             return !ie.getItem().is(Tags.Items.MUSIC_DISCS);
-        }
+        }*/
 
         return true;
     }
