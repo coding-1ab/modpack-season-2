@@ -8,7 +8,7 @@ Version 1.2.0
 - Added CC:Tweaked compatibility (This is a work in progress feature please send us feedback)
 - New Simplified Chinese translations from abandon0320
 #### Improvements
-- Improve wire rendering - [!68 Thank you tmvkrpxl0](https://gitlab.com/antarcticgardens/create-new-age/-/merge_requests/68)
+- Improve wire rendering and stop crashes with Create Aeronautics - [!68 Thank you tmvkrpxl0](https://gitlab.com/antarcticgardens/create-new-age/-/merge_requests/68)
 
 ------------------------------------------------------
 Version 1.1.7c
