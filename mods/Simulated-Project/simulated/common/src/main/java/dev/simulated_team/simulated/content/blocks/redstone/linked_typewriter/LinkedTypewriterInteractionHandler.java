@@ -3,7 +3,6 @@ package dev.simulated_team.simulated.content.blocks.redstone.linked_typewriter;
 import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.content.redstone.link.RedstoneLinkNetworkHandler;
 import com.simibubi.create.foundation.utility.ControlsUtil;
-import dev.simulated_team.simulated.data.SimLang;
 import dev.simulated_team.simulated.index.SimSoundEvents;
 import dev.simulated_team.simulated.mixin.accessor.KeyMappingsAccessor;
 import dev.simulated_team.simulated.network.packets.linked_typewriter.TypewriterDisconnectUser;
@@ -19,8 +18,6 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.chat.Component;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
@@ -62,22 +59,11 @@ public class LinkedTypewriterInteractionHandler {
     }
 
     public static void associateTypewriter(final LinkedTypewriterBlockEntity be) {
-        final LocalPlayer player = Minecraft.getInstance().player;
-
         if (be == null) {
             MODE = Mode.IDLE;
             stopInteraction();
-
-            final LinkedTypewriterBlockEntity associatedTypeWriter = TYPEWRITER.get();
-            if (associatedTypeWriter != null) {
-                final Component customName = associatedTypeWriter.components().getOrDefault(DataComponents.CUSTOM_NAME, SimLang.translate("linked_typewriter.title").component());
-                player.displayClientMessage(SimLang.translate("linked_typewriter.stop_controlling", customName.getString()).component(), true);
-            }
         } else {
             MODE = Mode.ACTIVE;
-
-            final Component customName = be.components().getOrDefault(DataComponents.CUSTOM_NAME, SimLang.translate("linked_typewriter.title").component());
-            player.displayClientMessage(SimLang.translate("linked_typewriter.start_controlling", customName.getString()).component(), true);
         }
 
         TYPEWRITER = new WeakReference<>(be);
@@ -130,7 +116,7 @@ public class LinkedTypewriterInteractionHandler {
             if (be != null && !be.isRemoved()) {
                 final LinkedTypewriterEntries.KeyboardEntry frequency = be.getTypewriterEntries().getEntry(key);
 
-                if (key == 256) {
+                if (key == GLFW.GLFW_KEY_ESCAPE) {
                     be.disconnectUser();
                     VeilPacketManager.server().sendPacket(new TypewriterDisconnectUser(be.getBlockPos()));
 
