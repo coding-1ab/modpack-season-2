@@ -456,6 +456,7 @@ public class SwivelBearingBlockEntity extends KineticBlockEntity implements Extr
             final SubLevel containingSubLevel = this.getContainingSubLevel();
             if (containingSubLevel != null) {
                 SubLevelAssemblyHelper.kickFromContainingSubLevel((ServerLevel) this.level, physicsSystem, pipeline, assembledSubLevel, containingSubLevel);
+                assembledSubLevel.logicalPose().orientation().set(containingSubLevel.logicalPose().orientation());
             }
 
             pipeline.teleport(assembledSubLevel, assembledSubLevel.logicalPose().position(), assembledSubLevel.logicalPose().orientation());
