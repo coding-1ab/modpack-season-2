@@ -7,5 +7,5 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(KeyMapping.class)
 public interface KeyMappingInvoker {
     @Invoker
-    boolean invokeConsumeClick();
+    void invokeRelease();
 }
