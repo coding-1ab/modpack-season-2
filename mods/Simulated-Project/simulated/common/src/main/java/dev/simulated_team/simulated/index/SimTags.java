@@ -32,6 +32,7 @@ public class SimTags {
         public static final TagKey<Block> AIRTIGHT = create("aeronautics", "airtight");
 
         public static final TagKey<Block> SUPER_LIGHT = create("sable", "super_light");
+        public static final TagKey<Block> QUARTER_VOLUME = create("sable", "quarter_volume");
         public static final TagKey<Block> LIGHT = create("sable", "light");
         public static final TagKey<Block> DIODE = create("sable", "diode");
 

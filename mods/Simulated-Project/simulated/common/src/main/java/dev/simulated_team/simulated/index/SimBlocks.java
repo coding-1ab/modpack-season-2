@@ -658,7 +658,7 @@ public class SimBlocks {
                     .initialProperties(SharedProperties::stone)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .blockstate(SimBlockStateGen::facingPoweredAxisBlockstate)
-                    .tag(AllTags.AllBlockTags.SAFE_NBT.tag, SimTags.Blocks.SUPER_LIGHT)
+                    .tag(AllTags.AllBlockTags.SAFE_NBT.tag, AllTags.AllBlockTags.BRITTLE.tag, SimTags.Blocks.SUPER_LIGHT, SimTags.Blocks.QUARTER_VOLUME)
                     .transform(axeOrPickaxe())
                     .item().transform(customItemModel())
                     .addLayer(() -> RenderType::cutoutMipped)
@@ -678,7 +678,7 @@ public class SimBlocks {
                     .initialProperties(SharedProperties::stone)
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .blockstate(SimBlockStateGen::facingPoweredAxisBlockstate)
-                    .tag(AllTags.AllBlockTags.SAFE_NBT.tag, SimTags.Blocks.SUPER_LIGHT) //Dono what this tag means (contraption safe?).
+                    .tag(AllTags.AllBlockTags.SAFE_NBT.tag, AllTags.AllBlockTags.BRITTLE.tag, SimTags.Blocks.SUPER_LIGHT, SimTags.Blocks.QUARTER_VOLUME)
                     .transform(axeOrPickaxe())
                     .item().transform(customItemModel())
                     .addLayer(() -> RenderType::cutoutMipped)
