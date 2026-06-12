@@ -4,16 +4,16 @@ plugins {
     id "checkstyle"
 }
 
+if (System.getenv("SNAPSHOT") != null) {
+    String buildNumber = System.getenv("BUILD_NUMBER")
+
+    if (buildNumber != null) {
+        version += "-$buildNumber"
+    }
+}
+
 base {
     archivesName = "${mod_id}-${project.name}-${minecraft_version}"
-
-    if (System.getenv("SNAPSHOT") != null) {
-        String buildNumber = System.getenv("BUILD_NUMBER")
-
-        if (buildNumber != null) {
-            version += "-$buildNumber"
-        }
-    }
 }
 
 java {
