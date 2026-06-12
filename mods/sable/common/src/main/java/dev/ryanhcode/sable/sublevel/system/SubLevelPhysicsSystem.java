@@ -118,6 +118,8 @@ public class SubLevelPhysicsSystem implements SubLevelObserver {
      */
     public SubLevelPhysicsSystem(final ServerLevel level) {
         this.level = level;
+
+        Sable.LOGGER.info("Creating physics pipeline for {} using {}", level.dimension(), PhysicsPipelineProvider.INSTANCE.getClass().getSimpleName());
         this.pipeline = PhysicsPipelineProvider.INSTANCE.createPipeline(level);
     }
 
