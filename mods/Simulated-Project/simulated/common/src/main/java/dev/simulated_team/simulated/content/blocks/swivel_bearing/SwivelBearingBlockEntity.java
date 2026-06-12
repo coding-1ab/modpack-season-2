@@ -355,6 +355,7 @@ public class SwivelBearingBlockEntity extends KineticBlockEntity implements Extr
     }
 
     public void updateServoCoefficients() {
+        this.validateConstraintHandle();
         if (!this.isAssembled() || this.handle == null) {
             return;
         }
@@ -397,6 +398,12 @@ public class SwivelBearingBlockEntity extends KineticBlockEntity implements Extr
 
         this.handle.setMotor(RotaryConstraintHandle.DEFAULT_AXIS, goal, kP, kD, false, 0.0);
         this.handle.setContactsEnabled(false);
+    }
+
+    private void validateConstraintHandle() {
+        if (this.handle != null && !this.handle.isValid()) {
+            this.handle = null;
+        }
     }
 
     public void assemble() {
@@ -524,9 +531,7 @@ public class SwivelBearingBlockEntity extends KineticBlockEntity implements Extr
         }
 
         final SubLevel subLevel = SubLevelContainer.getContainer(this.getLevel()).getSubLevel(id);
-        if (this.handle != null && !this.handle.isValid()) {
-            this.handle = null;
-        }
+        this.validateConstraintHandle();
 
         if (this.handle == null) {
             this.reattachConstraint((ServerSubLevel) subLevel, true);
@@ -534,8 +539,9 @@ public class SwivelBearingBlockEntity extends KineticBlockEntity implements Extr
     }
 
     public void reattachConstraint(final @Nullable ServerSubLevel plateSubLevel, final boolean updatePlate) {
-        //we also want to "reset" the plate BE here too, so it's correct
+        // we also want to "reset" the plate BE here too, so it's correct
         final BlockPos platePos = this.getPlatePos();
+
         if (platePos != null) {
             if (this.handle != null) {
                 this.handle.remove();
@@ -582,9 +588,11 @@ public class SwivelBearingBlockEntity extends KineticBlockEntity implements Extr
         );
 
         final ServerSubLevelContainer container = SubLevelContainer.getContainer((ServerLevel) this.getLevel());
+        final ServerSubLevel containingSubLevel = (ServerSubLevel) Sable.HELPER.getContaining(this);
         final PhysicsPipeline pipeline = container.physicsSystem().getPipeline();
 
-        this.handle = pipeline.addConstraint((ServerSubLevel) Sable.HELPER.getContaining(this), plateSubLevel, constraint);
+        if (containingSubLevel == plateSubLevel) return;
+        this.handle = pipeline.addConstraint(containingSubLevel, plateSubLevel, constraint);
     }
 
     @Override
