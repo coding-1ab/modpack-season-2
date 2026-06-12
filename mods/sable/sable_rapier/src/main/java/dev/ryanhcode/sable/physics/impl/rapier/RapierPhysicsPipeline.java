@@ -194,8 +194,6 @@ public class RapierPhysicsPipeline implements PhysicsPipeline {
         final Vector3dc pos = pose.position();
         final Quaterniondc rot = pose.orientation();
 
-        subLevel.buildMassTracker();
-
         final int id = Rapier3D.getID(subLevel);
         Rapier3D.createSubLevel(this.scene.handle(), id, new double[]{pos.x(), pos.y(), pos.z(), rot.x(), rot.y(), rot.z(), rot.w()});
 
