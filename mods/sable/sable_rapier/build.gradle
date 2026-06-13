@@ -240,7 +240,7 @@ dependencies {
         }
     }
 
-    api "dev.ryanhcode.sable-companion:sable-companion-common-$minecraft_version:$sable_companion_version"
+    compileOnly "dev.ryanhcode.sable-companion:sable-companion-common-$minecraft_version:$sable_companion_version"
 
     testImplementation platform('org.junit:junit-bom:6.0.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
