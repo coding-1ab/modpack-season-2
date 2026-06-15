@@ -51,6 +51,7 @@
   "create.tooltip.create_new_age.energy_stored": "Energy Stored: ",
   "create.tooltip.create_new_age.energy_usage": "Energy Usage: ",
   "create.tooltip.create_new_age.extracting": "Extracting: ",
+  "create.tooltip.create_new_age.fuel_ticks_left": "Fuel Ticks left:",
   "create.tooltip.create_new_age.generates": "Generates: ",
   "create.tooltip.create_new_age.generating": "Generating: ",
   "create.tooltip.create_new_age.magnetic_force": "Magnetic Force: ",

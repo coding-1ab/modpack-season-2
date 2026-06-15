@@ -1,6 +1,9 @@
 package org.antarcticgardens.cna.content.nuclear.reactor.rod;
 
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.foundation.utility.CreateLang;
+import net.createmod.catnip.lang.LangBuilder;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -16,11 +19,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.antarcticgardens.cna.config.CNAConfig;
 import org.antarcticgardens.cna.content.heat.HeatBlockEntity;
 import org.antarcticgardens.cna.content.nuclear.NuclearUtil;
+import org.antarcticgardens.cna.util.StringFormatUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntity, IHaveGoggleInformation {
+
+    public static final int MAX_FUEL = 172800;
+
     public ReactorRodBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
         working = blockState.getValue(ReactorRodBlock.ACTIVE);
@@ -31,8 +38,12 @@ public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntit
     public void tick(BlockPos pos, Level world, BlockState state) {
         var common = CNAConfig.getServer();
         double multiplier = common.overheatingMultiplier.get();
+        last = common.nuclearReactorRodHeat.get();
+        if (fuel <= 0) {
+            last = 0;
+        }
         if (multiplier > 0 && this.heat > 16000*multiplier) {
-            heat-=common.nuclearReactorRodHeatLoss.get();
+            last-= common.nuclearReactorRodHeatLoss.get();
             setChanged();
             float explosionRadius = CNAConfig.getServer().radiationDamageExplosionScale.get().floatValue() * CNAConfig.getServer().reactorOverheatExplosionMultiplier.get().floatValue();
             HeatBlockEntity.handleOverheat(this, () -> ((ReactorRodBlock) state.getBlock()).explode(level, pos, state, explosionRadius,
@@ -54,7 +65,7 @@ public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntit
                 world.setBlock(pos, state.setValue(ReactorRodBlock.ACTIVE, true), 3);
                 working = true;
             }
-            heat+=common.nuclearReactorRodHeat.get();
+            heat+= (float) last;
             setChanged();
         } else {
             if (working) {
@@ -68,6 +79,18 @@ public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntit
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         HeatBlockEntity.addToolTips(this, tooltip);
+
+        CreateLang.translate("tooltip.create_new_age.generating")
+                .style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
+        CreateLang.translate("tooltip.create_new_age.temperature.ps", StringFormatUtil.formatFloat((float) (last*20)))
+                .style(ChatFormatting.AQUA).forGoggles(tooltip, 2);
+
+        CreateLang.translate("tooltip.create_new_age.fuel_ticks_left")
+                .style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
+
+        LangBuilder builder = CreateLang.text(StringFormatUtil.formatFloat(fuel));
+        builder.style(ChatFormatting.AQUA).forGoggles(tooltip, 2);
+
         return true;
     }
 
@@ -108,12 +131,14 @@ public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntit
 
     public float heat = 0;
     public int fuel = 0;
+    public double last = 0;
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         heat = tag.getFloat("heat");
         fuel = tag.getInt("fuel");
+        last = tag.getDouble("last");
     }
 
     @Override
@@ -121,6 +146,7 @@ public class ReactorRodBlockEntity extends BlockEntity implements HeatBlockEntit
         super.saveAdditional(tag, registries);
         tag.putFloat("heat", heat);
         tag.putInt("fuel", fuel);
+        tag.putDouble("last", last);
     }
 
 

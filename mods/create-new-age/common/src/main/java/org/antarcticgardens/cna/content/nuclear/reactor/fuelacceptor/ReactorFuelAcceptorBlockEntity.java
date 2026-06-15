@@ -8,6 +8,7 @@ import net.minecraft.world.Containers;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.RodBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.antarcticgardens.cna.CreateNewAge;
@@ -24,7 +25,7 @@ public abstract class ReactorFuelAcceptorBlockEntity extends RodFindingReactorBl
 
     public ReactorFuelAcceptorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
-        container = new FuelAcceptorContainer(3);
+        container = new FuelAcceptorContainer(1);
     }
 
     @Override
@@ -66,7 +67,7 @@ public abstract class ReactorFuelAcceptorBlockEntity extends RodFindingReactorBl
                 hadBefore += rod.fuel;
             }
 
-            AtomicInteger totalNeeded = new AtomicInteger(345600 * rods.size() - hadBefore);
+            AtomicInteger totalNeeded = new AtomicInteger(ReactorRodBlockEntity.MAX_FUEL * rods.size() - hadBefore);
             for (int i = 0 ; i < container.getContainerSize() ; i++) {
                 ItemStack stack = container.getItem(i);
                 if (stack.is(CNATags.Item.NUCLEAR_FUEL.tag)) {
