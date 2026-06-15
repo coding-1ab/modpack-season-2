@@ -24,8 +24,19 @@ public class DirectionalLightData extends LightData implements EditorAttributePr
 
     /**
      * @return The direction this light is facing
+     * @apiNote The return type will change to {@link Vector3fc} in 5.0.0. Use {@link #getDirectionMutable()} to mutate this
      */
     public Vector3f getDirection() {
+        return this.direction;
+    }
+
+    /**
+     * Allows the value to be safely modified.
+     *
+     * @return The direction this light is facing
+     * @since 4.3.0
+     */
+    public Vector3f getDirectionMutable() {
         return this.direction;
     }
 

@@ -42,6 +42,17 @@ public class PointLightData extends LightData implements IndirectLightData, DDAL
         return this.position;
     }
 
+    /**
+     * Allows the value to be safely modified.
+     *
+     * @return The XYZ position of this light in the world
+     * @since 4.3.0
+     */
+    public Vector3d getPositionMutable() {
+        this.markDirty();
+        return this.position;
+    }
+
     @Override
     public boolean isOcclusionEnabled() {
         return this.occlusionEnabled;

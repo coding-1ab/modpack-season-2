@@ -64,22 +64,56 @@ public class AreaLightData extends LightData implements InstancedLightData, DDAL
 
     /**
      * @return The XYZ position of this light in the world
+     * @apiNote The return type will change to {@link Vector3dc} in 5.0.0. Use {@link #getPositionMutable()} to mutate this
      */
     public Vector3d getPosition() {
         return this.position;
     }
 
     /**
+     * Allows the value to be safely modified.
+     *
+     * @return The XYZ position of this light in the world
+     * @since 4.3.0
+     */
+    public Vector3d getPositionMutable() {
+        this.markDirty();
+        return this.position;
+    }
+
+    /**
      * @return The current orientation of the light
+     * @apiNote The return type will change to {@link Quaternionfc} in 5.0.0. Use {@link #getOrientationMutable()} to mutate this
      */
     public Quaternionf getOrientation() {
         return this.orientation;
     }
 
     /**
+     * Allows the value to be safely modified.
+     *
+     * @return The current orientation of the light
+     * @since 4.3.0
+     */
+    public Quaternionf getOrientationMutable() {
+        return this.orientation;
+    }
+
+    /**
      * @return The size of the light's surface
+     * @apiNote The return type will change to {@link Vector2fc} in 5.0.0. Use {@link #getSizeMutable()} to mutate this
      */
     public Vector2f getSize() {
+        return this.size;
+    }
+
+    /**
+     * Allows the value to be safely modified.
+     *
+     * @return The size of the light's surface
+     * @since 4.3.0
+     */
+    public Vector2f getSizeMutable() {
         return this.size;
     }
 
