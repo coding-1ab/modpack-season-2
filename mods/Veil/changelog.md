@@ -1,1 +1,2 @@
-- Fix particles fabulous mode ([#153](https://github.com/FoundryMC/Veil/pull/153))
+- Shader injection module ([#152](https://github.com/FoundryMC/Veil/pull/152))
+- Use close() instead of clear() to free ByteBufferBuilder ([#155](https://github.com/FoundryMC/Veil/pull/155))
