@@ -6,10 +6,8 @@ import foundry.veil.Veil;
 import foundry.veil.api.client.render.VeilRenderBridge;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.VeilRenderer;
-import foundry.veil.api.client.render.shader.ShaderModificationManager;
 import foundry.veil.api.client.render.shader.program.ShaderProgram;
-import foundry.veil.impl.client.render.shader.modifier.ReplaceShaderModification;
-import foundry.veil.impl.client.render.shader.modifier.ShaderModification;
+import foundry.veil.impl.client.render.shader.injection.ShaderInjectionManager;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
@@ -31,24 +29,33 @@ public class ShaderGameRendererMixin {
         }
 
         VeilRenderer renderer = VeilRenderSystem.renderer();
-        ShaderModificationManager modificationManager = renderer.getShaderModificationManager();
+        ShaderInjectionManager injectionManager = renderer.getShaderInjectionManager();
+
         for (Pair<ShaderInstance, Consumer<ShaderInstance>> pair : loadedShaders) {
-            ResourceLocation loc = ResourceLocation.tryParse(pair.getFirst().getName());
-            if (loc == null) {
-                Veil.LOGGER.error("Failed to replace vanilla shader '{}' with veil shader: Malformed name", pair.getFirst().getName());
+            String name = pair.getFirst().getName();
+            ResourceLocation target = ResourceLocation.tryParse(name);
+            if (target == null) {
+                Veil.LOGGER.warn("Couldn't parse shader name '{}' as resource location", name);
                 continue;
             }
 
-            List<ShaderModification> modifiers = modificationManager.getModifiers(loc.withPrefix("shaders/core/"));
-            if (modifiers.size() == 1 && modifiers.getFirst() instanceof ReplaceShaderModification replaceModification) {
-                ShaderProgram shader = renderer.getShaderManager().getShader(replaceModification.veilShader());
-                if (shader != null) {
-                    pair.getSecond().accept(VeilRenderBridge.toShaderInstance(shader));
-                    continue;
-                }
-
-                Veil.LOGGER.error("Failed to replace vanilla shader '{}' with veil shader: {}", loc, replaceModification.veilShader());
+            ResourceLocation replacementId = injectionManager.getReplacement(target);
+            if (replacementId == null) {
+                Veil.LOGGER.debug("No replacement found for {}", name);
+                continue;
             }
+
+            ShaderProgram shader = renderer.getShaderManager().getShader(replacementId);
+            if (shader == null) {
+                Veil.LOGGER.error("Failed to replace vanilla shader '{}': replacement '{}' not found", name, replacementId);
+                continue;
+            }
+
+            ShaderInstance oldInstance = pair.getFirst();
+            ShaderInstance newInstance = VeilRenderBridge.toShaderInstance(shader);
+            pair.getSecond().accept(newInstance);
+            Veil.LOGGER.info("Replaced vanilla shader '{}' with '{}'", name, replacementId);
+            oldInstance.close();
         }
     }
 }
