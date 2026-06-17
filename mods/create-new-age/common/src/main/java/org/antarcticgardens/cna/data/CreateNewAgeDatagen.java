@@ -42,7 +42,9 @@ public class CreateNewAgeDatagen {
 
         REGISTRATE.addDataGenerator(ProviderType.ITEM_TAGS, provider -> {
             for (CNATags.Block tag : CNATags.Block.values()) {
-                provider.copy(tag.blockTag, tag.itemTag);
+                if (tag.hasItemTag) {
+                    provider.copy(tag.blockTag, tag.itemTag);
+                }
             }
         });
 

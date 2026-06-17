@@ -1,22 +1,20 @@
 package org.antarcticgardens.cna.content.heat.pipe;
 
 import com.simibubi.create.api.boiler.BoilerHeater;
-import com.simibubi.create.content.decoration.encasing.EncasableBlock;
+import com.simibubi.create.content.decoration.encasing.EncasedBlock;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -25,19 +23,18 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.shapes.BooleanOp;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.HitResult;
 import org.antarcticgardens.cna.CNABlockEntityTypes;
+import org.antarcticgardens.cna.CNABlocks;
 import org.antarcticgardens.cna.config.CNAConfig;
 import org.antarcticgardens.cna.content.heat.HeatBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
-public class HeatPipeBlock extends Block implements EntityBlock, IWrenchable, EncasableBlock {
-    public HeatPipeBlock(Properties properties) {
-        super(properties);
-    }
+import java.util.function.Supplier;
+
+public class EncasedHeatPipeBlock extends Block implements EntityBlock, IWrenchable, EncasedBlock {
+
+    private final Supplier<Block> casing;
 
     public static BooleanProperty UP = BlockStateProperties.UP;
     public static BooleanProperty DOWN = BlockStateProperties.DOWN;
@@ -46,34 +43,30 @@ public class HeatPipeBlock extends Block implements EntityBlock, IWrenchable, En
     public static BooleanProperty SOUTH = BlockStateProperties.SOUTH;
     public static BooleanProperty WEST = BlockStateProperties.WEST;
 
+    public EncasedHeatPipeBlock(Properties properties, Supplier<Block> casing) {
+        super(properties);
+        this.casing = casing;
+    }
+
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(UP, DOWN, NORTH, EAST, SOUTH, WEST);
+        super.createBlockStateDefinition(builder);
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        ItemInteractionResult result = tryEncase(state, level, pos, stack, player, hand, hitResult);
-        if (result.consumesAction())
-            return result;
-
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    public Block getCasing() {
+        return casing.get();
     }
 
-    private static BlockState checkHeatBlock(BlockState state, LevelAccessor world, BlockPos pos, Direction dir, BooleanProperty property) {
-        return state.setValue(property,
-                world.getBlockEntity(pos.relative(dir)) instanceof HeatBlockEntity hbe
-                        && hbe.canConnect(dir));
-
-    }
-
-    @Nullable
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext context) {
-        BlockState state = this.defaultBlockState();
-        Level world = context.getLevel();
-        BlockPos pos = context.getClickedPos();
-        return updateState(state, world, pos);
+    public void handleEncasing(BlockState state, Level level, BlockPos pos, ItemStack heldItem, Player player, InteractionHand hand, BlockHitResult ray) {
+        level.setBlockAndUpdate(pos, EncasedHeatPipeBlock.transferSixWayProperties(state, defaultBlockState()));
+    }
+
+    @Override
+    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
+        return CNABlocks.HEAT_PIPE.asStack();
     }
 
     public static BooleanProperty getDirectionProperty(Direction dir) {
@@ -87,16 +80,11 @@ public class HeatPipeBlock extends Block implements EntityBlock, IWrenchable, En
         };
     }
 
-    public static BlockState updateState(BlockState state, LevelAccessor world, BlockPos pos) {
+    public static BlockState transferSixWayProperties(BlockState from, BlockState to) {
         for (Direction dir : Direction.values()) {
-            state = checkHeatBlock(state, world, pos, dir, getDirectionProperty(dir));
+            to = to.setValue(getDirectionProperty(dir), from.getValue(getDirectionProperty(dir)));
         }
-        return state;
-    }
-
-    @Override
-    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
-        return updateState(state, world, pos);
+        return to;
     }
 
     @Override
@@ -112,48 +100,24 @@ public class HeatPipeBlock extends Block implements EntityBlock, IWrenchable, En
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        VoxelShape shape = Shapes.box(0.25, 0.25, 0.25, 0.75, 0.75, 0.75);
-        if (state.getValue(UP)) {
-            shape = Shapes.join(shape,
-                    Shapes.box(0.25, 0.75, 0.25, 0.75, 1.0, 0.75),
-                    BooleanOp.OR);
-        }
-        if (state.getValue(DOWN)) {
-            shape = Shapes.join(shape,
-                    Shapes.box(0.25, 0.0, 0.25, 0.75, 0.25, 0.75),
-                    BooleanOp.OR);
-        }
-        if (state.getValue(NORTH)) {
-            shape = Shapes.join(shape,
-                    Shapes.box(0.25, 0.25, 0.0, 0.75, 0.75, 0.25),
-                    BooleanOp.OR);
-        }
-        if (state.getValue(EAST)) {
-            shape = Shapes.join(shape,
-                    Shapes.box(0.75, 0.25, 0.25, 1.0, 0.75, 0.75),
-                    BooleanOp.OR);
-        }
-        if (state.getValue(SOUTH)) {
-            shape = Shapes.join(shape,
-                    Shapes.box(0.25, 0.25, 0.75, 0.75, 0.75, 1.0),
-                    BooleanOp.OR);
-        }
-        if (state.getValue(WEST)) {
-            shape = Shapes.join(shape,
-                    Shapes.box(0, 0.25, 0.25, 0.25, 0.75, 0.75),
-                    BooleanOp.OR);
-        }
+    public InteractionResult onWrenched(BlockState state, UseOnContext context) {
+        Level world = context.getLevel();
+        BlockPos pos = context.getClickedPos();
 
-        return shape;
+        if (world.isClientSide)
+            return InteractionResult.SUCCESS;
+
+        context.getLevel().levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, context.getClickedPos(), Block.getId(state));
+
+        world.setBlockAndUpdate(pos, HeatPipeBlock.updateState(CNABlocks.HEAT_PIPE.get().defaultBlockState(), world, pos));
+        return InteractionResult.SUCCESS;
     }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return CNABlockEntityTypes.HEAT_PIPE.create(pos, state);
+        return CNABlockEntityTypes.ENCASED_HEAT_PIPE.create(pos, state);
     }
-
 
     public static int massPipe = 0;
     @Nullable
