@@ -194,6 +194,8 @@ public class SubLevelSerializer {
             subLevel.setUserDataTag(tag.getCompound("user_data"));
         }
 
+        subLevel.updateBoundingBox();
+        subLevel.forceUpdateGlobalBounds();
         return subLevel;
     }
 
