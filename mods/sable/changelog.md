@@ -1,2 +1,2 @@
 - Fix a crash with sub-level splitting
-- Potentially fix an issue regarding sub-level serialization
+- Fix and add recovery for an issue with sub-levels not loading in because their bounds got set to [0,0,0,0,0,0]
