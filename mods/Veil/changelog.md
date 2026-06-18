@@ -1,2 +1,3 @@
-- Shader injection module ([#152](https://github.com/FoundryMC/Veil/pull/152))
-- Use close() instead of clear() to free ByteBufferBuilder ([#155](https://github.com/FoundryMC/Veil/pull/155))
+- Fix Quasar light module having 0 radius with rgb_points ([#156](https://github.com/FoundryMC/Veil/pull/156))
+- Add celeritas and imguimc incompatibilities
+- Fix shader replacement not working
