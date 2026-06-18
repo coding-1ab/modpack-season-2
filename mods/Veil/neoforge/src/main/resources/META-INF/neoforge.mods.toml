@@ -66,7 +66,16 @@ description='''${description}'''
     type = "incompatible"
     reason = "${mod_name} supports Sodium ${sodium_version} and above"
 [[dependencies.${mod_id}]]
-    modId = "sodium"
+    modId = "celeritas"
     type = "incompatible"
-    versionRange = "(,${sodium_version})"
     reason = "${mod_name} supports Sodium ${sodium_version} and above"
+[[dependencies.${mod_id}]]
+    modId = "sodium"
+    type = "optional"
+    versionRange = "[${sodium_version},)"
+    reason = "${mod_name} supports Sodium ${sodium_version} and above"
+[[dependencies.${mod_id}]]
+    modId = "imguimc"
+    type = "optional"
+    versionRange = "[${sodium_version},2.0.0)"
+    reason = "${mod_name} supports imguimc ${imguimc_version} to 2.0.0"
