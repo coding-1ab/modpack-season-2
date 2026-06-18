@@ -142,6 +142,7 @@ processResources {
             'neoforge_version_range'       : neoforge_version_range,
             'neoforge_loader_version_range': neoforge_loader_version_range,
             'sodium_version'               : sodium_version,
+            'imguimc_version'              : imguimc_version,
             'java_version'                 : java_version
     ]
 
