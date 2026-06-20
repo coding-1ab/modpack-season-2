@@ -106,6 +106,7 @@
     "command.DataCommandsMixin",
     "command.ExecuteCommandMixin",
     "compatibility.computercraft.WirelessNetworkMixin",
+    "compatibility.etched.StopListeningSoundMixin",
     "compatibility.exposure.CameraPosesMixin",
     "compatibility.exposure.CameraStandEntityMixin",
     "compatibility.jade.BlockAccessorImplMixin",
