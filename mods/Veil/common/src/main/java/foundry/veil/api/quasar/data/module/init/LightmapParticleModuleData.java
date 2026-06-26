@@ -4,14 +4,16 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import foundry.veil.api.client.editor.EditorAttributeProvider;
 import foundry.veil.api.quasar.data.ParticleModuleTypeRegistry;
 import foundry.veil.api.quasar.data.module.ModuleType;
 import foundry.veil.api.quasar.data.module.ParticleModuleData;
 import foundry.veil.api.quasar.emitters.module.InitParticleModule;
 import foundry.veil.api.quasar.particle.ParticleModuleSet;
+import imgui.ImGui;
 import net.minecraft.client.renderer.LightTexture;
 
-public record LightmapParticleModuleData(int packedLight) implements ParticleModuleData {
+public final class LightmapParticleModuleData implements ParticleModuleData, EditorAttributeProvider {
 
     public static final MapCodec<LightmapParticleModuleData> CODEC = Codec.mapEither(
             Codec.BOOL.optionalFieldOf("fullbright", false)
@@ -31,6 +33,11 @@ public record LightmapParticleModuleData(int packedLight) implements ParticleMod
         }
         return Either.right(packedLight);
     });
+    private int packedLight;
+
+    public LightmapParticleModuleData(int packedLight) {
+        this.packedLight = packedLight;
+    }
 
     @Override
     public void addModules(ParticleModuleSet.Builder builder) {
@@ -42,5 +49,22 @@ public record LightmapParticleModuleData(int packedLight) implements ParticleMod
     @Override
     public ModuleType<?> getType() {
         return ParticleModuleTypeRegistry.LIGHTMAP;
+    }
+
+    @Override
+    public void renderImGuiAttributes() {
+        int[] editBlockLight = new int[]{LightTexture.block(packedLight)};
+        int[] editSkyLight = new int[]{LightTexture.sky(packedLight)};
+
+        boolean blockLightDirty = ImGui.dragScalar("block", editBlockLight, 0.01f, 0, 15);
+        boolean skyLightDirty = ImGui.dragScalar("sky", editSkyLight, 0.01f, 0, 15);
+
+        if (blockLightDirty || skyLightDirty) {
+            packedLight = LightTexture.pack(editBlockLight[0], editSkyLight[0]);
+        }
+    }
+
+    public int packedLight() {
+        return packedLight;
     }
 }

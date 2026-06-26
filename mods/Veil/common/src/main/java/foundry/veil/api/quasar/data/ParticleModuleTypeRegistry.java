@@ -14,81 +14,188 @@ import foundry.veil.api.quasar.data.module.render.TrailParticleModuleData;
 import foundry.veil.api.quasar.data.module.update.TickSizeParticleModuleData;
 import foundry.veil.api.quasar.data.module.update.TickSubEmitterModuleData;
 import foundry.veil.api.quasar.emitters.module.init.InitRandomRotationModuleData;
+import foundry.veil.api.quasar.emitters.module.update.VectorField;
 import foundry.veil.api.util.CodecUtil;
+import foundry.veil.api.util.FastNoiseLite;
+import foundry.veil.impl.quasar.ColorGradient;
 import foundry.veil.platform.registry.RegistrationProvider;
+import gg.moonflower.molangcompiler.api.MolangExpression;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
+
+import java.util.ArrayList;
+import java.util.function.Supplier;
 
 public class ParticleModuleTypeRegistry {
-    public static final ResourceKey<Registry<ModuleType<?>>> INIT_MODULES_KEY = ResourceKey.createRegistryKey(Veil.veilPath("quasar/module_type/init"));
-    public static final ResourceKey<Registry<ModuleType<?>>> UPDATE_MODULES_KEY = ResourceKey.createRegistryKey(Veil.veilPath("quasar/module_type/update"));
-    public static final ResourceKey<Registry<ModuleType<?>>> RENDER_MODULES_KEY = ResourceKey.createRegistryKey(Veil.veilPath("quasar/module_type/render"));
 
-    private static final RegistrationProvider<ModuleType<?>> INIT_MODULES_PROVIDER = RegistrationProvider.get(INIT_MODULES_KEY, Veil.MODID);
-    private static final RegistrationProvider<ModuleType<?>> UPDATE_MODULES_PROVIDER = RegistrationProvider.get(UPDATE_MODULES_KEY, Veil.MODID);
-    private static final RegistrationProvider<ModuleType<?>> RENDER_MODULES_PROVIDER = RegistrationProvider.get(RENDER_MODULES_KEY, Veil.MODID);
+    public static final ResourceKey<Registry<ModuleType<?>>> REGISTRY_KEY = ResourceKey.createRegistryKey(Veil.veilPath("quasar/module_type"));
 
-    public static final Registry<ModuleType<?>> INIT_MODULES_REGISTRY = INIT_MODULES_PROVIDER.asVanillaRegistry();
-    public static final Registry<ModuleType<?>> UPDATE_MODULES_REGISTRY = UPDATE_MODULES_PROVIDER.asVanillaRegistry();
-    public static final Registry<ModuleType<?>> RENDER_MODULES_REGISTRY = RENDER_MODULES_PROVIDER.asVanillaRegistry();
+    private static final RegistrationProvider<ModuleType<?>> PROVIDER = RegistrationProvider.get(
+            REGISTRY_KEY,
+            Veil.MODID);
 
-    public static final Codec<ModuleType<?>> INIT_MODULE_CODEC = CodecUtil.registryOrLegacyCodec(INIT_MODULES_REGISTRY);
-    public static final Codec<ModuleType<?>> UPDATE_MODULE_CODEC = CodecUtil.registryOrLegacyCodec(UPDATE_MODULES_REGISTRY);
-    public static final Codec<ModuleType<?>> RENDER_MODULE_CODEC = CodecUtil.registryOrLegacyCodec(RENDER_MODULES_REGISTRY);
+    /**
+     * @deprecated Use {@link #REGISTRY} instead
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "5.0.0")
+    @Deprecated
+    private static final RegistrationProvider<ModuleType<?>> INIT_MODULES_PROVIDER = PROVIDER;
+    /**
+     * @deprecated Use {@link #REGISTRY} instead
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "5.0.0")
+    @Deprecated
+    private static final RegistrationProvider<ModuleType<?>> UPDATE_MODULES_PROVIDER = PROVIDER;
+    /**
+     * @deprecated Use {@link #REGISTRY} instead
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "5.0.0")
+    @Deprecated
+    private static final RegistrationProvider<ModuleType<?>> RENDER_MODULES_PROVIDER = PROVIDER;
+
+    public static final Registry<ModuleType<? extends ParticleModuleData>> REGISTRY = PROVIDER.asVanillaRegistry();
+
+    /**
+     * @deprecated Use {@link #REGISTRY} instead
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "5.0.0")
+    @Deprecated
+    public static final Registry<ModuleType<? extends ParticleModuleData>> INIT_MODULES_REGISTRY = REGISTRY;
+    /**
+     * @deprecated Use {@link #REGISTRY} instead
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "5.0.0")
+    @Deprecated
+    public static final Registry<ModuleType<? extends ParticleModuleData>> UPDATE_MODULES_REGISTRY = REGISTRY;
+    /**
+     * @deprecated Use {@link #REGISTRY} instead
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "5.0.0")
+    @Deprecated
+    public static final Registry<ModuleType<? extends ParticleModuleData>> RENDER_MODULES_REGISTRY = REGISTRY;
+
+    public static final Codec<ModuleType<?>> CODEC = CodecUtil.registryOrLegacyCodec(REGISTRY);
+
+    /**
+     * @deprecated Use {@link #CODEC} instead
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "5.0.0")
+    @Deprecated
+    public static final Codec<ModuleType<?>> INIT_MODULE_CODEC = CODEC;
+    /**
+     * @deprecated Use {@link #CODEC} instead
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "5.0.0")
+    @Deprecated
+    public static final Codec<ModuleType<?>> UPDATE_MODULE_CODEC = CODEC;
+    /**
+     * @deprecated Use {@link #CODEC} instead
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "5.0.0")
+    @Deprecated
+    public static final Codec<ModuleType<?>> RENDER_MODULE_CODEC = CODEC;
 
     // INIT
-    public static final ModuleType<InitialVelocityModuleData> INITIAL_VELOCITY = registerInitModule("initial_velocity", InitialVelocityModuleData.CODEC);
-    public static final ModuleType<ColorParticleModuleData> INIT_COLOR = registerInitModule("init_color", ColorParticleModuleData.CODEC);
-    public static final ModuleType<InitSubEmitterModuleData> INIT_SUB_EMITTER = registerInitModule("init_sub_emitter", InitSubEmitterModuleData.CODEC);
-    public static final ModuleType<InitSizeParticleModuleData> INIT_SIZE = registerInitModule("init_size", InitSizeParticleModuleData.CODEC);
+    public static final ModuleType<InitialVelocityModuleData> INITIAL_VELOCITY = registerModule("initial_velocity", InitialVelocityModuleData.CODEC, () -> new InitialVelocityModuleData(new Vector3d(0, 1, 0), false, 1.0F));
+    public static final ModuleType<InitSubEmitterModuleData> INIT_SUB_EMITTER = registerModule("init_sub_emitter", InitSubEmitterModuleData.CODEC, () -> new InitSubEmitterModuleData(ResourceLocation.withDefaultNamespace("")));
+    /**
+     * @deprecated Use {@link ParticleSettings#randomSize()} instead
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "5.0.0")
+    @Deprecated
+    public static final ModuleType<InitSizeParticleModuleData> INIT_SIZE = registerDeprecatedModule(
+            "init_size",
+            InitSizeParticleModuleData.CODEC,
+            () -> new InitSizeParticleModuleData(MolangExpression.of(1.0F)),
+            "Use \"random_size\" instead",
+            "5.0.0");
     //    ModuleType<InitRandomColorParticleModule> INIT_RANDOM_COLOR = registerInitModule("init_random_color", InitRandomColorParticleModule.CODEC);
-    public static final ModuleType<InitRandomRotationModuleData> INIT_RANDOM_ROTATION = registerInitModule("init_random_rotation", InitRandomRotationModuleData.CODEC);
-    public static final ModuleType<LightModuleData> LIGHT = registerInitModule("light", LightModuleData.CODEC);
-    public static final ModuleType<LightmapParticleModuleData> LIGHTMAP = registerInitModule("lightmap", LightmapParticleModuleData.CODEC);
-    public static final ModuleType<BlockParticleModuleData> BLOCK_PARTICLE = registerInitModule("block", BlockParticleModuleData.CODEC);
+    /**
+     * @deprecated Use {@link ParticleSettings#randomInitialRotation()} instead
+     */
+    @ApiStatus.ScheduledForRemoval(inVersion = "5.0.0")
+    @Deprecated
+    public static final ModuleType<InitRandomRotationModuleData> INIT_RANDOM_ROTATION = registerDeprecatedModule(
+            "init_random_rotation",
+            InitRandomRotationModuleData.CODEC,
+            () -> new InitRandomRotationModuleData(new Vector3f(-180, -180, -180), new Vector3f(180, 180, 180)),
+            "Use \"random_initial_rotation\" instead",
+            "5.0.0");
+    public static final ModuleType<LightModuleData> LIGHT = registerModule("light", LightModuleData.CODEC, () -> new LightModuleData(new ColorGradient(1, 1, 1, 1), MolangExpression.of(1.0F), MolangExpression.of(1.0F)));
+    public static final ModuleType<LightmapParticleModuleData> LIGHTMAP = registerModule("lightmap", LightmapParticleModuleData.CODEC, () -> new LightmapParticleModuleData(15728880));
+    public static final ModuleType<BlockParticleModuleData> BLOCK_PARTICLE = registerModule("block", BlockParticleModuleData.CODEC, () -> new BlockParticleModuleData(false));
 
     // RENDER
-    public static final ModuleType<TrailParticleModuleData> TRAIL = registerRenderModule("trail", TrailParticleModuleData.CODEC);
-    public static final ModuleType<ColorParticleModuleData> COLOR = registerRenderModule("color", ColorParticleModuleData.CODEC);
+    public static final ModuleType<TrailParticleModuleData> TRAIL = registerModule("trail", TrailParticleModuleData.CODEC, () -> new TrailParticleModuleData(new ArrayList<>()));
+    public static final ModuleType<ColorParticleModuleData> COLOR = registerModule("color", ColorParticleModuleData.CODEC, () -> new ColorParticleModuleData(new ColorGradient(1, 1, 1, 1), MolangExpression.ZERO));
     //    ModuleType<ColorOverTimeParticleModule> COLOR_OVER_LIFETIME = registerRenderModule("color_over_lifetime", ColorOverTimeParticleModule.CODEC);
     //    ModuleType<ColorOverVelocityParticleModule> COLOR_OVER_VELOCITY = registerRenderModule("color_over_velocity", ColorOverVelocityParticleModule.CODEC);
 
     // UPDATE
-    public static final ModuleType<TickSizeParticleModuleData> TICK_SIZE = registerUpdateModule("tick_size", TickSizeParticleModuleData.CODEC);
-    public static final ModuleType<TickSubEmitterModuleData> TICK_SUB_EMITTER = registerUpdateModule("tick_sub_emitter", TickSubEmitterModuleData.CODEC);
+    public static final ModuleType<TickSizeParticleModuleData> TICK_SIZE = registerModule("size", TickSizeParticleModuleData.CODEC, () -> new TickSizeParticleModuleData(MolangExpression.of(1)));
+    public static final ModuleType<TickSubEmitterModuleData> TICK_SUB_EMITTER = registerModule("tick_sub_emitter", TickSubEmitterModuleData.CODEC, () -> new TickSubEmitterModuleData(ResourceLocation.withDefaultNamespace(""), 5));
     // UPDATE - COLLISION
-    public static final ModuleType<DieOnCollisionModuleData> DIE_ON_COLLISION = registerUpdateModule("die_on_collision", DieOnCollisionModuleData.CODEC);
-    public static final ModuleType<CollisionSubEmitterData> SUB_EMITTER_COLLISION = registerUpdateModule("sub_emitter_collision", CollisionSubEmitterData.CODEC);
+    public static final ModuleType<DieOnCollisionModuleData> DIE_ON_COLLISION = registerModule("die_on_collision", DieOnCollisionModuleData.CODEC, DieOnCollisionModuleData::new);
+    public static final ModuleType<CollisionSubEmitterData> SUB_EMITTER_COLLISION = registerModule("sub_emitter_collision", CollisionSubEmitterData.CODEC, () -> new CollisionSubEmitterData(ResourceLocation.withDefaultNamespace("")));
     //    ModuleType<BounceParticleModule> BOUNCE = registerUpdateModule("bounce", BounceParticleModule.CODEC);
     // UPDATE - FORCES
-    public static final ModuleType<GravityForceData> GRAVITY = registerUpdateModule("gravity", GravityForceData.CODEC);
-    public static final ModuleType<VortexForceData> VORTEX = registerUpdateModule("vortex", VortexForceData.CODEC);
-    public static final ModuleType<PointAttractorForceData> POINT_ATTRACTOR = registerUpdateModule("point_attractor", PointAttractorForceData.CODEC);
-    public static final ModuleType<VectorFieldForceData> VECTOR_FIELD = registerUpdateModule("vector_field", VectorFieldForceData.CODEC);
-    public static final ModuleType<DragForceData> DRAG = registerUpdateModule("drag", DragForceData.CODEC);
-    public static final ModuleType<WindForceData> WIND = registerUpdateModule("wind", WindForceData.CODEC);
-    public static final ModuleType<PointForceData> POINT = registerUpdateModule("point_force", PointForceData.CODEC);
+    public static final ModuleType<GravityForceData> GRAVITY = registerModule("gravity", GravityForceData.CODEC, () -> new GravityForceData(1F));
+    public static final ModuleType<VortexForceData> VORTEX = registerModule("vortex", VortexForceData.CODEC, () -> new VortexForceData(new Vector3d(0, 1, 0), new Vector3d(0), true, 10, 1.0f));
+    public static final ModuleType<PointAttractorForceData> POINT_ATTRACTOR = registerModule("point_attractor", PointAttractorForceData.CODEC, () -> new PointAttractorForceData(new Vector3d(0), true, 20, 1.0f, false, false));
+    public static final ModuleType<VectorFieldForceData> VECTOR_FIELD = registerModule("vector_field", VectorFieldForceData.CODEC, () -> new VectorFieldForceData(new VectorField(new FastNoiseLite(), 1.0F), 1.0F));
+    public static final ModuleType<DragForceData> DRAG = registerModule("drag", DragForceData.CODEC, () -> new DragForceData(0.5f));
+    public static final ModuleType<WindForceData> WIND = registerModule("wind", WindForceData.CODEC, () -> new WindForceData(new Vector3d(1, 0, 0), 0.5f, 1.0f));
+    public static final ModuleType<PointForceData> POINT = registerModule("point_force", PointForceData.CODEC, () -> new PointForceData(new Vector3d(0), true, 20, 1.0f));
 
     @ApiStatus.Internal
     public static void bootstrap() {
     }
 
-    private static <T extends ParticleModuleData> ModuleType<T> registerUpdateModule(String name, MapCodec<T> codec) {
-        ModuleType<T> type = () -> codec;
-        UPDATE_MODULES_PROVIDER.register(name, () -> type);
+    private static <T extends ParticleModuleData> ModuleType<T> registerModule(String name, MapCodec<T> codec, Supplier<T> defaultValue) {
+        ModuleType<T> type = new ModuleType<>() {
+            @Override
+            public MapCodec<T> codec() {
+                return codec;
+            }
+
+            @Override
+            public Supplier<T> defaultValue() {
+                return defaultValue;
+            }
+        };
+        PROVIDER.register(name, () -> type);
         return type;
     }
 
-    private static <T extends ParticleModuleData> ModuleType<T> registerRenderModule(String name, MapCodec<T> codec) {
-        ModuleType<T> type = () -> codec;
-        RENDER_MODULES_PROVIDER.register(name, () -> type);
-        return type;
-    }
+    @Deprecated
+    private static <T extends ParticleModuleData> ModuleType<T> registerDeprecatedModule(
+            String name,
+            MapCodec<T> codec,
+            Supplier<T> defaultValue,
+            String reason,
+            String removeVersion) {
+        ModuleType.DeprecationStatus status = new ModuleType.DeprecationStatus(reason, removeVersion);
+        ModuleType<T> type = new ModuleType<>() {
+            @Override
+            public MapCodec<T> codec() {
+                return codec;
+            }
 
-    private static <T extends ParticleModuleData> ModuleType<T> registerInitModule(String name, MapCodec<T> codec) {
-        ModuleType<T> type = () -> codec;
-        INIT_MODULES_PROVIDER.register(name, () -> type);
+            @Override
+            public Supplier<T> defaultValue() {
+                return defaultValue;
+            }
+
+            @Override
+            public DeprecationStatus deprecationStatus() {
+                return status;
+            }
+        };
+        PROVIDER.register(name, () -> type);
         return type;
     }
 }

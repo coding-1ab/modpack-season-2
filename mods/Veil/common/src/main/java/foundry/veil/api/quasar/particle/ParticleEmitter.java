@@ -16,11 +16,13 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnmodifiableView;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
 import org.joml.Vector3f;
@@ -42,14 +44,16 @@ import java.util.concurrent.CompletableFuture;
  *   OPTIONAL OnUpdateAction that can be set to run when a particle is updated
  *   OPTIONAL OnRenderAction that can be set to run when a particle is rendered
  */
+@ApiStatus.NonExtendable
 public class ParticleEmitter {
 
     private static final Set<Holder<ParticleModuleData>> REPORTED_MODULES = new HashSet<>();
 
-    private final ParticleSystemManager particleManager;
+    protected final ParticleSystemManager particleManager;
     private final ClientLevel level;
     private final ParticleEmitterData emitterData;
     private final List<ParticleModuleData> modules;
+    private final List<ParticleModuleData> modulesView;
     private final RandomSource randomSource;
     private final Vector3d position;
     private final Vector3d offset;
@@ -63,19 +67,20 @@ public class ParticleEmitter {
     private List<EmitterShapeSettings> emitterShapeSettings;
     private ParticleSettings particleSettings;
     private boolean forceSpawn;
-    private QuasarParticleData particleData;
+    protected QuasarParticleData particleData;
 
     @Nullable
     private Entity attachedEntity;
-    private CompletableFuture<?> spawnTask;
-    private CompletableFuture<?> removeTask;
+    protected CompletableFuture<?> spawnTask;
+    protected CompletableFuture<?> removeTask;
     private boolean removed;
 
-    ParticleEmitter(ParticleSystemManager particleManager, ClientLevel level, ParticleEmitterData data) {
+    protected ParticleEmitter(ParticleSystemManager particleManager, ClientLevel level, ParticleEmitterData data) {
         this.particleManager = particleManager;
         this.level = level;
         this.emitterData = data;
         this.modules = createModuleSet(data.particleData());
+        this.modulesView = Collections.unmodifiableList(this.modules);
         this.randomSource = RandomSource.create();
         this.position = new Vector3d();
         this.offset = new Vector3d();
@@ -87,7 +92,7 @@ public class ParticleEmitter {
         this.count = data.count();
         this.maxParticles = data.maxParticles();
         EmitterSettings emitterSettings = data.emitterSettings();
-        this.emitterShapeSettings = emitterSettings.emitterShapeSettings();
+        this.emitterShapeSettings = new ArrayList<>(emitterSettings.emitterShapeSettings());
         this.particleSettings = emitterSettings.particleSettings();
         this.forceSpawn = emitterSettings.forceSpawn();
         this.particleData = data.particleData();
@@ -108,13 +113,14 @@ public class ParticleEmitter {
         REPORTED_MODULES.clear();
     }
 
-    private void spawn() {
+    protected void spawn() {
         int count = Math.min(this.maxParticles, this.count);
         this.particleManager.reserve(count);
 
         for (int i = 0; i < count; i++) {
             Vector3dc particlePos = this.emitterShapeSettings.get(i % this.emitterShapeSettings.size()).getPos(this.randomSource, this.position);
             Vector3fc particleDirection = this.particleSettings.particleDirection(this.randomSource);
+            Vector3fc particleRotation = this.particleSettings.initialRotation(this.randomSource).mul(Mth.DEG_TO_RAD, new Vector3f());
 
             // TODO
 //        this.getParticleData().getInitModules().stream().filter(force -> force instanceof InitialVelocityForce).forEach(f -> {
@@ -139,13 +145,14 @@ public class ParticleEmitter {
             QuasarParticle particle = new QuasarParticle(this.level, this.randomSource, this.particleManager.getScheduler(), this.particleData, builder.build(), this.particleSettings, this);
             particle.getPosition().set(particlePos);
             particle.getVelocity().set(particleDirection);
+            particle.getRotation().set(particleRotation);
             particle.init();
             this.particles.add(particle);
         }
     }
 
-    private static List<ParticleModuleData> createModuleSet(QuasarParticleData data) {
-        List<Holder<ParticleModuleData>> allModules = data.getAllModules();
+    protected static List<ParticleModuleData> createModuleSet(QuasarParticleData data) {
+        List<Holder<ParticleModuleData>> allModules = data.modules();
         ArrayList<ParticleModuleData> list = new ArrayList<>(allModules.size());
         for (Holder<ParticleModuleData> module : allModules) {
             if (!module.isBound()) {
@@ -180,7 +187,7 @@ public class ParticleEmitter {
     }
 
     @ApiStatus.Internal
-    void tick() {
+    protected void tick() {
         this.position.set(0);
         if (this.attachedEntity != null) {
             if (this.attachedEntity.isAlive()) {
@@ -281,7 +288,27 @@ public class ParticleEmitter {
      * @param module The module to add
      */
     public void addCodeModule(CodeModule module) {
+        this.addModule(module);
+    }
+
+    /**
+     * Adds a new module to this emitter.
+     *
+     * @param module The module to add
+     * @since 4.3.0
+     */
+    public void addModule(ParticleModuleData module) {
         this.modules.add(module);
+    }
+
+    /**
+     * Removes a module from this emitter.
+     *
+     * @param module The module to remove
+     * @since 4.3.0
+     */
+    public void removeModule(ParticleModuleData module) {
+        this.modules.remove(module);
     }
 
     /**
@@ -299,6 +326,7 @@ public class ParticleEmitter {
         int removeCount;
         Iterator<QuasarParticle> iterator = this.particles.iterator();
         for (removeCount = 0; iterator.hasNext() && removeCount < count; removeCount++) {
+            iterator.next().onRemove();
             iterator.remove();
         }
         return removeCount;
@@ -460,6 +488,14 @@ public class ParticleEmitter {
 
     public void setParticleData(QuasarParticleData particleData) {
         this.particleData = particleData;
+    }
+
+    /**
+     * @since 4.3.0
+     */
+    @UnmodifiableView
+    public List<ParticleModuleData> getModules() {
+        return this.modulesView;
     }
 
     /**
