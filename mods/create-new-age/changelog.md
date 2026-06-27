@@ -1,4 +1,13 @@
 ------------------------------------------------------
+Version 1.2.1
+------------------------------------------------------
+#### Additions
+- Added heat casing
+#### Improvements
+- Improve Reactor Statistics
+- Cache wire networks and lazily reset wire connections - [!71 Thank you Superintendent](https://gitlab.com/antarcticgardens/create-new-age/-/merge_requests/71)
+
+------------------------------------------------------
 Version 1.2.0
 ------------------------------------------------------
 #### Additions
