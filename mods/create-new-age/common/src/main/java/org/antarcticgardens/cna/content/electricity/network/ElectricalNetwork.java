@@ -53,6 +53,10 @@ public class ElectricalNetwork {
             pathManager.addConnection(node, connectedNode);
     }
 
+    public void removeConnection(AbstractElectricalConnector node, AbstractElectricalConnector node1) {
+        pathManager.removeConnection(node, node1);
+    }
+
     public void updateConsumersAndSources() {
         consumers.clear();
         pulledSources.clear();

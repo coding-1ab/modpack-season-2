@@ -161,6 +161,11 @@ public abstract class AbstractElectricalConnector extends SmartBlockEntity {
     }
 
     public void disconnect(AbstractElectricalConnector entity) {
+        if (network != null)
+            network.removeConnection(this, entity);
+        if (entity.getNetwork() != null && entity.getNetwork() != network)
+            entity.getNetwork().removeConnection(this, entity);
+
         connectors.remove(entity);
         connectorPositions.remove(entity.getBlockPos());
     }
