@@ -81,6 +81,7 @@ public final class RenderData {
         this.prevRotation.set(particle.getRotation());
         this.prevRadius = particle.getRadius();
         this.packedLight = packedLight;
+        this.tickTrails();
     }
 
     @ApiStatus.Internal
@@ -174,7 +175,7 @@ public final class RenderData {
         return this.trails;
     }
 
-    public void tickTrails() {
+    private void tickTrails() {
         if (this.trails.isEmpty()) {
             return;
         }
@@ -185,6 +186,7 @@ public final class RenderData {
     }
 
     // TODO move to renderer
+    @ApiStatus.Internal
     public void renderTrails(MatrixStack matrixStack, MultiBufferSource bufferSource, Vec3 cameraPos, int packedLight, float partialTicks) {
         if (this.trails.isEmpty()) {
             return;
@@ -193,7 +195,7 @@ public final class RenderData {
         matrixStack.matrixPush();
         matrixStack.translate(-cameraPos.x(), -cameraPos.y(), -cameraPos.z());
         for (Trail trail : this.trails) {
-            trail.render(matrixStack, bufferSource.getBuffer(VeilRenderType.quasarTrail(trail.getTexture(), trail.getAdditive())), packedLight, partialTicks, new Vec3(this.particle.getPosition().x, this.particle.getPosition().y, this.particle.getPosition().z), new Vec3(this.particle.getRotation()));
+            trail.render(matrixStack, bufferSource.getBuffer(VeilRenderType.quasarTrail(trail.getTexture(), trail.isAdditive())), packedLight, partialTicks, new Vec3(this.particle.getPosition().x, this.particle.getPosition().y, this.particle.getPosition().z), new Vec3(this.particle.getRotation()));
         }
         matrixStack.matrixPop();
     }

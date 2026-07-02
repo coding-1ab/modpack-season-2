@@ -10,11 +10,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 
 public class Trail {
@@ -50,7 +54,7 @@ public class Trail {
         this.frequency = settings.getTrailFrequency();
         this.tilingMode = settings.getTilingMode();
         this.texture = settings.getTrailTexture();
-        this.additive = settings.getAdditive();
+        this.additive = settings.isAdditive();
         this.parentRotation = settings.getParentRotation();
     }
 
@@ -105,8 +109,8 @@ public class Trail {
         this.billboard = billboard;
     }
 
-    public boolean getAdditive() {
-        return additive;
+    public boolean isAdditive() {
+        return this.additive;
     }
 
     public void setAdditive(boolean additive) {
@@ -155,6 +159,7 @@ public class Trail {
         }
     }
 
+    @ApiStatus.Internal
     public void render(MatrixStack stack, VertexConsumer consumer, int light, float partialTicks, Vec3 target, Vec3 targetRotation) {
         // Not enough geometry to render anything
         if (this.points.isEmpty()) {

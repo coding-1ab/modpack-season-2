@@ -203,7 +203,6 @@ public class ParticleEmitter {
         Iterator<QuasarParticle> iterator = this.particles.iterator();
         while (iterator.hasNext()) {
             QuasarParticle particle = iterator.next();
-            particle.getRenderData().tickTrails();
             particle.tick();
 
             if (particle.isRemoved()) {

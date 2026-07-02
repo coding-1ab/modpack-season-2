@@ -46,6 +46,17 @@ public class TrailSettings implements EditorAttributeProvider {
     private boolean parentRotation;
     private float trailWidthModifierFloat = 1f;
 
+    /**
+     * @deprecated Use {@link TrailSettings#TrailSettings(int, int, Vector4fc, float, Optional, float, Trail.TilingMode, boolean, boolean, boolean)} instead
+     */
+    @Deprecated
+    public TrailSettings(int trailFrequency, int trailLength, Vector4fc trailColor, TrailWidthModifier trailWidthModifier, @Nullable ResourceLocation trailTexture, TrailPointModifier trailPointModifier, Trail.TilingMode tilingMode, boolean billboard, boolean parentRotation) {
+        this(trailFrequency, trailLength, trailColor, trailWidthModifier, trailTexture, trailPointModifier, tilingMode, billboard, false, parentRotation);
+    }
+
+    /**
+     * @since 4.3.0
+     */
     public TrailSettings(int trailFrequency, int trailLength, Vector4fc trailColor, TrailWidthModifier trailWidthModifier, @Nullable ResourceLocation trailTexture, TrailPointModifier trailPointModifier, Trail.TilingMode tilingMode, boolean billboard, boolean additive, boolean parentRotation) {
         this.trailFrequency = trailFrequency;
         this.trailLength = trailLength;
@@ -84,8 +95,8 @@ public class TrailSettings implements EditorAttributeProvider {
         return this.parentRotation;
     }
 
-    public boolean getAdditive() {
-        return additive;
+    public boolean isAdditive() {
+        return this.additive;
     }
 
     public void setAdditive(boolean additive) {
