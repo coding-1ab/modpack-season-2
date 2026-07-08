@@ -33,3 +33,10 @@ curseforge 627196 6426184 // item showcase
 modrinth hZ6B2Z0x // projectile lib
 modrinth LKsY0cFi // Create: Aeroworks
 modrinth 74IL0dDS // map atlases
+modrinth VEburL70 // polymorph
+modrinth oxmWQs9t // polymorphic energistics
+modrinth bqMxf6Ua // Create: Dreams & Desires
+modrinth LRsqtqYq // Create Aeronautics: Transmission & Linkage
+modrinth HH6C048t // waystones
+modrinth sU9FMQjX // Waystones: Sable (Create Aeronautics Addon)
+modrinth j0UWQoMG // CC: Sable
