@@ -70,14 +70,32 @@ public class SubLevelAssemblyHelper {
         final ServerSubLevelContainer container = SubLevelContainer.getContainer(level);
         assert container != null;
 
+        final SubLevelPhysicsSystem physicsSystem = container.physicsSystem();
         final SubLevel containingSubLevel = Sable.HELPER.getContaining(level, anchor);
         final Pose3d pose = new Pose3d();
 
         pose.position().set(anchor.getX() + 0.5, anchor.getY() + 0.5, anchor.getZ() + 0.5);
+
+        final Vector3d containingAngularVelocity = new Vector3d();
+        final Vector3d containingLinearVelocity = new Vector3d();
+        final Pose3d containingPose;
+
         if (containingSubLevel != null) {
-            final Pose3d containingPose = containingSubLevel.logicalPose();
+            if (containingSubLevel.isRemoved()) {
+                throw new RuntimeException("Sub-level assembly attempted inside plot of already removed sub-level");
+            }
+
+            containingPose = new Pose3d(containingSubLevel.logicalPose());
+
             containingPose.transformPosition(pose.position());
             pose.orientation().set(containingPose.orientation());
+
+            final RigidBodyHandle containingHandle = physicsSystem.getPhysicsHandle((ServerSubLevel) containingSubLevel);
+
+            containingHandle.getLinearVelocity(containingLinearVelocity);
+            containingHandle.getAngularVelocity(containingAngularVelocity);
+        } else {
+            containingPose = null;
         }
 
         final ServerSubLevel subLevel = (ServerSubLevel) container.allocateNewSubLevel(pose);
@@ -104,14 +122,16 @@ public class SubLevelAssemblyHelper {
 
         subLevel.logicalPose().position().set(subLevelCenter.x, subLevelCenter.y, subLevelCenter.z);
 
-        final SubLevelPhysicsSystem physicsSystem = container.physicsSystem();
         final PhysicsPipeline pipeline = physicsSystem.getPipeline();
 
         if (containingSubLevel != null) {
-            kickFromContainingSubLevel(level, physicsSystem, pipeline, subLevel, containingSubLevel);
+            kickFromContainingSubLevel(pipeline, subLevel, containingLinearVelocity, containingAngularVelocity, containingPose, !containingSubLevel.isRemoved() ? containingSubLevel : null);
         }
 
-        pipeline.teleport(subLevel, subLevel.logicalPose().position(), subLevel.logicalPose().orientation());
+        if (!subLevel.isRemoved()) {
+            pipeline.teleport(subLevel, subLevel.logicalPose().position(), subLevel.logicalPose().orientation());
+        }
+
         subLevel.updateLastPose();
 
         SubLevelAssemblyHelper.moveTrackingPoints(level, bounds, subLevel, transform);
@@ -125,18 +145,37 @@ public class SubLevelAssemblyHelper {
                                                   final PhysicsPipeline pipeline,
                                                   final ServerSubLevel subLevel,
                                                   final SubLevel containingSubLevel) {
+
+        final RigidBodyHandle containingHandle = physicsSystem.getPhysicsHandle((ServerSubLevel) containingSubLevel);
+        final Vector3d linearVelocity = containingHandle.getLinearVelocity(new Vector3d());
+        final Vector3d angularVelocity = containingHandle.getAngularVelocity(new Vector3d());
+        final Pose3d containingPose = containingSubLevel.logicalPose();
+
+        kickFromContainingSubLevel(pipeline, subLevel, linearVelocity, angularVelocity, containingPose, containingSubLevel);
+    }
+
+    @ApiStatus.Internal
+    private static void kickFromContainingSubLevel(final PhysicsPipeline pipeline,
+                                                   final ServerSubLevel subLevel,
+                                                   final Vector3d containingLinearVelocity,
+                                                   final Vector3d containingAngularVelocity,
+                                                   final Pose3d containingPose,
+                                                   @Nullable final SubLevel containingSubLevel) {
         final Pose3d originalPose = new Pose3d(subLevel.logicalPose());
 
-        final Vector3d velocity = Sable.HELPER.getVelocity(level, subLevel.logicalPose().position(), new Vector3d());
-        final RigidBodyHandle containingHandle = physicsSystem.getPhysicsHandle((ServerSubLevel) containingSubLevel);
-        pipeline.addLinearAndAngularVelocity(subLevel, velocity, containingHandle.getAngularVelocity());
 
         // re-transform after center of mass is fixed
         // we don't need to set the orientation again as it couldn't have changed
-        final Pose3d containingPose = containingSubLevel.logicalPose();
         containingPose.transformPosition(subLevel.logicalPose().position());
 
-        subLevel.setSplitFrom((ServerSubLevel) containingSubLevel, originalPose);
+        final Vector3d localPos = subLevel.logicalPose().position().sub(containingPose.position(), new Vector3d());
+        if (!subLevel.isRemoved()) {
+            pipeline.addLinearAndAngularVelocity(subLevel, containingAngularVelocity.cross(localPos, localPos).add(containingLinearVelocity), containingAngularVelocity);
+        }
+
+        if (containingSubLevel != null) {
+            subLevel.setSplitFrom((ServerSubLevel) containingSubLevel, originalPose);
+        }
     }
 
     /**
@@ -290,6 +329,7 @@ public class SubLevelAssemblyHelper {
 
         final LevelAccelerator accelerator = new LevelAccelerator(level);
         final LevelAccelerator resultingAccelerator = new LevelAccelerator(resultingLevel);
+        final BlockState airState = Blocks.AIR.defaultBlockState();
 
         final List<BlockState> states = new ArrayList<>();
 
@@ -378,6 +418,8 @@ public class SubLevelAssemblyHelper {
                 if (state.getBlock() instanceof final BlockSubLevelAssemblyListener listener) {
                     listener.afterMove(level, resultingLevel, state, block, newPos);
                 }
+
+                level.onBlockStateChange(newPos, airState, state);
             } catch (final Exception e) {
                 Sable.LOGGER.error("Failed to move block {} at {} to {}", state, block, newPos, e);
             }
@@ -391,7 +433,7 @@ public class SubLevelAssemblyHelper {
             try {
                 final LevelChunk levelchunk = resultingAccelerator.getChunk(SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()));
                 final BlockState subLevelState = states.get(i);
-                SubLevelAssemblyHelper.markAndNotifyBlock(resultingLevel, pos, levelchunk, Blocks.AIR.defaultBlockState(), subLevelState, 3, 512);
+                SubLevelAssemblyHelper.markAndNotifyBlock(resultingLevel, pos, levelchunk, airState, subLevelState, 3, 512);
             } catch (final Exception e) {
                 Sable.LOGGER.error("Failed to mark & notify block {} (untransformed = {})", pos, untransformed, e);
             }
@@ -402,13 +444,12 @@ public class SubLevelAssemblyHelper {
         SableAssemblyPlatform.INSTANCE.setIgnoreOnPlace(resultingLevel, true);
         // destroy all the old blocks
         for (final BlockPos block : blocks) {
-            final BlockState subLevelState = Blocks.AIR.defaultBlockState();
-
             try {
                 final LevelChunk chunk = accelerator.getChunk(SectionPos.blockToSectionCoord(block.getX()),
                         SectionPos.blockToSectionCoord(block.getZ()));
 
-                chunk.setBlockState(block, subLevelState, true);
+                level.onBlockStateChange(block, chunk.getBlockState(block), airState);
+                chunk.setBlockState(block, airState, true);
             } catch (final Exception e) {
                 Sable.LOGGER.error("Failed to destroy old block during assembly {}", block, e);
             }
@@ -416,7 +457,7 @@ public class SubLevelAssemblyHelper {
         SableAssemblyPlatform.INSTANCE.setIgnoreOnPlace(resultingLevel, false);
 
         for (final BlockPos block : blocks) {
-            final BlockState subLevelState = Blocks.AIR.defaultBlockState();
+            final BlockState subLevelState = airState;
             resultingLevel.sendBlockUpdated(block, Blocks.STONE.defaultBlockState(), subLevelState, 3);
         }
     }

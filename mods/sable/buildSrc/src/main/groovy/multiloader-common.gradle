@@ -4,6 +4,14 @@ plugins {
     id "checkstyle"
 }
 
+if (System.getenv("SNAPSHOT") != null) {
+    String buildNumber = System.getenv("BUILD_NUMBER")
+
+    if (buildNumber != null) {
+        version += "-$buildNumber"
+    }
+}
+
 base {
     archivesName = "${mod_id}-${project.name}-${minecraft_version}"
 }
@@ -107,27 +115,12 @@ dependencies {
     compileOnly "maven.modrinth:iris:$iris_version"
     compileOnly "maven.modrinth:distanthorizons:$distant_horizons_version"
     compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-forge:$cc_tweaked_version")
-    compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-common-api:$cc_tweaked_version")
     compileOnly("io.github.mortuusars.exposure:exposure-${minecraft_version}-neoforge:${exposure_version}") { transitive = false }
     compileOnly("maven.modrinth:jade:${project.jade_version}+neoforge") { transitive = false }
     compileOnly("maven.modrinth:jade-addons-forge:${project.jade_addons_version}+neoforge") { transitive = false }
     compileOnly("maven.modrinth:moonlight:${project.moonlight_version}-neoforge")
     compileOnly("curse.maven:vista-1368607:$vista_version")
-}
-
-// Declare capabilities on the outgoing configurations.
-// Read more about capabilities here: https://docs.gradle.org/current/userguide/component_capabilities.html#sec:declaring-additional-capabilities-for-a-local-component
-['apiElements', 'runtimeElements', 'sourcesElements'/*, 'javadocElements'*/].each { variant ->
-    configurations."$variant".outgoing {
-        capability("$group:${base.archivesName.get()}:$version")
-        capability("$group:$mod_id-${project.name}-${minecraft_version}:$version")
-        capability("$group:$mod_id-${project.name}:$version")
-        capability("$group:$mod_id:$version")
-        capability("$group:${project.name}:$version")
-    }
-    publishing.publications.configureEach {
-        suppressPomMetadataWarningsFor(variant)
-    }
+    compileOnly("maven.modrinth:shoulder-surfing-reloaded:${minecraft_version}-${project.shouldersurfing_version}+neoforge") { transitive = false }
 }
 
 sourcesJar {
@@ -165,7 +158,7 @@ String createModVersionRange() {
 
 processResources {
     var expandProps = [
-            'version'                      : version,
+            'version'                      : rootProject.version, // Make sure snapshots aren't included
             'group'                        : project.group, //Else we target the task's group.
             'minecraft_version'            : minecraft_version,
             'minecraft_version_range'      : minecraft_version_range,
@@ -212,7 +205,7 @@ publishing {
     repositories {
         mavenLocal()
         maven {
-            url = System.getenv('local_maven_url')
+            url = System.getenv('MAVEN_PUBLISH_URL')
 
             credentials {
                 username = System.getenv('local_maven_user')
