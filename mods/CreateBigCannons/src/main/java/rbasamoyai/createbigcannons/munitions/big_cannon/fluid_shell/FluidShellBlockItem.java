@@ -4,7 +4,7 @@ import static rbasamoyai.createbigcannons.munitions.big_cannon.fluid_shell.Abstr
 
 import java.util.List;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -29,7 +29,7 @@ import rbasamoyai.createbigcannons.munitions.FuzedProjectileBlockItem;
 public class FluidShellBlockItem extends FuzedProjectileBlockItem {
 
 	public FluidShellBlockItem(Block block, Properties properties) {
-		super(block, properties);
+		super(block, properties.component(CBCDataComponents.FLUID_CONTENT, CustomData.EMPTY));
 	}
 
 	@Override

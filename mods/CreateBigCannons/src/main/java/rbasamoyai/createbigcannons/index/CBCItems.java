@@ -45,7 +45,10 @@ import rbasamoyai.createbigcannons.utils.CBCRegistryUtils;
 
 public class CBCItems {
 
-	static { ModGroup.useModTab(ModGroup.MAIN_TAB_KEY); }
+	static {
+        ModGroup.setDefaultTabToNull();
+        REGISTRATE.setCreativeTab(null);
+    }
 
 	public static final ItemEntry<ImpactFuzeItem> IMPACT_FUZE = REGISTRATE.item("impact_fuze", ImpactFuzeItem::new)
 		.tag(CBCTags.CBCItemTags.FUZES)

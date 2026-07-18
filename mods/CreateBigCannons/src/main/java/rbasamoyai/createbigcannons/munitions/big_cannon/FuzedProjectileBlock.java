@@ -10,8 +10,6 @@ import net.createmod.catnip.data.Iterate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -90,19 +88,34 @@ public abstract class FuzedProjectileBlock<BLOCK_ENTITY extends FuzedBlockEntity
 		if (blocks.isEmpty()) return ItemStack.EMPTY;
 		StructureBlockInfo info = blocks.get(0);
 		if (info.nbt() == null) return ItemStack.EMPTY;
-        Tag tag = info.nbt().getCompound("components").get("createbigcannons:fuze");
-		ItemContainerContents contents = ItemContainerContents.CODEC
-            .parse(registries.createSerializationContext(NbtOps.INSTANCE), tag)
-            .resultOrPartial()
-            .orElse(ItemContainerContents.EMPTY);
-		return contents.getSlots() > 0 ? contents.getStackInSlot(0) : ItemStack.EMPTY;
+        return ItemStack.parseOptional(registries, info.nbt().getCompound("Fuze"));
 	}
 
 	public static ItemStack getFuzeFromBlock(Level level, BlockPos pos, BlockState state) {
 		return level.getBlockEntity(pos) instanceof FuzedBlockEntity projectile ? projectile.getFuze() : ItemStack.EMPTY;
 	}
 
-	@Override
+    @Override
+    public StructureBlockInfo getHandloadingInfo(ItemStack stack, BlockPos localPos, Direction cannonOrientation, HolderLookup.Provider registries) {
+        StructureBlockInfo info = super.getHandloadingInfo(stack, localPos, cannonOrientation, registries);
+        if (info.nbt() != null) {
+            ItemStack fuze = getFuzeFromItemStack(stack);
+            info.nbt().put("Fuze", fuze.saveOptional(registries));
+        }
+        return info;
+    }
+
+    @Override
+    public ItemStack getExtractedItem(StructureBlockInfo info, HolderLookup.Provider registries) {
+        ItemStack stack = super.getExtractedItem(info, registries);
+        if (info.nbt() != null) {
+            ItemStack fuze = ItemStack.parseOptional(registries, info.nbt().getCompound("Fuze"));
+            stack.set(CBCDataComponents.FUZE, fuze.isEmpty() ? ItemContainerContents.EMPTY : ItemContainerContents.fromItems(List.of(fuze)));
+        }
+        return stack;
+    }
+
+    @Override
 	public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
 		if (hand == InteractionHand.OFF_HAND)
 			return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
@@ -213,8 +226,10 @@ public abstract class FuzedProjectileBlock<BLOCK_ENTITY extends FuzedBlockEntity
     @Override
     public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         ItemStack item = super.getCloneItemStack(level, pos, state);
-        if (level.getBlockEntity(pos) instanceof FuzedBlockEntity be)
-            item.set(CBCDataComponents.FUZE, be.components().getOrDefault(CBCDataComponents.FUZE, ItemContainerContents.EMPTY));
+        if (level.getBlockEntity(pos) instanceof FuzedBlockEntity be) {
+            ItemStack fuze = be.getFuze();
+            item.set(CBCDataComponents.FUZE, fuze.isEmpty() ? ItemContainerContents.EMPTY : ItemContainerContents.fromItems(List.of(fuze)));
+        }
         return item;
     }
 

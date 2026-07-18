@@ -1,10 +1,46 @@
 # Changelog
 
-## [5.11.4] - Unreleased
+## [5.11.7] - 2026-06-22
+
+**Create Big Cannons 5.11.7 brings more fixes, as well as support for Sable 2.0.0.**
+
+Added:
+- [Datapacks] Added example JSON files of big cannon and autocannon materials in the built-in `example_createbigcannons` folder
+
+Fixed:
+- Fixed unfuzed and non-tracer projectile block items not being consumable by schematic printer
+- [Sable] Fixed shell impact compat NoSuchMethodError crash
+
+## [5.11.6] - 2026-06-06
+
+**Create Big Cannons 5.11.6 fixes more critical issues for the 1.21.1 release.**
+
+Changes:
+- [Development] Added block damage hook courtesy of devprinter
+
+Fixed:
+- Fixed cloned big cannon projectile items not being compatible with schematic printing
+  - Still incompatible with block entity data, not supported. Do a simple middle click, not ctrl+click
+- [Sable] Fixed shell impact detonation crash courtesy of devprinter
+- [CBC: Advanced Technologies] Fixed (probably) creative mode tab crash
+
+## [5.11.5] - 2026-05-31
+
+**Create Big Cannons 5.11.5 fixes a critical issue introduced in v5.11.4 that breaks big cannon munitions.**
+
+Fixed:
+- Fixed big cannon munitions not working when placed as compared to when handloaded
+
+## [5.11.4] - 2026-05-30
 
 **Create Big Cannons 5.11.4, with more fixes and more support, particularly for Sable and Create Aeronautics!**
 
+NOTE: This update changes data storage for big cannon munition blocks and autocannon ammo container blocks on 1.21.1.
+Existing blocks will be broken!
+
 Added:
+- Added emissive support for tracer autocannon and big cannon projectiles
+  - Must be enabled in Create Big Cannons client config
 - [Sable] Added cannon recoil on Sable physics objects, courtesy of wph1234
 - [Sable] Cannon projectiles now apply some force when impacting Sable physics objects, courtesy of wph1234
 - [Sable] Added integration for impact and inertia fuzes (and delayed variants) to trigger on impacting the ground as a sublevel
@@ -23,6 +59,7 @@ Changed:
 - Increased armor piercing shell entity explosion power from 5 to 7
 - Increased default autocannon rounds capacity of autocannon ammo container to 64 from 16
 - Increased default machine gun rounds capacity of autocannon ammo container to 128 from 64
+- Changed creative autocannon ammo container to no longer be fillable with hoppers and chutes
 - [1.21.1] Updated Russian (ru_ru.json) translation courtesy of sashafiesta
 - [1.21.1] Updated Chinese (Simplified) (zh_cn.json) translation courtesy of wph1234
 
@@ -36,9 +73,14 @@ Fixed:
 - Fixed cannon shots not hitting entities if they are destroyed from hitting a block
 - Fixed flak, shrapnel, and grapeshot burst overpenetration
 - Fixed schematic requirements for big cartridges and big cannon projectiles
-- Fixed incorrect data components saving leading to stack overflow crashes
 - Fixed projectile grounding in world, courtesy of Hectoris919
 - Fixed mechanical piston pushing
+- Fixed placement of ammunition in autocannon ammo container screen
+- Fixed crash with CBC: Advanced Technologies
+- Fixed clipboard not correctly copying Fixed Cannon Mount angles
+- Fixed filling autocannon ammo container with hopper and chute
+- Fixed proximity fuze detonation
+- [1.21.1] Fixed incorrect block data saving leading to stack overflow crashes
 - [Aeronautics] Fixed cannon blocks and cannon contraptions not attaching to ship on assembly
 - [Aeronautics] Fixed Cannon Loader, Cannon Drill, and Cannon Builder not attaching to ship on assembly
 - [Sable] Fixed cannon blocks splitting from cannon mount on physics object

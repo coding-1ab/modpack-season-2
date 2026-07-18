@@ -7,11 +7,11 @@ import dev.ryanhcode.sable.companion.math.JOMLConversion;
 import dev.ryanhcode.sable.sublevel.system.SubLevelPhysicsSystem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import rbasamoyai.createbigcannons.config.CBCConfigs;
 import rbasamoyai.createbigcannons.munitions.AbstractCannonProjectile;
 import rbasamoyai.createbigcannons.munitions.big_cannon.FuzedBlockEntity;
@@ -25,8 +25,11 @@ public class ShellSubLevelImpactCallback implements BlockSubLevelCollisionCallba
     private ShellSubLevelImpactCallback() {}
 
     @Override
-    public CollisionResult sable$onCollision(BlockPos blockPos, Vector3d hitPos, double impactVelocity) {
+    public CollisionResult sable$onCollision(BlockPos blockPos, BlockPos otherHitPos, Vector3d hitPos, double impactVelocity) {
         if (!CBCConfigs.server().compat.sableFuzedProjectilesCanExplodeAsPhysicsObject.get())
+            return CollisionResult.NONE;
+        double triggerVelocity = 4.0f;
+        if (impactVelocity * impactVelocity < triggerVelocity * triggerVelocity)
             return CollisionResult.NONE;
 
         SubLevelPhysicsSystem system = SubLevelPhysicsSystem.getCurrentlySteppingSystem();
@@ -42,19 +45,20 @@ public class ShellSubLevelImpactCallback implements BlockSubLevelCollisionCallba
             return CollisionResult.NONE;
 
         Direction shellFacing = state.getValue(FuzedProjectileBlock.FACING);
-        Direction hitFace = fuzedBlock.isBaseFuze() ? shellFacing.getOpposite() : shellFacing;
-        Vec3 hitDir = JOMLConversion.toMojang(hitPos).subtract(blockPos.getCenter());
-        Direction closest = Direction.getNearest(hitDir.x, hitDir.y, hitDir.z);
-        if (closest != hitFace)
-            return CollisionResult.NONE;
 
         // Taken from CBC: Fuze Sable Fix by Zizazr
         BlockHitResult hitResult = new BlockHitResult(JOMLConversion.toMojang(hitPos), Direction.DOWN, blockPos, false);
         AbstractCannonProjectile.ImpactResult impactResult = new AbstractCannonProjectile.ImpactResult(
             AbstractCannonProjectile.ImpactResult.KinematicOutcome.STOP, false);
 
-        if (fuzeItem.onBlockImpact(fuze, level, blockPos, state, hitResult, impactResult)) {
-            fuzedBlock.detonateProjectileOnTheSpot(level, blockPos, state, shellFacing);
+        if (fuzeItem.onBlockImpact(fuze, level, blockPos, state, hitResult, impactResult, JOMLConversion.toMojang(hitPos))) {
+            level.getServer().tell(new TickTask(level.getServer().getTickCount(), ()->{
+                BlockState currentState = level.getBlockState(blockPos);
+                if(currentState.getBlock() instanceof FuzedProjectileBlock<?,?> currentFuzedBlock){
+                    currentFuzedBlock.detonateProjectileOnTheSpot(level,blockPos,currentState,null);
+                }
+            }));
+            return new CollisionResult(JOMLConversion.ZERO, true);
         } else {
             fuzedBE.setFuze(fuze);
         }

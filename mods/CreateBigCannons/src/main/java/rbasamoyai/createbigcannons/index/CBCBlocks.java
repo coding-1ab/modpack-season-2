@@ -96,7 +96,10 @@ import rbasamoyai.createbigcannons.munitions.config.MunitionPropertiesHandler;
 
 public class CBCBlocks {
 
-	static { ModGroup.useModTab(ModGroup.MAIN_TAB_KEY); }
+	static {
+        ModGroup.setDefaultTabToNull();
+        REGISTRATE.setCreativeTab(null);
+    }
 
 	//////// Log cannon blocks ////////
 
