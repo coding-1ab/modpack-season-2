@@ -63,7 +63,7 @@ addMods {
     addMod(
         filePath = "./mods/create-new-age",
         includeTransitive = false,
-        assetSource = modrinth("eQ9rbApE"),
+        assetSource = modrinth("ZyNyY0OA"),
         modProjects = listOf(
             modProject(
                 dependencyNotations = listOf("org.antarcticgardens.cna:create-new-age"),
