@@ -9,200 +9,489 @@ plugins {
     id 'net.neoforged.moddev'
 }
 
+import groovy.transform.Immutable
 import net.jpountz.lz4.LZ4FrameOutputStream
 import org.apache.tools.ant.taskdefs.condition.Os
+import org.gradle.process.ExecOperations
+import javax.inject.Inject
 
-import java.nio.file.Files
+abstract class RustEnvironmentTask extends DefaultTask {
 
-def mac(arch) {
-    [triple: "${arch}-apple-darwin", suffix: "", arch: arch, os: "macos", ext: "dylib", lib: true]
-}
+    @Inject
+    abstract ExecOperations getExecOperations()
 
-def linux(arch) {
-    [triple: "${arch}-unknown-linux-gnu", suffix: ".2.17", arch: arch, os: "linux", ext: "so", lib: true]
-}
-
-def freebsd(arch) {
-    [triple: "${arch}-unknown-freebsd", suffix: "", arch: arch, os: "freebsd", ext: "so", lib: true]
-}
-
-def windows(arch) {
-    [triple: "${arch}-pc-windows-msvc", suffix: "", arch: arch, os: "windows", ext: "dll", lib: false]
-}
-
-def supportedTargets = [
-        mac("x86_64"),
-        mac("aarch64"),
-        linux("x86_64"),
-        linux("aarch64"),
-        windows("x86_64"),
-        windows("aarch64"),
-//        freebsd("x86_64"),
-        // freebsd("aarch64"),
-]
-def pinnedRustVersion = 'nightly-2026-01-29'
-def rustRootDir = file("src/main/rust")
-def rustProjectDir = file("$rustRootDir/rapier")
-def nativesDir = file("src/main/resources/natives/sable_rapier")
-def cargoCacheDir = project.layout.buildDirectory.file("cargo").get().asFile
-def docker = Os.isFamily(Os.FAMILY_MAC) ? "/usr/local/bin/docker" : "docker"
-def xWinImage = 'sable-build-xwin'
-def zigbuildImage = 'sable-build-zigbuild'
-
-def baseDockerCommand = [
-        docker,
-        'run',
-        '--rm',
-        '-v',
-        "$rustRootDir:/io",
-        '-v',
-        "$cargoCacheDir/git:/usr/local/cargo/git",
-        '-v',
-        "$cargoCacheDir/registry:/usr/local/cargo/registry",
-        '-w',
-        '/io/rapier',
-]
-project.ext.zigbuildCargo = [baseDockerCommand, zigbuildImage, 'cargo'].flatten()
-project.ext.xWinCargo = [baseDockerCommand, xWinImage, 'cargo'].flatten()
-
-tasks.register('createContainersDirectory') {
-    doLast {
-        if (!cargoCacheDir.exists()) {
-            cargoCacheDir.mkdirs()
+    boolean commandExists(List<String> command) {
+        try {
+            execOperations.exec {
+                commandLine command
+            }
+            return true
+        } catch (Exception ignored) {
+            return false
         }
+    }
+
+    String execute(List<String> command) {
+        def output = new ByteArrayOutputStream()
+
+        execOperations.exec {
+            commandLine command
+            standardOutput = output
+        }
+
+        return output.toString()
     }
 }
 
+@Immutable
+class RustTarget {
+    String triple
+    String arch
+    String os
+    String extension
+    boolean library
+    String targetSuffix = ""
 
-tasks.register('buildZigbuildImage', Exec) {
-    group = 'rust'
-    workingDir rustRootDir
-    commandLine docker, 'build', '-t', zigbuildImage, 'container/zigbuild', '--build-arg', "RUST_VERSION=${pinnedRustVersion}"
-    dependsOn createContainersDirectory
-}
-tasks.register('buildXWinImage', Exec) {
-    group = 'rust'
-    workingDir rustRootDir
-    commandLine docker, 'build', '-t', xWinImage, 'container/xwin', '--build-arg', "RUST_VERSION=${pinnedRustVersion}"
-    dependsOn createContainersDirectory
-}
+    String getLibraryName() {
+        "${library ? 'lib' : ''}sable_rapier.${extension}"
+    }
 
-tasks.register('buildImages') {
-    group = 'rust'
-    dependsOn buildZigbuildImage, buildXWinImage
-}
-
-tasks.register('cleanRust', Exec) {
-    group = 'rust'
-    workingDir rustProjectDir
-    commandLine project.ext.zigbuildCargo
-    // only need to use zigbuild cargo since both containers share the same target folder
-    args 'clean'
-    dependsOn createContainersDirectory
+    String getOutputName() {
+        "sable_rapier_${arch}_${os}.${extension}"
+    }
 }
 
-def compileRustTaskName = { target ->
+@Immutable
+class RustConfig {
+    String toolchain
+    File rootDir
+    File projectDir
+    File nativesDir
+    List<RustTarget> targets
+}
+
+
+def rust = new RustConfig(
+        toolchain: "nightly-2026-01-29",
+
+        rootDir: layout.projectDirectory.dir("src/main/rust").asFile,
+
+        projectDir: layout.projectDirectory
+                .dir("src/main/rust/rapier")
+                .asFile,
+
+        nativesDir: layout.projectDirectory
+                .dir("src/main/resources/natives/sable_rapier")
+                .asFile,
+
+        targets: [
+                new RustTarget(
+                        triple: "x86_64-apple-darwin",
+                        arch: "x86_64",
+                        os: "macos",
+                        extension: "dylib",
+                        library: true
+                ),
+
+                new RustTarget(
+                        triple: "aarch64-apple-darwin",
+                        arch: "aarch64",
+                        os: "macos",
+                        extension: "dylib",
+                        library: true
+                ),
+
+                new RustTarget(
+                        triple: "x86_64-unknown-linux-gnu",
+                        arch: "x86_64",
+                        os: "linux",
+                        extension: "so",
+                        library: true,
+                        targetSuffix: ".2.17"
+                ),
+
+                new RustTarget(
+                        triple: "aarch64-unknown-linux-gnu",
+                        arch: "aarch64",
+                        os: "linux",
+                        extension: "so",
+                        library: true,
+                        targetSuffix: ".2.17"
+                ),
+
+                new RustTarget(
+                        triple: "x86_64-unknown-freebsd",
+                        arch: "x86_64",
+                        os: "freebsd",
+                        extension: "so",
+                        library: true
+                )
+        ]
+)
+
+def REQUIRED_ZIG_VERSION = "0.16.0"
+
+File rustEnvFile = layout.buildDirectory.file("rust-env/environment.properties").get().asFile
+File toolsDir = layout.buildDirectory.dir("rust-tools").get().asFile
+
+def loadRustEnv = {
+    if (!rustEnvFile.exists()) {
+        throw new GradleException(
+                "Rust 환경 정보 파일이 없습니다. 'bootstrapRust' 태스크가 먼저 실행되어야 합니다."
+        )
+    }
+    Properties props = new Properties()
+    rustEnvFile.withInputStream { props.load(it) }
+    props
+}
+
+tasks.register("bootstrapRust", RustEnvironmentTask) {
+    group = "rust"
+    description = "Rust toolchain/target/외부 도구가 존재하고 요구 버전과 동일한지 확인하고, " +
+            "없으면 설치한다. rustup 자체만 사전 설치가 필요하다."
+
+    // 환경은 언제든 바뀔 수 있으므로 항상 재검증한다.
+    outputs.upToDateWhen { false }
+
+    doLast {
+        boolean isWindows = Os.isFamily(Os.FAMILY_WINDOWS)
+        boolean isMac = Os.isFamily(Os.FAMILY_MAC)
+        def lookupPrefix = isWindows ? ["where"] : ["which"]
+
+        def tryFindAbsolutePath = { String toolName ->
+            if (!commandExists(lookupPrefix + [toolName])) return null
+            String raw = execute(lookupPrefix + [toolName])
+            String firstLine = raw.readLines().find { it?.trim() }
+            if (!firstLine) return null
+            File resolved = new File(firstLine.trim())
+            if (!resolved.isAbsolute()) resolved = resolved.absoluteFile
+            resolved.exists() ? resolved.absolutePath : null
+        }
+
+        def requireAbsolutePath = { String toolName ->
+            def path = tryFindAbsolutePath(toolName)
+            if (!path) {
+                throw new GradleException(
+                        "'${toolName}' 실행 파일을 찾을 수 없습니다.\n" +
+                                "이 도구는 자동 설치 대상이 아니므로 직접 설치 후 다시 시도하세요."
+                )
+            }
+            path
+        }
+
+        Properties report = new Properties()
+
+        // 1) rustup — 자동 설치 대상 아님 (bootstrap 진입점 도구이므로 사전 설치 전제)
+        String rustupPath = requireAbsolutePath("rustup")
+        String rustupVersion = execute([rustupPath, "--version"]).trim()
+        report.setProperty("rustup.path", rustupPath)
+        report.setProperty("rustup.version", rustupVersion)
+        logger.lifecycle("[bootstrapRust] rustup: ${rustupPath} (${rustupVersion})")
+
+        // 2) toolchain 없으면 설치
+        String requiredToolchain = rust.toolchain
+        String installedToolchains = execute([rustupPath, "toolchain", "list"])
+        boolean toolchainInstalled = installedToolchains.readLines().any {
+            it.trim().startsWith(requiredToolchain)
+        }
+        if (!toolchainInstalled) {
+            logger.lifecycle("[bootstrapRust] toolchain ${requiredToolchain} 설치 중...")
+            execOperations.exec { commandLine rustupPath, "toolchain", "install", requiredToolchain }
+        }
+
+        // +toolchain 문법은 rustup의 shim(cargo)만 해석 가능하다.
+        // (rustup which --toolchain ... cargo 는 toolchain 내부의 실제 바이너리라 +toolchain을 모른다)
+        String cargoPath = requireAbsolutePath("cargo")
+        String rustcPath = execute([rustupPath, "which", "--toolchain", requiredToolchain, "rustc"]).trim()
+        report.setProperty("rust.toolchain", requiredToolchain)
+        report.setProperty("cargo.path", cargoPath)
+        report.setProperty("rustc.path", rustcPath)
+        logger.lifecycle("[bootstrapRust] toolchain ${requiredToolchain} 준비 완료 (cargo=${cargoPath})")
+
+        // 3) target 없으면 설치
+        Set<String> requiredTargets = rust.targets*.triple.toSet()
+        Set<String> installedTargets = execute(
+                [rustupPath, "target", "list", "--toolchain", requiredToolchain, "--installed"]
+        ).readLines()*.trim().findAll { it }.toSet()
+        Set<String> missingTargets = requiredTargets - installedTargets
+
+        missingTargets.each { t ->
+            logger.lifecycle("[bootstrapRust] target ${t} 설치 중...")
+            execOperations.exec {
+                commandLine rustupPath, "target", "add", t, "--toolchain", requiredToolchain
+            }
+        }
+        report.setProperty("rust.targets", requiredTargets.join(","))
+        logger.lifecycle("[bootstrapRust] target ${requiredTargets.size()}개 준비 완료")
+
+        // 4) cargo-zigbuild 없으면 설치
+        String cargoZigbuildPath = tryFindAbsolutePath("cargo-zigbuild")
+        if (!cargoZigbuildPath) {
+            logger.lifecycle("[bootstrapRust] cargo-zigbuild 설치 중 (cargo install)...")
+            execOperations.exec { commandLine cargoPath, "install", "cargo-zigbuild", "--locked" }
+            cargoZigbuildPath = requireAbsolutePath("cargo-zigbuild")
+        }
+        report.setProperty("cargoZigbuild.path", cargoZigbuildPath)
+        logger.lifecycle("[bootstrapRust] cargo-zigbuild: ${cargoZigbuildPath}")
+
+        // 5) zig — 없거나 버전이 다르면 ziglang.org 공식 배포본을 build/ 밑에 직접 받아 사용
+        //    (docker 환경과 버전을 완전히 동일하게 맞추기 위해 시스템 패키지 매니저 대신 공식 tarball 사용)
+        String zigPath = tryFindAbsolutePath("zig")
+        String zigVersion = zigPath ? execute([zigPath, "version"]).trim() : null
+
+        if (zigVersion != REQUIRED_ZIG_VERSION) {
+            logger.lifecycle("[bootstrapRust] zig ${REQUIRED_ZIG_VERSION} 다운로드 중... (현재: ${zigVersion ?: '없음'})")
+
+            String osName = isWindows ? "windows" : (isMac ? "macos" : "linux")
+            String rawArch = System.getProperty("os.arch").toLowerCase()
+            String archName = (rawArch.contains("aarch64") || rawArch.contains("arm64")) ? "aarch64" : "x86_64"
+            String archiveExt = isWindows ? "zip" : "tar.xz"
+            String archiveName = "zig-${osName}-${archName}-${REQUIRED_ZIG_VERSION}.${archiveExt}"
+            String downloadUrl = "https://ziglang.org/download/${REQUIRED_ZIG_VERSION}/${archiveName}"
+
+            File zigToolsDir = new File(toolsDir, "zig")
+            zigToolsDir.mkdirs()
+            File archiveFile = new File(zigToolsDir, archiveName)
+
+            logger.lifecycle("[bootstrapRust] GET ${downloadUrl}")
+            ant.get(src: downloadUrl, dest: archiveFile, verbose: false)
+
+            File extractDir = new File(zigToolsDir, "extracted")
+            extractDir.deleteDir()
+            extractDir.mkdirs()
+
+            if (isWindows) {
+                ant.unzip(src: archiveFile, dest: extractDir)
+            } else {
+                execOperations.exec {
+                    commandLine "tar", "-xJf", archiveFile.absolutePath, "-C", extractDir.absolutePath
+                }
+            }
+
+            File extractedRoot = extractDir.listFiles({ f -> f.isDirectory() } as FileFilter)?.find { true }
+            if (!extractedRoot) {
+                throw new GradleException("zig 압축 해제 결과를 찾을 수 없습니다: ${extractDir}")
+            }
+
+            File zigBinary = new File(extractedRoot, isWindows ? "zig.exe" : "zig")
+            if (!zigBinary.exists()) {
+                throw new GradleException("압축 해제된 zig 실행 파일을 찾을 수 없습니다: ${zigBinary}")
+            }
+            if (!isWindows) {
+                zigBinary.setExecutable(true)
+            }
+
+            zigPath = zigBinary.absolutePath
+            zigVersion = execute([zigPath, "version"]).trim()
+
+            if (zigVersion != REQUIRED_ZIG_VERSION) {
+                throw new GradleException(
+                        "다운로드한 zig 버전이 요구 사항과 다릅니다.\n" +
+                                "  요구 버전: ${REQUIRED_ZIG_VERSION}\n  실제 버전: ${zigVersion}"
+                )
+            }
+        }
+        report.setProperty("zig.path", zigPath)
+        report.setProperty("zig.version", zigVersion)
+        logger.lifecycle("[bootstrapRust] zig: ${zigPath} (${zigVersion})")
+
+        rustEnvFile.parentFile.mkdirs()
+        rustEnvFile.withOutputStream {
+            report.store(it, "Rust build environment (verified/installed by bootstrapRust)")
+        }
+        logger.lifecycle("[bootstrapRust] 모든 도구 준비 완료 → ${rustEnvFile}")
+    }
+}
+
+def compileRustTaskName = { RustTarget target ->
     "compileRust-${target.os}-${target.arch}"
 }
 
-def commandLineForTarget(target) {
-    if (target.triple.contains('msvc')) {
-        [project.ext.xWinCargo, 'xwin', 'build', '--target', target.triple + target.suffix].flatten()
-        // support meme platforms, this does nothing by default because the target is disabled
-    } else if (target.triple == 'aarch64-unknown-freebsd') {
-        [project.ext.zigbuildCargo, 'zigbuild', '-Z', 'build-std', '--target', target.triple + target.suffix].flatten()
-    } else {
-        [project.ext.zigbuildCargo, 'zigbuild', '--target', target.triple + target.suffix].flatten()
+def cargoCommand = { RustTarget target, boolean release = true ->
+    def command = [
+            "cargo",
+            "+${rust.toolchain}",
+            "zigbuild"
+    ]
+
+    if (target.triple == "x86_64-unknown-freebsd") {
+        command.addAll([
+                "-Z",
+                "build-std"
+        ])
     }
+
+    command.addAll([
+            "--target",
+            target.triple + target.targetSuffix
+    ])
+
+    if (release) {
+        command.add("--release")
+    }
+
+    command
 }
 
-def nativesNameForTarget(target) {
-    "sable_rapier_${target.arch}_${target.os}.${target.ext}"
+tasks.register("cleanRust", Exec) {
+    dependsOn("bootstrapRust")
+    group = "rust"
+
+    workingDir = rust.projectDir
+    commandLine "cargo", "clean"
+
+    doFirst { executable = loadRustEnv().getProperty("cargo.path") }
 }
 
-supportedTargets.forEach { target ->
+rust.targets.each { RustTarget target ->
     tasks.register(compileRustTaskName(target), Exec) {
-        group = 'rust'
-        workingDir rustProjectDir
-        description = "Cross-compiles natives for the ${target.triple} target"
-        def commands= commandLineForTarget(target)
-        commands.add('--release')
-        commandLine = commands
+        dependsOn("bootstrapRust")
+        group = "rust"
+
+        workingDir = rust.projectDir
+        description = "Builds ${target.triple}"
+
+        commandLine cargoCommand(target)
+
+        doFirst { executable = loadRustEnv().getProperty("cargo.path") }
     }
 }
 
 tasks.register("compileRustDev", Exec) {
-    group = 'rust'
-    workingDir rustProjectDir
-    description = "Compiles debug natives"
-    commandLine = [project.ext.zigbuildCargo, 'zigbuild'].flatten()
+    dependsOn("bootstrapRust")
+    group = "rust"
+
+    workingDir = rust.projectDir
+    commandLine(
+            "cargo",
+            "+${rust.toolchain}",
+            "zigbuild"
+    )
+
+    doFirst { executable = loadRustEnv().getProperty("cargo.path") }
 }
 
-tasks.register('buildRustNatives') {
-    group = 'build'
-    description = 'Compiles all Rust natives and moves them to resources.'
+tasks.register("buildRustNatives") {
+    dependsOn("bootstrapRust")
+    group = "build"
+    description = "Build all native libraries."
 
-    dependsOn = supportedTargets.stream().map(compileRustTaskName).collect()
-    finalizedBy copyRustNatives
+    dependsOn rust.targets.collect { compileRustTaskName(it) }
+
+    finalizedBy "copyRustNatives"
+
+    doFirst { executable = loadRustEnv().getProperty("cargo.path") }
 }
 
-tasks.register('buildRustNativesDev') {
-    group = 'build'
-    description = 'Compiles all Rust natives and moves them to resources.'
+tasks.register("buildRustNativesDev") {
+    dependsOn("bootstrapRust")
+    group = "build"
+    description = "Build native libraries (debug)."
 
-    dependsOn compileRustDev
-    finalizedBy copyRustNativesDev
+    dependsOn "compileRustDev"
+
+    finalizedBy "copyRustNativesDev"
+
+    doFirst { executable = loadRustEnv().getProperty("cargo.path") }
 }
 
-tasks.register('copyRustNatives', Copy) {
-    group = 'rust'
-    into nativesDir
-    mustRunAfter(buildRustNatives)
+tasks.register("copyRustNatives", Copy) {
+    dependsOn("bootstrapRust")
+    group = "rust"
 
-    supportedTargets.forEach { target ->
-        from(file("$rustRootDir/target/${target.triple}/release/${if (target.lib) { "lib" } else { "" }}sable_rapier.${target.ext}")) {
-            rename { nativesNameForTarget(target) }
+    into rust.nativesDir
+
+    mustRunAfter "buildRustNatives"
+
+    rust.targets.each { RustTarget target ->
+        from(new File(
+                rust.rootDir,
+                "target/${target.triple}/release/${target.libraryName}"
+        )) {
+            rename { target.outputName }
         }
     }
-    finalizedBy packRustNatives
+
+    finalizedBy "packRustNatives"
+
+    doFirst { executable = loadRustEnv().getProperty("cargo.path") }
 }
 
-tasks.register('copyRustNativesDev', Copy) {
-    group = 'rust'
-    into nativesDir
-    mustRunAfter(buildRustNativesDev)
+tasks.register("copyRustNativesDev", Copy) {
+    dependsOn("bootstrapRust")
+    group = "rust"
 
-    supportedTargets.forEach { target ->
-        var library = file("$rustRootDir/target/debug/${if (target.lib) { "lib" } else { "" }}sable_rapier.${target.ext}")
-        if (!library.exists()) return
+    into rust.nativesDir
 
-        from(library) {
-            rename { nativesNameForTarget(target) }
-        }
-    }
-    finalizedBy packRustNatives
-}
-tasks.register('packRustNatives', Zip) {
-    group = 'rust'
-    archiveFile.set file("${nativesDir}/sable_rapier_binaries.zip.l4z")
-    entryCompression = ZipEntryCompression.STORED
-    into nativesDir
+    mustRunAfter "buildRustNativesDev"
 
-    mustRunAfter copyRustNatives, copyRustNativesDev
-    supportedTargets.forEach { target ->
-        var f = nativesNameForTarget(target)
-        // No, you can't use rename here in case you were wondering.
-        from(file("${nativesDir}/${f}")) { eachFile { setPath f } }
-    }
-    doLast {
-        byte[] bytes = Files.readAllBytes(getArchiveFile().get().asFile.toPath())
-        try (var f = new FileOutputStream(getArchiveFile().get().asFile)) {
-            try (var x = new LZ4FrameOutputStream(f, LZ4FrameOutputStream.BLOCKSIZE.SIZE_4MB, bytes.length, LZ4FrameOutputStream.FLG.Bits.BLOCK_INDEPENDENCE)) {
-                x.write(bytes)
+    rust.targets.each { RustTarget target ->
+        def library = new File(
+                rust.rootDir,
+                "target/debug/${target.libraryName}"
+        )
+
+        if (library.exists()) {
+            from(library) {
+                rename { target.outputName }
             }
         }
-        supportedTargets.forEach { t ->
-            delete(file("${nativesDir}/${nativesNameForTarget(t)}"))
+    }
+
+    finalizedBy "packRustNatives"
+
+    doFirst { executable = loadRustEnv().getProperty("cargo.path") }
+}
+
+tasks.register("packRustNatives", Zip) {
+    dependsOn("bootstrapRust")
+    group = "rust"
+
+    destinationDirectory.set(
+            layout.projectDirectory.dir(
+                    "src/main/resources/natives/sable_rapier"
+            )
+    )
+
+    archiveFileName.set("sable_rapier_binaries.zip.l4z")
+
+    entryCompression = ZipEntryCompression.STORED
+
+    into rust.nativesDir
+
+    mustRunAfter(
+            "copyRustNatives",
+            "copyRustNativesDev"
+    )
+
+    rust.targets.each { RustTarget target ->
+        from(new File(rust.nativesDir, target.outputName)) {
+            eachFile {
+                path = target.outputName
+            }
+        }
+    }
+
+    doFirst { executable = loadRustEnv().getProperty("cargo.path") }
+
+    doLast {
+        File archive = archiveFile.get().asFile
+
+        byte[] bytes = Files.readAllBytes(archive.toPath())
+
+        new FileOutputStream(archive).withCloseable { file ->
+            new LZ4FrameOutputStream(
+                    file,
+                    LZ4FrameOutputStream.BLOCKSIZE.SIZE_4MB,
+                    bytes.length,
+                    LZ4FrameOutputStream.FLG.Bits.BLOCK_INDEPENDENCE
+            ).withCloseable { lz4 ->
+                lz4.write(bytes)
+            }
+        }
+
+        rust.targets.each { target ->
+            delete(new File(rust.nativesDir, target.outputName))
         }
     }
 }
