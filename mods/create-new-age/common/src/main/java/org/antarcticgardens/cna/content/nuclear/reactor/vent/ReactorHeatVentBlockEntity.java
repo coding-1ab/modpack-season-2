@@ -88,14 +88,17 @@ public class ReactorHeatVentBlockEntity extends RodFindingReactorBlockEntity imp
             for (Direction dir : Direction.values()) {
                 findRods(rods, dir);
             }
+
+            float cap = multiplier > 0 ? (float) (maxHeat() * multiplier) : Float.MAX_VALUE;
             for (ReactorRodBlockEntity rod : rods) {
-                float total = Math.min(rod.heat, 10_000 - heat);
-                rod.heat -= total;
-                if (total > 0) {
-                    setChanged();
+                float total = Math.min(rod.heat, cap - heat);
+                if (total <= 0) {
+                    break;
                 }
+                rod.heat -= total;
+                setChanged();
                 extract += total;
-                heat+=total;
+                heat += total;
             }
         }
     }
