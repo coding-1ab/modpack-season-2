@@ -379,8 +379,6 @@ tasks.register("buildRustNatives") {
     dependsOn rust.targets.collect { compileRustTaskName(it) }
 
     finalizedBy "copyRustNatives"
-
-    doFirst { executable = loadRustEnv().getProperty("cargo.path") }
 }
 
 tasks.register("buildRustNativesDev") {
@@ -391,8 +389,6 @@ tasks.register("buildRustNativesDev") {
     dependsOn "compileRustDev"
 
     finalizedBy "copyRustNativesDev"
-
-    doFirst { executable = loadRustEnv().getProperty("cargo.path") }
 }
 
 tasks.register("copyRustNatives", Copy) {
@@ -413,8 +409,6 @@ tasks.register("copyRustNatives", Copy) {
     }
 
     finalizedBy "packRustNatives"
-
-    doFirst { executable = loadRustEnv().getProperty("cargo.path") }
 }
 
 tasks.register("copyRustNativesDev", Copy) {
