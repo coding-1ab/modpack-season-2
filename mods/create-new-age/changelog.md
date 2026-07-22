@@ -6,6 +6,7 @@ Version 1.2.1
 #### Improvements
 - Improve Reactor Statistics
 - Cache wire networks and lazily reset wire connections - [!71 Thank you Superintendent](https://gitlab.com/antarcticgardens/create-new-age/-/merge_requests/71)
+- Scale reactor heat vent extraction cap by overheatingMultiplier - [!72 Thank you Guk kis](https://gitlab.com/antarcticgardens/create-new-age/-/merge_requests/72)
 
 ------------------------------------------------------
 Version 1.2.0
