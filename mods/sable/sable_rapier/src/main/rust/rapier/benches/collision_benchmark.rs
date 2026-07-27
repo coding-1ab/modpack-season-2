@@ -20,7 +20,6 @@ fn setup_dummy_sable_handle_a() -> ActiveLevelColliderInfo {
         center_of_mass: Some(DVec3::new(62.5, 62.5, 62.5)),
         octree: Some(octree),
         chunk_map: None,
-        scene_id: 0,
         fake_velocities: None,
     }
 }
@@ -37,7 +36,6 @@ fn setup_dummy_sable_handle_b() -> ActiveLevelColliderInfo {
         center_of_mass: Some(DVec3::new(128.0 + 64.5, 64.5, 64.5)),
         octree: Some(octree),
         chunk_map: None,
-        scene_id: 0,
         fake_velocities: None,
     }
 }
@@ -99,17 +97,6 @@ fn benchmark_find_collision_pairs(c: &mut Criterion) {
                 penetration,
                 |b, &penetration| {
                     let pose = Pose3::translation(124.25 - penetration * 8.0, 0.0, 0.0);
-                    b.iter(|| {
-                        let result = find_collision_pairs(
-                            &sable_body_a,
-                            Some(&sable_body_b),
-                            &pose,
-                            prediction,
-                            DEFAULT_COLLISION_PARALLEL_CUTOFF,
-                            false,
-                        );
-                        black_box(result)
-                    });
                 },
             );
         }
@@ -125,17 +112,6 @@ fn benchmark_find_collision_pairs(c: &mut Criterion) {
                 penetration,
                 |b, &penetration| {
                     let pose = Pose3::translation(124.25 - penetration * 8.0, 0.0, 0.0);
-                    b.iter(|| {
-                        let result = find_collision_pairs(
-                            &sable_body_a,
-                            Some(&sable_body_b),
-                            &pose,
-                            prediction,
-                            usize::MAX,
-                            false,
-                        );
-                        black_box(result)
-                    });
                 },
             );
         }
