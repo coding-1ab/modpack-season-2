@@ -1,7 +1,9 @@
 package foundry.veil.api.quasar.particle;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.MeshData;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.serialization.Codec;
 import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.rendertype.VeilRenderType;
@@ -25,7 +27,6 @@ import java.nio.ByteBuffer;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL15C.*;
-import static org.lwjgl.opengl.GL15C.GL_ARRAY_BUFFER;
 import static org.lwjgl.system.MemoryUtil.memAddress;
 
 /**
@@ -37,9 +38,9 @@ public abstract class RenderStyle implements NativeResource {
 
     public static final Codec<RenderStyle> CODEC = CodecUtil.registryOrLegacyCodec(RenderStyleRegistry.REGISTRY);
 
-    private VertexArray vertexArray;
-    private int instanceVBO;
-    private final int bufferSize;
+    protected VertexArray vertexArray;
+    protected int instanceVBO;
+    protected final int bufferSize;
     protected int maxParticles;
 
     public static final int MIN_PARTICLES = 400;
@@ -51,9 +52,11 @@ public abstract class RenderStyle implements NativeResource {
 
     /**
      * Called after the Veil renderer is available, sets up anything necessary for rendering.
+     *
+     * @since 4.4.0
      */
     public void init() {
-        if (bufferSize <= 0) {
+        if (this.bufferSize <= 0) {
             return;
         }
 
@@ -62,7 +65,7 @@ public abstract class RenderStyle implements NativeResource {
         this.instanceVBO = this.vertexArray.getOrCreateBuffer(2);
 
         VertexArrayBuilder builder = this.vertexArray.editFormat();
-        builder.defineVertexBuffer(2, this.instanceVBO, 0, bufferSize, 1);
+        builder.defineVertexBuffer(VertexArray.INSTANCE_BUFFER, this.instanceVBO, 0, this.bufferSize, 1);
         this.setupBufferState(builder);
     }
 
@@ -88,11 +91,14 @@ public abstract class RenderStyle implements NativeResource {
     /**
      * Draws a list of particles using a batched VertexArray.
      *
-     * @param particles    A list of currently active particles
-     * @param camera       The camera to use to render the particles
+     * @param particles A list of currently active particles
+     * @param camera    The camera to use to render the particles
+     * @since 4.4.0
      */
     public void render(List<QuasarParticle> particles, Camera camera) {
-        if (particles.isEmpty()) return;
+        if (particles.isEmpty()) {
+            return;
+        }
 
         RenderType renderType = particles.getFirst().getRenderData().getRenderType();
         if (renderType == null) {
@@ -101,7 +107,9 @@ public abstract class RenderStyle implements NativeResource {
 
         // Perform frustum culling for each particle
         List<QuasarParticle> visibleParticles = particles.stream().filter(particle -> VeilRenderSystem.getCullingFrustum().testSphere(particle.getPosition(), particle.getRenderData().getRenderRadius())).toList();
-        if (visibleParticles.isEmpty()) return;
+        if (visibleParticles.isEmpty()) {
+            return;
+        }
 
         RenderSystem.glBindBuffer(GL_ARRAY_BUFFER, this.instanceVBO);
 
@@ -165,25 +173,29 @@ public abstract class RenderStyle implements NativeResource {
     @Override
     public void free() {
         this.vertexArray.free();
-
     }
 
     /**
      * @return The MeshData to use for each particle.
+     * @since 4.4.0
      */
     protected abstract MeshData createMesh();
 
     /**
      * Set up the vertex attribute arrays to use for each particle.
+     *
      * @param builder The builder associated with the VertexArray
+     * @since 4.4.0
      */
     protected abstract void setupBufferState(VertexArrayBuilder builder);
 
     /**
      * Put information about each particle into the vertex attribute array.
+     *
      * @param particle The particle being loaded
-     * @param camera The camera rendering the particles
-     * @param buffer The buffer of the current VertexArray
+     * @param camera   The camera rendering the particles
+     * @param buffer   The buffer of the current VertexArray
+     * @since 4.4.0
      */
     protected abstract void putBufferData(QuasarParticle particle, Camera camera, ByteBuffer buffer);
 
@@ -232,15 +244,15 @@ public abstract class RenderStyle implements NativeResource {
 
         @Override
         protected void setupBufferState(VertexArrayBuilder builder) {
-            builder. setVertexAttribute(2,  2, 4, VertexArrayBuilder.DataType.FLOAT, false, 0               ); // Model Matrix[0]
-            builder. setVertexAttribute(3,  2, 4, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 4 ); // Model Matrix[1]
-            builder. setVertexAttribute(4,  2, 4, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 8 ); // Model Matrix[2]
-            builder. setVertexAttribute(5,  2, 4, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 12); // Model Matrix[3]
-            builder. setVertexAttribute(6,  2, 1, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 16); // Scale
-            builder. setVertexAttribute(7,  2, 2, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 17); // UV0 min
-            builder. setVertexAttribute(8,  2, 2, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 19); // UV0 max
-            builder. setVertexAttribute(9,  2, 4, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 21); // Color
-            builder.setVertexIAttribute(10, 2, 2, VertexArrayBuilder.DataType.SHORT,                  Float.BYTES * 25); // UV2 / Light
+            builder.setVertexAttribute(2, 2, 4, VertexArrayBuilder.DataType.FLOAT, false, 0); // Model Matrix[0]
+            builder.setVertexAttribute(3, 2, 4, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 4); // Model Matrix[1]
+            builder.setVertexAttribute(4, 2, 4, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 8); // Model Matrix[2]
+            builder.setVertexAttribute(5, 2, 4, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 12); // Model Matrix[3]
+            builder.setVertexAttribute(6, 2, 1, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 16); // Scale
+            builder.setVertexAttribute(7, 2, 2, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 17); // UV0 min
+            builder.setVertexAttribute(8, 2, 2, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 19); // UV0 max
+            builder.setVertexAttribute(9, 2, 4, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 21); // Color
+            builder.setVertexIAttribute(10, 2, 2, VertexArrayBuilder.DataType.SHORT, Float.BYTES * 25); // UV2 / Light
         }
 
         @Override
@@ -320,15 +332,15 @@ public abstract class RenderStyle implements NativeResource {
 
         @Override
         protected void setupBufferState(VertexArrayBuilder builder) {
-            builder. setVertexAttribute(2,  2, 4, VertexArrayBuilder.DataType.FLOAT, false, 0               ); // Model Matrix[0]
-            builder. setVertexAttribute(3,  2, 4, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 4 ); // Model Matrix[1]
-            builder. setVertexAttribute(4,  2, 4, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 8 ); // Model Matrix[2]
-            builder. setVertexAttribute(5,  2, 4, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 12); // Model Matrix[3]
-            builder. setVertexAttribute(6,  2, 1, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 16); // Scale
-            builder. setVertexAttribute(7,  2, 2, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 17); // UV0 min
-            builder. setVertexAttribute(8,  2, 2, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 19); // UV0 max
-            builder. setVertexAttribute(9,  2, 4, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 21); // Color
-            builder.setVertexIAttribute(10, 2, 2, VertexArrayBuilder.DataType.SHORT,        Float.BYTES * 25); // UV2 / Light
+            builder.setVertexAttribute(2, 2, 4, VertexArrayBuilder.DataType.FLOAT, false, 0); // Model Matrix[0]
+            builder.setVertexAttribute(3, 2, 4, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 4); // Model Matrix[1]
+            builder.setVertexAttribute(4, 2, 4, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 8); // Model Matrix[2]
+            builder.setVertexAttribute(5, 2, 4, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 12); // Model Matrix[3]
+            builder.setVertexAttribute(6, 2, 1, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 16); // Scale
+            builder.setVertexAttribute(7, 2, 2, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 17); // UV0 min
+            builder.setVertexAttribute(8, 2, 2, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 19); // UV0 max
+            builder.setVertexAttribute(9, 2, 4, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 21); // Color
+            builder.setVertexIAttribute(10, 2, 2, VertexArrayBuilder.DataType.SHORT, Float.BYTES * 25); // UV2 / Light
         }
 
         @Override
