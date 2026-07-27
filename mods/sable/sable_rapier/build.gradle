@@ -466,8 +466,6 @@ tasks.register("packRustNatives", Zip) {
         }
     }
 
-    doFirst { executable = loadRustEnv().getProperty("cargo.path") }
-
     doLast {
         File archive = archiveFile.get().asFile
 
