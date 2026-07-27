@@ -13,6 +13,7 @@ import groovy.transform.Immutable
 import net.jpountz.lz4.LZ4FrameOutputStream
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.process.ExecOperations
+import java.nio.file.Files
 import javax.inject.Inject
 
 abstract class RustEnvironmentTask extends DefaultTask {
@@ -365,7 +366,9 @@ tasks.register("compileRustDev", Exec) {
     commandLine(
             "cargo",
             "+${rust.toolchain}",
-            "zigbuild"
+            "zigbuild",
+            "--features",
+            "debug"
     )
 
     doFirst { executable = loadRustEnv().getProperty("cargo.path") }

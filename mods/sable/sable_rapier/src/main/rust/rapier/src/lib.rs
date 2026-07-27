@@ -527,8 +527,24 @@ pub extern "system" fn Java_dev_ryanhcode_sable_physics_impl_rapier_Rapier3D_get
         let sable_data = scene.sable_data.read().unwrap();
         let sim_data = scene.sim_data.read().unwrap();
 
-        let rb: &RigidBody =
-            &sim_data.rigid_body_set[sable_data.rigid_bodies[&(id as LevelColliderID)]];
+        #[cfg(feature = "debug")]
+        {
+            eprintln!("sable-rapie rust getPose called: id={}", id);
+
+            let key = id as LevelColliderID;
+
+            let handle = sable_data.rigid_bodies.get(&key);
+
+            eprintln!("sable-rapier rust rigid body map contains {} = {:?}", key, handle);
+
+            let rb = handle.and_then(|h| sim_data.rigid_body_set.get(*h));
+
+            eprintln!("sable-rapier rust sim_data.rigid_body_set.get: {:?}", rb);
+
+            let rb = rb.unwrap();
+        }
+
+        let rb: &RigidBody = &sim_data.rigid_body_set[sable_data.rigid_bodies[&(id as LevelColliderID)]];
 
         let arr: [jdouble; 7] = [
             rb.translation().x as jdouble,
