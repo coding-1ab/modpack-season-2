@@ -1,4 +1,4 @@
-package foundry.veil.mixin.dynamicbuffer.client;
+package foundry.veil.mixin.shader_recompile.client;
 
 import foundry.veil.Veil;
 import foundry.veil.api.client.render.VeilRenderSystem;
@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Map;
 
 @Mixin(GameRenderer.class)
-public class DynamicBufferGameRendererMixin {
+public class ShaderRecompileGameRendererMixin {
 
     @Shadow
     @Final

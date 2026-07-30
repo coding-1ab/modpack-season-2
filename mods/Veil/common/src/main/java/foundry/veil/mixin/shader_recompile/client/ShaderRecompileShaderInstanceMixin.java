@@ -1,4 +1,4 @@
-package foundry.veil.mixin.dynamicbuffer.client;
+package foundry.veil.mixin.shader_recompile.client;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.shaders.Program;
@@ -10,7 +10,7 @@ import foundry.veil.api.client.render.ext.VeilDebug;
 import foundry.veil.ext.ShaderInstanceExtension;
 import foundry.veil.impl.client.render.dynamicbuffer.VanillaShaderCompiler;
 import foundry.veil.impl.client.render.shader.program.ShaderProgramImpl;
-import foundry.veil.mixin.dynamicbuffer.accessor.DynamicBufferProgramAccessor;
+import foundry.veil.mixin.shader_recompile.accessor.ShaderRecompileProgramAccessor;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import net.minecraft.client.renderer.ShaderInstance;
@@ -30,7 +30,7 @@ import static org.lwjgl.opengl.KHRDebug.GL_PROGRAM;
 import static org.lwjgl.opengl.KHRDebug.GL_SHADER;
 
 @Mixin(ShaderInstance.class)
-public abstract class DynamicBufferShaderInstanceMixin implements Shader, ShaderInstanceExtension {
+public abstract class ShaderRecompileShaderInstanceMixin implements Shader, ShaderInstanceExtension {
 
     @Mutable
     @Shadow
@@ -95,8 +95,8 @@ public abstract class DynamicBufferShaderInstanceMixin implements Shader, Shader
 
         VeilDebug debug = VeilDebug.get();
         debug.objectLabel(GL_PROGRAM, this.programId, "Vanilla Shader Program " + this.name + ":default");
-        debug.objectLabel(GL_SHADER, ((DynamicBufferProgramAccessor) this.vertexProgram).getId(), "Vanilla vertex Shader " + this.vertexProgram.getName() + ":default");
-        debug.objectLabel(GL_SHADER, ((DynamicBufferProgramAccessor) this.fragmentProgram).getId(), "Vanilla fragment Shader " + this.fragmentProgram.getName() + ":default");
+        debug.objectLabel(GL_SHADER, ((ShaderRecompileProgramAccessor) this.vertexProgram).getId(), "Vanilla vertex Shader " + this.vertexProgram.getName() + ":default");
+        debug.objectLabel(GL_SHADER, ((ShaderRecompileProgramAccessor) this.fragmentProgram).getId(), "Vanilla fragment Shader " + this.fragmentProgram.getName() + ":default");
     }
 
     @Inject(method = "apply", at = @At("HEAD"))
@@ -162,8 +162,8 @@ public abstract class DynamicBufferShaderInstanceMixin implements Shader, Shader
             }
 
             // This allows other people to attach their own shaders
-            DynamicBufferProgramAccessor vertexAccessor = (DynamicBufferProgramAccessor) this.vertexProgram;
-            DynamicBufferProgramAccessor fragmentAccessor = (DynamicBufferProgramAccessor) this.fragmentProgram;
+            ShaderRecompileProgramAccessor vertexAccessor = (ShaderRecompileProgramAccessor) this.vertexProgram;
+            ShaderRecompileProgramAccessor fragmentAccessor = (ShaderRecompileProgramAccessor) this.fragmentProgram;
 
             int oldVertex = vertexAccessor.getId();
             int oldFragment = fragmentAccessor.getId();
