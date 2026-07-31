@@ -41,13 +41,13 @@ public record TextResource(
 
     public enum Type {
         TEXT(".txt", 0xED0F),
-        JSON(".json", 0xECCD, TextEditorLanguage::Json);
+        JSON(".json", 0xECCD, () -> TextEditorLanguage::Json);
 
         private final String extension;
         private final int icon;
-        private final Supplier<TextEditorLanguage> languageDefinition;
+        private final Supplier<Supplier<TextEditorLanguage>> languageDefinition;
 
-        Type(String extension, int icon, @Nullable Supplier<TextEditorLanguage> languageDefinition) {
+        Type(String extension, int icon, @Nullable Supplier<Supplier<TextEditorLanguage>> languageDefinition) {
             this.extension = extension;
             this.icon = icon;
             this.languageDefinition = languageDefinition;
@@ -66,7 +66,7 @@ public record TextResource(
         }
 
         public @Nullable TextEditorLanguage getLanguageDefinition() {
-            return Veil.IMGUIMC && this.languageDefinition != null ? this.languageDefinition.get() : null;
+            return Veil.IMGUIMC && this.languageDefinition != null ? this.languageDefinition.get().get() : null;
         }
     }
 }
