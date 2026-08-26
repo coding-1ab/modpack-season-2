@@ -14,6 +14,7 @@ import org.antarcticgardens.cna.content.electricity.light.LampPostBlock;
 import org.antarcticgardens.cna.content.electricity.light.StreetLightBlock;
 import org.antarcticgardens.cna.content.energising.EnergiserBlock;
 import org.antarcticgardens.cna.content.heat.heater.HeaterBlock;
+import org.antarcticgardens.cna.content.heat.pipe.EncasedHeatPipeBlock;
 import org.antarcticgardens.cna.content.heat.pipe.HeatPipeBlock;
 import org.antarcticgardens.cna.content.heat.pump.HeatPumpBlock;
 import org.antarcticgardens.cna.content.heat.stirling.StirlingEngineBlock;
@@ -76,6 +77,39 @@ public class CNABlockStateGen {
                         .rotationY((int) Math.round(Math.toDegrees(euler.z)))
                         .addModel()
                         .condition(PipeBlock.PROPERTY_BY_DIRECTION.get(dir), true)
+                        .end();
+            }
+        };
+    }
+
+    public static <P extends EncasedHeatPipeBlock> NonNullBiConsumer<DataGenContext<Block, P>, RegistrateBlockstateProvider> encasedHeatPipe() {
+        return (c, p) -> {
+            MultiPartBlockStateBuilder builder = p.getMultipartBuilder(c.get());
+            ModelFile.ExistingModelFile sideFlat = p.models().getExistingFile(p.modLoc("block/" + c.getName() + "/side_flat"));
+            ModelFile.ExistingModelFile sideOpen = p.models().getExistingFile(p.modLoc("block/" + c.getName() + "/side_open"));
+            ModelFile.ExistingModelFile topFlat = p.models().getExistingFile(p.modLoc("block/" + c.getName() + "/top_flat"));
+            ModelFile.ExistingModelFile topOpen = p.models().getExistingFile(p.modLoc("block/" + c.getName() + "/top_open"));
+
+            for (Direction dir : Direction.values()) {
+                ModelFile flat = dir.getAxis().isHorizontal() ? sideFlat : topFlat;
+                ModelFile open = dir.getAxis().isHorizontal() ? sideOpen : topOpen;
+                int rotY = dir.getAxis().isHorizontal() ? (int) dir.toYRot() : 0;
+                int rotX = dir.getAxis().isVertical() ? (dir == Direction.UP ? 0 : 180) : 0;
+
+                builder.part()
+                        .modelFile(flat)
+                        .rotationY(rotY)
+                        .rotationX(rotX)
+                        .addModel()
+                        .condition(EncasedHeatPipeBlock.getDirectionProperty(dir), false)
+                        .end();
+
+                builder.part()
+                        .modelFile(open)
+                        .rotationY(rotY)
+                        .rotationX(rotX)
+                        .addModel()
+                        .condition(EncasedHeatPipeBlock.getDirectionProperty(dir), true)
                         .end();
             }
         };

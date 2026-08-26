@@ -7,6 +7,7 @@ import com.simibubi.create.foundation.block.connected.CTType;
 import net.minecraft.resources.ResourceLocation;
 
 public class CNASpriteShifts {
+    public static CTSpriteShiftEntry HEAT_CASING = omni("heat_casing");
     public static CTSpriteShiftEntry REACTOR_CASING = omni("reactor_casing");
     public static CTSpriteShiftEntry REACTOR_GLASS = omni("reactor_glass");
     public static CTSpriteShiftEntry REDSTONE_MAGNET = omni("redstone_magnet");
