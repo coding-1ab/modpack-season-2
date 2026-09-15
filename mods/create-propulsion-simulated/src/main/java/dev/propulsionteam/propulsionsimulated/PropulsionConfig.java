@@ -36,6 +36,11 @@ public class PropulsionConfig {
     public static final ModConfigSpec.DoubleValue ION_MULTIBLOCK_2X_THRUST_MULTIPLIER;
     public static final ModConfigSpec.DoubleValue ION_MULTIBLOCK_3X_THRUST_MULTIPLIER;
 
+    public static final ModConfigSpec.DoubleValue SINGLE_RCS_THRUST;
+    public static final ModConfigSpec.DoubleValue RCS_THRUST;
+    public static final ModConfigSpec.DoubleValue RCS_FLAME_SCALE;
+    public static final ModConfigSpec.DoubleValue RCS_SOUND_VOLUME;
+    public static final ModConfigSpec.IntValue RCS_SOUND_RANGE;
     public static final ModConfigSpec.DoubleValue VECTOR_THRUSTER_BASE_THRUST;
     public static final ModConfigSpec.DoubleValue LIQUID_VECTOR_THRUSTER_BASE_THRUST;
     public static final ModConfigSpec.IntValue LIQUID_VECTOR_THRUSTER_FUEL_TANK_CAPACITY_MB;
@@ -150,6 +155,14 @@ public class PropulsionConfig {
                 .defineInRange("creativeThrusterMultiblock2x2x2MaxThrust", 100000.0d, 10.0d, 100000000.0d);
         CREATIVE_THRUSTER_MULTIBLOCK_3X3X3_MAX_THRUST = COMMON_BUILDER.comment("Maximum thrust (kN) the scroll can reach on a 3x3x3 creative thruster multiblock.")
                 .defineInRange("creativeThrusterMultiblock3x3x3MaxThrust", 5000000.0d, 10.0d, 100000000.0d);
+        COMMON_BUILDER.pop();
+
+        COMMON_BUILDER.push("rcsThruster");
+        SINGLE_RCS_THRUST = COMMON_BUILDER.defineInRange("singleThrustPn", 100.0d, 0.0d, 10000000.0d);
+        RCS_THRUST = COMMON_BUILDER.defineInRange("fullThrustPerNozzlePn", 100.0d, 0.0d, 10000000.0d);
+        RCS_FLAME_SCALE = COMMON_BUILDER.defineInRange("flameScale", 1.0d, 0.0d, 8.0d);
+        RCS_SOUND_VOLUME = COMMON_BUILDER.defineInRange("soundVolume", 1.0d, 0.0d, 4.0d);
+        RCS_SOUND_RANGE = COMMON_BUILDER.defineInRange("soundRangeBlocks", 32, 1, 256);
         COMMON_BUILDER.pop();
 
         COMMON_BUILDER.push("vectorThruster");

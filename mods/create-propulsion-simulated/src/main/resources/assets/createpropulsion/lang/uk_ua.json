@@ -1,4 +1,11 @@
 {
+    "block.createpropulsion.single_rcs_thruster": "Одиночний рушій RCS",
+    "block.createpropulsion.rcs_thruster": "Повний рушій RCS",
+    "createpropulsion.single_rcs_thruster.tooltip.summary": "Створює сталу тягу за сигналом редстоуну або редстоунового зв’язку. Не потребує палива чи енергії.",
+    "createpropulsion.rcs_thruster.tooltip.summary": "Чотири сопла незалежно створюють сталу тягу. Подайте сигнал з боку сопла або через його редстоуновий зв’язок. Не потребує палива чи енергії.",
+    "createpropulsion.subtitle.rcs_loop": "Рушій RCS працює",
+    "createpropulsion.subtitle.rcs_off": "Рушій RCS вимикається",
+
     "createpropulsion.gui.goggles.burner.heat.cold": "Холодний",
     "createpropulsion.gui.goggles.burner.heat.searing": "Розжарений",
     "block.createpropulsion.redstone_converter": "Редстоуновий перетворювач",

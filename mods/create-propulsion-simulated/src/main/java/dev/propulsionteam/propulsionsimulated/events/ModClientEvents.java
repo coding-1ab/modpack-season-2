@@ -1,10 +1,12 @@
 package dev.propulsionteam.propulsionsimulated.events;
 
+import dev.propulsionteam.propulsionsimulated.content.thruster.rcs_thruster.RcsThrusterRenderer;
 import com.simibubi.create.CreateClient;
 import com.simibubi.create.content.decoration.encasing.EncasedCTBehaviour;
 import com.simibubi.create.foundation.block.connected.CTModel;
 import com.simibubi.create.foundation.model.ModelSwapper;
 import dev.createpropulsionsimulated.client.sound.ThrusterLoopSoundController;
+import dev.createpropulsionsimulated.client.sound.RcsThrusterSoundController;
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.LiquidBurnerRenderer;
 import dev.propulsionteam.propulsionsimulated.content.platinum.PlatinumFluidTankModel;
@@ -58,6 +60,7 @@ public class ModClientEvents {
     @SubscribeEvent
     public static void onSoundEngineLoad(SoundEngineLoadEvent event) {
         ThrusterLoopSoundController.onSoundEngineReload();
+        RcsThrusterSoundController.reset();
     }
 
     @SubscribeEvent
@@ -190,6 +193,7 @@ public class ModClientEvents {
 
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerBlockEntityRenderer(PropulsionBlockEntities.RCS_THRUSTER_BLOCK_ENTITY.get(), RcsThrusterRenderer::new);
         event.registerBlockEntityRenderer(PropulsionBlockEntities.STIRLING_ENGINE_BLOCK_ENTITY.get(), StirlingEngineRenderer::new);
         event.registerBlockEntityRenderer(PropulsionBlockEntities.REDSTONE_TRANSMISSION_BLOCK_ENTITY.get(), RedstoneTransmissionRenderer::new);
         event.registerBlockEntityRenderer(PropulsionBlockEntities.CREATIVE_THRUSTER_BLOCK_ENTITY.get(), CreativeThrusterRenderer::new);

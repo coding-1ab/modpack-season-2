@@ -1,4 +1,11 @@
 {
+    "block.createpropulsion.single_rcs_thruster": "单向 RCS 推进器",
+    "block.createpropulsion.rcs_thruster": "四向 RCS 推进器",
+    "createpropulsion.single_rcs_thruster.tooltip.summary": "收到红石信号或红石链路信号时持续产生恒定推力。无需燃料或能量。",
+    "createpropulsion.rcs_thruster.tooltip.summary": "四个喷嘴可独立产生恒定推力。可从喷嘴对应侧或通过其红石链路控制各喷嘴。无需燃料或能量。",
+    "createpropulsion.subtitle.rcs_loop": "RCS 推进器运转",
+    "createpropulsion.subtitle.rcs_off": "RCS 推进器停止",
+
   "createpropulsion.gui.goggles.burner.heat.cold": "冰冷",
   "createpropulsion.gui.goggles.burner.heat.searing": "炽热",
   "block.createpropulsion.redstone_converter": "红石转换器",

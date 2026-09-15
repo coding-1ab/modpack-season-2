@@ -1,5 +1,6 @@
 package dev.propulsionteam.propulsionsimulated.registries;
 
+import dev.propulsionteam.propulsionsimulated.content.thruster.rcs_thruster.RcsThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.LiquidBurnerBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.solid.SolidBurnerBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.cable.fe.FeCableBlockEntity;
@@ -33,6 +34,11 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public class PropulsionBlockEntities {
     private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES =
         DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, CreatePropulsion.ID);
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RcsThrusterBlockEntity>> RCS_THRUSTER_BLOCK_ENTITY =
+        BLOCK_ENTITY_TYPES.register("rcs_thruster_block_entity", () -> BlockEntityType.Builder.of(
+            RcsThrusterBlockEntity::new,
+            PropulsionBlocks.SINGLE_RCS_THRUSTER_BLOCK.get(), PropulsionBlocks.RCS_THRUSTER_BLOCK.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ThrusterBlockEntity>> THRUSTER_BLOCK_ENTITY =
         BLOCK_ENTITY_TYPES.register("thruster_block_entity",

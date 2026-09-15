@@ -1,4 +1,11 @@
 {
+    "block.createpropulsion.single_rcs_thruster": "Одиночный двигатель RCS",
+    "block.createpropulsion.rcs_thruster": "Полный двигатель RCS",
+    "createpropulsion.single_rcs_thruster.tooltip.summary": "Создаёт постоянную тягу при сигнале редстоуна или редстоуновой связи. Не требует топлива или энергии.",
+    "createpropulsion.rcs_thruster.tooltip.summary": "Четыре сопла независимо создают постоянную тягу. Подайте сигнал со стороны сопла или через его редстоуновую связь. Не требует топлива или энергии.",
+    "createpropulsion.subtitle.rcs_loop": "Двигатель RCS работает",
+    "createpropulsion.subtitle.rcs_off": "Двигатель RCS выключается",
+
     "createpropulsion.gui.goggles.burner.heat.cold": "Холодный",
     "createpropulsion.gui.goggles.burner.heat.searing": "Обжигающий",
     "block.createpropulsion.redstone_converter": "Редстоуновый преобразователь",

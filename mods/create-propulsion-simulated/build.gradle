@@ -42,6 +42,7 @@ neoForge {
 }
 
 sourceSets.main.resources { srcDirs = ['src/main/resources', 'src/generated/resources'] }
+neoForge.addModdingDependenciesTo(sourceSets.test)
 
 repositories {
     mavenCentral()
@@ -192,7 +193,7 @@ dependencies {
 
     testImplementation platform("org.junit:junit-bom:5.11.4")
     testImplementation "org.junit.jupiter:junit-jupiter"
-    testImplementation "com.google.code.gson:gson:2.11.0"
+    testImplementation "com.google.code.gson:gson"
     testRuntimeOnly "org.junit.platform:junit-platform-launcher"
 }
 

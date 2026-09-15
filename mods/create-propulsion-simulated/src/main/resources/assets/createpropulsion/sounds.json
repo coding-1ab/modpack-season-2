@@ -40,5 +40,20 @@
     "sounds": [
       "createpropulsion:ion_thruster_off"
     ]
+  },
+  "rcs_loop": {
+    "subtitle": "createpropulsion.subtitle.rcs_loop",
+    "sounds": [
+      {
+        "name": "createpropulsion:rcs_loop",
+        "stream": true
+      }
+    ]
+  },
+  "rcs_off": {
+    "subtitle": "createpropulsion.subtitle.rcs_off",
+    "sounds": [
+      "createpropulsion:rcs_off"
+    ]
   }
 }

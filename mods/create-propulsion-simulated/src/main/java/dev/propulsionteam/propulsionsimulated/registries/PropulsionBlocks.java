@@ -1,5 +1,7 @@
 package dev.propulsionteam.propulsionsimulated.registries;
 
+import dev.propulsionteam.propulsionsimulated.content.thruster.rcs_thruster.SingleRcsThrusterBlock;
+import dev.propulsionteam.propulsionsimulated.content.thruster.rcs_thruster.RcsThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.LiquidBurnerBlock;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.solid.SolidBurnerBlock;
@@ -56,6 +58,11 @@ public class PropulsionBlocks {
     public static final DeferredBlock<VectorThrusterBlock> VECTOR_THRUSTER_BLOCK = BLOCKS.register("vector_thruster",
         () -> new VectorThrusterBlock(Block.Properties.of().mapColor(MapColor.METAL).requiresCorrectToolForDrops()
             .sound(SoundType.METAL).strength(5.5f, 4.0f).noOcclusion()));
+    public static final DeferredBlock<RcsThrusterBlock> RCS_THRUSTER_BLOCK = BLOCKS.register("rcs_thruster",
+        () -> new RcsThrusterBlock(Block.Properties.ofFullCopy(VECTOR_THRUSTER_BLOCK.get())));
+    public static final DeferredBlock<SingleRcsThrusterBlock> SINGLE_RCS_THRUSTER_BLOCK = BLOCKS.register("single_rcs_thruster",
+        () -> new SingleRcsThrusterBlock(Block.Properties.ofFullCopy(VECTOR_THRUSTER_BLOCK.get())));
+
     public static final DeferredBlock<LiquidVectorThrusterBlock> LIQUID_VECTOR_THRUSTER_BLOCK = BLOCKS.register("liquid_vector_thruster",
         () -> new LiquidVectorThrusterBlock(Block.Properties.of().mapColor(MapColor.METAL).requiresCorrectToolForDrops()
             .sound(SoundType.METAL).strength(5.5f, 4.0f).noOcclusion()));
@@ -143,6 +150,8 @@ public class PropulsionBlocks {
             .requiresCorrectToolForDrops().strength(2.5f, 3.5f)));
 
     static {
+        registerDefaultBlockItem("rcs_thruster", RCS_THRUSTER_BLOCK);
+        registerDefaultBlockItem("single_rcs_thruster", SINGLE_RCS_THRUSTER_BLOCK);
         registerDefaultBlockItem("thruster", THRUSTER_BLOCK);
         registerBlockItem("creative_thruster", CREATIVE_THRUSTER_BLOCK, new BlockItem.Properties().rarity(Rarity.EPIC));
         registerBlockItem("ion_thruster", ION_THRUSTER_BLOCK, new BlockItem.Properties().rarity(Rarity.UNCOMMON));

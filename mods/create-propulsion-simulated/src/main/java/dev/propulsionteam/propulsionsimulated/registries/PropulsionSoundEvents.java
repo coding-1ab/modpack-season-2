@@ -12,6 +12,8 @@ public class PropulsionSoundEvents {
     private static final DeferredRegister<SoundEvent> SOUND_EVENTS =
         DeferredRegister.create(Registries.SOUND_EVENT, CreatePropulsion.ID);
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> RCS_LOOP = register("rcs_loop");
+    public static final DeferredHolder<SoundEvent, SoundEvent> RCS_OFF = register("rcs_off");
     public static final DeferredHolder<SoundEvent, SoundEvent> THRUSTER_STARTUP = register("thruster_startup");
     public static final DeferredHolder<SoundEvent, SoundEvent> THRUSTER_LOOP = SOUND_EVENTS.register(
         "thruster_loop",

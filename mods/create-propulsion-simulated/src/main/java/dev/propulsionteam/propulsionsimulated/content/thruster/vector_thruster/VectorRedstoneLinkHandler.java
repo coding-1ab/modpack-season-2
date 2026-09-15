@@ -31,7 +31,11 @@ public class VectorRedstoneLinkHandler {
         VectorRedstoneLinkBehaviour.WEST_TYPE,
         VectorRedstoneLinkBehaviour.EAST_TYPE,
         VectorRedstoneLinkBehaviour.DOWN_TYPE,
-        VectorRedstoneLinkBehaviour.UP_TYPE
+        VectorRedstoneLinkBehaviour.UP_TYPE,
+        VectorRedstoneLinkBehaviour.RCS_TYPES.get(0),
+        VectorRedstoneLinkBehaviour.RCS_TYPES.get(1),
+        VectorRedstoneLinkBehaviour.RCS_TYPES.get(2),
+        VectorRedstoneLinkBehaviour.RCS_TYPES.get(3)
     };
 
     @SubscribeEvent

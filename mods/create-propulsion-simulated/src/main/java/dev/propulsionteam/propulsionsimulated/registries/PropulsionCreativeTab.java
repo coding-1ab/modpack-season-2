@@ -55,6 +55,8 @@ public class PropulsionCreativeTab {
         registerSectionItem(MAIN_SECTION, "thruster", () -> PropulsionBlocks.THRUSTER_BLOCK.get().asItem());
         registerSectionItem(MAIN_SECTION, "creative_thruster", () -> PropulsionBlocks.CREATIVE_THRUSTER_BLOCK.get().asItem());
         registerSectionItem(MAIN_SECTION, "ion_thruster", () -> PropulsionBlocks.ION_THRUSTER_BLOCK.get().asItem());
+        registerSectionItem(MAIN_SECTION, "single_rcs_thruster", () -> PropulsionBlocks.SINGLE_RCS_THRUSTER_BLOCK.get().asItem());
+        registerSectionItem(MAIN_SECTION, "rcs_thruster", () -> PropulsionBlocks.RCS_THRUSTER_BLOCK.get().asItem());
         registerSectionItem(MAIN_SECTION, "vector_thruster", () -> PropulsionBlocks.VECTOR_THRUSTER_BLOCK.get().asItem());
         registerSectionItem(MAIN_SECTION, "creative_vector_thruster", () -> PropulsionBlocks.CREATIVE_VECTOR_THRUSTER_BLOCK.get().asItem());
         registerSectionItem(MAIN_SECTION, "liquid_vector_thruster", () -> PropulsionBlocks.LIQUID_VECTOR_THRUSTER_BLOCK.get().asItem());

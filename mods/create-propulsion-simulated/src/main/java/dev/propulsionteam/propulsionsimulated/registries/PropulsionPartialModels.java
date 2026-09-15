@@ -6,6 +6,10 @@ import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.minecraft.resources.ResourceLocation;
 
 public class PropulsionPartialModels {
+    public static final PartialModel SINGLE_RCS_FLAME = partial("single_rcs_flame");
+    public static final PartialModel[] RCS_FLAMES = {
+        partial("rcs_flame_south"), partial("rcs_flame_north"), partial("rcs_flame_west"), partial("rcs_flame_east")
+    };
     //Lodestone
     public static final PartialModel LODESTONE_TRACKER_INDICATOR = partial("lodestone_tracker_overlay");
     //Reaction wheel
