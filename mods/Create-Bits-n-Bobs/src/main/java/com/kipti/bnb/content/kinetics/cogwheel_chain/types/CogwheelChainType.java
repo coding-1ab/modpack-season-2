@@ -41,19 +41,17 @@ public class CogwheelChainType {
         SQUARE
     }
 
-    //Todo: custom render types / just make this not an enum
-    public enum ChainRenderInfo {
-        CHAIN(VertexShape.CROSS, 3, 3, false),
-        ROPE(VertexShape.SQUARE, 3, 3, false),
-        BELT(VertexShape.SQUARE, 3, 2, true),
-        ;
+    public static class ChainRenderInfo {
+        public static final ChainRenderInfo CHAIN = new ChainRenderInfo(VertexShape.CROSS, 3, 3, false);
+        public static final ChainRenderInfo ROPE = new ChainRenderInfo(VertexShape.SQUARE, 3, 3, false);
+        public static final ChainRenderInfo BELT = new ChainRenderInfo(VertexShape.SQUARE, 3, 2, true);
 
         private final VertexShape vertexShape;
         private final int width;
         private final int height;
         private final boolean consistentInsideOutside;
 
-        ChainRenderInfo(final VertexShape vertexShape, final int width, final int height, final boolean consistentInsideOutside) {
+        public ChainRenderInfo(final VertexShape vertexShape, final int width, final int height, final boolean consistentInsideOutside) {
             this.vertexShape = vertexShape;
             this.width = width;
             this.height = height;
@@ -61,23 +59,19 @@ public class CogwheelChainType {
         }
 
         public VertexShape getVertexShape() {
-            return vertexShape;
+            return this.vertexShape;
         }
 
         public int getWidth() {
-            return width;
+            return this.width;
         }
 
         public int getHeight() {
-            return height;
-        }
-
-        public boolean isDefaultDimensions() {
-            return width == 3 && height == 3;
+            return this.height;
         }
 
         public boolean usesConsistentInsideOutside() {
-            return consistentInsideOutside;
+            return this.consistentInsideOutside;
         }
     }
 
@@ -162,7 +156,7 @@ public class CogwheelChainType {
         }
 
         public CogwheelChainType build() {
-            return new CogwheelChainType(costFactor, chainRenderInfo, renderTexture, relatedItem, cogwheelPredicate, permitsAxisChange, breakEffectsBlock);
+            return new CogwheelChainType(this.costFactor, this.chainRenderInfo, this.renderTexture, this.relatedItem, this.cogwheelPredicate, this.permitsAxisChange, this.breakEffectsBlock);
         }
     }
 
@@ -172,7 +166,7 @@ public class CogwheelChainType {
     }
 
     public String getTranslationKey() {
-        final ResourceLocation key = getKey();
+        final ResourceLocation key = this.getKey();
         return "cogwheel_chain_type." + key.getNamespace() + "." + key.getPath().replace("/", ".");
     }
 
@@ -181,27 +175,27 @@ public class CogwheelChainType {
     }
 
     public ChainRenderInfo getRenderType() {
-        return chainRenderInfo;
+        return this.chainRenderInfo;
     }
 
     public ResourceLocation getRenderTexture() {
-        return renderTexture;
+        return this.renderTexture;
     }
 
     private boolean isRelatedItem(final Item item) {
-        return relatedItem.test(item);
+        return this.relatedItem.test(item);
     }
 
     public Predicate<Block> getCogwheelPredicate() {
-        return cogwheelPredicate;
+        return this.cogwheelPredicate;
     }
 
     public boolean permitsAxisChanges() {
-        return permitsAxisChange;
+        return this.permitsAxisChange;
     }
 
     public Block getBreakEffectsBlock() {
-        return breakEffectsBlock.get();
+        return this.breakEffectsBlock.get();
     }
 
 }

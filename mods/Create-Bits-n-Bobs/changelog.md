@@ -369,3 +369,9 @@
 # 1.21.1-2.3.4
 
 - Increased available bits for headlamp colours
+
+# 1.21.1-2.3.5
+
+- Added Create: Sulfuric Resonance cogwheel model compat
+- Cleaned up chain drive API - Means explicit Bits 'n' Tracks incompatibility until they update to the new API
+- Reformed cogwheel material system to stop breaking cogwheel models in other mods so much

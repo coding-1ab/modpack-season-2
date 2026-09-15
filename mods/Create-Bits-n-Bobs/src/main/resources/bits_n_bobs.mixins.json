@@ -60,6 +60,7 @@
     "PlayerSkyhookRendererMixin",
     "SubMenuConfigScreenMixin",
     "client.CreativeModeTabMixin",
+    "cogwheel_material.AllPartialModelsMixin",
     "cogwheel_material.CachedBuffersMixin",
     "cogwheel_material.CogwheelMaterialVisualMixin",
     "cogwheel_material.SafeBlockEntityRendererMixin",

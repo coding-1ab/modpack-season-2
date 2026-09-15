@@ -4,7 +4,6 @@ import com.hlysine.create_connected.registries.CCPartialModels;
 import com.kipti.bnb.registry.client.BnbPartialModels;
 import com.kipti.bnb.registry.core.BnbTags;
 import com.pedrorok.hypertube.registry.ModPartialModels;
-import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.foundation.model.BakedModelHelper;
 import com.simibubi.create.foundation.model.BakedQuadHelper;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
@@ -204,9 +203,9 @@ public class CogwheelMaterialRenderer {
     }
 
     public enum Variant {
-        COGWHEEL(BnbTags.BnbBlockTags.COGWHEEL_MATERIAL_COGWHEEL_MODEL.tag, () -> AllPartialModels.COGWHEEL),
-        SHAFTLESS_COGWHEEL(BnbTags.BnbBlockTags.COGWHEEL_MATERIAL_SHAFTLESS_COGWHEEL_MODEL.tag, () -> AllPartialModels.SHAFTLESS_COGWHEEL),
-        SHAFTLESS_LARGE_COGWHEEL(BnbTags.BnbBlockTags.COGWHEEL_MATERIAL_SHAFTLESS_LARGE_COGWHEEL_MODEL.tag, () -> AllPartialModels.SHAFTLESS_LARGE_COGWHEEL),
+        COGWHEEL(BnbTags.BnbBlockTags.COGWHEEL_MATERIAL_COGWHEEL_MODEL.tag, () -> BnbPartialModels.MATERIAL_COGWHEEL),
+        SHAFTLESS_COGWHEEL(BnbTags.BnbBlockTags.COGWHEEL_MATERIAL_SHAFTLESS_COGWHEEL_MODEL.tag, () -> BnbPartialModels.MATERIAL_COGWHEEL_SHAFTLESS),
+        SHAFTLESS_LARGE_COGWHEEL(BnbTags.BnbBlockTags.COGWHEEL_MATERIAL_SHAFTLESS_LARGE_COGWHEEL_MODEL.tag, () -> BnbPartialModels.MATERIAL_LARGE_COGWHEEL_SHAFTLESS),
         FLANGED_COGWHEEL(BnbTags.BnbBlockTags.COGWHEEL_MATERIAL_FLANGED_COGWHEEL_MODEL.tag, () -> BnbPartialModels.SMALL_FLANGED_COGWHEEL_BLOCK),
         LARGE_FLANGED_COGWHEEL(BnbTags.BnbBlockTags.COGWHEEL_MATERIAL_LARGE_FLANGED_COGWHEEL_MODEL.tag, () -> BnbPartialModels.LARGE_FLANGED_COGWHEEL_BLOCK),
         ENCASED_FLANGED_COGWHEEL(BnbTags.BnbBlockTags.COGWHEEL_MATERIAL_ENCASED_FLANGED_COGWHEEL_MODEL.tag, () -> BnbPartialModels.ENCASED_FLANGED_COGWHEEL_BLOCK),
