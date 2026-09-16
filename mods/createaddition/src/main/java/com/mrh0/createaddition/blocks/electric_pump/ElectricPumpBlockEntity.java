@@ -179,6 +179,11 @@ public class ElectricPumpBlockEntity extends PumpBlockEntity {
 		return active;
 	}
 
+	public void setActive(boolean active) {
+		this.active = active;
+		applySpeed();
+	}
+
 	@Override
 	public void tickAudio() {
 		if (!active) return;

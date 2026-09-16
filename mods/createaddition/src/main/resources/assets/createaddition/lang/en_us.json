@@ -315,6 +315,13 @@
 	"createaddition.ponder.pei_redstone.header": "Redstone Control",
 	"createaddition.ponder.pei_redstone.text_1": "Redstone power will prevent the stationary interface from engaging.",
 
+	"createaddition.ponder.electric_pump_flow.header": "Fluid Transportation using Electric Pumps",
+	"createaddition.ponder.electric_pump_flow.text_1": "Electric Pumps govern the flow of their attached pipe networks",
+	"createaddition.ponder.electric_pump_flow.text_2": "Their arrow indicates the direction of flow",
+	"createaddition.ponder.electric_pump_flow.text_3": "The network behind is now pulling fluids...",
+	"createaddition.ponder.electric_pump_flow.text_4": "...while the network in front is transferring it outward",
+	"createaddition.ponder.electric_pump_flow.text_5": "A Wrench can be used to reverse the direction",
+
 	"createaddition.schedule.condition.energy_threshold": "Energy Cargo Condition",
 	"createaddition.schedule.condition.threshold.unit": "K⚡",
 	"createaddition.schedule.condition.threshold.energy": "Energy",

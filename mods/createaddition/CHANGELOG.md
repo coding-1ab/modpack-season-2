@@ -4,6 +4,22 @@ Add changes below NEXT...
 
 ## NEXT
 
+## Release 1.7.1
+
+### Added
+
+- Electric Pump block.
+
+### Fixes
+
+- Various bug fixes.
+
+## Release 1.7.0
+
+### Fixes
+
+- Improved sable compatability.
+
 ## Release 1.6.0
 
 ### Added
