@@ -1,6 +1,7 @@
 {
     "itemGroup.create_enchantment_industry.base":  "Create: Enchantment Industry",
     "itemGroup.create_enchantment_industry.apotheotic":  "Create: Apotheotic Industry",
+    "create_enchantment_industry.ponder.group.experience":  "Experience",
     "create_enchantment_industry.gui.experience_hatch.exchange":  "Experience Exchange",
     "create_enchantment_industry.gui.experience_hatch.points":  "Points",
     "create_enchantment_industry.gui.experience_hatch.all":  "All",

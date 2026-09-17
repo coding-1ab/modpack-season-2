@@ -506,6 +506,7 @@
     "create_enchantment_industry.ponder.gem_cutter.text_3": "Gem Cutter must be installed on horizontal Belt or Depot",
     "create_enchantment_industry.ponder.gem_cutter.text_4": "Gem Cutter requires a tank of Crystal Essence to work. Fluid Tank must be installed at 2 blocks beneath it",
     "create_enchantment_industry.ponder.gem_cutter.text_5": "Processing...",
+    "create_enchantment_industry.ponder.group.experience": "Experience",
     "create_enchantment_industry.ponder.infuser.header": "Infusing item with Infuser",
     "create_enchantment_industry.ponder.infuser.text_1": "With a Infuser and Basin, Infusion recipes can be automated",
     "create_enchantment_industry.ponder.infuser.text_2": "Just like infusing at an Enchantment Table, Infuser also requires bookshelf support",

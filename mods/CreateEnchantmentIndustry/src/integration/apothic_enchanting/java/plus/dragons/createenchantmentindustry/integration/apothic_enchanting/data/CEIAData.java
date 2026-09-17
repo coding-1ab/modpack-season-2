@@ -27,12 +27,13 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.data.loading.DatagenModLoader;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
+import plus.dragons.createenchantmentindustry.integration.ModIntegration;
 import plus.dragons.createenchantmentindustry.integration.apothic_enchanting.client.ponder.CEIAPonderPlugin;
 
 @Mod(CEICommon.ID)
 public class CEIAData {
     public CEIAData(IEventBus modBus) {
-        if (!DatagenModLoader.isRunningDataGen())
+        if (!DatagenModLoader.isRunningDataGen() || !ModIntegration.APOTHIC_ENCHANTING.enabled())
             return;
         REGISTRATE.registerPonderLocalization(CEIAPonderPlugin::new);
         modBus.register(this);

@@ -22,12 +22,13 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.data.loading.DatagenModLoader;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
+import plus.dragons.createenchantmentindustry.integration.ModIntegration;
 import plus.dragons.createenchantmentindustry.integration.apotheosis.client.ponder.CEIAXPonderPlugin;
 
 @Mod(CEICommon.ID)
 public class CEIAXData {
     public CEIAXData(IEventBus modBus) {
-        if (!DatagenModLoader.isRunningDataGen())
+        if (!DatagenModLoader.isRunningDataGen() || !ModIntegration.APOTHEOSIS.enabled())
             return;
         CEICommon.REGISTRATE.registerPonderLocalization(CEIAXPonderPlugin::new);
     }

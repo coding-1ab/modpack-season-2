@@ -33,19 +33,20 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.neoforged.neoforge.data.loading.DatagenModLoader;
 import plus.dragons.createenchantmentindustry.client.ponder.scene.*;
 import plus.dragons.createenchantmentindustry.common.registry.CEIBlocks;
+import plus.dragons.createenchantmentindustry.common.registry.CEIItems;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
 
 public class CEIPonderScenes {
     public static void register(PonderSceneRegistrationHelper<ResourceLocation> helper) {
         PonderSceneRegistrationHelper<ItemProviderEntry<?, ?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
 
-        HELPER.forComponents(AllItems.EXP_NUGGET)
+        helper.forComponents(AllItems.EXP_NUGGET.getId(), CEIItems.EXPERIENCE_BUCKET.getId(), AllBlocks.EXPERIENCE_BLOCK.getId())
                 .addStoryBoard("experience/basic", ExperienceScene::basic, CEIPonderTags.EXPERIENCE_APPLIANCES)
                 .addStoryBoard("experience/advance", ExperienceScene::advance, CEIPonderTags.SUPER_EXPERIENCE_APPLIANCES)
                 .addStoryBoard("experience/prepare_for_super_enchant", ExperienceScene::prepare)
                 .addStoryBoard("experience/beacon_base", ExperienceScene::beaconBase);
 
-        HELPER.forComponents(AllBlocks.EXPERIENCE_BLOCK, CEIBlocks.SUPER_EXPERIENCE_BLOCK)
+        HELPER.forComponents(CEIBlocks.SUPER_EXPERIENCE_BLOCK)
                 .addStoryBoard("experience/prepare_for_super_enchant", ExperienceScene::prepare, CEIPonderTags.SUPER_EXPERIENCE_APPLIANCES);
 
         HELPER.forComponents(CEIBlocks.EXPERIENCE_HATCH)

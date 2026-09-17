@@ -505,6 +505,7 @@
     "create_enchantment_industry.ponder.gem_cutter.text_3": "宝石切割机必须被安装在平直传送带或置物台上",
     "create_enchantment_industry.ponder.gem_cutter.text_4": "宝石切割机需要一罐宝石精粹才能运作。储罐必须被安装在其下方两格的位置",
     "create_enchantment_industry.ponder.gem_cutter.text_5": "加工中……",
+    "create_enchantment_industry.ponder.group.experience": "经验",
     "create_enchantment_industry.ponder.infuser.header": "使用灌注机进行灌注",
     "create_enchantment_industry.ponder.infuser.text_1": "配合灌注机与工作盆，可实现灌注配方的自动化",
     "create_enchantment_industry.ponder.infuser.text_2": "与在附魔台进行灌注相同，灌注机也需要书架的支持",
