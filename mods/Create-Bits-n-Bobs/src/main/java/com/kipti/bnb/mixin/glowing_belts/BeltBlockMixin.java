@@ -1,6 +1,6 @@
 package com.kipti.bnb.mixin.glowing_belts;
 
-import com.kipti.bnb.registry.compat.BnbCreateBlockEdits;
+import com.kipti.bnb.foundation.BnbBlockStateProperties;
 import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import com.simibubi.create.content.kinetics.belt.BeltBlock;
 import com.simibubi.create.content.kinetics.belt.BeltBlockEntity;
@@ -38,15 +38,15 @@ public class BeltBlockMixin extends HorizontalKineticBlock implements IBE<BeltBl
     @Inject(method = "createBlockStateDefinition", at = @At("TAIL"))
     private void bits_n_bobs$createBlockStateDefinitionWithGlowingProperty(final StateDefinition.Builder<Block, BlockState> builder,
                                                                            final CallbackInfo ci) {
-        builder.add(BnbCreateBlockEdits.GLOWING);
+        builder.add(BnbBlockStateProperties.GLOWING);
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void bits_n_bobs$constructorWithDefaultGlowing(final BlockBehaviour.Properties properties,
                                                            final CallbackInfo ci) {
         this.registerDefaultState(
-                this.defaultBlockState()
-                        .setValue(BnbCreateBlockEdits.GLOWING, false)
+            this.defaultBlockState()
+                .setValue(BnbBlockStateProperties.GLOWING, false)
         );
     }
 
@@ -60,28 +60,28 @@ public class BeltBlockMixin extends HorizontalKineticBlock implements IBE<BeltBl
                                                            final BlockHitResult hitResult,
                                                            final CallbackInfoReturnable<ItemInteractionResult> cir) {
         final ItemInteractionResult result = cir.getReturnValue();
-        if (result != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION && state.hasProperty(BnbCreateBlockEdits.GLOWING))
+        if (result != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION && state.hasProperty(BnbBlockStateProperties.GLOWING))
             return;
 
         final boolean isGlowSac = stack.getItem() instanceof GlowInkSacItem;
         if (!isGlowSac) return;
 
-        final boolean stateIsGlowing = state.getValue(BnbCreateBlockEdits.GLOWING);
+        final boolean stateIsGlowing = state.getValue(BnbBlockStateProperties.GLOWING);
 
         if (!stateIsGlowing)
             this.withBlockEntityDo(
-                    level, pos, be -> {
-                        for (final BlockPos blockPos : BeltBlock.getBeltChain(level, be.getController())) {
-                            final BeltBlockEntity belt = BeltHelper.getSegmentBE(level, blockPos);
-                            if (belt == null)
-                                continue;
-                            level.setBlock(
-                                    blockPos,
-                                    level.getBlockState(blockPos).setValue(BnbCreateBlockEdits.GLOWING, true),
-                                    Block.UPDATE_ALL | Block.UPDATE_MOVE_BY_PISTON
-                            );
-                        }
+                level, pos, be -> {
+                    for (final BlockPos blockPos : BeltBlock.getBeltChain(level, be.getController())) {
+                        final BeltBlockEntity belt = BeltHelper.getSegmentBE(level, blockPos);
+                        if (belt == null)
+                            continue;
+                        level.setBlock(
+                            blockPos,
+                            level.getBlockState(blockPos).setValue(BnbBlockStateProperties.GLOWING, true),
+                            Block.UPDATE_ALL | Block.UPDATE_MOVE_BY_PISTON
+                        );
                     }
+                }
             );
         cir.setReturnValue(ItemInteractionResult.SUCCESS);
     }

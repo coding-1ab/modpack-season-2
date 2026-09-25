@@ -5,6 +5,8 @@ import dev.engine_room.flywheel.api.instance.InstanceType;
 import dev.engine_room.flywheel.lib.instance.TransformedInstance;
 import net.createmod.catnip.render.SpriteShiftEntry;
 
+import javax.annotation.Nullable;
+
 /**
  * Adapted version of the {@link com.simibubi.create.content.processing.burner.ScrollTransformedInstance}, with the scrolling behaviour removed.
  * This is used to shift the uv on the instance one time and that's it.
@@ -19,14 +21,14 @@ public class ShiftTransformedInstance extends TransformedInstance {
         super(type, handle);
     }
 
-    public ShiftTransformedInstance setSpriteShift(final SpriteShiftEntry spriteShift) {
+    public ShiftTransformedInstance setSpriteShift(final @Nullable SpriteShiftEntry spriteShift) {
         if (spriteShift == null) {
-            diffU = 0;
-            diffV = 0;
+            this.diffU = 0;
+            this.diffV = 0;
             return this;
         }
-        diffU = spriteShift.getTarget().getU0() - spriteShift.getOriginal().getU0();
-        diffV = spriteShift.getTarget().getV0() - spriteShift.getOriginal().getV0();
+        this.diffU = spriteShift.getTarget().getU0() - spriteShift.getOriginal().getU0();
+        this.diffV = spriteShift.getTarget().getV0() - spriteShift.getOriginal().getV0();
         return this;
     }
 

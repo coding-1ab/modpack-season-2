@@ -8,15 +8,16 @@ import org.semver4j.Semver
 
 plugins {
     id 'java-library'
-    id 'maven-publish'
     id 'idea'
     id 'net.neoforged.moddev' version '2.0.141'
-    id 'me.modmuss50.mod-publish-plugin' version '1.1.0'
+    id 'me.modmuss50.mod-publish-plugin' version '2.1.1'
+    id 'net.azmod.release' version '0.2.1'
 }
 
 def isSnapshotVersioning = project.hasProperty('snapshot_versioning') && project.property('snapshot_versioning').toString().toBoolean()
 version = isSnapshotVersioning ? "${mod_version}-SNAPSHOT" : mod_version
 group = mod_group_id
+
 base {
     archivesName = mod_id
 }
@@ -40,6 +41,25 @@ repositories {
         name = 'azmod-maven-snapshots'
         url = "https://maven.azmod.net/snapshots"
     }
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'azmod-modmaven-mirror'
+                url = "https://maven.azmod.net/modmaven"
+
+                if (findProperty('azmodMavenUser') != null) {
+                    //Credentials purely required for adding new mods to cache, you will still be able to get stuff from modmaven itself / existing cache.
+                    credentials {
+                        username = findProperty('azmodMavenUser') ?: System.getenv('AZMOD_MAVEN_USER')
+                        password = findProperty('azmodMavenToken') ?: System.getenv('AZMOD_MAVEN_PASSWORD')
+                    }
+                }
+            }
+        }
+        filter {
+            includeGroup "maven.modrinth"
+        }
+    }
     // Add your extra repos from broken build
     maven { url = 'https://maven.squiddev.cc' } // CC: Tweaked
     maven { url = 'https://mvn.devos.one/snapshots' }
@@ -47,6 +67,10 @@ repositories {
     maven {
         name = 'BlameJared Maven (CrT / Bookshelf)'
         url = 'https://maven.blamejared.com'
+    }
+    maven {
+        name = 'Kotlin for Forge'
+        url = 'https://thedarkcolour.github.io/KotlinForForge/'
     }
     exclusiveContent {
         forRepository {
@@ -61,7 +85,6 @@ repositories {
         }
     }
 }
-
 neoForge {
     version = neo_version
 
@@ -80,6 +103,8 @@ neoForge {
                     '--all',
                     '--output', file('src/generated/resources/').getAbsolutePath(),
                     '--existing', file('src/main/resources/').getAbsolutePath()
+
+            systemProperty 'net.minecraft.data.Main.parallel', 'false'
         }
     }
     mods {
@@ -115,7 +140,24 @@ dependencies {
         exclude group: "me.fallenbreath"
     }
 
-    implementation("com.cake.autoload:autoload-neoforge-1.21.1:1.+")
+    //implementation("com.cake.autoload:autoload-neoforge-1.21.1:1.+")
+
+    // Actual compats here:
+//    implementation("maven.modrinth:create-connected:${create_connected_version}")
+//    implementation("maven.modrinth:slice-and-dice:${create_slice_and_dice_version}")
+//    implementation("maven.modrinth:hypertube:${create_hypertube_version}")
+//    implementation("maven.modrinth:create-additional-logistics:${createadditionallogistics_version}")
+//    implementation("maven.modrinth:create-encased:${create_encased_version}")
+//    implementation("maven.modrinth:create-design-n-decor:${dndecor_version}")
+//    implementation("thedarkcolour:kotlinforforge-neoforge:${kotlin_for_forge_version}")
+
+    compileOnly("maven.modrinth:create-connected:${create_connected_version}")
+    compileOnly("maven.modrinth:slice-and-dice:${create_slice_and_dice_version}")
+    compileOnly("maven.modrinth:hypertube:${create_hypertube_version}")
+    compileOnly("maven.modrinth:create-additional-logistics:${createadditionallogistics_version}")
+    compileOnly("maven.modrinth:create-encased:${create_encased_version}")
+    compileOnly("maven.modrinth:create-design-n-decor:${dndecor_version}")
+    compileOnly("thedarkcolour:kotlinforforge-neoforge:${kotlin_for_forge_version}")
 
     jarJar(api("dev.ryanhcode.sable-companion:sable-companion-common-${project.minecraft_version}:[${project.sable_companion_version},)")) {
         version {
@@ -128,6 +170,7 @@ dependencies {
         compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-forge-api:$cc_tweaked_version")
         localRuntime("cc.tweaked:cc-tweaked-$minecraft_version-forge:$cc_tweaked_version")
     }
+
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -164,55 +207,9 @@ jar {
         attributes('FMLModType': 'GAMELIBRARY')
     }
 }
-// ========================
-// Changelog & Publishing
-// ========================
-
-String getRelevantChangelog(String targetVersion) {
-    def changelogFile = file("changelog.md")
-    if (!changelogFile.exists()) {
-        return "No changelog found."
-    }
-    def lines = changelogFile.readLines()
-    def result = new StringBuilder()
-    def capturing = false
-    def targetMinecraftVersion = targetVersion.split("-")[0]
-    def targetModVersion = targetVersion.split("-").length > 1 ? targetVersion.split("-")[1] : ""
-    def newerVersionsExist = false
-
-    for (line in lines) {
-        if (line.startsWith("# ")) {
-            if (capturing) {
-                break
-            }
-            def versionTag = line.substring(2).trim()
-            def entryMinecraftVersion = versionTag.split("-")[0]
-            def entryModVersion = versionTag.split("-").length > 1 ? versionTag.split("-")[1] : ""
-            entryModVersion = entryModVersion.replace("jolly", "")
-            if (versionTag == targetVersion) {
-                capturing = true
-                continue
-            }
-            if (entryMinecraftVersion == targetMinecraftVersion &&
-                    new Semver(entryModVersion) > new Semver(targetModVersion)) {
-                newerVersionsExist = true
-            }
-        } else if (capturing && line.trim()) {
-            result.append(line).append("\n")
-        }
-    }
-
-    if (newerVersionsExist) {
-        println("WARNING: Publishing an older version! Newer entries exist for Minecraft ${targetMinecraftVersion}.")
-    }
-
-    return result.length() > 0 ? result.toString().trim() : "No changelog entry found for version ${targetVersion}."
-}
 
 publishMods {
     file = jar.archiveFile
-    def changelogText = getRelevantChangelog(minecraft_version + "-" + mod_version)
-    changelog = changelogText
     type = STABLE
     modLoaders.add("neoforge")
     displayName = "${mod_name} ${mod_version} NeoForge ${minecraft_version}"
@@ -223,6 +220,10 @@ publishMods {
         accessToken = findProperty('curseforgePublishToken')
         minecraftVersions.add("1.21.1")
         requires("create")
+        requires("azimuth-api")
+        requires("strut-your-stuff")
+        client = true
+        server = true
     }
 
     modrinth {
@@ -230,16 +231,15 @@ publishMods {
         accessToken = findProperty('modrinthPublishToken')
         minecraftVersions.add("1.21.1")
         requires("create")
+        requires("azimuth-api")
+        requires("strut-your-stuff")
     }
 
     discord {
         webhookUrl = findProperty('aztechDiscordPublishWebhook')
         username = "bits n bober version bot"
         avatarUrl = "https://cataas.com/cat?width=500&height=500"
-        content = """
-        # New Mod Release: ${getDisplayName().get()}
-        ${changelogText}
-        """.trim()
         style { look = "CLASSIC" }
     }
 }
+

@@ -18,13 +18,14 @@ import net.neoforged.neoforge.common.util.Lazy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public enum BnbFeatureFlag {
-    COGWHEEL_CHAIN_DRIVES(
+    UNDEDICATED_COGWHEEL_CHAIN_DRIVES(
             FeatureCategories.BEHAVIOUR,
-            "Ability for the player to create chain drives using create's cogwheels specifically."
+            "Ability for the player to create chain drives on components that are not dedicated for chains (i.e. not flanged)"
     ),
     FLANGED_CHAIN_DRIVES(
             FeatureCategories.BLOCK, "Ability for the player to create chain drives using the flanged gear cogwheels.",
@@ -80,7 +81,8 @@ public enum BnbFeatureFlag {
             BnbTrinketBlocks.LIGHTBULB::get
     ),
     BRASS_LAMP(
-            FeatureCategories.BLOCK, "Availability of the Brass Lamp block.",
+            FeatureCategories.BLOCK, "Availability of the Brass Lamp block. (Legacy)",
+            false, false,
             BnbTrinketBlocks.BRASS_LAMP::get
     ),
     HEADLAMP(
@@ -107,7 +109,7 @@ public enum BnbFeatureFlag {
     ),
     INDUSTRIAL_TRUSS(
             FeatureCategories.BLOCK, "Availability of the industrial truss blocks.",
-            BnbDecorativeBlocks.METAL_TRUSS::get
+            BnbDecorativeBlocks.INDUSTRIAL_TRUSS::get
 //            BnbDecorativeBlocks.INDUSTRIAL_TRUSS_ENCASED_SHAFT::get,
 //            BnbDecorativeBlocks.INDUSTRIAL_TRUSS_ENCASED_PIPE::get
     ),
@@ -156,13 +158,13 @@ public enum BnbFeatureFlag {
             final List<Supplier<Block>> blocks = new ArrayList<>();
             for (final BnbPaletteStoneTypes type : values) {
                 blocks.addAll(type.getVariants()
-                                      .registeredBlocks.stream()
-                                      .map(e -> (Supplier<Block>) e::get)
-                                      .toList());
+                        .registeredBlocks.stream()
+                        .map(e -> (Supplier<Block>) e::get)
+                        .toList());
                 blocks.addAll(type.getVariants()
-                                      .registeredPartials.stream()
-                                      .map(e -> (Supplier<Block>) e::get)
-                                      .toList());
+                        .registeredPartials.stream()
+                        .map(e -> (Supplier<Block>) e::get)
+                        .toList());
             }
             return blocks;
         });
@@ -181,8 +183,8 @@ public enum BnbFeatureFlag {
             final List<Supplier<Block>> blocks = new ArrayList<>();
             blocks.add(baseBlock::get);
             blocks.addAll(Arrays.stream(dyedBlockList.toArray())
-                                  .map(dyedEntry -> (Supplier<Block>) dyedEntry::get)
-                                  .toList());
+                    .map(dyedEntry -> (Supplier<Block>) dyedEntry::get)
+                    .toList());
             return blocks.stream().toList();
         });
     }
@@ -344,7 +346,7 @@ public enum BnbFeatureFlag {
         final BnbFeatureFlag flag;
 
         try {
-            flag = BnbFeatureFlag.valueOf(featureFlagKey.toUpperCase());
+            flag = BnbFeatureFlag.valueOf(featureFlagKey.toUpperCase(Locale.ROOT));
         } catch (final IllegalArgumentException e) {
             return false;
         }
@@ -388,7 +390,7 @@ public enum BnbFeatureFlag {
     }
 
     public BnbFeatureEnabledCondition getDataCondition() {
-        return new BnbFeatureEnabledCondition(this.name().toLowerCase());
+        return new BnbFeatureEnabledCondition(this.name().toLowerCase(Locale.ROOT));
     }
 
 }

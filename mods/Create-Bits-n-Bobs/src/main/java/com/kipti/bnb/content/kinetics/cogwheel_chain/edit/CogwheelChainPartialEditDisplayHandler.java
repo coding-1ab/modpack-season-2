@@ -14,7 +14,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.BlockItem;
@@ -35,12 +34,6 @@ import org.jetbrains.annotations.Nullable;
 import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.ChainDriveDisplayRenderer.INVALID_COLOUR;
 import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.ChainDriveDisplayRenderer.VALID_COLOUR;
 
-/**
- * Client-side display handler for cogwheel chain partial edit previews.
- * <p>
- * Renders either outliner (shape + connections) for valid insertions,
- * or red particles for invalid ones. Only one mode is ever active.
- */
 @EventBusSubscriber(Dist.CLIENT)
 public class CogwheelChainPartialEditDisplayHandler {
 
@@ -51,7 +44,7 @@ public class CogwheelChainPartialEditDisplayHandler {
     }
 
     private static void tick(final LocalPlayer player) {
-        final CogwheelChainPartialEditContext editContext = CogwheelChainPartialEditInteractionHandler.getCurrentEditContext();
+        final CogwheelChainPartialEdit editContext = CogwheelChainPartialEditInteractionHandler.getCurrentEditContext();
         if (editContext == null) {
             return;
         }
@@ -82,25 +75,18 @@ public class CogwheelChainPartialEditDisplayHandler {
             return;
         }
 
-        CogwheelChainPartialEditInsertionPlan insertionPlan = null;
-        ChainInteractionFailedException validationFailure = null;
         try {
-            insertionPlan = CogwheelChainPartialEditInsertionPlanner.planWithCandidate(
+            final CogwheelChainPartialEditInsertionPlan insertionPlan = CogwheelChainPartialEditInsertionPlanner.planWithCandidate(
                     existingChain, editContext, placement.pos(), placement.candidate()
             );
+            if (insertionPlan != null) {
+                player.displayClientMessage(Component.empty(), true);
+                renderValidPlacement(level, placement, insertionPlan);
+                renderCostOverlay(player, editContext, insertionPlan);
+                return;
+            }
         } catch (final ChainInteractionFailedException e) {
-            validationFailure = e;
-        }
-
-        if (insertionPlan != null) {
-            player.displayClientMessage(Component.empty(), true);
-            renderValidPlacement(level, placement, insertionPlan);
-            renderCostOverlay(player, editContext, insertionPlan);
-            return;
-        }
-
-        if (validationFailure != null) {
-            player.displayClientMessage(validationFailure.getComponent(), true);
+            player.displayClientMessage(e.getComponent(), true);
         }
         renderInvalidPlacement(level, editContext, placement);
     }
@@ -138,7 +124,7 @@ public class CogwheelChainPartialEditDisplayHandler {
     }
 
     private static void renderInvalidPlacement(final ClientLevel level,
-                                               final CogwheelChainPartialEditContext editContext,
+                                               final CogwheelChainPartialEdit editContext,
                                                final ProposedPlacement placement) {
         ChainDriveDisplayRenderer.renderBlockOutline(
                 level,
@@ -157,7 +143,7 @@ public class CogwheelChainPartialEditDisplayHandler {
 
     private static @Nullable ProposedPlacement resolveProposedPlacement(final LocalPlayer player,
                                                                         final ClientLevel level,
-                                                                        final CogwheelChainPartialEditContext editContext) {
+                                                                        final CogwheelChainPartialEdit editContext) {
         final HitResult genericHit = Minecraft.getInstance().hitResult;
         if (!(genericHit instanceof final BlockHitResult blockHit) || blockHit.getType() == HitResult.Type.MISS)
             return null;
@@ -185,9 +171,6 @@ public class CogwheelChainPartialEditDisplayHandler {
         if (baseCandidate == null)
             return null;
 
-        final Direction.Axis axis = blockHit.getDirection().getAxis();
-        final CogwheelChainCandidate candidate = new CogwheelChainCandidate(
-                axis, baseCandidate.isLarge(), baseCandidate.hasSmallCogwheelOffset());
 
         final BlockPlaceContext placeContext = new BlockPlaceContext(
                 new UseOnContext(
@@ -197,25 +180,27 @@ public class CogwheelChainPartialEditDisplayHandler {
         final BlockState placementState = cogwheelBlock.getStateForPlacement(placeContext);
         if (placementState == null) return null;
 
+        final CogwheelChainCandidate candidate = CogwheelChainCandidate.getForBlock(placementState);
         return new ProposedPlacement(placementPos, candidate, blockHit.getDirection(), placementState);
     }
 
     private static void renderCostOverlay(final LocalPlayer player,
-                                          final CogwheelChainPartialEditContext editContext,
+                                          final CogwheelChainPartialEdit editContext,
                                           final CogwheelChainPartialEditInsertionPlan insertionPlan) {
-        if (player.hasInfiniteMaterials() || insertionPlan.costDelta() == 0) {
+        final int chainsRequired = insertionPlan.addedCost();
+        if (player.hasInfiniteMaterials() || chainsRequired == 0) {
             return;
         }
 
-        final boolean hasEnough = insertionPlan.costDelta() < 0 || ChainConveyorBlockEntity.getChainsFromInventory(
+        final boolean hasEnough = ChainConveyorBlockEntity.getChainsFromInventory(
                 player,
                 editContext.chainItemType().getDefaultInstance(),
-                insertionPlan.costDelta(),
+                chainsRequired,
                 true
         );
         BlueprintOverlayRenderer.displayChainRequirements(
                 editContext.chainItemType(),
-                insertionPlan.costDelta(),
+                chainsRequired,
                 hasEnough
         );
     }

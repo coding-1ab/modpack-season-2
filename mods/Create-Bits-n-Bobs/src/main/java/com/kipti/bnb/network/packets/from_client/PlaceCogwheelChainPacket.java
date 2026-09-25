@@ -1,5 +1,6 @@
 package com.kipti.bnb.network.packets.from_client;
 
+import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainPathfinder;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PathedCogwheelNode;
@@ -7,6 +8,7 @@ import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.ChainInteractionFailedException;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.kipti.bnb.network.BnbPackets;
+import com.kipti.bnb.registry.core.BnbConfigs;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
 import net.createmod.catnip.net.base.ServerboundPacketPayload;
 import net.minecraft.core.Holder;
@@ -42,7 +44,10 @@ public record PlaceCogwheelChainPacket(
     @Override
     public void handle(final ServerPlayer player) {
         //Server side validation of the chain
-        if (this.worldSpacePartialChain.maxBounds() > PlacingCogwheelChain.MAX_CHAIN_BOUNDS)
+        if (this.worldSpacePartialChain.getSize() > BnbConfigs.server().COGWHEEL_MAX_NODE_COUNT.get())
+            return;
+
+        if (this.worldSpacePartialChain.maxBounds() > BnbConfigs.server().COGWHEEL_MAX_BOUNDS.get())
             return;
 
         if (this.worldSpacePartialChain.checkMissingNodesInLevel(player.level(), this.chainType))
@@ -69,8 +74,8 @@ public record PlaceCogwheelChainPacket(
         final List<PathedCogwheelNode> chainGeometry;
         try {
             chainGeometry = CogwheelChainPathfinder.buildChainPath(this.worldSpacePartialChain);
-        } catch (final
-        ChainInteractionFailedException ignored) { //We assume the client has been notified if the path was invalid, anything else is tampering
+        } catch (final ChainInteractionFailedException e) {
+            CreateBitsnBobs.LOGGER.warn("Client sent an invalid chain placement request: {}", e.getMessage());
             return;
         }
         if (chainGeometry == null)

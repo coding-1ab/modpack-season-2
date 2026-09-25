@@ -3,6 +3,8 @@ package com.kipti.bnb;
 import com.cake.azimuth.ponder.PonderForeignLabelRegistry;
 import com.cake.struts.compat.flywheel.StrutsFlywheelCompatLoader;
 import com.cake.struts.content.StrutModelManipulator;
+import com.kipti.bnb.content.decoration.cogwheel_material.CogwheelMaterialContext;
+import com.kipti.bnb.content.decoration.cogwheel_material.CogwheelMaterialRenderer;
 import com.kipti.bnb.content.kinetics.gigantic_cogwheel.GiganticCogwheelRenderer;
 import com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.block_entity.HeadlampRenderCache;
 import com.kipti.bnb.content.trinkets.light.headlamp.rendering.pipeline.block_entity.HeadlampVertexBufferCache;
@@ -17,7 +19,6 @@ import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.createmod.catnip.render.SuperByteBufferCache;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -39,6 +40,7 @@ public class CreateBitsnBobsClient {
         final IEventBus eventBus = container.getEventBus();
 
         BnbInstanceTypes.init();
+        CogwheelMaterialRenderer.init();
 
         eventBus.addListener(this::onClientSetup);
         eventBus.addListener(this::registerAdditionalModels);
@@ -50,26 +52,30 @@ public class CreateBitsnBobsClient {
 
     private static void clientInit() {
         PonderIndex.addPlugin(new BnbPonderPlugin());
-        PonderForeignLabelRegistry.register(CreateBitsnBobs.MOD_ID, Component.translatable("bits_n_bobs.ponder.foreign_label"));
+        PonderForeignLabelRegistry.register(
+                CreateBitsnBobs.MOD_ID, "bits n bobs"
+        );
 
         BnbPartialModels.register();
         BnbSpriteShifts.register();
 
         SuperByteBufferCache.getInstance().registerCompartment(GiganticCogwheelRenderer.GIGANTIC_COGWHEEL_CACHE);
+        SuperByteBufferCache.getInstance().registerCompartment(CogwheelMaterialContext.COGWHEEL_MATERIAL);
 
         StrutsFlywheelCompatLoader.registerStrutVisual(BnbBlockEntities.GIRDER_STRUT.get());
 
         // TODO: BaseConfigScreen.withButtonLabels only accepts String, not Component — cannot localize
-        BaseConfigScreen.setDefaultActionFor(CreateBitsnBobs.MOD_ID, base -> base
-                .withButtonLabels(null, "Feature Settings", "Balancing Settings")
-                .withSpecs(null, BnbConfigs.common().specification, BnbConfigs.server().specification)
+        BaseConfigScreen.setDefaultActionFor(
+                CreateBitsnBobs.MOD_ID, base -> base
+                        .withButtonLabels(null, "Feature Settings", "Balancing Settings")
+                        .withSpecs(null, BnbConfigs.common().specification, BnbConfigs.server().specification)
         );
     }
 
     private void registerAdditionalModels(final ModelEvent.RegisterAdditional event) {
         event.register(ModelResourceLocation.standalone(BnbStrutDefinitions.NORMAL_MODEL.segmentModelLocation()));
         event.register(ModelResourceLocation.standalone(BnbStrutDefinitions.WEATHERED_MODEL.segmentModelLocation()));
-        event.register(ModelResourceLocation.standalone(BnbStrutDefinitions.WOODEN_MODEL.segmentModelLocation()));
+//        event.register(ModelResourceLocation.standalone(BnbStrutDefinitions.WOODEN_MODEL.segmentModelLocation()));
         event.register(ModelResourceLocation.standalone(BnbStrutDefinitions.CABLE_MODEL.segmentModelLocation()));
     }
 
@@ -77,7 +83,6 @@ public class CreateBitsnBobsClient {
         StrutModelManipulator.invalidateMeshes();
         HeadlampRenderCache.clearCaches();
         HeadlampVertexBufferCache.clear();
-        SuperByteBufferCache.getInstance().invalidate(GiganticCogwheelRenderer.GIGANTIC_COGWHEEL_CACHE);
     }
 
     @EventBusSubscriber(Dist.CLIENT)
@@ -87,7 +92,10 @@ public class CreateBitsnBobsClient {
             final ModContainer modContainer = ModList.get()
                     .getModContainerById(CreateBitsnBobs.MOD_ID)
                     .orElseThrow(() -> new IllegalStateException("Bits n Bobs mod container missing on LoadComplete"));
-            final Supplier<IConfigScreenFactory> configScreen = () -> (mc, previousScreen) -> new BaseConfigScreen(previousScreen, CreateBitsnBobs.MOD_ID);
+            final Supplier<IConfigScreenFactory> configScreen = () -> (mc, previousScreen) -> new BaseConfigScreen(
+                    previousScreen,
+                    CreateBitsnBobs.MOD_ID
+            );
             modContainer.registerExtensionPoint(IConfigScreenFactory.class, configScreen);
         }
     }

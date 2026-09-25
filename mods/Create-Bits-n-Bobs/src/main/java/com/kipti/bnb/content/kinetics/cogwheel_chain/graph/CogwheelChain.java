@@ -22,8 +22,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -97,6 +97,16 @@ public class CogwheelChain {
         this.type = type;
         this.returnedItem = returnedItem;
         this.updateInsideOutsideFlip();
+    }
+
+    public AABB getRenderBounds() {
+        AABB bounds = null;
+        for (final RenderedChainPathNode node : this.renderedNodes) {
+            final Vec3 pos = node.getPosition();
+            final AABB nodeBox = new AABB(pos, pos);
+            bounds = bounds == null ? nodeBox : bounds.minmax(nodeBox);
+        }
+        return bounds == null ? null : bounds.inflate(0.5);
     }
 
     public @Nullable PathedCogwheelNode getNodeFromControllerOffset(final Vec3i controllerOffset) {
@@ -174,9 +184,10 @@ public class CogwheelChain {
             isController = false;
         }
 
-        final BlockEntity be = level.getBlockEntity(controllerPos);
-        if (be instanceof final KineticBlockEntity kbe) {
-            kbe.updateSpeed = true;
+        for (final PlacingCogwheelNode node : source.getVisitedNodes()) {
+            if (level.getBlockEntity(node.pos()) instanceof final KineticBlockEntity kbe) {
+                kbe.updateSpeed = true;
+            }
         }
     }
 
@@ -193,7 +204,7 @@ public class CogwheelChain {
         );
 
         if (behaviour.isPartOfChain()) {
-            behaviour.destroyChain(isCreative, true);
+            behaviour.destroyChain(!isCreative, true);
         }
 
         if (isController) {

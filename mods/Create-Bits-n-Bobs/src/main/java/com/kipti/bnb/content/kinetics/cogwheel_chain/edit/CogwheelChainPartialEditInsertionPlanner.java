@@ -7,6 +7,7 @@ import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelNode;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.placement.ChainInteractionFailedException;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.segment.CogwheelChainSegment;
+import com.kipti.bnb.registry.core.BnbConfigs;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
@@ -20,34 +21,31 @@ import java.util.List;
 public class CogwheelChainPartialEditInsertionPlanner {
 
     /**
-     * Plans an insertion using the in-world block state at the proposed position.
-     * Used server-side after the cogwheel block has been placed.
+     * Plans an insertion using the in-world block state at the proposed position. Used server-side after the cogwheel
+     * block has been placed.
      */
     public static @Nullable CogwheelChainPartialEditInsertionPlan plan(final CogwheelChain existingChain,
-                                                                       final CogwheelChainPartialEditContext editContext,
+                                                                       final CogwheelChainPartialEdit editContext,
                                                                        final BlockPos proposedPos,
-                                                                       final BlockState proposedState) {
+                                                                       final BlockState proposedState)
+            throws ChainInteractionFailedException {
         final CogwheelChainCandidate candidate = CogwheelChainCandidate.getForBlock(proposedState);
         if (candidate == null)
             return null;
         if (!editContext.chainType().getCogwheelPredicate().test(proposedState.getBlock()))
             return null;
-        try {
-            return planWithCandidate(existingChain, editContext, proposedPos, candidate);
-        } catch (final ChainInteractionFailedException ignored) {
-            return null;
-        }
+        return planWithCandidate(existingChain, editContext, proposedPos, candidate);
     }
 
     /**
-     * Plans an insertion using a pre-computed candidate.
-     * Used client-side for preview when the cogwheel block has not yet been placed.
+     * Plans an insertion using a pre-computed candidate. Used client-side for preview when the cogwheel block has not
+     * yet been placed.
      */
     public static @Nullable CogwheelChainPartialEditInsertionPlan planWithCandidate(final CogwheelChain existingChain,
-                                                                                    final CogwheelChainPartialEditContext editContext,
+                                                                                    final CogwheelChainPartialEdit editContext,
                                                                                     final BlockPos proposedPos,
                                                                                     final CogwheelChainCandidate candidate)
-            throws ChainInteractionFailedException {
+        throws ChainInteractionFailedException {
         if (existingChain.getChainType() != editContext.chainType())
             return null;
         if (editContext.segment().type() != CogwheelChainSegment.SegmentType.BETWEEN_NODES)
@@ -60,38 +58,40 @@ public class CogwheelChainPartialEditInsertionPlanner {
             return null;
 
         final PlacingCogwheelNode proposedNode = new PlacingCogwheelNode(
-                proposedPos, candidate.axis(), candidate.isLarge(), candidate.hasSmallCogwheelOffset());
+            proposedPos, candidate.axis(), candidate.isLarge(), candidate.hasSmallCogwheelOffset());
         PlacingCogwheelChain.validateConnection(
-                resolvedSegment.startNode(), proposedNode, null, editContext.chainType());
+            resolvedSegment.startNode(), proposedNode, null, editContext.chainType());
         PlacingCogwheelChain.validateConnection(
-                proposedNode, resolvedSegment.endNode(), resolvedSegment.startNode(), editContext.chainType());
+            proposedNode, resolvedSegment.endNode(), resolvedSegment.startNode(), editContext.chainType());
 
         final List<PlacingCogwheelNode> rebuiltNodes = new ArrayList<>(resolvedSegment.existingWorldNodes());
         rebuiltNodes.add(resolvedSegment.insertionIndex(), proposedNode);
 
         final PlacingCogwheelChain rebuiltChain = new PlacingCogwheelChain(rebuiltNodes);
-        if (rebuiltChain.maxBounds() > PlacingCogwheelChain.MAX_CHAIN_BOUNDS)
+        if (rebuiltChain.getSize() > BnbConfigs.server().COGWHEEL_MAX_NODE_COUNT.get())
+            throw new ChainInteractionFailedException("out_of_node_count");
+        if (rebuiltChain.maxBounds() > BnbConfigs.server().COGWHEEL_MAX_BOUNDS.get())
             return null;
 
         final int oldCost = resolvedSegment.existingChain().getChainsRequiredInLoop(editContext.chainType());
         final int newCost = rebuiltChain.getChainsRequiredInLoop(editContext.chainType());
         return new CogwheelChainPartialEditInsertionPlan(
-                resolvedSegment.startNode(),
-                resolvedSegment.endNode(),
-                proposedNode,
-                resolvedSegment.insertionIndex(),
-                rebuiltChain,
-                oldCost,
-                newCost
+            resolvedSegment.startNode(),
+            resolvedSegment.endNode(),
+            proposedNode,
+            resolvedSegment.insertionIndex(),
+            rebuiltChain,
+            oldCost,
+            newCost
         );
     }
 
     public static PlacingCogwheelNode toWorldNode(final PathedCogwheelNode pathedNode, final BlockPos controllerPos) {
         return new PlacingCogwheelNode(
-                controllerPos.offset(pathedNode.localPos()),
-                pathedNode.rotationAxis(),
-                pathedNode.isLarge(),
-                pathedNode.hasSmallCogwheelOffset()
+            controllerPos.offset(pathedNode.localPos()),
+            pathedNode.rotationAxis(),
+            pathedNode.isLarge(),
+            pathedNode.hasSmallCogwheelOffset()
         );
     }
 
@@ -119,7 +119,7 @@ public class CogwheelChainPartialEditInsertionPlanner {
     }
 
     private static @Nullable ResolvedSegment resolveSegment(final CogwheelChain existingChain,
-                                                            final CogwheelChainPartialEditContext editContext) {
+                                                            final CogwheelChainPartialEdit editContext) {
         final List<PathedCogwheelNode> existingNodes = existingChain.getChainPathCogwheelNodes();
         if (existingNodes.size() < 2) {
             return null;
@@ -148,11 +148,11 @@ public class CogwheelChainPartialEditInsertionPlanner {
         }
 
         return new ResolvedSegment(
-                new PlacingCogwheelChain(existingWorldNodes),
-                existingWorldNodes,
-                startNode,
-                endNode,
-                startNodeIndex + 1
+            new PlacingCogwheelChain(existingWorldNodes),
+            existingWorldNodes,
+            startNode,
+            endNode,
+            startNodeIndex + 1
         );
     }
 
@@ -165,7 +165,8 @@ public class CogwheelChainPartialEditInsertionPlanner {
         return worldNodes;
     }
 
-    private static boolean containsNodeAt(final List<PlacingCogwheelNode> existingWorldNodes, final BlockPos proposedPos) {
+    private static boolean containsNodeAt(final List<PlacingCogwheelNode> existingWorldNodes,
+                                          final BlockPos proposedPos) {
         for (final PlacingCogwheelNode existingNode : existingWorldNodes) {
             if (existingNode.pos().equals(proposedPos)) {
                 return true;
@@ -179,5 +180,7 @@ public class CogwheelChainPartialEditInsertionPlanner {
                                    PlacingCogwheelNode startNode,
                                    PlacingCogwheelNode endNode,
                                    int insertionIndex) {
+
     }
+
 }

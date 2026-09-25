@@ -3,7 +3,6 @@ package com.kipti.bnb;
 import com.cake.azimuth.lang.IncludeLangDefaults;
 import com.cake.azimuth.lang.LangDefault;
 import com.cake.azimuth.registration.BehaviourApplicators;
-import com.cake.azimuth.registration.VisualWrapperInterest;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.BnbCogwheelChainTypes;
 import com.kipti.bnb.network.BnbPackets;
 import com.kipti.bnb.registry.azimuth.BnbBehaviourApplicators;
@@ -26,6 +25,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -49,11 +49,17 @@ public class CreateBitsnBobs {
     public static final CreateRegistrate REGISTRATE = CreateRegistrate.create(MOD_ID)
             .defaultCreativeTab((ResourceKey<CreativeModeTab>) null)
             .setTooltipModifierFactory(item ->
-                                               new ItemDescription.Modifier(item, FontHelper.Palette.STANDARD_CREATE)
-                                                       .andThen(TooltipModifier.mapNull(KineticStats.create(item)))
+                    new ItemDescription.Modifier(item, FontHelper.Palette.STANDARD_CREATE)
+                            .andThen(TooltipModifier.mapNull(KineticStats.create(item)))
             );
 
     public CreateBitsnBobs(final IEventBus modEventBus, final ModContainer modContainer) {
+        LOGGER.info("Bits 'n' Bobs is present!");
+        LOGGER.info("Sorry for the disruption if any, I do poke around with the graphics of other mods");
+
+        warnAboutCogwheelAssetReplacement("create_connected", "Create: Connected");
+        warnAboutCogwheelAssetReplacement("create_hypertube", "Create: Hypertubes");
+
         modEventBus.addListener(CreateBitsnBobsData::gatherData);
         final ModLoadingContext modLoadingContext = ModLoadingContext.get();
 
@@ -92,12 +98,17 @@ public class CreateBitsnBobs {
     }
 
     private static void commonSetup(final FMLCommonSetupEvent event) {
-        BehaviourApplicators.resolveRegisteredTypes();//TODO: CORRECT FUCKING LCOATION
-        VisualWrapperInterest.resolve();
+        BehaviourApplicators.resolveRegisteredTypes();//TODO: CORRECT FUCKING LCOATION - edit: wtf this mean???
     }
 
     public static ResourceLocation asResource(final String s) {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, s);
+    }
+
+    private static void warnAboutCogwheelAssetReplacement(final String modId, final String modName) {
+        if (ModList.get().isLoaded(modId)) {
+            LOGGER.warn("Bits 'n' bobs is replacing cogwheel assets inside {} so they can be remapped to wooden materials!", modName);
+        }
     }
 
 }

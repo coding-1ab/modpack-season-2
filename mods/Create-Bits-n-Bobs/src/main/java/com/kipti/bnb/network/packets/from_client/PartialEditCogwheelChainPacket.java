@@ -3,7 +3,7 @@ package com.kipti.bnb.network.packets.from_client;
 import com.cake.azimuth.behaviour.SuperBlockEntityBehaviour;
 import com.kipti.bnb.CreateBitsnBobs;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.behaviour.CogwheelChainBehaviour;
-import com.kipti.bnb.content.kinetics.cogwheel_chain.edit.CogwheelChainPartialEditContext;
+import com.kipti.bnb.content.kinetics.cogwheel_chain.edit.CogwheelChainPartialEdit;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.edit.CogwheelChainPartialEditInsertionPlan;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.edit.CogwheelChainPartialEditInsertionPlanner;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.*;
@@ -37,8 +37,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * Sent from client to server when a player confirms a partial chain edit.
- * The server places the cogwheel block, then inserts the new node into the chain.
+ * Sent from client to server when a player confirms a partial chain edit. The server places the cogwheel block, then
+ * inserts the new node into the chain.
  */
 public record PartialEditCogwheelChainPacket(
         BlockPos controllerPos,
@@ -96,7 +96,7 @@ public record PartialEditCogwheelChainPacket(
                 this.controllerPos.getX() + 0.5,
                 this.controllerPos.getY() + 0.5,
                 this.controllerPos.getZ() + 0.5
-        ) > PlacingCogwheelChain.MAX_CHAIN_INTERACTION_DISTANCE_SQ)
+        ) > PlacingCogwheelChain.getCogwheelMaxInteractionDistanceSq())
             return;
         if (player.distanceToSqr(
                 this.newCogwheelPos.getX() + 0.5,
@@ -142,18 +142,24 @@ public record PartialEditCogwheelChainPacket(
 
         level.setBlock(this.newCogwheelPos, placementState, Block.UPDATE_ALL);
 
-        final CogwheelChainPartialEditContext editContext = this.resolveEditContext(existingChain);
+        final CogwheelChainPartialEdit editContext = this.resolveEditContext(existingChain);
         if (editContext == null) {
             level.setBlock(this.newCogwheelPos, originalState, Block.UPDATE_ALL);
             return;
         }
 
-        final CogwheelChainPartialEditInsertionPlan insertionPlan = CogwheelChainPartialEditInsertionPlanner.plan(
-                existingChain,
-                editContext,
-                this.newCogwheelPos,
-                placementState
-        );
+        final CogwheelChainPartialEditInsertionPlan insertionPlan;
+        try {
+            insertionPlan = CogwheelChainPartialEditInsertionPlanner.plan(
+                    existingChain,
+                    editContext,
+                    this.newCogwheelPos,
+                    placementState
+            );
+        } catch (final ChainInteractionFailedException e) {
+            CreateBitsnBobs.LOGGER.warn("Client sent an invalid chain edit request: {}", e.getMessage());
+            return;
+        }
         if (insertionPlan == null) {
             level.setBlock(this.newCogwheelPos, originalState, Block.UPDATE_ALL);
             return;
@@ -165,7 +171,12 @@ public record PartialEditCogwheelChainPacket(
             return;
         }
 
-        final List<PathedCogwheelNode> chainGeometry = this.buildChainGeometry(rebuiltChain);
+        final List<PathedCogwheelNode> chainGeometry;
+        try {
+            chainGeometry = this.buildChainGeometry(rebuiltChain);
+        } catch (final ChainInteractionFailedException e) {
+            throw new RuntimeException("Failed to place into level after insertion plan was generated: " + e.getMessage(), e);
+        }
         if (chainGeometry == null) {
             level.setBlock(this.newCogwheelPos, originalState, Block.UPDATE_ALL);
             return;
@@ -236,7 +247,7 @@ public record PartialEditCogwheelChainPacket(
         return blockItem.getBlock().getStateForPlacement(placeContext);
     }
 
-    private @Nullable CogwheelChainPartialEditContext resolveEditContext(final CogwheelChain existingChain) {
+    private @Nullable CogwheelChainPartialEdit resolveEditContext(final CogwheelChain existingChain) {
         final CogwheelChainSegment authoritativeSegment = CogwheelChainPartialEditInsertionPlanner.resolveBetweenNodesSegment(
                 existingChain,
                 this.startNodeIndex
@@ -244,8 +255,8 @@ public record PartialEditCogwheelChainPacket(
         if (authoritativeSegment == null || !this.isWithinSelectedSegment(authoritativeSegment))
             return null;
 
-        return new CogwheelChainPartialEditContext(
-                this.controllerPos,
+        return new CogwheelChainPartialEdit(
+                this.controllerPos.immutable(),
                 this.chainPosition,
                 authoritativeSegment,
                 this.startNodeIndex,
@@ -262,12 +273,9 @@ public record PartialEditCogwheelChainPacket(
                 && this.chainPosition - SEGMENT_POSITION_EPSILON <= authoritativeSegment.endDist();
     }
 
-    private @Nullable List<PathedCogwheelNode> buildChainGeometry(final PlacingCogwheelChain rebuiltChain) {
-        try {
-            return CogwheelChainPathfinder.buildChainPath(rebuiltChain);
-        } catch (final ChainInteractionFailedException ignored) {
-            return null;
-        }
+    private @Nullable List<PathedCogwheelNode> buildChainGeometry(final PlacingCogwheelChain rebuiltChain)
+            throws ChainInteractionFailedException {
+        return CogwheelChainPathfinder.buildChainPath(rebuiltChain);
     }
 
     private boolean tryConsumeChains(final ServerPlayer player, final Item chainItem, final int addedCost) {
@@ -338,4 +346,5 @@ public record PartialEditCogwheelChainPacket(
     public PacketTypeProvider getTypeProvider() {
         return BnbPackets.PARTIAL_EDIT_COGWHEEL_CHAIN;
     }
+
 }

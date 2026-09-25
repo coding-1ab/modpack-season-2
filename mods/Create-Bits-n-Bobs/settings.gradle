@@ -2,6 +2,7 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         maven { url = 'https://maven.neoforged.net/releases' }
+        maven { url = 'https://maven.azmod.net/releases' }
     }
 }
 
@@ -20,6 +21,14 @@ if (azimuthBuild.exists()) {
 def strutYourStuffBuild = file('../Strut-Your-Stuff')
 if (strutYourStuffBuild.exists()) {
     includeBuild('../Strut-Your-Stuff') {
+        dependencySubstitution {
+            substitute module('com.cake.struts:struts') using project(':')
+        }
+    }
+}
+def strutYourStuffActualNameBuild = file('../StrutYourStuff')
+if (strutYourStuffActualNameBuild.exists()) {
+    includeBuild('../StrutYourStuff') {
         dependencySubstitution {
             substitute module('com.cake.struts:struts') using project(':')
         }

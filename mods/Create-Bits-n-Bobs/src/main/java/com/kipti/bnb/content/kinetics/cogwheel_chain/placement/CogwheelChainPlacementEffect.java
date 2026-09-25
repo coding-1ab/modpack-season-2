@@ -4,6 +4,7 @@ import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainCandidat
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.CogwheelChainPathfinder;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelChain;
 import com.kipti.bnb.content.kinetics.cogwheel_chain.graph.PlacingCogwheelNode;
+import com.kipti.bnb.registry.core.BnbConfigs;
 import com.simibubi.create.content.equipment.blueprint.BlueprintOverlayRenderer;
 import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
 import net.minecraft.client.Minecraft;
@@ -21,19 +22,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.ChainDriveDisplayRenderer.*;
-import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementInteraction.clearPlacingChain;
-import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementInteraction.getChainItemInHand;
-import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementInteraction.getCurrentBuildingChain;
-import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementInteraction.getCurrentChainItemType;
-import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementInteraction.getCurrentChainLevel;
-import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementInteraction.getCurrentChainType;
+import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.ChainDriveDisplayRenderer.INVALID_COLOUR;
+import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.ChainDriveDisplayRenderer.VALID_COLOUR;
+import static com.kipti.bnb.content.kinetics.cogwheel_chain.placement.CogwheelChainPlacementInteraction.*;
 
 /**
  * Client-side display handler for the normal chain-building placement flow.
  * <p>
- * Renders existing chain nodes (shapes + connections) and provides visual feedback
- * for the next target: outliner for valid connections, particles for invalid or no-target cases.
+ * Renders existing chain nodes (shapes + connections) and provides visual feedback for the next target: outliner for
+ * valid connections, particles for invalid or no-target cases.
  */
 public class CogwheelChainPlacementEffect {
 
@@ -100,15 +97,14 @@ public class CogwheelChainPlacementEffect {
     }
 
     /**
-     * Target is a candidate cogwheel: check connection validity.
-     * Valid → outliner with connections only (no block shape).
-     * Invalid → red particles from last node to target.
+     * Target is a candidate cogwheel: check connection validity. Valid → outliner with connections only (no block
+     * shape). Invalid → red particles from last node to target.
      */
     private static @Nullable BlockPos displayTargetCandidate(final ClientLevel level,
-                                                              final PlacingCogwheelNode lastNode,
-                                                              final BlockPos targetedPos,
-                                                              final BlockState targetedState,
-                                                              final CogwheelChainCandidate candidate) {
+                                                             final PlacingCogwheelNode lastNode,
+                                                             final BlockPos targetedPos,
+                                                             final BlockState targetedState,
+                                                             final CogwheelChainCandidate candidate) {
         if (!getCurrentChainType().getCogwheelPredicate().test(targetedState.getBlock())) {
             ChainDriveDisplayRenderer.renderParticlesBetween(level, lastNode.center(), targetedPos.getCenter(), INVALID_COLOUR);
             return null;
@@ -120,22 +116,23 @@ public class CogwheelChainPlacementEffect {
         final @Nullable PlacingCogwheelNode previousNode = getCurrentBuildingChain().getSize() >= 2
                 ? getCurrentBuildingChain().getNodes().get(getCurrentBuildingChain().getSize() - 2) : null;
 
-        if (isConnectionValid(lastNode, targetNode, previousNode)) {
+        try {
+            isConnectionValid(lastNode, targetNode, previousNode);
             renderTargetConnection(lastNode, targetNode);
             return targetedPos;
+        } catch (final ChainInteractionFailedException ignored) {
+            //ChainInteractionFailedException is normal and expected - no swallowed error
+            return null;
         }
-
-        ChainDriveDisplayRenderer.renderParticlesBetween(level, lastNode.center(), targetNode.center(), INVALID_COLOUR);
-        return null;
     }
 
     /**
-     * No candidate targeted: project hit onto the last node's axis plane and show particles.
-     * Green if within range, red if beyond.
+     * No candidate targeted: project hit onto the last node's axis plane and show particles. Green if within range, red
+     * if beyond.
      */
     private static void displayProjectedTarget(final ClientLevel level,
-                                                final PlacingCogwheelNode lastNode,
-                                                final BlockHitResult hit) {
+                                               final PlacingCogwheelNode lastNode,
+                                               final BlockHitResult hit) {
         final Vec3 lastNodePos = Vec3.atCenterOf(lastNode.pos());
         final Direction.Axis axis = lastNode.rotationAxis();
 
@@ -145,23 +142,20 @@ public class CogwheelChainPlacementEffect {
         final Vec3 projected = toTargeted.subtract(axisNormal.scale(toTargeted.dot(axisNormal))).add(lastNodePos);
 
         final double distance = projected.distanceTo(lastNodePos);
-        final int colour = distance <= MAX_PLACEMENT_RANGE ? VALID_COLOUR : INVALID_COLOUR;
+        final int colour = distance <= BnbConfigs.server().COGWHEEL_MAX_BOUNDS.get() ? VALID_COLOUR : INVALID_COLOUR;
         ChainDriveDisplayRenderer.renderParticlesBetween(level, lastNode.center(), projected, colour);
     }
 
     private static boolean isConnectionValid(final PlacingCogwheelNode from,
-                                              final PlacingCogwheelNode to,
-                                              final @Nullable PlacingCogwheelNode previous) {
-        try {
-            PlacingCogwheelChain.validateConnection(from, to, previous, getCurrentChainType());
-            return true;
-        } catch (final ChainInteractionFailedException ignored) {
-            return false;
-        }
+                                             final PlacingCogwheelNode to,
+                                             final @Nullable PlacingCogwheelNode previous)
+            throws ChainInteractionFailedException {
+        PlacingCogwheelChain.validateConnection(from, to, previous, getCurrentChainType());
+        return true;
     }
 
     private static void renderTargetConnection(final PlacingCogwheelNode lastNode,
-                                                final PlacingCogwheelNode targetNode) {
+                                               final PlacingCogwheelNode targetNode) {
         final int[] sides = ChainPlacementPathDisplayHelper.getPathDisplaySides(getCurrentBuildingChain());
         final int lastSide = sides.length > 0 ? sides[sides.length - 1] : 0;
 
@@ -193,7 +187,7 @@ public class CogwheelChainPlacementEffect {
     }
 
     private static void renderExistingSegment(final PlacingCogwheelNode nodeA, final PlacingCogwheelNode nodeB,
-                                               final int fromSide, final int toSide) {
+                                              final int fromSide, final int toSide) {
         final Vec3 fromOffset = fromSide == 0 ? Vec3.ZERO : CogwheelChainPathfinder.getPathingTangentOnCog(nodeB, nodeA, -fromSide);
         final Vec3 toOffset = toSide == 0 ? Vec3.ZERO : CogwheelChainPathfinder.getPathingTangentOnCog(nodeA, nodeB, toSide);
         ChainDriveDisplayRenderer.renderConnectionLine(

@@ -28,28 +28,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * Client-side state and entry handling for segment-targeted partial chain edits.
- * <p>
- * Flow:
- * <ol>
- *   <li>Player holds cogwheel, right-clicks a chain segment between two cogs → enters edit mode</li>
- *   <li>Display handler shows preview of proposed insertion as the player looks around</li>
- *   <li>Player right-clicks on a valid block surface → cogwheel is placed AND inserted into the chain</li>
- *   <li>Shift+right-click cancels at any point</li>
- * </ol>
- */
 @IncludeLangDefaults(
         @LangDefault(key = "tooltip.bits_n_bobs.chain_drive_partial_edit_hint", value = "Inserting cogwheel into chain drive")
 )
 public class CogwheelChainPartialEditInteractionHandler {
 
-    private static @Nullable CogwheelChainPartialEditContext currentEditContext = null;
+    private static @Nullable CogwheelChainPartialEdit currentEditContext = null;
     private static @Nullable ProposedPlacement proposedPlacement = null;
 
-    /**
-     * @return {@code true} if the interaction was handled by this handler
-     */
     public static boolean onRightClick() {
         final LocalPlayer player = Minecraft.getInstance().player;
         final ClientLevel level = Minecraft.getInstance().level;
@@ -74,7 +60,7 @@ public class CogwheelChainPartialEditInteractionHandler {
     }
 
     private static boolean tryEnterEditMode(final LocalPlayer player, final ClientLevel level) {
-        final CogwheelChainPartialEditContext editContext = resolveSelectedEditContext(player, level);
+        final CogwheelChainPartialEdit editContext = resolveSelectedEditContext(player, level);
         if (editContext == null)
             return false;
 
@@ -92,7 +78,7 @@ public class CogwheelChainPartialEditInteractionHandler {
         if (placement == null)
             return true;
 
-        final CogwheelChainPartialEditContext editContext = currentEditContext;
+        final CogwheelChainPartialEdit editContext = currentEditContext;
         if (editContext == null)
             return true;
 
@@ -126,8 +112,8 @@ public class CogwheelChainPartialEditInteractionHandler {
         return null;
     }
 
-    private static @Nullable CogwheelChainPartialEditContext resolveSelectedEditContext(final LocalPlayer player,
-                                                                                        final ClientLevel level) {
+    private static @Nullable CogwheelChainPartialEdit resolveSelectedEditContext(final LocalPlayer player,
+                                                                                 final ClientLevel level) {
         final BlockPos controllerPos = CogwheelChainInteractionHandler.getSelectedController();
         if (controllerPos == null || !level.isLoaded(controllerPos))
             return null;
@@ -149,8 +135,8 @@ public class CogwheelChainPartialEditInteractionHandler {
         if (segmentNodes == null)
             return null;
 
-        return new CogwheelChainPartialEditContext(
-                controllerPos,
+        return new CogwheelChainPartialEdit(
+                controllerPos.immutable(),
                 chainPosition,
                 selectedSegment,
                 segmentNodes.startNodeIndex(),
@@ -211,7 +197,7 @@ public class CogwheelChainPartialEditInteractionHandler {
         return currentEditContext != null;
     }
 
-    public static @Nullable CogwheelChainPartialEditContext getCurrentEditContext() {
+    public static @Nullable CogwheelChainPartialEdit getCurrentEditContext() {
         return currentEditContext;
     }
 

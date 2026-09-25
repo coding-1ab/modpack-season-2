@@ -8,7 +8,11 @@ import com.kipti.bnb.content.kinetics.flywheel_bearing.mechanics.FlywheelMovemen
 import com.kipti.bnb.mixin_accessor.FlywheelAccessibleKineticNetwork;
 import com.kipti.bnb.registry.core.BnbConfigs;
 import com.simibubi.create.AllSoundEvents;
-import com.simibubi.create.content.contraptions.*;
+import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
+import com.simibubi.create.content.contraptions.AssemblyException;
+import com.simibubi.create.content.contraptions.ControlledContraptionEntity;
+import com.simibubi.create.content.contraptions.IControlContraption;
+import com.simibubi.create.content.contraptions.IDisplayAssemblyExceptions;
 import com.simibubi.create.content.contraptions.bearing.BearingBlock;
 import com.simibubi.create.content.contraptions.bearing.BearingContraption;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
@@ -553,8 +557,8 @@ public class FlywheelBearingBlockEntity extends GeneratingKineticBlockEntity imp
     }
 
     @Override
-    public AABB getRenderBoundingBox() {
-        return super.getRenderBoundingBox().inflate(1);
+    protected AABB createRenderBoundingBox() {
+        return super.createRenderBoundingBox().inflate(1);
     }
 }
 

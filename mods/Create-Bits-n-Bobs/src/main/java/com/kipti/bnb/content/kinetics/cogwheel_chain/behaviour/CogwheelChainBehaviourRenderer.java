@@ -16,21 +16,22 @@ import com.simibubi.create.foundation.render.RenderTypes;
 import dev.engine_room.flywheel.lib.transform.PoseTransformStack;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.animation.AnimationTickHolder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.List;
 import java.util.function.Function;
 
-public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer<KineticBlockEntity> {
+import static com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorRenderer.MIP_DISTANCE;
 
-    public static final int MIP_DISTANCE = 48;
-    public static final int SEAM_DIST = 16;
+public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer<KineticBlockEntity> {
 
     @Override
     public void renderSafe(final SuperBlockEntityBehaviour behaviour,
@@ -56,13 +57,13 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
 
             final float offset = rotationsPerTick == 0 ? 0 : (float) (Math.PI * 2 * rotationsPerTick * time);
 
-            final Vec3 origin = Vec3.atLowerCornerOf(be.getBlockPos());
-            final List<ChainSegment> segments = CogwheelChainRenderGeometryBuilder.buildSegments(chain, origin);
+            final List<ChainSegment> segments = CogwheelChainRenderGeometryBuilder.buildSegments(chain, Vec3.ZERO);
             final double totalChainDistance = segments.stream().mapToDouble(ChainSegment::distance).sum();
             if (totalChainDistance <= 1e-4) {
                 return;
             }
             final double chainTextureSquish = Math.ceil(totalChainDistance) / totalChainDistance;
+            final Matrix3f accumulatedOrientation = new Matrix3f(); //Used to help with orientation when rolling around axes
             for (final ChainSegment segment : segments) {
                 final double stretchOffset = offset + segment.uvStart();
 
@@ -80,7 +81,8 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
                         (float) stretchOffset,
                         (float) chainTextureSquish,
                         type,
-                        flipInsideOutside
+                        flipInsideOutside,
+                        accumulatedOrientation
                 );
             }
         }
@@ -100,7 +102,8 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
                              final float offset,
                              final float textureSquish,
                              final CogwheelChainType type,
-                             final boolean flipInsideOutside) {
+                             final boolean flipInsideOutside,
+                             final Matrix3f accumulatedOrientation) {
         final Vec3 diff = to.subtract(from);
         final double yaw = Mth.RAD_TO_DEG * Mth.atan2(diff.x, diff.z);
         final double pitch = Mth.RAD_TO_DEG * Mth.atan2(
@@ -108,29 +111,24 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
                         .length()
         );
 
-        final BlockPos tilePos = be.getBlockPos();
-
-        final Vec3 startOffset = from.subtract(Vec3.atCenterOf(tilePos));
-
         ms.pushPose();
         final PoseTransformStack chain = TransformStack.of(ms);
-        chain.center();
-        chain.translate(startOffset);
+        chain.translate(from);
 
         final int light1 = lighter.apply(new Vector3f((float) from.x, (float) from.y, (float) from.z));
         final int light2 = lighter.apply(new Vector3f((float) to.x, (float) to.y, (float) to.z));
 
-        final boolean inShipyardLod = ShipyardHelper.isProbablyInShipyard(BlockPos.containing(from));
+        final Vec3 worldCenter = from.lerp(to, 0.5).add(be.getBlockPos().getCenter());
+        final boolean inShipyardLod = ShipyardHelper.isProbablyInShipyard(BlockPos.containing(worldCenter));
 
-//        final boolean far = !inShipyardLod && (Minecraft.getInstance().level == be.getLevel() && !Minecraft.getInstance()
-//                .getBlockEntityRenderDispatcher().camera.getPosition()
-//                .closerThan(from.lerp(to, 0.5), MIP_DISTANCE));
-//        final boolean close = inShipyardLod || (Minecraft.getInstance().level == be.getLevel() && Minecraft.getInstance()
-//                .getBlockEntityRenderDispatcher().camera.getPosition()
-//                .closerThan(from.lerp(to, 0.5), SEAM_DIST));
-
-        final boolean far = false;
-        final boolean close = true;
+        final boolean far = !inShipyardLod && !(Minecraft.getInstance().level == be.getLevel() && !Minecraft.getInstance()
+                .getBlockEntityRenderDispatcher().camera.getPosition()
+                .closerThan(worldCenter, MIP_DISTANCE));
+        final boolean close = inShipyardLod ||
+                Minecraft.getInstance().level != be.getLevel() ||
+                Minecraft.getInstance()
+                        .getBlockEntityRenderDispatcher().camera.getPosition()
+                        .closerThan(worldCenter, MIP_DISTANCE * 0.5);
 
         if (close)
             renderChainSlowerButWithoutGaps(
@@ -147,7 +145,8 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
                     light1,
                     light2,
                     type,
-                    flipInsideOutside
+                    flipInsideOutside,
+                    accumulatedOrientation
             );
         else {
             chain.rotateYDegrees((float) yaw);
@@ -185,7 +184,8 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
                                                         final int lightAtSource,
                                                         final int lightAtDest,
                                                         final CogwheelChainType type,
-                                                        final boolean flipInsideOutside) {
+                                                        final boolean flipInsideOutside,
+                                                        final Matrix3f accumulatedOrientation) {
         final CogwheelChainType.ChainRenderInfo chainRenderInfo = type.getRenderType();
 
         // Calculate corners in world space for the segment ends
@@ -194,20 +194,35 @@ public class CogwheelChainBehaviourRenderer extends BlockEntityBehaviourRenderer
                 to,
                 postTo,
                 chainRenderInfo,
-                toCogwheelAxis
+                toCogwheelAxis,
+                accumulatedOrientation
         );
+        if (fromCogwheelAxis.dot(toCogwheelAxis) < 0.99) {
+            //Let the axes in accumulatedOrientation be relative
+            // Z = forwards / averagedir
+            // Y = perpendicular to forwards and cogwheel axis, this is the radius axis
+            // X = cogwheel axis
+
+            //We need to rotate current X and Y around the Z axis to ensure that when we 'roll' (i.e. cogwheel axis goes from world x to world y) the generated geometry is consistent
+            final int rotationSign = fromCogwheelAxis.cross(toCogwheelAxis).dot(to.subtract(from)) > 0 ? 1 : -1;
+            accumulatedOrientation.mul(new Matrix3f(
+                    0, rotationSign, 0,
+                    -rotationSign, 0, 0,
+                    0, 0, 1
+            ));
+        }
         final List<Vec3> sourcePoints = CogwheelChainRenderGeometryBuilder.getEndPointsForChainJoint(
                 preFrom,
                 from,
                 to,
                 chainRenderInfo,
-                fromCogwheelAxis
+                fromCogwheelAxis,
+                accumulatedOrientation
         );
 
         //This is my shame, i couldnt find a deterministic way to order the points consistently between joints so here we are,
         //Matching it in a post process step
         destinationPoints = CogwheelChainRenderGeometryBuilder.getPointsInClosestOrder(destinationPoints, sourcePoints);
-
         final float length = (float) from.distanceTo(to);
         final float minV = offset * textureSquish;
         final float maxV = length * textureSquish + minV;

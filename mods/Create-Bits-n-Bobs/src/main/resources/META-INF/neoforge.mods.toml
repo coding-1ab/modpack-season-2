@@ -16,7 +16,7 @@ config="${mod_id}.mixins.json"
 [[dependencies.${mod_id}]]
 modId="neoforge"
 type="required"
-versionRange="${neo_version_range}"
+versionRange="[21.1.219,)"
 ordering="NONE"
 side="BOTH"
 
@@ -28,9 +28,16 @@ ordering="NONE"
 side="BOTH"
 
 [[dependencies.${mod_id}]]
+modId="create"
+type="required"
+versionRange="[6.0.10,)"
+ordering="AFTER"
+side="BOTH"
+
+[[dependencies.${mod_id}]]
 modId="azimuth"
 type="required"
-versionRange="[1.2.0,)"
+versionRange="[1.4.6,)"
 ordering="AFTER"
 side="BOTH"
 
@@ -41,3 +48,36 @@ versionRange="[1.0.0,)"
 ordering="AFTER"
 side="BOTH"
 
+[[dependencies.${mod_id}]]
+modId="createcasing"
+type="optional"
+ordering="AFTER"
+side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="dndecor"
+type="optional"
+ordering="AFTER"
+side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="create_connected"
+type="optional"
+ordering="AFTER"
+side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="tfmg"
+type="incompatible"
+reason="TFMG <= 1.2.2 is incompatible with Bits 'n' Bobs. If TFMG 1.2.3 is not released yet, use Create: TFMG Community Edition or TFMG 1.2.2c which is available on the Bits n Bobs mod page"
+ordering="AFTER"
+versionRange="(,1.2.2]"
+side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="bits_n_tracks"
+type="incompatible"
+reason="Bits 'n' Tracks <= 1.0.3.1 targets old code in Bits 'n' Bobs, wait for Bits 'n' Tracks to update the code, or use Bits 'n' Bobs 2.2.9."
+ordering="AFTER"
+versionRange="(,1.0.3.1]"
+side="BOTH"

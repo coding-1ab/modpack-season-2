@@ -9,8 +9,8 @@ import com.kipti.bnb.content.kinetics.cogwheel_chain.shape.CogwheelChainInteract
 import com.kipti.bnb.content.kinetics.cogwheel_chain.types.CogwheelChainType;
 import com.kipti.bnb.network.packets.from_client.PlaceCogwheelChainPacket;
 import com.kipti.bnb.network.packets.from_client.WrenchCogwheelChainPacket;
-import com.kipti.bnb.registry.core.BnbFeatureFlag;
 import com.simibubi.create.AllItems;
+import com.simibubi.create.content.kinetics.chainConveyor.ChainConveyorBlockEntity;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -18,6 +18,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -106,7 +107,7 @@ public class CogwheelChainPlacementInteraction {
             return false;
         }
 
-        if (player.isShiftKeyDown() || (currentChainType != null && currentChainType != heldChainType)) {
+        if (player.isShiftKeyDown() && currentBuildingChain != null || (currentChainType != null && currentChainType != heldChainType)) {
             if (currentBuildingChain != null) {
                 clearPlacingChain();
             }
@@ -127,11 +128,6 @@ public class CogwheelChainPlacementInteraction {
 
         if (targetedCandidate == null) {
             return currentBuildingChain != null;
-        }
-
-        if (!BnbFeatureFlag.COGWHEEL_CHAIN_DRIVES.isEnabled()) {
-            player.displayClientMessage(new ChainInteractionFailedException("config_forbids").getComponent(), true);
-            return true;
         }
 
         if (!heldChainType.getCogwheelPredicate().test(targetedState.getBlock())) {
@@ -188,6 +184,7 @@ public class CogwheelChainPlacementInteraction {
                     heldChainType,
                     chainItemInHand.getItem()
             );
+            player.displayClientMessage(Component.translatable("tooltip.bits_n_bobs.chain_drive_placing_hint"), true);
         } else {
             if (currentBuildingChain.getLastNode().pos().equals(hitPos)) {
                 currentBuildingChain.getNodes().removeLast();
@@ -215,6 +212,19 @@ public class CogwheelChainPlacementInteraction {
                 }
 
                 if (completed) {
+                    final int chainsRequired = getCurrentBuildingChain().getChainsRequiredInLoop(getCurrentChainType());
+
+                    final boolean hasEnough = ChainConveyorBlockEntity.getChainsFromInventory(
+                            player,
+                            getCurrentChainItemType().getDefaultInstance(),
+                            chainsRequired,
+                            true
+                    );
+
+                    if (!hasEnough && !player.hasInfiniteMaterials()) {
+                        throw new ChainInteractionFailedException("not_enough_material");
+                    }
+
                     CatnipServices.NETWORK.sendToServer(new PlaceCogwheelChainPacket(
                             currentBuildingChain,
                             currentChainType,

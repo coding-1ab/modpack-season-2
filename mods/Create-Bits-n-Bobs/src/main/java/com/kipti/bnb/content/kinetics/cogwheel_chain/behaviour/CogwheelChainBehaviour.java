@@ -26,6 +26,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,16 +61,6 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     }
 
     public static void breakChain(final Level level, final BlockPos pos, @Nullable final Player player) {
-        final CogwheelChainBehaviour behaviour = get(level, pos, TYPE);
-        if (behaviour == null)
-            return;
-
-        final boolean infinite = player != null && player.hasInfiniteMaterials();
-        final ItemStack drops = behaviour.destroyChain(player == null, true);
-
-        if (player != null && !infinite && !drops.isEmpty()) {
-            player.getInventory().placeItemBackInInventory(drops);
-        }
     }
 
     @Override
@@ -128,7 +119,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     @Override
     public void initialize() {
         super.initialize();
-        this.syncControllerRegistration();
+        this.updateControlledChain();
         if (this.isPartOfChain() && this.getBlockEntity() instanceof final KineticBlockEntity kbe) {
             kbe.updateSpeed = true;
         }
@@ -137,14 +128,17 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
 
     @Override
     public void unload() {
-        this.unregisterController();
+        this.unregisterControlledChain();
         super.unload();
     }
 
     @Override
     public void remove() {
         super.remove();
-        if (this.isClientSide()) return;
+        if (this.isClientSide() || !this.isPartOfChain()) return;
+
+        if (this.tryTransferOnRemoval()) return;
+
         if (this.isController())
             this.destroyChain(false, false);
         else {
@@ -152,6 +146,39 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
             if (controllerBehaviour == null) return;
             controllerBehaviour.checkIntegrityNextTick = true;
         }
+    }
+
+    /**
+     * See if we are being replaced by a compatible block entity and try transfer our info, ensuring we check integrity next tick
+     */
+    private boolean tryTransferOnRemoval() {
+        final CogwheelChainBehaviour controllerBehaviour = this.resolveControllerBehaviour();
+        if (controllerBehaviour == null) return false;
+        final CogwheelChain chain = controllerBehaviour.getControlledChain();
+        if (chain == null) return false;
+
+        final BlockState replacingState = this.getLevel().getBlockState(this.getPos());
+        final PathedCogwheelNode thisNode = chain.getNodeFromControllerOffset(
+                this.controllerOffset == null ? Vec3i.ZERO : this.controllerOffset
+        );
+        final CogwheelChainCandidate replacingCandidate = CogwheelChainCandidate.getForBlock(replacingState);
+        if (replacingCandidate == null || thisNode == null ||
+                !replacingCandidate.isConsistentWithNode(thisNode) ||
+                !chain.getChainType().getCogwheelPredicate().test(replacingState.getBlock()))
+            return false;
+
+        final BlockEntity replacingBlockEntity = this.getLevel().getBlockEntity(this.getPos());
+        final CogwheelChainBehaviour replacingBehaviour = this.getSameBehaviour(replacingBlockEntity);
+
+        if (replacingBehaviour == null)
+            return false;
+
+        replacingBehaviour.chainsToRefund = this.chainsToRefund;
+        replacingBehaviour.controlledChain = this.controlledChain;
+        replacingBehaviour.controllerOffset = this.controllerOffset;
+        replacingBehaviour.sendData();
+        replacingBehaviour.updateControlledChain();
+        return true;
     }
 
     @Override
@@ -171,7 +198,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
 
         final CogwheelChainBehaviour controller = this.resolveControllerBehaviour();
         if (controller == null) {
-            //Orphaned so assume the original chain was broken so do nothing
+            //Orphaned so assume the original chain was broken, do nothing
             this.disconnectFromChain();
             return ItemStack.EMPTY;
         }
@@ -244,7 +271,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
         } else {
             this.controlledChain = null;
         }
-        this.syncControllerRegistration();
+        this.updateControlledChain();
     }
 
     @Override
@@ -322,7 +349,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     public void setAsController(final CogwheelChain cogwheelChain) {
         this.controlledChain = cogwheelChain;
         this.controllerOffset = null;
-        this.syncControllerRegistration();
+        this.updateControlledChain();
     }
 
     @Override
@@ -366,7 +393,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     }
 
     public void setController(final Vec3i offset) {
-        this.unregisterController();
+        this.unregisterControlledChain();
         this.controlledChain = null;
         this.controllerOffset = offset;
     }
@@ -403,7 +430,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
             final Vec3i transformedOffset = transform.applyWithoutOffset(new BlockPos(this.controllerOffset));
             this.setController(transformedOffset);
         }
-        this.syncControllerRegistration();
+        this.updateControlledChain();
     }
 
     public boolean isPartOfChain() {
@@ -418,6 +445,11 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
     @Override
     public BehaviourRenderSupplier getRenderer() {
         return BnbBlockEntityBehaviourRenderers.COGWHEEL_CHAIN;
+    }
+
+    @Override
+    public @Nullable AABB getRenderBoundingBox() {
+        return this.controlledChain != null ? this.controlledChain.getRenderBounds().move(this.getPos()) : null;
     }
 
     @Override
@@ -505,21 +537,23 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
      * through dead chain links.
      */
     public void clearChainData() {
-        this.unregisterController();
+        this.unregisterControlledChain();
         this.controlledChain = null;
         this.controllerOffset = null;
         this.chainsToRefund = 0;
+        this.invalidateRenderBoundingBox();
     }
 
-    private void syncControllerRegistration() {
+    private void updateControlledChain() {
+        this.invalidateRenderBoundingBox();
         if (this.controlledChain == null) {
-            this.unregisterController();
+            this.unregisterControlledChain();
             return;
         }
-        this.registerController();
+        this.registerControlledChain();
     }
 
-    private void registerController() {
+    private void registerControlledChain() {
         if (!this.hasLevel() || this.controlledChain == null) {
             return;
         }
@@ -532,7 +566,7 @@ public class CogwheelChainBehaviour extends SuperBlockEntityBehaviour implements
         this.registeredControllerPos = currentPos;
     }
 
-    private void unregisterController() {
+    private void unregisterControlledChain() {
         if (!this.hasLevel()) {
             this.registeredControllerPos = null;
             return;

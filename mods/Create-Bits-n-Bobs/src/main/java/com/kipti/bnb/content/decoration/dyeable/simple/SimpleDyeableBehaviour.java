@@ -1,14 +1,14 @@
 package com.kipti.bnb.content.decoration.dyeable.simple;
 
 import com.kipti.bnb.content.decoration.dyeable.BaseDyeableBehaviour;
-import com.kipti.bnb.registry.content.BnbAdvancements;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.DyeItem;
-import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import org.jetbrains.annotations.Nullable;
 
 public class SimpleDyeableBehaviour extends BaseDyeableBehaviour {
 
@@ -18,27 +18,29 @@ public class SimpleDyeableBehaviour extends BaseDyeableBehaviour {
         super(be);
     }
 
-    @Override
-    public BehaviourType<?> getType() {
-        return TYPE;
+    @Nullable
+    public static DyeColor getDyeColor(final BlockEntity blockEntity) {
+        final Level level = blockEntity.getLevel();
+        if (level == null) {
+            return null;
+        }
+
+        return getDyeColor(level, blockEntity.getBlockPos());
+    }
+
+    @Nullable
+    public static DyeColor getDyeColor(final BlockGetter level, final BlockPos pos) {
+        final SimpleDyeableBehaviour behaviour = get(level, pos, TYPE);
+        if (behaviour == null) {
+            return null;
+        }
+
+        return behaviour.getColor();
     }
 
     @Override
-    public void onItemUse(final PlayerInteractEvent.RightClickBlock event) {
-        final ItemStack stack = event.getItemStack();
-        if (!(stack.getItem() instanceof final DyeItem dyeItem)) {
-            return;
-        }
-
-        if (!event.getLevel().isClientSide) {
-            if (event.getEntity() instanceof final Player player) {
-                BnbAdvancements.DYE_FLUID_COMPONENT.awardTo(player);
-            }
-            this.setColor(dyeItem.getDyeColor());
-        }
-
-        event.setCanceled(true);
-        event.setCancellationResult(InteractionResult.SUCCESS);
+    public BehaviourType<?> getType() {
+        return TYPE;
     }
 
 }

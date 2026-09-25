@@ -9,9 +9,14 @@ import com.kipti.bnb.content.decoration.grating.GratingBlock;
 import com.kipti.bnb.content.decoration.grating.GratingPanelBlock;
 import com.kipti.bnb.content.decoration.grating.GratingPanelBlockItem;
 import com.kipti.bnb.content.decoration.grating.GratingPanelCTBehaviour;
-import com.kipti.bnb.content.decoration.strut.BnbStrutBlock;
 import com.kipti.bnb.content.decoration.strut.CableStrutBlock;
-import com.kipti.bnb.content.decoration.truss.*;
+import com.kipti.bnb.content.decoration.strut.GirderStrutBlock;
+import com.kipti.bnb.content.decoration.truss.TrussBlock;
+import com.kipti.bnb.content.decoration.truss.TrussBlockItem;
+import com.kipti.bnb.content.decoration.truss.TrussBlockModel;
+import com.kipti.bnb.content.decoration.truss.TrussFluidPipeBlock;
+import com.kipti.bnb.content.decoration.truss.TrussPipeBlockModel;
+import com.kipti.bnb.content.decoration.truss.TrussShaftBlock;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredConnectedGirderModel;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderBlock;
 import com.kipti.bnb.content.decoration.weathered_girder.WeatheredGirderBlockStateGenerator;
@@ -41,15 +46,14 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 
 import static com.kipti.bnb.CreateBitsnBobs.REGISTRATE;
+//import static com.kipti.bnb.content.decoration.strut.GirderStrutBlock.FLUSH_ANCHOR;
 import static com.simibubi.create.foundation.data.CreateRegistrate.connectedTextures;
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
 import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
 
 @IncludeLangDefaults({
         @LangDefault(key = "block.bits_n_bobs.girder_strut.tooltip.summary", value = "A type of girder used to span a distance _between two anchor points_."),
-        @LangDefault(key = "block.bits_n_bobs.industrial_truss.tooltip.summary", value = "This one is uhh missing stuff to encase pipes and shafts so stay attuned"),
-        @LangDefault(key = "block.bits_n_bobs.industrial_grating_panel.tooltip.summary", value = "This one is uhh missing stuff to encase pipes and shafts so stay attuned"),
-        @LangDefault(key = "message.bits_n_bobs.girder_strut.missing_anchors", value = "You need %s more Girder Struts"),
+        @LangDefault(key = "block.bits_n_bobs.industrial_truss.tooltip.summary", value = "Can be used to _encase pipes and shafts_."),
 })
 public class BnbDecorativeBlocks {
 
@@ -79,7 +83,7 @@ public class BnbDecorativeBlocks {
                             .withPool(p.applyExplosionCondition(
                                     AllBlocks.SHAFT.get(), LootPool.lootPool()
                                             .setRolls(ConstantValue
-                                                              .exactly(1.0F))
+                                                    .exactly(1.0F))
                                             .add(LootItem.lootTableItem(
                                                     AllBlocks.SHAFT.get()))
                             ))
@@ -87,9 +91,9 @@ public class BnbDecorativeBlocks {
             .onRegister(CreateRegistrate.blockModel(() -> WeatheredConnectedGirderModel::new))
             .register();
 
-    public static final BlockEntry<BnbStrutBlock> WEATHERED_GIRDER_STRUT = REGISTRATE.block(
+    public static final BlockEntry<GirderStrutBlock> WEATHERED_GIRDER_STRUT = REGISTRATE.block(
                     "weathered_girder_strut",
-                    p -> new BnbStrutBlock(
+                    p -> new GirderStrutBlock(
                             p,
                             BnbStrutDefinitions.WEATHERED_MODEL
                     )
@@ -116,9 +120,9 @@ public class BnbDecorativeBlocks {
             .build()
             .register();
 
-    public static final BlockEntry<BnbStrutBlock> GIRDER_STRUT = REGISTRATE.block(
+    public static final BlockEntry<GirderStrutBlock> GIRDER_STRUT = REGISTRATE.block(
                     "girder_strut",
-                    p -> new BnbStrutBlock(
+                    p -> new GirderStrutBlock(
                             p,
                             BnbStrutDefinitions.NORMAL_MODEL
                     )
@@ -173,7 +177,7 @@ public class BnbDecorativeBlocks {
                     GratingBlock::new
             )
             .properties(p -> p.mapColor(MapColor.METAL)
-                    .strength(0.1f, 6.0f)
+                    .strength(0.6f, 6.0f)
                     .sound(SoundType.METAL)
                     .noOcclusion()
                     .isSuffocating((state, level, pos) -> false)
@@ -182,6 +186,7 @@ public class BnbDecorativeBlocks {
             .blockstate((c, p) -> p.simpleBlock(c.get()))
             .onRegister(connectedTextures(() -> new SimpleCTBehaviour(BnbSpriteShifts.INDUSTRIAL_GRATING)))
             .addLayer(() -> RenderType::cutout)
+            .tag(AllTags.AllBlockTags.FAN_TRANSPARENT.tag)
             .simpleItem()
             .register();
 
@@ -191,7 +196,7 @@ public class BnbDecorativeBlocks {
             )
             .properties(p -> p.mapColor(MapColor.METAL)
                     .noOcclusion()
-                    .strength(0.1f, 6.0f)
+                    .strength(0.6f, 6.0f)
                     .sound(SoundType.METAL)
                     .isSuffocating((state, level, pos) -> false)
                     .isViewBlocking((state, level, pos) -> false))
@@ -206,6 +211,7 @@ public class BnbDecorativeBlocks {
             .onRegister(connectedTextures(
                     () -> new GratingPanelCTBehaviour(BnbSpriteShifts.INDUSTRIAL_GRATING)))
             .addLayer(() -> RenderType::cutout)
+            .tag(AllTags.AllBlockTags.FAN_TRANSPARENT.tag)
             .item(GratingPanelBlockItem::new)
             .model((c, p) -> p.withExistingParent(
                     c.getName(),
@@ -214,7 +220,7 @@ public class BnbDecorativeBlocks {
             .build()
             .register();
 
-    public static final BlockEntry<TrussBlock> METAL_TRUSS = CreateBitsnBobs.REGISTRATE.block(
+    public static final BlockEntry<TrussBlock> INDUSTRIAL_TRUSS = CreateBitsnBobs.REGISTRATE.block(
                     "industrial_truss",
                     TrussBlock::new
             )
@@ -241,8 +247,8 @@ public class BnbDecorativeBlocks {
             .build()
             .register();
 
-    public static final BlockEntry<TrussFluidPipe> METAL_TRUSS_PIPE =
-            REGISTRATE.block("industrial_truss_pipe", TrussFluidPipe::new)
+    public static final BlockEntry<TrussFluidPipeBlock> METAL_TRUSS_PIPE =
+            REGISTRATE.block("industrial_truss_pipe", TrussFluidPipeBlock::new)
                     .lang("Metal Truss Pipe")
                     .initialProperties(SharedProperties::copperMetal)
                     .transform(pickaxeOnly())
@@ -255,8 +261,8 @@ public class BnbDecorativeBlocks {
                                             Direction.Axis axis = state.getValue(BlockStateProperties.AXIS);
                                             return ConfiguredModel.builder()
                                                     .modelFile(p.models()
-                                                                       .getExistingFile(p.modLoc(
-                                                                               "block/industrial_truss/industrial_truss_pipe")))
+                                                            .getExistingFile(p.modLoc(
+                                                                    "block/industrial_truss/industrial_truss_pipe")))
                                                     .uvLock(false)
                                                     .rotationX(axis == Direction.Axis.Y ? 0 : 90)
                                                     .rotationY(axis == Direction.Axis.X ? 90 : 0)
@@ -269,7 +275,7 @@ public class BnbDecorativeBlocks {
                     .register();
 
     public static final BlockEntry<TrussShaftBlock> METAL_TRUSS_SHAFT = REGISTRATE
-            .block("industrial_truss_shaft", p -> new TrussShaftBlock(p, BnbDecorativeBlocks.METAL_TRUSS::get))
+            .block("industrial_truss_shaft", p -> new TrussShaftBlock(p, BnbDecorativeBlocks.INDUSTRIAL_TRUSS::get))
             .initialProperties(SharedProperties::stone)
             .transform(pickaxeOnly())
             .blockstate((c, p) -> BlockStateGen.axisBlock(
