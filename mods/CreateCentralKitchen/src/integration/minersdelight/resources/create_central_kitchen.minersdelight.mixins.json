@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "priority": 1000,
+  "package": "plus.dragons.createcentralkitchen.mixin.minersdelight",
+  "plugin": "plus.dragons.createcentralkitchen.mixin.UniversalConditionalMixinPlugin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "CopperPotBlockEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}

@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "priority": 1000,
+  "package": "plus.dragons.createcentralkitchen.mixin.extradelight",
+  "plugin": "plus.dragons.createcentralkitchen.mixin.UniversalConditionalMixinPlugin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "CCKJeiPluginMixin",
+    "MechanicalMixerBlockEntityAccessor",
+    "MechanicalPressBlockEntityAccessor",
+    "RecipeFinderMixin",
+    "SingleItemRecipeAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}
