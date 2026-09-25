@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class AdvancedTiltAdapterBlockEntity extends TiltAdapterBlockEntity {
     public static final int DEFAULT_ANGLE_LIMIT = 45;
+    private static final int ANGLE_STATE_VERSION = 1;
 
     public AdvancedTiltAdapterAngleScrollBehaviour leftAngleBehaviour;
     public AdvancedTiltAdapterAngleScrollBehaviour rightAngleBehaviour;
@@ -32,6 +33,9 @@ public class AdvancedTiltAdapterBlockEntity extends TiltAdapterBlockEntity {
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         super.addBehaviours(behaviours);
+
+        leftAngleLimit = AdvancedTiltAdapterAngleScrollBehaviour.clampToConfiguredRange(leftAngleLimit);
+        rightAngleLimit = AdvancedTiltAdapterAngleScrollBehaviour.clampToConfiguredRange(rightAngleLimit);
 
         leftAngleBehaviour = new AdvancedTiltAdapterAngleScrollBehaviour(
             Component.translatable("createpropulsion.advanced_tilt_adapter.left_angle"),
@@ -53,6 +57,7 @@ public class AdvancedTiltAdapterBlockEntity extends TiltAdapterBlockEntity {
 
     /** Called when a side's scroll value changes; keeps independent limits unless shared mode is on. */
     public void onAngleLimitChanged(boolean fromLeft, int value) {
+        value = AdvancedTiltAdapterAngleScrollBehaviour.clampToConfiguredRange(value);
         if (fromLeft) {
             leftAngleLimit = value;
             if (sharedAngles) {
@@ -72,14 +77,7 @@ public class AdvancedTiltAdapterBlockEntity extends TiltAdapterBlockEntity {
         }
         setChanged();
         if (level != null && !level.isClientSide) {
-            targetAngle = clampToAngleLimits(computeTargetAngle());
-            currentAngle = clampToAngleLimits(currentAngle);
-            if (Math.abs(getTheoreticalSpeed()) > 0) {
-                beginOrExtendKineticMove();
-            } else {
-                flickerTicker.scheduleUpdate(this::syncNetworkState);
-            }
-            sendData();
+            requestTargetRecalculation();
         }
     }
 
@@ -109,17 +107,17 @@ public class AdvancedTiltAdapterBlockEntity extends TiltAdapterBlockEntity {
 
     @Override
     protected float getNeutralTargetAngle() {
-        return -DEFAULT_ANGLE_LIMIT;
+        return 0;
     }
 
     @Override
     protected float getPositiveSideAngleRange() {
-        return leftAngleLimit;
+        return AdvancedTiltAdapterAngleScrollBehaviour.clampToConfiguredRange(leftAngleLimit);
     }
 
     @Override
     protected float getNegativeSideAngleRange() {
-        return rightAngleLimit;
+        return AdvancedTiltAdapterAngleScrollBehaviour.clampToConfiguredRange(rightAngleLimit);
     }
 
     @Override
@@ -128,14 +126,28 @@ public class AdvancedTiltAdapterBlockEntity extends TiltAdapterBlockEntity {
         compound.putInt("LeftAngle", leftAngleLimit);
         compound.putInt("RightAngle", rightAngleLimit);
         compound.putBoolean("SharedAngles", sharedAngles);
+        compound.putInt("AngleStateVersion", ANGLE_STATE_VERSION);
     }
 
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound, registries, clientPacket);
-        leftAngleLimit = compound.contains("LeftAngle") ? compound.getInt("LeftAngle") : DEFAULT_ANGLE_LIMIT;
-        rightAngleLimit = compound.contains("RightAngle") ? compound.getInt("RightAngle") : DEFAULT_ANGLE_LIMIT;
+        leftAngleLimit = AdvancedTiltAdapterAngleScrollBehaviour.clampToConfiguredRange(
+            compound.contains("LeftAngle") ? compound.getInt("LeftAngle") : DEFAULT_ANGLE_LIMIT);
+        rightAngleLimit = AdvancedTiltAdapterAngleScrollBehaviour.clampToConfiguredRange(
+            compound.contains("RightAngle") ? compound.getInt("RightAngle") : DEFAULT_ANGLE_LIMIT);
         sharedAngles = compound.getBoolean("SharedAngles");
+
+        if (!compound.contains("AngleStateVersion")) {
+            // Old advanced adapters used -45 degrees as their logical neutral.
+            // Rebase the coordinates without asking the attached mechanism to move.
+            motion.offsetAngles(DEFAULT_ANGLE_LIMIT);
+            computerTargetAngle += DEFAULT_ANGLE_LIMIT;
+        }
+
+        float minimum = -getNegativeSideAngleRange();
+        float maximum = getPositiveSideAngleRange();
+        motion.clampTargets(minimum, maximum);
         if (leftAngleBehaviour != null) {
             leftAngleBehaviour.setStoredValue(leftAngleLimit);
         }

@@ -5,9 +5,11 @@ import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionShapes;
+import dev.propulsionteam.propulsionsimulated.utility.DirectionalPlacement;
 import com.simibubi.create.content.kinetics.base.AbstractEncasedShaftBlock;
 import com.simibubi.create.content.kinetics.base.DirectionalAxisKineticBlock;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
+import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.foundation.block.IBE;
 
 import net.minecraft.core.BlockPos;
@@ -16,6 +18,7 @@ import net.minecraft.core.Direction.Axis;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -59,12 +62,14 @@ public abstract class AbstractTiltAdapterBlock<T extends TiltAdapterBlockEntity>
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        Direction baseDirection = context.getNearestLookingDirection();
+        Direction baseDirection = DirectionalPlacement.nearestLookingDirection(context);
         Player player = context.getPlayer();
+        boolean manualPlacement = player != null && player.isShiftKeyDown();
         Direction placeDirection;
 
-        if (player != null && !player.isShiftKeyDown()) {
-            placeDirection = baseDirection.getOpposite();
+        if (!manualPlacement) {
+            Direction inputSide = getPreferredShaftInput(context);
+            placeDirection = inputSide == null ? baseDirection.getOpposite() : inputSide.getOpposite();
         } else {
             placeDirection = baseDirection;
         }
@@ -74,6 +79,37 @@ public abstract class AbstractTiltAdapterBlock<T extends TiltAdapterBlockEntity>
         return fromFacingAndAlignment(defaultBlockState(), placeDirection, alignedX);
     }
 
+    @Nullable
+    private static Direction getPreferredShaftInput(BlockPlaceContext context) {
+        BlockPos placementPos = context.getClickedPos();
+        Direction clickedInputSide = context.getClickedFace().getOpposite();
+
+        if (hasShaftFacingPlacement(context, placementPos, clickedInputSide)) {
+            return clickedInputSide;
+        }
+
+        Direction preferred = null;
+
+        for (Direction side : Direction.values()) {
+            if (!hasShaftFacingPlacement(context, placementPos, side)) {
+                continue;
+            }
+
+            if (preferred != null && preferred.getAxis() != side.getAxis()) {
+                return null;
+            }
+            preferred = side;
+        }
+        return preferred;
+    }
+
+    private static boolean hasShaftFacingPlacement(BlockPlaceContext context, BlockPos placementPos, Direction side) {
+        BlockPos neighbourPos = placementPos.relative(side);
+        BlockState neighbourState = context.getLevel().getBlockState(neighbourPos);
+        return neighbourState.getBlock() instanceof IRotate rotate
+            && rotate.hasShaftTowards(context.getLevel(), neighbourPos, neighbourState, side.getOpposite());
+    }
+
     @Override
     public BlockState rotate(BlockState state, Rotation rot) {
         if (rot.ordinal() % 2 == 1) {
@@ -81,6 +117,21 @@ public abstract class AbstractTiltAdapterBlock<T extends TiltAdapterBlockEntity>
         }
         Direction facing = state.getValue(DirectionalKineticBlock.FACING);
         return fromFacingAndAlignment(state, rot.rotate(facing), state.getValue(AXIS_ALONG_FIRST_COORDINATE));
+    }
+
+    @Override
+    public BlockState getRotatedBlockState(BlockState state, Direction targetedFace) {
+        Direction facing = getDirection(state);
+        if (facing.getAxis() == targetedFace.getAxis()) {
+            return state;
+        }
+
+        Direction rotatedFacing = facing;
+        do {
+            rotatedFacing = rotatedFacing.getClockWise(targetedFace.getAxis());
+        } while (rotatedFacing.getAxis() == targetedFace.getAxis());
+
+        return fromFacingAndAlignment(state, rotatedFacing, isAxisAlongFirst(state));
     }
 
     @Override
@@ -114,21 +165,31 @@ public abstract class AbstractTiltAdapterBlock<T extends TiltAdapterBlockEntity>
 
     /** World direction of the left (positive differential) redstone input face. */
     public static boolean isShaftFace(BlockState state, Direction face) {
-        return face.getAxis() == state.getValue(AXIS);
+        return face.getAxis() == getDirection(state).getAxis();
     }
 
     public static Direction getShaftFace(BlockState state, boolean positiveAlongAxis) {
         return Direction.fromAxisAndDirection(
-            state.getValue(AXIS),
+            getDirection(state).getAxis(),
             positiveAlongAxis ? Direction.AxisDirection.POSITIVE : Direction.AxisDirection.NEGATIVE
         );
+    }
+
+    @Override
+    public boolean hasShaftTowards(LevelReader world, BlockPos pos, BlockState state, Direction face) {
+        return isShaftFace(state, face);
+    }
+
+    @Override
+    public Axis getRotationAxis(BlockState state) {
+        return getDirection(state).getAxis();
     }
 
     /**
      * Applies the same rotations as {@code advanced_tilt_adapter.json} / {@code tilt_adapter.json} blockstates.
      */
     public static Vec3 applyBlockstateModelRotation(Vec3 vec, BlockState state) {
-        Axis axis = state.getValue(AXIS);
+        Axis axis = getDirection(state).getAxis();
         Direction facing = getDirection(state);
         boolean alongFirst = isAxisAlongFirst(state);
 
@@ -160,7 +221,7 @@ public abstract class AbstractTiltAdapterBlock<T extends TiltAdapterBlockEntity>
 
     /** Extra Y rotation from blockstate (degrees), for value-box label alignment. */
     public static float getBlockstateModelYRotation(BlockState state) {
-        Axis axis = state.getValue(AXIS);
+        Axis axis = getDirection(state).getAxis();
         Direction facing = getDirection(state);
         if (axis == Axis.Z && facing == Direction.SOUTH) {
             return 180;
@@ -214,8 +275,8 @@ public abstract class AbstractTiltAdapterBlock<T extends TiltAdapterBlockEntity>
     }
 
     public static Direction getRedstoneSide(BlockState state, boolean left) {
-        Axis axis = state.getValue(AXIS);
         Direction facing = getDirection(state);
+        Axis axis = facing.getAxis();
         boolean positiveDir = facing.getAxisDirection() == Direction.AxisDirection.POSITIVE;
         boolean alignedX = isAxisAlongFirst(state);
 

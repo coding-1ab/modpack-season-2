@@ -7,14 +7,17 @@ import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.FluidThrusterProperties;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterFuelConsumptionMath;
 import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterFuelManager;
 import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterParticleType;
+import dev.propulsionteam.propulsionsimulated.particles.smoke.ThrusterSmokeParticleData;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionBlockEntities;
 import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
@@ -54,9 +57,11 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     protected double lastOxidizerConsumedMbPerTick = 0.0d;
     protected double fuelDrainAccumulator = 0.0d;
     protected double oxidizerDrainAccumulator = 0.0d;
+    protected double pendingFuelDemandTicks = 0.0d;
     // Ticks to skip multiblock-validity checks after a sublevel move to tolerate transient invalidity.
     private static final int DISASSEMBLY_GRACE_TICKS = 5;
     private int disassemblyCooldown = 0;
+    private boolean reconcileLoadedTopology = true;
 
     public ThrusterBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
@@ -129,14 +134,23 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             }
             return;
         }
+        if (disassemblyCooldown > 0) {
+            disassemblyCooldown--;
+            return;
+        }
+        if (reconcileLoadedTopology) {
+            reconcileLoadedTopology = false;
+            if (!hasConsistentLoadedTopology()) {
+                resetLocalMultiblockState();
+                return;
+            }
+        }
         if (isController() && isMultiblock()) {
-            if (disassemblyCooldown > 0) {
-                disassemblyCooldown--;
-            } else if (!SimulatedThrustAdapter.isOutsideWorldBuildHeight(level, worldPosition)) {
+            if (!SimulatedThrustAdapter.isOutsideWorldBuildHeight(level, worldPosition)) {
                 // Fix: Skip multiblock validation when outside build height to prevent disassembly.
                 Direction facing = getFacing();
                 if (!isValidFormedCube(worldPosition, width, facing)) {
-                    disassembleMulti();
+                    resetLocalMultiblockState();
                     return;
                 }
             }
@@ -147,6 +161,46 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                 tryAssemble();
             }
         }
+    }
+
+    private boolean hasConsistentLoadedTopology() {
+        BlockState state = getBlockState();
+        boolean renderedAsMultiblock = state.hasProperty(ThrusterBlock.MULTIBLOCK)
+            && state.getValue(ThrusterBlock.MULTIBLOCK);
+        if (!isMultiblock()) {
+            return controllerPos == null && !renderedAsMultiblock;
+        }
+
+        ThrusterBlockEntity controller = getControllerBE();
+        if (controller == null || controller.width != width || controller.getClass() != getClass()) {
+            return false;
+        }
+        BlockPos origin = controller.getBlockPos();
+        BlockPos relative = worldPosition.subtract(origin);
+        if (relative.getX() < 0 || relative.getY() < 0 || relative.getZ() < 0
+            || relative.getX() >= width || relative.getY() >= width || relative.getZ() >= width) {
+            return false;
+        }
+        return renderedAsMultiblock
+            && controller.isValidFormedCube(origin, width, controller.getFacing());
+    }
+
+    private void resetLocalMultiblockState() {
+        width = 1;
+        controllerPos = null;
+        updateConnectivity = true;
+        isThrustDirty = true;
+        thrusterData.setThrust(0);
+
+        BlockState state = getBlockState();
+        if (state.hasProperty(ThrusterBlock.MULTIBLOCK) && state.getValue(ThrusterBlock.MULTIBLOCK)) {
+            level.setBlock(worldPosition, state.setValue(ThrusterBlock.MULTIBLOCK, false), Block.UPDATE_CLIENTS);
+            state = getBlockState();
+        }
+        setRedstoneInput(level.getBestNeighborSignal(worldPosition));
+        calculateObstruction(level, worldPosition, state.getValue(AbstractThrusterBlock.FACING));
+        setChanged();
+        notifyUpdate();
     }
 
     protected void tryAssemble() {
@@ -246,6 +300,9 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             t.controllerPos = (t == controller) ? null : origin;
             t.width = size;
             t.isThrustDirty = true;
+            // A newly formed member may still carry its former single-block force.
+            // Clear every cache before the controller calculates the combined thrust.
+            t.thrusterData.setThrust(0.0f);
             BlockPos cellPos = t.getBlockPos();
             BlockState liveState = SimulatedThrustAdapter.getBlockStateSafe(level,cellPos);
             if (liveState.hasProperty(ThrusterBlock.MULTIBLOCK)
@@ -351,11 +408,26 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     @Override
     public AABB getRenderBoundingBox() {
         if (isController() && isMultiblock()) {
+            double extra = 32.0d;
             return new AABB(
-                worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
-                worldPosition.getX() + width, worldPosition.getY() + width, worldPosition.getZ() + width);
+                    worldPosition.getX() - extra,
+                    worldPosition.getY() - extra,
+                    worldPosition.getZ() - extra,
+                    worldPosition.getX() + width + extra,
+                    worldPosition.getY() + width + extra,
+                    worldPosition.getZ() + width + extra
+            );
         }
-        return super.getRenderBoundingBox();
+
+        double extra = 16.0d;
+        return new AABB(
+                worldPosition.getX() - extra,
+                worldPosition.getY() - extra,
+                worldPosition.getZ() - extra,
+                worldPosition.getX() + 1.0d + extra,
+                worldPosition.getY() + 1.0d + extra,
+                worldPosition.getZ() + 1.0d + extra
+        );
     }
 
     private boolean isFrontLayerCell(ThrusterBlockEntity ctrl, Direction cubeFacing) {
@@ -392,11 +464,13 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         // moved. Each afterMove call resets the counter, so the final afterMove determines
         // when reassembly actually runs.
         disassemblyCooldown = DISASSEMBLY_GRACE_TICKS;
+        reconcileLoadedTopology = true;
     }
 
     @Override
     public void updateThrust(BlockState currentBlockState) {
         if (!isController()) {
+            setThrustAndSync(0.0f);
             isThrustDirty = false;
             return;
         }
@@ -407,20 +481,42 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         }
     }
 
+    @Override
+    protected void sampleResourceDemandForTick() {
+        if (!usesFluidFuelAccounting() || !isController() || tank == null || !isWorking()) {
+            return;
+        }
+        FluidThrusterProperties properties = getFuelProperties(fluidStack().getFluid());
+        if (properties == null) {
+            return;
+        }
+        pendingFuelDemandTicks = ThrusterFuelConsumptionMath.accumulateDemand(
+            pendingFuelDemandTicks,
+            getEffectiveThrustPercentage(),
+            properties.consumptionMultiplier()
+        );
+    }
+
+    protected boolean usesFluidFuelAccounting() {
+        return true;
+    }
+
     protected void updateSingleThrust(BlockState currentBlockState) {
         final double prevConsumedMbPerTick = lastConsumedMbPerTick;
         final int prevFuelAmount = tank != null ? tank.getPrimaryHandler().getFluidAmount() : 0;
+        final double sampledFuelDemand = pendingFuelDemandTicks;
+        pendingFuelDemandTicks = 0.0d;
         float thrust = 0;
-        float currentPower = getPower();
+        float currentPower = getEffectiveThrottle();
         lastConsumedMbPerTick = 0.0d;
         if (isWorking() && currentPower > 0) {
             FluidThrusterProperties properties = getFuelProperties(fluidStack().getFluid());
-            float obstructionEffect = calculateObstructionEffect();
-            float thrustPercentage = Math.min(currentPower, obstructionEffect);
+            float thrustPercentage = getEffectiveThrustPercentage();
 
             if (thrustPercentage > 0 && properties != null) {
-                final int tickRate = 10;
-                double requestedConsumption = calculateFuelConsumption(currentPower, properties.consumptionMultiplier(), tickRate);
+                final int tickRate = getThrustUpdateIntervalTicks();
+                double requestedConsumption = ThrusterFuelConsumptionMath.requestedFuel(
+                    getFuelConsumptionPerTickAtFullThrottle(), sampledFuelDemand);
                 int consumption = consumeFuelWithAccumulator(requestedConsumption);
                 FluidStack drainedStack = tank.getPrimaryHandler().drain(consumption, IFluidHandler.FluidAction.EXECUTE);
                 int fuelConsumed = drainedStack.getAmount();
@@ -442,7 +538,9 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         setThrustAndSync(thrust);
         if (didSingleTooltipTelemetryChange(prevConsumedMbPerTick, prevFuelAmount)) {
             setChanged();
-            notifyUpdate();
+            if (shouldSyncFuelTelemetryImmediately()) {
+                notifyUpdate();
+            }
         }
         isThrustDirty = false;
     }
@@ -461,19 +559,21 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         final double prevOxidizerConsumedMbPerTick = lastOxidizerConsumedMbPerTick;
         final int prevFuelAmount = tank != null ? tank.getPrimaryHandler().getFluidAmount() : 0;
         final int prevOxidizerAmount = oxidizerTank != null ? oxidizerTank.getPrimaryHandler().getFluidAmount() : 0;
+        final double sampledFuelDemand = pendingFuelDemandTicks;
+        pendingFuelDemandTicks = 0.0d;
         int n = width * width * width;
         float totalThrust = 0;
-        float currentPower = getPower();
+        float currentPower = getEffectiveThrottle();
         lastConsumedMbPerTick = 0.0d;
         lastOxidizerConsumedMbPerTick = 0.0d;
 
         if (isWorking() && currentPower > 0) {
             FluidThrusterProperties properties = getFuelProperties(fluidStack().getFluid());
-            float obstructionEffect = calculateObstructionEffect();
-            float thrustPercentage = Math.min(currentPower, obstructionEffect);
+            float thrustPercentage = getEffectiveThrustPercentage();
             if (thrustPercentage > 0 && properties != null) {
-                final int tickRate = 10;
-                double baseConsumption = calculateFuelConsumption(currentPower, properties.consumptionMultiplier(), tickRate);
+                final int tickRate = getThrustUpdateIntervalTicks();
+                double baseConsumption = ThrusterFuelConsumptionMath.requestedFuel(
+                    getFuelConsumptionPerTickAtFullThrottle(), sampledFuelDemand);
                 
                 boolean canUseOxidizer = validOxidizer();
                 // Multiblock fuel efficiency always applies; oxidizer adds an extra multiplier.
@@ -517,7 +617,9 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         setThrustAndSync(totalThrust);
         if (didMultiTooltipTelemetryChange(prevConsumedMbPerTick, prevOxidizerConsumedMbPerTick, prevFuelAmount, prevOxidizerAmount)) {
             setChanged();
-            notifyUpdate();
+            if (shouldSyncFuelTelemetryImmediately()) {
+                notifyUpdate();
+            }
         }
         BlockPos origin = worldPosition;
         for (int x = 0; x < width; x++) {
@@ -652,6 +754,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     public void sable$physicsTick(final dev.ryanhcode.sable.sublevel.ServerSubLevel subLevel, final dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle handle, final double timeStep) {
         if (isMultiblock() && !isController()) return;
         if (isMultiblock()) {
+            if (!isActive()) return;
             float thrust = getCurrentThrust();
             if (thrust <= 0.0f || !Float.isFinite(thrust)) return;
             Vector3d directionLocal = new Vector3d(getThrustDirectionLocal()).normalize();
@@ -706,6 +809,52 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         return redstoneInput / 15.0f;
     }
 
+    @Override
+    public void setDigitalInput(float power) {
+        if (!isController() && isMultiblock()) {
+            ThrusterBlockEntity controller = getControllerBE();
+            if (controller != null) {
+                controller.setDigitalInput(power);
+                return;
+            }
+        }
+        super.setDigitalInput(power);
+    }
+
+    @Override
+    public void setControlMode(ControlMode mode) {
+        if (!isController() && isMultiblock()) {
+            ThrusterBlockEntity controller = getControllerBE();
+            if (controller != null) {
+                controller.setControlMode(mode);
+                return;
+            }
+        }
+        super.setControlMode(mode);
+    }
+
+    @Override
+    public float getCurrentThrust() {
+        if (!isController() && isMultiblock()) {
+            ThrusterBlockEntity controller = getControllerBE();
+            if (controller != null) {
+                return controller.getCurrentThrust();
+            }
+        }
+        return super.getCurrentThrust();
+    }
+
+    @Override
+    public float getStartupProgress() {
+        if (!isController() && isMultiblock()) {
+            ThrusterBlockEntity controller = getControllerBE();
+            if (controller != null) {
+                return controller.getStartupProgress();
+            }
+        }
+        return super.getStartupProgress();
+    }
+
     private int getAggregatedRedstone() {
         int max = redstoneInput;
         if (level == null) return max;
@@ -730,7 +879,10 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         this.redstoneInput = power;
         if (controlMode == ControlMode.NORMAL) {
             dirtyThrust();
-            notifyUpdate();
+            setChanged();
+            if (shouldSyncThrottleImmediately()) {
+                notifyUpdate();
+            }
         }
         if (isMultiblock() && !isController()) {
             ThrusterBlockEntity ctrl = getControllerBE();
@@ -739,6 +891,14 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
                 ctrl.notifyUpdate();
             }
         }
+    }
+
+    protected boolean shouldSyncThrottleImmediately() {
+        return true;
+    }
+
+    protected boolean shouldSyncFuelTelemetryImmediately() {
+        return true;
     }
 
     protected boolean validOxidizer() {
@@ -751,8 +911,8 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
     }
 
     @Override
-    public boolean shouldEmitParticles() {
-        if (!super.shouldEmitParticles()) {
+    public boolean shouldEmitPlume() {
+        if (!super.shouldEmitPlume()) {
             return false;
         }
         if (isMultiblock()) {
@@ -766,89 +926,165 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
 
     @Override
     public void emitParticles(Level level, BlockPos pos, BlockState state) {
-        if (!(isController() && isMultiblock())) {
-            super.emitParticles(level, pos, state);
-            return;
-        }
-        if (!shouldEmitParticles()) return;
-        float power = getPower();
-        float emissionScale = (float) Math.max(power, MathUtility.epsilon);
-        if (power <= 0) return;
+        if (!isController() && isMultiblock()) return;
+        if (!validFluid()) return;
 
-        Direction direction = state.getValue(AbstractThrusterBlock.FACING);
-        Direction oppositeDirection = direction.getOpposite();
+        float power = getEffectiveThrottle();
+        if (power <= 0.035f) return;
+        if (getEmptyBlocks() <= 0) return;
 
-        Vec3 localExhaustDirection = new Vec3(oppositeDirection.getStepX(), oppositeDirection.getStepY(), oppositeDirection.getStepZ());
-        // Emit from the center nozzle plane of the whole assembled cube.
-        Vec3 localNozzlePosition = getMultiblockCenterNozzlePositionLocal();
+        WorldExhaustRay ray = getWorldExhaustRay();
+        if (ray == null) return;
 
-        Vec3 worldNozzlePosition = Sable.HELPER.projectOutOfSubLevel(level, localNozzlePosition);
-        Vec3 worldAheadPosition = Sable.HELPER.projectOutOfSubLevel(level, localNozzlePosition.add(localExhaustDirection));
-        Vec3 worldExhaustDirection = worldAheadPosition.subtract(worldNozzlePosition);
-        if (worldExhaustDirection.lengthSqr() < MathUtility.epsilon) {
-            worldExhaustDirection = localExhaustDirection;
-        } else {
-            worldExhaustDirection = worldExhaustDirection.normalize();
-        }
+        Level particleLevel = ray.level();
+        Vec3 nozzle = ray.nozzlePos();
+        Vec3 direction = ray.direction();
+
+        if (particleLevel == null) return;
+        if (direction.lengthSqr() < MathUtility.epsilon) return;
+
+        direction = direction.normalize();
+
+        int w = isMultiblock() ? width : 1;
 
         double particleCountMultiplier = org.joml.Math.clamp(0.0d, PARTICLE_MULTIPLIER_CAP, getParticleCountMultiplier());
         if (particleCountMultiplier <= 0) return;
+
         double particleVelocityMultiplier = org.joml.Math.clamp(0.0d, PARTICLE_MULTIPLIER_CAP, getParticleVelocityMultiplier());
 
-        float velocityScale = width == 2 ? 1.15f : 1.3f;
-        Vector3d particleVelocity = new Vector3d(worldExhaustDirection.x, worldExhaustDirection.y, worldExhaustDirection.z)
-            .mul(4.0f * emissionScale * velocityScale * particleVelocityMultiplier);
-        ParticleOptions particleData = createParticleOptions();
+        double smokeStart = switch (w) {
+            case 1 -> 7.7d;
+            case 2 -> 11.4d;
+            default -> 16.0d;
+        };
 
-        double speedPerTick = particleVelocity.length();
-        int streamParticles = Math.max(1, (int) Math.ceil(speedPerTick / TARGET_PARTICLE_SPACING_BLOCKS * particleCountMultiplier));
-        int crossSectionParticles = Math.max(1, (int) Math.round((width == 2 ? 14 : 28) * particleCountMultiplier));
-        int particlesToSpawn = Math.max(streamParticles, crossSectionParticles);
-        double plumeRadius = width == 2 ? 0.45 : 0.7;
+        double streamLength = switch (w) {
+            case 1 -> 1.15d;
+            case 2 -> 1.75d;
+            default -> 2.6d;
+        };
+
+        double streamRadius = switch (w) {
+            case 1 -> 0.28d;
+            case 2 -> 0.58d;
+            default -> 1.05d;
+        };
+
+        double particleSpeed = switch (w) {
+            case 1 -> 0.72d;
+            case 2 -> 0.95d;
+            default -> 1.25d;
+        };
+
+        float baseScale = switch (w) {
+            case 1 -> 2.6f;
+            case 2 -> 3.8f;
+            default -> 5.4f;
+        };
+
+        int baseLifetime = switch (w) {
+            case 1 -> 48;
+            case 2 -> 58;
+            default -> 72;
+        };
+
+        int particlesToSpawn = switch (w) {
+            case 1 -> Math.max(2, (int) java.lang.Math.round((2.0d + power * 3.0d) * particleCountMultiplier));
+            case 2 -> Math.max(4, (int) java.lang.Math.round((4.0d + power * 5.0d) * particleCountMultiplier));
+            default -> Math.max(7, (int) java.lang.Math.round((7.0d + power * 7.0d) * particleCountMultiplier));
+        };
+
+        Vec3 up = Math.abs(direction.y) < 0.92d ? new Vec3(0, 1, 0) : new Vec3(1, 0, 0);
+        Vec3 right = direction.cross(up).normalize();
+        Vec3 localUp = right.cross(direction).normalize();
+
         for (int i = 0; i < particlesToSpawn; i++) {
-            double ox = (level.random.nextDouble() * 2.0 - 1.0) * plumeRadius;
-            double oy = (level.random.nextDouble() * 2.0 - 1.0) * plumeRadius;
-            double oz = (level.random.nextDouble() * 2.0 - 1.0) * plumeRadius;
-            // Keep spread mostly perpendicular to exhaust direction.
-            switch (oppositeDirection.getAxis()) {
-                case X -> ox = 0.0;
-                case Y -> oy = 0.0;
-                case Z -> oz = 0.0;
-            }
-            double beamFrac = particlesToSpawn <= 1 ? 0.0 : (double) i / (double) particlesToSpawn;
-            if (level instanceof net.minecraft.server.level.ServerLevel serverLevel) {
-                double px = worldNozzlePosition.x + ox + particleVelocity.x * beamFrac;
-                double py = worldNozzlePosition.y + oy + particleVelocity.y * beamFrac;
-                double pz = worldNozzlePosition.z + oz + particleVelocity.z * beamFrac;
+            double beamFrac = particlesToSpawn <= 1 ? 0.0d : (double) i / (double) particlesToSpawn;
+
+            double burst = java.lang.Math.pow(level.random.nextDouble(), 2.2d);
+            double angle = level.random.nextDouble() * java.lang.Math.PI * 2.0d;
+
+            double spawnSpread = streamRadius * (0.18d + burst * 0.38d);
+            Vec3 radial = right.scale(java.lang.Math.cos(angle) * spawnSpread)
+                    .add(localUp.scale(java.lang.Math.sin(angle) * spawnSpread));
+
+            double along = smokeStart
+                    + streamLength * beamFrac * 0.28d
+                    + level.random.nextDouble() * 0.35d;
+
+            Vec3 spawn = nozzle
+                    .add(direction.scale(along))
+                    .add(radial);
+
+            double punch = switch (w) {
+                case 1 -> 2.35d;
+                case 2 -> 2.85d;
+                default -> 3.35d;
+            };
+
+            double speedRandom = 0.95d + level.random.nextDouble() * 0.55d;
+
+            Vec3 outward = radial.lengthSqr() > 0.0001d
+                    ? radial.normalize().scale((0.018d + level.random.nextDouble() * 0.035d) * w)
+                    : Vec3.ZERO;
+
+            Vec3 turbulent = right.scale((level.random.nextDouble() - 0.5d) * 0.055d * w)
+                    .add(localUp.scale((level.random.nextDouble() - 0.5d) * 0.055d * w));
+
+            Vec3 velocity = direction.scale(particleSpeed * punch * power * speedRandom * particleVelocityMultiplier)
+                    .add(outward)
+                    .add(turbulent)
+                    .add(0.0d, 0.004d + level.random.nextDouble() * 0.010d, 0.0d);
+
+            float sizeRandom = 0.72f + level.random.nextFloat() * 0.76f;
+            float distanceBoost = 0.85f + (float) beamFrac * 0.45f;
+            float scale = baseScale * sizeRandom * distanceBoost;
+
+            int lifetime = baseLifetime + level.random.nextInt(18);
+
+            float heat = (float) (1.0d - beamFrac);
+            float r = 0.20f + heat * 0.08f;
+            float g = 0.20f + heat * 0.05f;
+            float b = 0.23f + heat * 0.03f;
+
+            ThrusterSmokeParticleData particle = new ThrusterSmokeParticleData(
+                    scale,
+                    lifetime,
+                    r,
+                    g,
+                    b
+            );
+
+            if (particleLevel instanceof ServerLevel serverLevel) {
                 double maxDistSq = PARTICLE_BROADCAST_RANGE_BLOCKS * PARTICLE_BROADCAST_RANGE_BLOCKS;
+
                 for (ServerPlayer player : serverLevel.players()) {
-                    if (player.distanceToSqr(px, py, pz) > maxDistSq) {
-                        continue;
-                    }
+                    if (player.distanceToSqr(spawn.x, spawn.y, spawn.z) > maxDistSq) continue;
+
                     serverLevel.sendParticles(
-                        player,
-                        particleData,
-                        true,
-                        px,
-                        py,
-                        pz,
-                        0,
-                        particleVelocity.x,
-                        particleVelocity.y,
-                        particleVelocity.z,
-                        1.0
+                            player,
+                            particle,
+                            true,
+                            spawn.x,
+                            spawn.y,
+                            spawn.z,
+                            0,
+                            velocity.x,
+                            velocity.y,
+                            velocity.z,
+                            1.0d
                     );
                 }
             } else {
-                level.addParticle(
-                    particleData,
-                    true,
-                    worldNozzlePosition.x + ox + particleVelocity.x * beamFrac,
-                    worldNozzlePosition.y + oy + particleVelocity.y * beamFrac,
-                    worldNozzlePosition.z + oz + particleVelocity.z * beamFrac,
-                    particleVelocity.x,
-                    particleVelocity.y,
-                    particleVelocity.z
+                particleLevel.addParticle(
+                        particle,
+                        true,
+                        spawn.x,
+                        spawn.y,
+                        spawn.z,
+                        velocity.x,
+                        velocity.y,
+                        velocity.z
                 );
             }
         }
@@ -1047,6 +1283,18 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         return ctrl.tank.getPrimaryHandler().getFluid();
     }
 
+    @Override
+    public int getFuelAmountMb() {
+        ThrusterBlockEntity ctrl = isController() ? this : getControllerBE();
+        return ctrl != null && ctrl.tank != null ? ctrl.tank.getPrimaryHandler().getFluidAmount() : 0;
+    }
+
+    @Override
+    public int getFuelCapacityMb() {
+        ThrusterBlockEntity ctrl = isController() ? this : getControllerBE();
+        return ctrl != null && ctrl.tank != null ? ctrl.tank.getPrimaryHandler().getCapacity() : 0;
+    }
+
     public boolean validFluid() {
         if (fluidStack().isEmpty()) return false;
         return getFuelProperties(fluidStack().getFluid()) != null;
@@ -1054,6 +1302,11 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
 
     public FluidThrusterProperties getFuelProperties(Fluid fluid) {
         return ThrusterFuelManager.getProperties(fluid);
+    }
+
+    /** Shared plume resolver access to the existing fuel-driven particle selection. */
+    public ParticleOptions createResolvedParticleOptions() {
+        return createParticleOptions();
     }
 
     @Override
@@ -1075,10 +1328,6 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
             );
         }
         return resolvedProperties.particleType().createParticleOptions(resolvedProperties);
-    }
-
-    private double calculateFuelConsumption(float powerPercentage, float fluidPropertiesConsumptionMultiplier, int tickRate) {
-        return getFuelConsumptionPerTickAtFullThrottle() * powerPercentage * fluidPropertiesConsumptionMultiplier * tickRate;
     }
 
     protected double getFuelConsumptionPerTickAtFullThrottle() {
@@ -1103,6 +1352,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         compound.putDouble("LastOxidizerConsumedMbPerTick", lastOxidizerConsumedMbPerTick);
         compound.putDouble("FuelDrainAccumulator", fuelDrainAccumulator);
         compound.putDouble("OxidizerDrainAccumulator", oxidizerDrainAccumulator);
+        compound.putDouble("PendingFuelDemandTicks", pendingFuelDemandTicks);
         
         if (tank != null) {
             compound.put("FuelTankSync", tank.getPrimaryHandler().getFluid().saveOptional(registries));
@@ -1129,6 +1379,7 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         lastOxidizerConsumedMbPerTick = compound.getDouble("LastOxidizerConsumedMbPerTick");
         fuelDrainAccumulator = compound.getDouble("FuelDrainAccumulator");
         oxidizerDrainAccumulator = compound.getDouble("OxidizerDrainAccumulator");
+        pendingFuelDemandTicks = compound.getDouble("PendingFuelDemandTicks");
 
         // Update capacity before loading fluid to avoid truncation
         if (isController() && isMultiblock()) {
@@ -1152,7 +1403,13 @@ public class ThrusterBlockEntity extends AbstractThrusterBlockEntity {
         } else {
             controllerPos = null;
         }
-        updateConnectivity = compound.getBoolean("UpdateConnectivity");
+        updateConnectivity = compound.getBoolean("UpdateConnectivity") || !compound.contains("Width");
+        if (!clientPacket) {
+            // Create schematics place the copied blockstates before all block entities.
+            // Defer topology validation until the complete placement has settled.
+            disassemblyCooldown = DISASSEMBLY_GRACE_TICKS;
+            reconcileLoadedTopology = true;
+        }
     }
 
     protected int getBaseTankCapacityMb() {

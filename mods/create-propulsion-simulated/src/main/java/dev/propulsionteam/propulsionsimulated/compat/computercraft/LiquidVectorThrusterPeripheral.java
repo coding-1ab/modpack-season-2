@@ -6,7 +6,8 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.shared.peripheral.generic.methods.FluidMethods;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity.ControlMode;
-import dev.propulsionteam.propulsionsimulated.content.thruster.liquid_vector_thruster.LiquidVectorThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.liquid_vector_thruster.LiquidVectorThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterControlMath;
 import net.minecraft.util.Mth;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.Optional;
 
-public class LiquidVectorThrusterPeripheral extends SyncedPeripheral<LiquidVectorThrusterBlockEntity> {
+public class LiquidVectorThrusterPeripheral extends ThrusterPeripheralBase<LiquidVectorThrusterBlockEntity> {
     private final FluidMethods fluidMethods = new FluidMethods();
 
     public LiquidVectorThrusterPeripheral(LiquidVectorThrusterBlockEntity blockEntity) {
@@ -48,17 +49,17 @@ public class LiquidVectorThrusterPeripheral extends SyncedPeripheral<LiquidVecto
 
     @LuaFunction(mainThread = true)
     public final void setVectorX(double x) {
-        blockEntity.setVectorCoordinates((float) Mth.clamp(x, -1.0, 1.0), blockEntity.getTargetVectorY());
+        blockEntity.setVectorCoordinates(VectorThrusterControlMath.clampCoordinate(x), blockEntity.getTargetVectorY());
     }
 
     @LuaFunction(mainThread = true)
     public final void setVectorY(double y) {
-        blockEntity.setVectorCoordinates(blockEntity.getTargetVectorX(), (float) Mth.clamp(y, -1.0, 1.0));
+        blockEntity.setVectorCoordinates(blockEntity.getTargetVectorX(), VectorThrusterControlMath.clampCoordinate(y));
     }
 
     @LuaFunction(mainThread = true)
     public final void setVector(double x, double y) {
-        blockEntity.setVectorCoordinates((float) Mth.clamp(x, -1.0, 1.0), (float) Mth.clamp(y, -1.0, 1.0));
+        blockEntity.setVectorCoordinates(VectorThrusterControlMath.clampCoordinate(x), VectorThrusterControlMath.clampCoordinate(y));
     }
 
     @LuaFunction(mainThread = true)
@@ -117,18 +118,4 @@ public class LiquidVectorThrusterPeripheral extends SyncedPeripheral<LiquidVecto
         return handler;
     }
 
-    @Override
-    public void attach(@NotNull IComputerAccess computer) {
-        super.attach(computer);
-        blockEntity.setDigitalInput(Mth.clamp(blockEntity.getPower(), 0.0f, 1.0f));
-        blockEntity.setControlMode(ControlMode.PERIPHERAL);
-    }
-
-    @Override
-    public void detach(@NotNull IComputerAccess computer) {
-        super.detach(computer);
-        blockEntity.setDigitalInput(0.0f);
-        blockEntity.setRedstonePower(0);
-        blockEntity.setControlMode(ControlMode.NORMAL);
-    }
 }

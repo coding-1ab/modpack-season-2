@@ -3,13 +3,14 @@ package dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.CreateClient;
+import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBox;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxRenderer;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
 import com.simibubi.create.foundation.utility.CreateLang;
-import dev.propulsionteam.propulsionsimulated.content.thruster.liquid_vector_thruster.LiquidVectorThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.liquid_vector_thruster.LiquidVectorThrusterBlockEntity;
 import dev.ryanhcode.sable.Sable;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,10 +34,14 @@ public class VectorRedstoneLinkRenderer {
         VectorRedstoneLinkBehaviour.WEST_TYPE,
         VectorRedstoneLinkBehaviour.EAST_TYPE,
         VectorRedstoneLinkBehaviour.DOWN_TYPE,
-        VectorRedstoneLinkBehaviour.UP_TYPE
+        VectorRedstoneLinkBehaviour.UP_TYPE,
+        VectorRedstoneLinkBehaviour.RCS_TYPES.get(0),
+        VectorRedstoneLinkBehaviour.RCS_TYPES.get(1),
+        VectorRedstoneLinkBehaviour.RCS_TYPES.get(2),
+        VectorRedstoneLinkBehaviour.RCS_TYPES.get(3)
     };
 
-    private static final String[] SIDE_KEYS = { "west", "east", "down", "up" };
+    private static final String[] SIDE_KEYS = { "west", "east", "down", "up", "rcs_south", "rcs_north", "rcs_west", "rcs_east" };
 
     public static void tick() {
         Minecraft mc = Minecraft.getInstance();
@@ -86,37 +91,17 @@ public class VectorRedstoneLinkRenderer {
     }
 
     public static void renderOnBlockEntity(VectorThrusterBlockEntity be, float partialTicks, PoseStack ms,
-            MultiBufferSource buffer, int light, int overlay) {
-        if (be == null || be.isRemoved())
-            return;
-
-        if (!be.isVirtual()) {
-            if (Minecraft.getInstance().cameraEntity == null)
-                return;
-            float max = com.simibubi.create.infrastructure.config.AllConfigs.client().filterItemRenderDistance.getF();
-            if (Minecraft.getInstance().cameraEntity.position()
-                     .distanceToSqr(Sable.HELPER.projectOutOfSubLevel(be.getLevel(), VecHelper.getCenterOf(be.getBlockPos()))) > (max * max))
-                return;
-        }
-
-        VectorRedstoneLinkBehaviour[] links = {
-            be.westLink, be.eastLink, be.downLink, be.upLink
-        };
-
-        for (VectorRedstoneLinkBehaviour behaviour : links) {
-            if (behaviour == null) continue;
-            for (boolean first : Iterate.trueAndFalse) {
-                ValueBoxTransform transform = first ? behaviour.getFirstSlot() : behaviour.getSecondSlot();
-                ms.pushPose();
-                transform.transform(be.getLevel(), be.getBlockPos(), be.getBlockState(), ms);
-                ValueBoxRenderer.renderItemIntoValueBox(behaviour.getFrequency(first).getStack(), ms, buffer, light, overlay);
-                ms.popPose();
-            }
-        }
+                                           MultiBufferSource buffer, int light, int overlay) {
+        renderLinks(be, new VectorRedstoneLinkBehaviour[]{be.westLink, be.eastLink, be.downLink, be.upLink}, ms, buffer, light, overlay);
     }
 
     public static void renderOnBlockEntity(LiquidVectorThrusterBlockEntity be, float partialTicks, PoseStack ms,
-            MultiBufferSource buffer, int light, int overlay) {
+                                           MultiBufferSource buffer, int light, int overlay) {
+        renderLinks(be, new VectorRedstoneLinkBehaviour[]{be.westLink, be.eastLink, be.downLink, be.upLink}, ms, buffer, light, overlay);
+    }
+
+    public static void renderLinks(SmartBlockEntity be,
+                                   VectorRedstoneLinkBehaviour[] links, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
         if (be == null || be.isRemoved())
             return;
 
@@ -129,10 +114,6 @@ public class VectorRedstoneLinkRenderer {
                 return;
         }
 
-        VectorRedstoneLinkBehaviour[] links = {
-            be.westLink, be.eastLink, be.downLink, be.upLink
-        };
-
         for (VectorRedstoneLinkBehaviour behaviour : links) {
             if (behaviour == null) continue;
             for (boolean first : Iterate.trueAndFalse) {
@@ -144,4 +125,5 @@ public class VectorRedstoneLinkRenderer {
             }
         }
     }
+
 }

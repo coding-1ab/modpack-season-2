@@ -1,7 +1,7 @@
 package dev.propulsionteam.propulsionsimulated.compat.computercraft;
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity.ControlMode;
-import dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.creative_thruster.CreativeThrusterBlockEntity;
 import com.simibubi.create.compat.computercraft.implementation.peripherals.SyncedPeripheral;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
@@ -9,7 +9,7 @@ import dan200.computercraft.api.peripheral.IPeripheral;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
-public class CreativeThrusterPeripheral extends SyncedPeripheral<CreativeThrusterBlockEntity> {
+public class CreativeThrusterPeripheral extends ThrusterPeripheralBase<CreativeThrusterBlockEntity> {
 
     public CreativeThrusterPeripheral(CreativeThrusterBlockEntity blockEntity) {
         super(blockEntity);
@@ -20,7 +20,7 @@ public class CreativeThrusterPeripheral extends SyncedPeripheral<CreativeThruste
         return "creative_thruster";
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final int getObstruction() {
         return blockEntity.getUnobstructedBlocks();
     }
@@ -45,42 +45,42 @@ public class CreativeThrusterPeripheral extends SyncedPeripheral<CreativeThruste
         blockEntity.setThrustConfig(percent);
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final int getThrustConfig() {
         return blockEntity.getThrustConfig();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final float getTargetThrustPN() {
         return blockEntity.getCreativeTargetThrust();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final float getTargetThrustKN() {
         return (float) (getTargetThrustPN() / PropulsionConfig.getThrustUnitsPerKnOrDefault());
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getCurrentThrustPN() {
         return blockEntity.getCurrentThrust();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getCurrentThrustKN() {
         return getCurrentThrustPN() / PropulsionConfig.getThrustUnitsPerKnOrDefault();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getDisplayedThrustPN() {
         return blockEntity.getDisplayedThrustPnForTooltip();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getDisplayedThrustKN() {
         return getDisplayedThrustPN() / PropulsionConfig.getThrustUnitsPerKnOrDefault();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getAirflowMs() {
         return blockEntity.getDisplayedAirflowMsForTooltip();
     }
@@ -95,18 +95,4 @@ public class CreativeThrusterPeripheral extends SyncedPeripheral<CreativeThruste
         return false;
     }
 
-    @Override
-    public void attach(@NotNull IComputerAccess computer) {
-        super.attach(computer);
-        blockEntity.setDigitalInput(Mth.clamp(blockEntity.getPower(), 0.0f, 1.0f));
-        blockEntity.setControlMode(ControlMode.PERIPHERAL);
-    }
-
-    @Override
-    public void detach(@NotNull IComputerAccess computer) {
-        super.detach(computer);
-        blockEntity.setDigitalInput(0.0f);
-        blockEntity.setRedstonePower(0);
-        blockEntity.setControlMode(ControlMode.NORMAL);
-    }
 }

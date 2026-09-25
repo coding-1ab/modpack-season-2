@@ -3,79 +3,17 @@ package dev.propulsionteam.propulsionsimulated.content.thruster.solid_fuel_thrus
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.ItemStackHandler;
 
-public class SolidFuelThrusterItemHandler implements IItemHandlerModifiable {
-    public static final int QUEUE_SLOT = 0;
+public class SolidFuelThrusterItemHandler extends ItemStackHandler {
+    public static final int FUEL_SLOT = 0;
+    public static final int SLOT_COUNT = 1;
 
     private final SolidFuelThrusterBlockEntity blockEntity;
 
     public SolidFuelThrusterItemHandler(SolidFuelThrusterBlockEntity blockEntity) {
+        super(SLOT_COUNT);
         this.blockEntity = blockEntity;
-    }
-
-    @Override
-    public int getSlots() {
-        return 1;
-    }
-
-    @Override
-    @NotNull
-    public ItemStack getStackInSlot(int slot) {
-        return slot == QUEUE_SLOT ? blockEntity.getQueuedFuel() : ItemStack.EMPTY;
-    }
-
-    @Override
-    public void setStackInSlot(int slot, @NotNull ItemStack stack) {
-        if (slot == QUEUE_SLOT) {
-            blockEntity.setQueuedFuel(stack);
-            blockEntity.markFuelChanged();
-        }
-    }
-
-    @Override
-    @NotNull
-    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-        if (slot != QUEUE_SLOT || stack.isEmpty()) {
-            return stack;
-        }
-        if (!blockEntity.canAcceptFuel(stack)) {
-            return stack;
-        }
-
-        if (!blockEntity.getQueuedFuel().isEmpty()) {
-            return stack;
-        }
-
-        ItemStack toInsert = stack.copyWithCount(1);
-        if (!simulate) {
-            blockEntity.setQueuedFuel(toInsert);
-            blockEntity.markFuelChanged();
-        }
-        if (stack.getCount() <= 1) {
-            return ItemStack.EMPTY;
-        }
-        ItemStack remainder = stack.copy();
-        remainder.shrink(1);
-        return remainder;
-    }
-
-    @Override
-    @NotNull
-    public ItemStack extractItem(int slot, int amount, boolean simulate) {
-        if (slot != QUEUE_SLOT || amount <= 0) {
-            return ItemStack.EMPTY;
-        }
-        ItemStack queued = blockEntity.getQueuedFuel();
-        if (queued.isEmpty()) {
-            return ItemStack.EMPTY;
-        }
-        ItemStack extracted = queued.copy();
-        if (!simulate) {
-            blockEntity.setQueuedFuel(ItemStack.EMPTY);
-            blockEntity.markFuelChanged();
-        }
-        return extracted;
     }
 
     @Override
@@ -85,6 +23,32 @@ public class SolidFuelThrusterItemHandler implements IItemHandlerModifiable {
 
     @Override
     public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-        return slot == QUEUE_SLOT && blockEntity.canAcceptFuel(stack);
+        return slot == FUEL_SLOT && blockEntity.canAcceptFuel(stack);
+    }
+
+    @Override
+    @NotNull
+    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+        if (slot != FUEL_SLOT || stack.isEmpty() || blockEntity.getBurnTime() > 0) {
+            return stack;
+        }
+        if (!getStackInSlot(FUEL_SLOT).isEmpty()) {
+            return stack;
+        }
+        return super.insertItem(slot, stack, simulate);
+    }
+
+    @Override
+    @NotNull
+    public ItemStack extractItem(int slot, int amount, boolean simulate) {
+        if (slot != FUEL_SLOT || amount <= 0 || blockEntity.getBurnTime() > 0) {
+            return ItemStack.EMPTY;
+        }
+        return super.extractItem(slot, amount, simulate);
+    }
+
+    @Override
+    protected void onContentsChanged(int slot) {
+        blockEntity.onInventoryChanged(slot);
     }
 }

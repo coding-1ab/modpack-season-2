@@ -2,12 +2,13 @@ package dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster;
 
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
 import dev.propulsionteam.propulsionsimulated.particles.ion.IonParticleData;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.LevelAccessor;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -17,10 +18,13 @@ import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterB
 import dev.propulsionteam.propulsionsimulated.content.thruster.ion_thruster.IonThrusterBlockEntity;
 
 import java.util.List;
+
 import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.joml.Vector3d;
 
 public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
@@ -32,10 +36,10 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
     public VectorRedstoneLinkBehaviour downLink;
     public VectorRedstoneLinkBehaviour upLink;
 
-    private int westSignal;
-    private int eastSignal;
-    private int downSignal;
-    private int upSignal;
+    private float westSignal;
+    private float eastSignal;
+    private float downSignal;
+    private float upSignal;
 
     private float targetVectorX;
     private float targetVectorY;
@@ -56,7 +60,7 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
     }
 
     @Override
-    protected boolean supportsMultiblock() {
+    public boolean supportsMultiblock() {
         return false;
     }
 
@@ -69,24 +73,24 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
         super.addBehaviours(behaviours);
 
         westLink = VectorRedstoneLinkBehaviour.receiver(this,
-            ValueBoxTransform.Dual.makeSlots(isFirst -> new VectorThrusterLinkTransform(isFirst, Direction.WEST)),
-            VectorRedstoneLinkBehaviour.WEST_TYPE, "West",
-            power -> setSignal(power, Direction.WEST));
+                ValueBoxTransform.Dual.makeSlots(isFirst -> new VectorThrusterLinkTransform(isFirst, Direction.WEST)),
+                VectorRedstoneLinkBehaviour.WEST_TYPE, "West",
+                power -> setSignal(power, Direction.WEST));
 
         eastLink = VectorRedstoneLinkBehaviour.receiver(this,
-            ValueBoxTransform.Dual.makeSlots(isFirst -> new VectorThrusterLinkTransform(isFirst, Direction.EAST)),
-            VectorRedstoneLinkBehaviour.EAST_TYPE, "East",
-            power -> setSignal(power, Direction.EAST));
+                ValueBoxTransform.Dual.makeSlots(isFirst -> new VectorThrusterLinkTransform(isFirst, Direction.EAST)),
+                VectorRedstoneLinkBehaviour.EAST_TYPE, "East",
+                power -> setSignal(power, Direction.EAST));
 
         downLink = VectorRedstoneLinkBehaviour.receiver(this,
-            ValueBoxTransform.Dual.makeSlots(isFirst -> new VectorThrusterLinkTransform(isFirst, Direction.DOWN)),
-            VectorRedstoneLinkBehaviour.DOWN_TYPE, "Down",
-            power -> setSignal(power, Direction.DOWN));
+                ValueBoxTransform.Dual.makeSlots(isFirst -> new VectorThrusterLinkTransform(isFirst, Direction.DOWN)),
+                VectorRedstoneLinkBehaviour.DOWN_TYPE, "Down",
+                power -> setSignal(power, Direction.DOWN));
 
         upLink = VectorRedstoneLinkBehaviour.receiver(this,
-            ValueBoxTransform.Dual.makeSlots(isFirst -> new VectorThrusterLinkTransform(isFirst, Direction.UP)),
-            VectorRedstoneLinkBehaviour.UP_TYPE, "Up",
-            power -> setSignal(power, Direction.UP));
+                ValueBoxTransform.Dual.makeSlots(isFirst -> new VectorThrusterLinkTransform(isFirst, Direction.UP)),
+                VectorRedstoneLinkBehaviour.UP_TYPE, "Up",
+                power -> setSignal(power, Direction.UP));
 
         behaviours.add(westLink);
         behaviours.add(eastLink);
@@ -96,30 +100,42 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
 
     private void setSignal(int power, Direction localSide) {
         int clamped = Math.clamp(power, 0, 15);
-        int prev = switch (localSide) {
+        float prev = switch (localSide) {
             case WEST -> westSignal;
             case EAST -> eastSignal;
             case DOWN -> downSignal;
-            case UP   -> upSignal;
-            default   -> 0;
+            case UP -> upSignal;
+            default -> 0;
         };
         if (prev == clamped) return;
         switch (localSide) {
             case WEST -> westSignal = clamped;
             case EAST -> eastSignal = clamped;
             case DOWN -> downSignal = clamped;
-            case UP   -> upSignal   = clamped;
-            default -> {}
+            case UP -> upSignal = clamped;
+            default -> {
+            }
         }
         onVectorSignalChanged();
     }
 
     // --- CC / external API -------------------------------------------------
 
-    public float getTargetVectorX() { return targetVectorX; }
-    public float getTargetVectorY() { return targetVectorY; }
-    public float getCurrentVectorX() { return currentVectorX; }
-    public float getCurrentVectorY() { return currentVectorY; }
+    public float getTargetVectorX() {
+        return targetVectorX;
+    }
+
+    public float getTargetVectorY() {
+        return targetVectorY;
+    }
+
+    public float getCurrentVectorX() {
+        return currentVectorX;
+    }
+
+    public float getCurrentVectorY() {
+        return currentVectorY;
+    }
 
     public float getInterpolatedVectorX(float partialTick) {
         return Mth.lerp(partialTick, prevVectorX, currentVectorX);
@@ -133,16 +149,27 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
         return Mth.lerp(partialTick, prevFlapProgress, currentFlapProgress);
     }
 
-    /** Sets the four directional signals to produce the given -1..1 vector. */
+    @OnlyIn(Dist.CLIENT)
+    @Override
+    public AABB getRenderBoundingBox() {
+        return super.getRenderBoundingBox();
+    }
+
+    /**
+     * Sets the four directional signals to produce the given -1..1 vector without
+     * quantizing ComputerCraft coordinates to redstone levels.
+     */
     public void setVectorCoordinates(float x, float y) {
-        westSignal = x > 0 ? Math.round(x * 15) : 0;
-        eastSignal = x < 0 ? Math.round(-x * 15) : 0;
-        downSignal = y > 0 ? Math.round(y * 15) : 0;
-        upSignal   = y < 0 ? Math.round(-y * 15) : 0;
+        westSignal = VectorThrusterControlMath.positiveSignal(x);
+        eastSignal = VectorThrusterControlMath.negativeSignal(x);
+        downSignal = VectorThrusterControlMath.positiveSignal(y);
+        upSignal = VectorThrusterControlMath.negativeSignal(y);
         onVectorSignalChanged();
     }
 
-    /** Ponder (and similar): set redstone-derived targets while the scene advances animation manually. */
+    /**
+     * Ponder (and similar): set redstone-derived targets while the scene advances animation manually.
+     */
     public void applyVectorSignalsForScene(float x, float y) {
         setVectorCoordinates(x, y);
     }
@@ -194,8 +221,8 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
         double tiltScale = Math.tan(Math.toRadians(MAX_VISUAL_TILT_DEGREES));
 
         Vector3d exhaust = new Vector3d(forward).negate()
-            .fma(currentVectorX * tiltScale, right)
-            .fma(currentVectorY * tiltScale, up);
+                .fma(currentVectorX * tiltScale, right)
+                .fma(currentVectorY * tiltScale, up);
 
         if (exhaust.lengthSquared() < 1e-8) {
             exhaust.set(forward).negate();
@@ -213,14 +240,14 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
 
         Vector3d center = new Vector3d(pos.getX() + 0.5d, pos.getY() + 0.5d, pos.getZ() + 0.5d);
         Vector3d pivot = new Vector3d(center)
-            .fma(-1.0d / 16.0d, right)
-            .fma(1.0d / 16.0d, up)
-            .fma(7.0d / 16.0d, forward);
+                .fma(-1.0d / 16.0d, right)
+                .fma(1.0d / 16.0d, up)
+                .fma(7.0d / 16.0d, forward);
 
         Vector3d exhaust = new Vector3d(localExhaustDirection.x, localExhaustDirection.y, localExhaustDirection.z);
         double tiltScale = Math.tan(Math.toRadians(MAX_VISUAL_TILT_DEGREES));
-        double yawRad   = Math.toRadians(Mth.clamp((float) (exhaust.dot(right) / tiltScale), -1f, 1f) * MAX_VISUAL_TILT_DEGREES);
-        double pitchRad = Math.toRadians(-Mth.clamp((float) (exhaust.dot(up)    / tiltScale), -1f, 1f) * MAX_VISUAL_TILT_DEGREES);
+        double yawRad = Math.toRadians(Mth.clamp((float) (exhaust.dot(right) / tiltScale), -1f, 1f) * MAX_VISUAL_TILT_DEGREES);
+        double pitchRad = Math.toRadians(-Mth.clamp((float) (exhaust.dot(up) / tiltScale), -1f, 1f) * MAX_VISUAL_TILT_DEGREES);
 
         Vector3d neutralNozzle = new Vector3d(center).fma(-nozzleOffset, forward);
         Vector3d relative = neutralNozzle.sub(pivot, new Vector3d());
@@ -238,8 +265,8 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
         ObstructionRaySample sample = sampleObstructionRaycast(level, scanLength);
         double firstHitDistance = sample.firstHitDistance();
         float newEfficiency = scanLength <= 0
-            ? 0.0f
-            : Math.clamp((float) (firstHitDistance / scanLength), 0.0f, 1.0f);
+                ? 0.0f
+                : Math.clamp((float) (firstHitDistance / scanLength), 0.0f, 1.0f);
         int newEmptyBlocks = sample.emptyBlocksEstimate();
 
         if (this.emptyBlocks != newEmptyBlocks || Math.abs(this.obstructionEfficiency - newEfficiency) > 1e-4f) {
@@ -265,8 +292,8 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
     private void updateMappedTargets() {
         // West signal tilts nozzle right (+X); East tilts it left (-X).
         // Down signal tilts nozzle up (+Y); Up tilts it down (-Y).
-        targetVectorX = Mth.clamp((westSignal - eastSignal) / 15.0f, -1.0f, 1.0f);
-        targetVectorY = Mth.clamp((downSignal - upSignal)   / 15.0f, -1.0f, 1.0f);
+        targetVectorX = VectorThrusterControlMath.coordinateFromSignals(westSignal, eastSignal);
+        targetVectorY = VectorThrusterControlMath.coordinateFromSignals(downSignal, upSignal);
     }
 
     private static float tweenTowards(float current, float target) {
@@ -290,18 +317,18 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
         double dot = v.dot(axisUnit);
         Vector3d cross = new Vector3d(axisUnit).cross(v);
         Vector3d rotated = new Vector3d(v).mul(cos)
-            .add(cross.mul(sin))
-            .add(new Vector3d(axisUnit).mul(dot * (1.0d - cos)));
+                .add(cross.mul(sin))
+                .add(new Vector3d(axisUnit).mul(dot * (1.0d - cos)));
         v.set(rotated);
     }
 
     @Override
     protected void write(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
         super.write(compound, registries, clientPacket);
-        compound.putInt("WestSignal", westSignal);
-        compound.putInt("EastSignal", eastSignal);
-        compound.putInt("DownSignal", downSignal);
-        compound.putInt("UpSignal",   upSignal);
+        compound.putFloat("WestSignal", westSignal);
+        compound.putFloat("EastSignal", eastSignal);
+        compound.putFloat("DownSignal", downSignal);
+        compound.putFloat("UpSignal", upSignal);
         compound.putFloat("TargetVectorX", targetVectorX);
         compound.putFloat("TargetVectorY", targetVectorY);
         compound.putFloat("CurrentVectorX", currentVectorX);
@@ -312,10 +339,10 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
     @Override
     protected void read(CompoundTag compound, net.minecraft.core.HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound, registries, clientPacket);
-        westSignal = compound.getInt("WestSignal");
-        eastSignal = compound.getInt("EastSignal");
-        downSignal = compound.getInt("DownSignal");
-        upSignal   = compound.getInt("UpSignal");
+        westSignal = compound.getFloat("WestSignal");
+        eastSignal = compound.getFloat("EastSignal");
+        downSignal = compound.getFloat("DownSignal");
+        upSignal = compound.getFloat("UpSignal");
         updateMappedTargets();
         targetVectorX = compound.contains("TargetVectorX") ? compound.getFloat("TargetVectorX") : targetVectorX;
         targetVectorY = compound.contains("TargetVectorY") ? compound.getFloat("TargetVectorY") : targetVectorY;
@@ -328,30 +355,37 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
         }
         int scanLength = PropulsionConfig.OBSTRUCTION_SCAN_LENGTH.get();
         obstructionEfficiency = compound.contains("ObstructionEfficiency")
-            ? compound.getFloat("ObstructionEfficiency")
-            : (scanLength <= 0 ? 0.0f : Math.clamp((float) emptyBlocks / (float) scanLength, 0.0f, 1.0f));
+                ? compound.getFloat("ObstructionEfficiency")
+                : (scanLength <= 0 ? 0.0f : Math.clamp((float) emptyBlocks / (float) scanLength, 0.0f, 1.0f));
     }
 
     @Override
-    public double getNozzleOffsetFromCenter() { return PropulsionConfig.NOZZLE_OFFSET_FROM_CENTER.get(); }
+    public double getNozzleOffsetFromCenter() {
+        return PropulsionConfig.NOZZLE_OFFSET_FROM_CENTER.get();
+    }
 
     @Override
-    protected double getBaseThrust() { return PropulsionConfig.VECTOR_THRUSTER_BASE_THRUST.get(); }
+    protected double getBaseThrust() {
+        return PropulsionConfig.VECTOR_THRUSTER_BASE_THRUST.get();
+    }
 
     @Override
-    protected double getRawThrustCap() { return PropulsionConfig.VECTOR_THRUSTER_BASE_THRUST.get(); }
+    protected double getRawThrustCap() {
+        return PropulsionConfig.VECTOR_THRUSTER_BASE_THRUST.get();
+    }
 
-    @Override
-    protected ParticleOptions createParticleOptions() {
-        // Particle narrows as the nozzle closes: 0.85 at idle, 0.35 at full throttle
+    /** Particle-mode nozzle narrows from 0.85 at idle to 0.35 at full redstone throttle. */
+    public ParticleOptions createVectorPlumeParticleOptions() {
         float size = Mth.lerp(currentFlapProgress, 0.85f, 0.35f);
-        return new IonParticleData(List.of(), getDyeColor(), size);
+        return new IonParticleData(java.util.List.of(), getDyeColor(), size);
     }
 
     // -----------------------------------------------------------------------
 
     private static class VectorThrusterLinkTransform extends ValueBoxTransform.Dual {
-        /** Local side of the input block face this slot lives on (WEST/EAST/DOWN/UP). */
+        /**
+         * Local side of the input block face this slot lives on (WEST/EAST/DOWN/UP).
+         */
         private final Direction localSide;
 
         public VectorThrusterLinkTransform(boolean first, Direction localSide) {
@@ -364,11 +398,11 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
             Vec3 local = switch (localSide) {
                 // Outer face of each 1px-thick cube is at x=1 / x=15 / y=1 / y=15.
                 // Use 0.5 to sit just outside that face so the box is visible.
-                case WEST -> VecHelper.voxelSpace(0.5f,  isFirst() ? 11f : 5f, 2f);
+                case WEST -> VecHelper.voxelSpace(0.5f, isFirst() ? 11f : 5f, 2f);
                 case EAST -> VecHelper.voxelSpace(15.5f, isFirst() ? 11f : 5f, 2f);
-                case DOWN -> VecHelper.voxelSpace(isFirst() ? 5f : 11f, 0.5f,  2f);
-                case UP   -> VecHelper.voxelSpace(isFirst() ? 5f : 11f, 15.5f, 2f);
-                default   -> Vec3.ZERO;
+                case DOWN -> VecHelper.voxelSpace(isFirst() ? 5f : 11f, 0.5f, 2f);
+                case UP -> VecHelper.voxelSpace(isFirst() ? 5f : 11f, 15.5f, 2f);
+                default -> Vec3.ZERO;
             };
             return rotatePointForFacing(local, state.getValue(AbstractThrusterBlock.FACING));
         }
@@ -402,22 +436,22 @@ public class VectorThrusterBlockEntity extends IonThrusterBlockEntity {
         private Vec3 rotatePointForFacing(Vec3 vec, Direction blockFacing) {
             return switch (blockFacing) {
                 case NORTH -> vec;
-                case EAST  -> VecHelper.rotateCentered(vec, -90, Direction.Axis.Y);
+                case EAST -> VecHelper.rotateCentered(vec, -90, Direction.Axis.Y);
                 case SOUTH -> VecHelper.rotateCentered(vec, 180, Direction.Axis.Y);
-                case WEST  -> VecHelper.rotateCentered(vec, 90, Direction.Axis.Y);
-                case UP    -> VecHelper.rotateCentered(vec, 90, Direction.Axis.X);
-                case DOWN  -> VecHelper.rotateCentered(vec, -90, Direction.Axis.X);
+                case WEST -> VecHelper.rotateCentered(vec, 90, Direction.Axis.Y);
+                case UP -> VecHelper.rotateCentered(vec, 90, Direction.Axis.X);
+                case DOWN -> VecHelper.rotateCentered(vec, -90, Direction.Axis.X);
             };
         }
 
         private Vec3 rotateDirectionForFacing(Vec3 vec, Direction blockFacing) {
             return switch (blockFacing) {
                 case NORTH -> vec;
-                case EAST  -> VecHelper.rotate(vec, -90, Direction.Axis.Y);
+                case EAST -> VecHelper.rotate(vec, -90, Direction.Axis.Y);
                 case SOUTH -> VecHelper.rotate(vec, 180, Direction.Axis.Y);
-                case WEST  -> VecHelper.rotate(vec, 90, Direction.Axis.Y);
-                case UP    -> VecHelper.rotate(vec, 90, Direction.Axis.X);
-                case DOWN  -> VecHelper.rotate(vec, -90, Direction.Axis.X);
+                case WEST -> VecHelper.rotate(vec, 90, Direction.Axis.Y);
+                case UP -> VecHelper.rotate(vec, 90, Direction.Axis.X);
+                case DOWN -> VecHelper.rotate(vec, -90, Direction.Axis.X);
             };
         }
     }

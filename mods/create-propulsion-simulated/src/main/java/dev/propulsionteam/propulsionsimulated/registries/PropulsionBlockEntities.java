@@ -1,5 +1,6 @@
 package dev.propulsionteam.propulsionsimulated.registries;
 
+import dev.propulsionteam.propulsionsimulated.content.thruster.rcs_thruster.RcsThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.LiquidBurnerBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.solid.SolidBurnerBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.cable.fe.FeCableBlockEntity;
@@ -8,18 +9,20 @@ import dev.propulsionteam.propulsionsimulated.content.cable.relay.CableRelayBloc
 import dev.propulsionteam.propulsionsimulated.content.heat.engine.StirlingEngineBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.platinum.CoralGeneratorBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.platinum.PlatinumFluidTankBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.platinum.PlatinumFluidVesselBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.creative_vector_thruster.CreativeVectorThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ion_thruster.IonThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.liquid_vector_thruster.LiquidVectorThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.AdvancedTiltAdapterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterBlockEntity;
-import dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterBlockEntity;
-import dev.propulsionteam.propulsionsimulated.content.thruster.creative_vector_thruster.CreativeVectorThrusterBlockEntity;
-import dev.propulsionteam.propulsionsimulated.content.thruster.ion_thruster.IonThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.creative_thruster.CreativeThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.redstone_converter.RedstoneConverterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionBlockEntity;
-import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlockEntity;
-import dev.propulsionteam.propulsionsimulated.content.thruster.liquid_vector_thruster.LiquidVectorThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.thruster.solid_fuel_thruster.SolidFuelThrusterBlockEntity;
-import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.content.wing.PropulsionCopycatWingBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.wing.SymmetricPropulsionCopycatWingBlockEntity;
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
 
 import net.minecraft.core.registries.Registries;
@@ -31,6 +34,11 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public class PropulsionBlockEntities {
     private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES =
         DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, CreatePropulsion.ID);
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RcsThrusterBlockEntity>> RCS_THRUSTER_BLOCK_ENTITY =
+        BLOCK_ENTITY_TYPES.register("rcs_thruster_block_entity", () -> BlockEntityType.Builder.of(
+            RcsThrusterBlockEntity::new,
+            PropulsionBlocks.SINGLE_RCS_THRUSTER_BLOCK.get(), PropulsionBlocks.RCS_THRUSTER_BLOCK.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ThrusterBlockEntity>> THRUSTER_BLOCK_ENTITY =
         BLOCK_ENTITY_TYPES.register("thruster_block_entity",
@@ -97,12 +105,23 @@ public class PropulsionBlockEntities {
                 PropulsionBlocks.COPYCAT_WING_8.get(),
                 PropulsionBlocks.COPYCAT_WING_12.get()
             ).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SymmetricPropulsionCopycatWingBlockEntity>> SYMMETRIC_COPYCAT_WING_BLOCK_ENTITY =
+        BLOCK_ENTITY_TYPES.register("symmetric_copycat_wing_block_entity",
+            () -> BlockEntityType.Builder.of(
+                (pos, state) -> new SymmetricPropulsionCopycatWingBlockEntity(pos, state),
+                PropulsionBlocks.SYMMETRIC_COPYCAT_WING.get(),
+                PropulsionBlocks.SYMMETRIC_COPYCAT_WING_8.get(),
+                PropulsionBlocks.SYMMETRIC_COPYCAT_WING_12.get()
+            ).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CoralGeneratorBlockEntity>> CORAL_GENERATOR_BLOCK_ENTITY =
         BLOCK_ENTITY_TYPES.register("coral_generator_block_entity",
             () -> BlockEntityType.Builder.of((pos, state) -> new CoralGeneratorBlockEntity(pos, state), PropulsionBlocks.CORAL_GENERATOR.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PlatinumFluidTankBlockEntity>> PLATINUM_FLUID_TANK_BLOCK_ENTITY =
         BLOCK_ENTITY_TYPES.register("platinum_fluid_tank_block_entity",
             () -> BlockEntityType.Builder.of((pos, state) -> new PlatinumFluidTankBlockEntity(pos, state), PropulsionBlocks.PLATINUM_FLUID_TANK.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PlatinumFluidVesselBlockEntity>> PLATINUM_FLUID_VESSEL_BLOCK_ENTITY =
+        BLOCK_ENTITY_TYPES.register("platinum_fluid_vessel_block_entity",
+            () -> BlockEntityType.Builder.of((pos, state) -> new PlatinumFluidVesselBlockEntity(pos, state), PropulsionBlocks.PLATINUM_FLUID_VESSEL.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FeCableBlockEntity>> FE_CABLE_BLOCK_ENTITY =
         BLOCK_ENTITY_TYPES.register("fe_cable_block_entity",
             () -> BlockEntityType.Builder.of((pos, state) -> new FeCableBlockEntity(pos, state), PropulsionBlocks.FE_CABLE.get()).build(null));

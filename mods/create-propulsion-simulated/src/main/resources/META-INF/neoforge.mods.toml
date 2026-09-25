@@ -6,7 +6,7 @@ license = "${mod_license}"
 modId = "${mod_id}"
 version = "${mod_version}"
 displayName = "${mod_name}"
-displayURL = "https://modrinth.com/mod/create-propulsion"
+displayURL = "https://www.curseforge.com/minecraft/mc-mods/create-propulsion-simulated"
 logoFile = "icon.png"
 authors = "${mod_authors}"
 description = '''${mod_description}'''
@@ -108,13 +108,20 @@ side = "BOTH"
 [[dependencies.createpropulsion]]
 modId = "sable"
 type = "required"
-versionRange = "*"
+versionRange = "[${sable_version},)"
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.createpropulsion]]
 modId = "sablecompanion"
 type = "required"
+versionRange = "*"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.createpropulsion]]
+modId = "rocketnautics"
+type = "optional"
 versionRange = "*"
 ordering = "AFTER"
 side = "BOTH"

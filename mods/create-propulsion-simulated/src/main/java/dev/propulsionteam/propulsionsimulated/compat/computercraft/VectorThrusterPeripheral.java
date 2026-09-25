@@ -5,11 +5,12 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlockEntity.ControlMode;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterBlockEntity;
+import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterControlMath;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 /** Fuel vector thrusters only; creative vectors use {@link CreativeVectorThrusterPeripheral}. */
-public class VectorThrusterPeripheral extends SyncedPeripheral<VectorThrusterBlockEntity> {
+public class VectorThrusterPeripheral extends ThrusterPeripheralBase<VectorThrusterBlockEntity> {
     public VectorThrusterPeripheral(VectorThrusterBlockEntity blockEntity) {
         super(blockEntity);
     }
@@ -43,17 +44,17 @@ public class VectorThrusterPeripheral extends SyncedPeripheral<VectorThrusterBlo
 
     @LuaFunction(mainThread = true)
     public final void setVectorX(double x) {
-        blockEntity.setVectorCoordinates((float) Mth.clamp(x, -1.0, 1.0), blockEntity.getTargetVectorY());
+        blockEntity.setVectorCoordinates(VectorThrusterControlMath.clampCoordinate(x), blockEntity.getTargetVectorY());
     }
 
     @LuaFunction(mainThread = true)
     public final void setVectorY(double y) {
-        blockEntity.setVectorCoordinates(blockEntity.getTargetVectorX(), (float) Mth.clamp(y, -1.0, 1.0));
+        blockEntity.setVectorCoordinates(blockEntity.getTargetVectorX(), VectorThrusterControlMath.clampCoordinate(y));
     }
 
     @LuaFunction(mainThread = true)
     public final void setVector(double x, double y) {
-        blockEntity.setVectorCoordinates((float) Mth.clamp(x, -1.0, 1.0), (float) Mth.clamp(y, -1.0, 1.0));
+        blockEntity.setVectorCoordinates(VectorThrusterControlMath.clampCoordinate(x), VectorThrusterControlMath.clampCoordinate(y));
     }
 
     // --- Throttle ----------------------------------------------------------
@@ -88,18 +89,4 @@ public class VectorThrusterPeripheral extends SyncedPeripheral<VectorThrusterBlo
         return blockEntity.getPower();
     }
 
-    @Override
-    public void attach(@NotNull IComputerAccess computer) {
-        super.attach(computer);
-        blockEntity.setDigitalInput(Mth.clamp(blockEntity.getPower(), 0.0f, 1.0f));
-        blockEntity.setControlMode(ControlMode.PERIPHERAL);
-    }
-
-    @Override
-    public void detach(@NotNull IComputerAccess computer) {
-        super.detach(computer);
-        blockEntity.setDigitalInput(0.0f);
-        blockEntity.setRedstonePower(0);
-        blockEntity.setControlMode(ControlMode.NORMAL);
-    }
 }

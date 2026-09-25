@@ -1,6 +1,7 @@
 package dev.propulsionteam.propulsionsimulated.events;
 
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
+import dev.createpropulsionsimulated.client.sound.RcsThrusterSoundController;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorRedstoneLinkRenderer;
 import dev.propulsionteam.propulsionsimulated.utility.value_boxes.DualRowValueRenderer;
 
@@ -31,6 +32,7 @@ public class ForgeClientEvents {
     public static void onClientTick(ClientTickEvent.Post event) {
         DualRowValueRenderer.tick();
         VectorRedstoneLinkRenderer.tick();
+        RcsThrusterSoundController.cleanup();
     }
 
     @SubscribeEvent

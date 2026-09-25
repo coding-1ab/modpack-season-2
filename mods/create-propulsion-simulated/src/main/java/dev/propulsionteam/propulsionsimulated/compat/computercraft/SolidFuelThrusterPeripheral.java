@@ -19,7 +19,7 @@ import java.util.Optional;
 /**
  * Solid item-fuel thrusters use their own peripheral type so Lua can distinguish them from fluid thrusters.
  */
-public class SolidFuelThrusterPeripheral extends SyncedPeripheral<SolidFuelThrusterBlockEntity> {
+public class SolidFuelThrusterPeripheral extends ThrusterPeripheralBase<SolidFuelThrusterBlockEntity> {
     private final InventoryMethods inventoryMethods = new InventoryMethods();
 
     public SolidFuelThrusterPeripheral(SolidFuelThrusterBlockEntity blockEntity) {
@@ -78,19 +78,12 @@ public class SolidFuelThrusterPeripheral extends SyncedPeripheral<SolidFuelThrus
 
     @LuaFunction(mainThread = true)
     public final int getFuelAmount() {
-        int amount = 0;
-        if (!blockEntity.getBurningFuel().isEmpty()) {
-            amount++;
-        }
-        if (!blockEntity.getQueuedFuel().isEmpty()) {
-            amount++;
-        }
-        return amount;
+        return blockEntity.getFuelStack().isEmpty() ? 0 : 1;
     }
 
     @LuaFunction(mainThread = true)
     public final int getFuelCapacity() {
-        return 2;
+        return 1;
     }
 
     @LuaFunction(mainThread = true)
@@ -100,7 +93,8 @@ public class SolidFuelThrusterPeripheral extends SyncedPeripheral<SolidFuelThrus
 
     @LuaFunction(mainThread = true)
     public final boolean isBurning() {
-        return blockEntity.getBurnTime() > 0 && !blockEntity.getBurningFuel().isEmpty();
+        return blockEntity.getBurnTime() > 0 && !blockEntity.getBurningFuel().isEmpty()
+            && blockEntity.getThrottle() > 0;
     }
 
     @LuaFunction(mainThread = true)
@@ -121,7 +115,7 @@ public class SolidFuelThrusterPeripheral extends SyncedPeripheral<SolidFuelThrus
     }
 
     private IItemHandler getHandler() throws LuaException {
-        IItemHandler handler = blockEntity.getItemHandler(blockEntity.getFuelInputSide());
+        IItemHandler handler = blockEntity.inventory;
         if (handler == null) {
             throw new LuaException("Item inventory not available");
         }
@@ -139,18 +133,4 @@ public class SolidFuelThrusterPeripheral extends SyncedPeripheral<SolidFuelThrus
         return false;
     }
 
-    @Override
-    public void attach(@NotNull IComputerAccess computer) {
-        super.attach(computer);
-        blockEntity.setDigitalInput(Mth.clamp(blockEntity.getPower(), 0.0f, 1.0f));
-        blockEntity.setControlMode(ControlMode.PERIPHERAL);
-    }
-
-    @Override
-    public void detach(@NotNull IComputerAccess computer) {
-        super.detach(computer);
-        blockEntity.setDigitalInput(0.0f);
-        blockEntity.setRedstonePower(0);
-        blockEntity.setControlMode(ControlMode.NORMAL);
-    }
 }

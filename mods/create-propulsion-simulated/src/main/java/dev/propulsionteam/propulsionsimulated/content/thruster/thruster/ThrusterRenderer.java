@@ -5,8 +5,9 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
+import dev.propulsionteam.propulsionsimulated.client.render.plume.ThrusterPlumeRenderer;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlock;
-import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterDebugRenderer;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterDebugRenderer;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionPartialModels;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
@@ -23,7 +24,10 @@ public class ThrusterRenderer extends SmartBlockEntityRenderer<ThrusterBlockEnti
 
     @Override
     protected void renderSafe(ThrusterBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
-        VectorThrusterDebugRenderer.render(be);
+        ThrusterDebugRenderer.render(be, ms, buffer);
+
+        ThrusterPlumeRenderer.render(be, partialTicks, ms, buffer);
+
         if (!be.isController() || !be.isMultiblock()) return;
 
         PartialModel model = getMultiblockModel(be.width);
@@ -62,5 +66,15 @@ public class ThrusterRenderer extends SmartBlockEntityRenderer<ThrusterBlockEnti
             case UP -> ms.mulPose(Axis.XP.rotationDegrees(-270));
             case DOWN -> ms.mulPose(Axis.XP.rotationDegrees(-90));
         }
+    }
+
+    @Override
+    public boolean shouldRenderOffScreen(ThrusterBlockEntity be) {
+        return true;
+    }
+
+    @Override
+    public int getViewDistance() {
+        return 256;
     }
 }

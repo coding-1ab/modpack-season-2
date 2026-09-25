@@ -5,9 +5,10 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
+import dev.propulsionteam.propulsionsimulated.client.render.plume.ThrusterPlumeRenderer;
 import dev.propulsionteam.propulsionsimulated.content.thruster.AbstractThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorRedstoneLinkRenderer;
-import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterDebugRenderer;
+import dev.propulsionteam.propulsionsimulated.content.thruster.ThrusterDebugRenderer;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterRenderer;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterBlockEntity;
 import dev.propulsionteam.propulsionsimulated.registries.PropulsionPartialModels;
@@ -27,14 +28,18 @@ public class IonThrusterRenderer extends SmartBlockEntityRenderer<IonThrusterBlo
 
     @Override
     protected void renderSafe(IonThrusterBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
-            int light, int overlay) {
+                              int light, int overlay) {
         super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
-        VectorThrusterDebugRenderer.render(be);
+        ThrusterDebugRenderer.render(be, ms, buffer);
+
+        ThrusterPlumeRenderer.render(be, partialTicks, ms, buffer);
+
         if (be.isController() && be.isMultiblock()) {
             renderMultiblock(be, ms, buffer, light, overlay);
         }
+
         if (be instanceof VectorThrusterBlockEntity vector) {
-            VectorThrusterRenderer.render(vector, partialTicks, ms, buffer, light, overlay);
+            VectorThrusterRenderer.renderThruster(vector, partialTicks, ms, buffer, light, overlay);
             VectorRedstoneLinkRenderer.renderOnBlockEntity(vector, partialTicks, ms, buffer, light, overlay);
         }
     }
@@ -86,5 +91,15 @@ public class IonThrusterRenderer extends SmartBlockEntityRenderer<IonThrusterBlo
                 ms.mulPose(Axis.XP.rotationDegrees(90));
             }
         }
+    }
+
+    @Override
+    public boolean shouldRenderOffScreen(IonThrusterBlockEntity be) {
+        return true;
+    }
+
+    @Override
+    public int getViewDistance() {
+        return 256;
     }
 }

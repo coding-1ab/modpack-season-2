@@ -1,0 +1,171 @@
+{
+  "textures": {
+    "1": "createpropulsion:block/rcs",
+    "particle": "createpropulsion:block/rcs"
+  },
+  "elements": [
+    {
+      "from": [
+        6.65,
+        5.65,
+        -4.65
+      ],
+      "to": [
+        9.35,
+        8.35,
+        0.05
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          9.5,
+          5.5,
+          -0.8
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            8,
+            9.5,
+            9.25,
+            10.75
+          ],
+          "texture": "#1"
+        },
+        "east": {
+          "uv": [
+            8,
+            8.75,
+            9.25,
+            9.5
+          ],
+          "texture": "#1"
+        },
+        "south": {
+          "uv": [
+            8,
+            9.5,
+            9.25,
+            10.75
+          ],
+          "texture": "#1"
+        },
+        "west": {
+          "uv": [
+            9.25,
+            8.75,
+            8,
+            9.5
+          ],
+          "texture": "#1"
+        },
+        "up": {
+          "uv": [
+            9.25,
+            9.5,
+            8,
+            8.75
+          ],
+          "rotation": 90,
+          "texture": "#1"
+        },
+        "down": {
+          "uv": [
+            8,
+            9.5,
+            9.25,
+            8.75
+          ],
+          "rotation": 90,
+          "texture": "#1"
+        }
+      },
+      "shade": false
+    },
+    {
+      "name": "cube inverted",
+      "from": [
+        9.35,
+        8.35,
+        0.05
+      ],
+      "to": [
+        6.65,
+        5.65,
+        -4.65
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          9.5,
+          5.5,
+          0.2
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            8,
+            10.75,
+            9.25,
+            9.5
+          ],
+          "texture": "#1"
+        },
+        "east": {
+          "uv": [
+            9.25,
+            9.5,
+            8,
+            8.75
+          ],
+          "texture": "#1"
+        },
+        "south": {
+          "uv": [
+            8,
+            10.75,
+            9.25,
+            9.5
+          ],
+          "texture": "#1"
+        },
+        "west": {
+          "uv": [
+            8,
+            9.5,
+            9.25,
+            8.75
+          ],
+          "texture": "#1"
+        },
+        "up": {
+          "uv": [
+            8,
+            8.75,
+            9.25,
+            9.5
+          ],
+          "rotation": 90,
+          "texture": "#1"
+        },
+        "down": {
+          "uv": [
+            9.25,
+            8.75,
+            8,
+            9.5
+          ],
+          "rotation": 90,
+          "texture": "#1"
+        }
+      },
+      "shade": false
+    }
+  ],
+  "ambientocclusion": false,
+  "render_type": "minecraft:translucent"
+}

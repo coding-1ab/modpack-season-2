@@ -1,5 +1,7 @@
 package dev.propulsionteam.propulsionsimulated.registries;
 
+import dev.propulsionteam.propulsionsimulated.content.thruster.rcs_thruster.SingleRcsThrusterBlock;
+import dev.propulsionteam.propulsionsimulated.content.thruster.rcs_thruster.RcsThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.CreatePropulsion;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.liquid.LiquidBurnerBlock;
 import dev.propulsionteam.propulsionsimulated.content.heat.burners.solid.SolidBurnerBlock;
@@ -10,21 +12,26 @@ import dev.propulsionteam.propulsionsimulated.content.cable.relay.CableRelayBloc
 import dev.propulsionteam.propulsionsimulated.content.platinum.CoralGeneratorBlock;
 import dev.propulsionteam.propulsionsimulated.content.platinum.PlatinumFluidTankBlock;
 import dev.propulsionteam.propulsionsimulated.content.platinum.PlatinumFluidTankItem;
+import dev.propulsionteam.propulsionsimulated.content.platinum.PlatinumFluidVesselBlock;
+import dev.propulsionteam.propulsionsimulated.content.platinum.PlatinumFluidVesselItem;
 import dev.propulsionteam.propulsionsimulated.content.platinum.PlatinumCasingBlock;
 import dev.propulsionteam.propulsionsimulated.content.redstone_converter.RedstoneConverterBlock;
 import dev.propulsionteam.propulsionsimulated.content.redstone_transmission.RedstoneTransmissionBlock;
 import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.AdvancedTiltAdapterBlock;
 import dev.propulsionteam.propulsionsimulated.content.tilt_adapter.TiltAdapterBlock;
-import dev.propulsionteam.propulsionsimulated.content.thruster.creative_thruster.CreativeThrusterBlock;
-import dev.propulsionteam.propulsionsimulated.content.thruster.creative_vector_thruster.CreativeVectorThrusterBlock;
+import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.creative_thruster.CreativeThrusterBlock;
+import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.creative_vector_thruster.CreativeVectorThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.ion_thruster.IonThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.thruster.ThrusterBlock;
-import dev.propulsionteam.propulsionsimulated.content.thruster.liquid_vector_thruster.LiquidVectorThrusterBlock;
+import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.liquid_vector_thruster.LiquidVectorThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.solid_fuel_thruster.SolidFuelThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.thruster.vector_thruster.VectorThrusterBlock;
 import dev.propulsionteam.propulsionsimulated.content.wing.CopycatWingBlock;
 import dev.propulsionteam.propulsionsimulated.content.wing.CopycatWingItem;
 import dev.propulsionteam.propulsionsimulated.content.wing.WingBlock;
+import dev.propulsionteam.propulsionsimulated.content.wing.SymWingBlock;
+import dev.propulsionteam.propulsionsimulated.content.wing.SymCopycatWingBlock;
+import dev.propulsionteam.propulsionsimulated.content.wing.SymCopycatWingItem;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -51,6 +58,11 @@ public class PropulsionBlocks {
     public static final DeferredBlock<VectorThrusterBlock> VECTOR_THRUSTER_BLOCK = BLOCKS.register("vector_thruster",
         () -> new VectorThrusterBlock(Block.Properties.of().mapColor(MapColor.METAL).requiresCorrectToolForDrops()
             .sound(SoundType.METAL).strength(5.5f, 4.0f).noOcclusion()));
+    public static final DeferredBlock<RcsThrusterBlock> RCS_THRUSTER_BLOCK = BLOCKS.register("rcs_thruster",
+        () -> new RcsThrusterBlock(Block.Properties.ofFullCopy(VECTOR_THRUSTER_BLOCK.get())));
+    public static final DeferredBlock<SingleRcsThrusterBlock> SINGLE_RCS_THRUSTER_BLOCK = BLOCKS.register("single_rcs_thruster",
+        () -> new SingleRcsThrusterBlock(Block.Properties.ofFullCopy(VECTOR_THRUSTER_BLOCK.get())));
+
     public static final DeferredBlock<LiquidVectorThrusterBlock> LIQUID_VECTOR_THRUSTER_BLOCK = BLOCKS.register("liquid_vector_thruster",
         () -> new LiquidVectorThrusterBlock(Block.Properties.of().mapColor(MapColor.METAL).requiresCorrectToolForDrops()
             .sound(SoundType.METAL).strength(5.5f, 4.0f).noOcclusion()));
@@ -85,6 +97,15 @@ public class PropulsionBlocks {
     public static final DeferredBlock<WingBlock> WING_BLOCK = BLOCKS.register("wing",
         () -> new WingBlock(Block.Properties.of().mapColor(MapColor.COLOR_LIGHT_GRAY).sound(SoundType.COPPER)
             .strength(1.5f, 2.0f).noOcclusion()));
+    public static final DeferredBlock<SymWingBlock> SYMMETRIC_WING_BLOCK = BLOCKS.register("symmetric_wing",
+        () -> new SymWingBlock(Block.Properties.of().mapColor(MapColor.COLOR_LIGHT_GRAY).sound(SoundType.COPPER)
+            .strength(1.5f, 2.0f).noOcclusion()));
+    public static final DeferredBlock<SymCopycatWingBlock> SYMMETRIC_COPYCAT_WING = BLOCKS.register("symmetric_copycat_wing",
+        () -> new SymCopycatWingBlock(Block.Properties.of().strength(1.5f, 2.0f), 4));
+    public static final DeferredBlock<SymCopycatWingBlock> SYMMETRIC_COPYCAT_WING_8 = BLOCKS.register("symmetric_copycat_wing_8",
+        () -> new SymCopycatWingBlock(Block.Properties.of().strength(1.5f, 2.0f), 8));
+    public static final DeferredBlock<SymCopycatWingBlock> SYMMETRIC_COPYCAT_WING_12 = BLOCKS.register("symmetric_copycat_wing_12",
+        () -> new SymCopycatWingBlock(Block.Properties.of().strength(1.5f, 2.0f), 12));
     public static final DeferredBlock<WingBlock> TEMPERED_WING_BLOCK = BLOCKS.register("tempered_wing",
         () -> new WingBlock(Block.Properties.of().mapColor(MapColor.COLOR_LIGHT_GRAY).sound(SoundType.COPPER)
             .strength(1.5f, 2.0f).noOcclusion()));
@@ -112,6 +133,9 @@ public class PropulsionBlocks {
     public static final DeferredBlock<PlatinumFluidTankBlock> PLATINUM_FLUID_TANK = BLOCKS.register("platinum_fluid_tank",
         () -> new PlatinumFluidTankBlock(Block.Properties.of().mapColor(MapColor.METAL).sound(SoundType.COPPER)
             .requiresCorrectToolForDrops().strength(2.5f, 2.0f).noOcclusion().isRedstoneConductor((s, l, p) -> true)));
+    public static final DeferredBlock<PlatinumFluidVesselBlock> PLATINUM_FLUID_VESSEL = BLOCKS.register("platinum_fluid_vessel",
+        () -> new PlatinumFluidVesselBlock(Block.Properties.of().mapColor(MapColor.METAL).sound(SoundType.COPPER)
+            .requiresCorrectToolForDrops().strength(2.5f, 2.0f).noOcclusion().isRedstoneConductor((s, l, p) -> true)));
     public static final DeferredBlock<CoralGeneratorBlock> CORAL_GENERATOR = BLOCKS.register("coral_generator",
         () -> new CoralGeneratorBlock(Block.Properties.of().mapColor(MapColor.COLOR_CYAN).sound(SoundType.STONE)
             .requiresCorrectToolForDrops().strength(3.5f, 3.0f).noOcclusion()));
@@ -126,6 +150,8 @@ public class PropulsionBlocks {
             .requiresCorrectToolForDrops().strength(2.5f, 3.5f)));
 
     static {
+        registerDefaultBlockItem("rcs_thruster", RCS_THRUSTER_BLOCK);
+        registerDefaultBlockItem("single_rcs_thruster", SINGLE_RCS_THRUSTER_BLOCK);
         registerDefaultBlockItem("thruster", THRUSTER_BLOCK);
         registerBlockItem("creative_thruster", CREATIVE_THRUSTER_BLOCK, new BlockItem.Properties().rarity(Rarity.EPIC));
         registerBlockItem("ion_thruster", ION_THRUSTER_BLOCK, new BlockItem.Properties().rarity(Rarity.UNCOMMON));
@@ -141,6 +167,10 @@ public class PropulsionBlocks {
         registerDefaultBlockItem("tilt_adapter", TILT_ADAPTER_BLOCK);
         registerDefaultBlockItem("advanced_tilt_adapter", ADVANCED_TILT_ADAPTER_BLOCK);
         registerDefaultBlockItem("wing", WING_BLOCK);
+        registerDefaultBlockItem("symmetric_wing", SYMMETRIC_WING_BLOCK);
+        BLOCK_ITEMS.register("symmetric_copycat_wing", () -> new SymCopycatWingItem(SYMMETRIC_COPYCAT_WING.get(), new BlockItem.Properties()));
+        BLOCK_ITEMS.register("symmetric_copycat_wing_8", () -> new SymCopycatWingItem(SYMMETRIC_COPYCAT_WING_8.get(), new BlockItem.Properties()));
+        BLOCK_ITEMS.register("symmetric_copycat_wing_12", () -> new SymCopycatWingItem(SYMMETRIC_COPYCAT_WING_12.get(), new BlockItem.Properties()));
         registerDefaultBlockItem("tempered_wing", TEMPERED_WING_BLOCK);
         BLOCK_ITEMS.register("copycat_wing", () -> new CopycatWingItem(COPYCAT_WING.get(), new BlockItem.Properties()));
         BLOCK_ITEMS.register("copycat_wing_8", () -> new CopycatWingItem(COPYCAT_WING_8.get(), new BlockItem.Properties()));
@@ -151,6 +181,7 @@ public class PropulsionBlocks {
         registerDefaultBlockItem("raw_platinum_block", RAW_PLATINUM_BLOCK);
         registerDefaultBlockItem("platinum_casing", PLATINUM_CASING);
         BLOCK_ITEMS.register("platinum_fluid_tank", () -> new PlatinumFluidTankItem(PLATINUM_FLUID_TANK.get(), new BlockItem.Properties()));
+        BLOCK_ITEMS.register("platinum_fluid_vessel", () -> new PlatinumFluidVesselItem(PLATINUM_FLUID_VESSEL.get(), new BlockItem.Properties()));
         registerBlockItem("coral_generator", CORAL_GENERATOR, new BlockItem.Properties().rarity(Rarity.RARE));
         registerDefaultBlockItem("cable", FE_CABLE);
         registerDefaultBlockItem("cable_hub", CABLE_HUB);

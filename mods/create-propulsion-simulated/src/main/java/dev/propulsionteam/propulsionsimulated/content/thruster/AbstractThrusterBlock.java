@@ -2,6 +2,7 @@ package dev.propulsionteam.propulsionsimulated.content.thruster;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 import dev.propulsionteam.propulsionsimulated.PropulsionConfig;
+import dev.propulsionteam.propulsionsimulated.utility.DirectionalPlacement;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -43,7 +44,7 @@ public abstract class AbstractThrusterBlock extends DirectionalBlock implements 
 
     @Override
     public BlockState getStateForPlacement(final BlockPlaceContext context) {
-        final Direction baseDirection = context.getNearestLookingDirection();
+        final Direction baseDirection = DirectionalPlacement.nearestLookingDirection(context);
         final Player player = context.getPlayer();
         final Direction placeDirection;
         if (player != null) {
@@ -113,7 +114,13 @@ public abstract class AbstractThrusterBlock extends DirectionalBlock implements 
         if (interactionResult != ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) {
             return interactionResult;
         }
-        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+        final ItemInteractionResult defaultResult =
+                super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+        if (!stack.isEmpty()
+                && defaultResult == ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION) {
+            return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+        }
+        return defaultResult;
     }
 
     @Override

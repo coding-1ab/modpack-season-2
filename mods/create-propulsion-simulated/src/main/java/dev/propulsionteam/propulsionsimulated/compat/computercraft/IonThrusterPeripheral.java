@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Ion FE thrusters use their own peripheral type so Lua can distinguish them from fuel thrusters ({@link ThrusterPeripheral}).
  */
-public class IonThrusterPeripheral extends SyncedPeripheral<IonThrusterBlockEntity> {
+public class IonThrusterPeripheral extends ThrusterPeripheralBase<IonThrusterBlockEntity> {
 
     public IonThrusterPeripheral(IonThrusterBlockEntity blockEntity) {
         super(blockEntity);
@@ -24,7 +24,7 @@ public class IonThrusterPeripheral extends SyncedPeripheral<IonThrusterBlockEnti
         return "ion_thruster";
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final int getObstruction() {
         return blockEntity.getUnobstructedBlocks();
     }
@@ -44,27 +44,27 @@ public class IonThrusterPeripheral extends SyncedPeripheral<IonThrusterBlockEnti
         return blockEntity.getThrottle();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getCurrentThrustPN() {
         return blockEntity.getCurrentThrust();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getCurrentThrustKN() {
         return getCurrentThrustPN() / PropulsionConfig.getThrustUnitsPerKnOrDefault();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getDisplayedThrustPN() {
         return blockEntity.getDisplayedThrustPnForTooltip();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getDisplayedThrustKN() {
         return getDisplayedThrustPN() / PropulsionConfig.getThrustUnitsPerKnOrDefault();
     }
 
-    @LuaFunction
+    @LuaFunction(mainThread = true)
     public final double getAirflowMs() {
         return blockEntity.getDisplayedAirflowMsForTooltip();
     }
@@ -76,7 +76,7 @@ public class IonThrusterPeripheral extends SyncedPeripheral<IonThrusterBlockEnti
 
     @LuaFunction(mainThread = true)
     public final int getEnergyCapacityFe() {
-        return blockEntity.getEnergyCapacity();
+        return blockEntity.getTotalEnergyCapacityForComputer();
     }
 
     @Override
@@ -88,18 +88,4 @@ public class IonThrusterPeripheral extends SyncedPeripheral<IonThrusterBlockEnti
         return false;
     }
 
-    @Override
-    public void attach(@NotNull IComputerAccess computer) {
-        super.attach(computer);
-        blockEntity.setDigitalInput(Mth.clamp(blockEntity.getPower(), 0.0f, 1.0f));
-        blockEntity.setControlMode(ControlMode.PERIPHERAL);
-    }
-
-    @Override
-    public void detach(@NotNull IComputerAccess computer) {
-        super.detach(computer);
-        blockEntity.setDigitalInput(0.0f);
-        blockEntity.setRedstonePower(0);
-        blockEntity.setControlMode(ControlMode.NORMAL);
-    }
 }

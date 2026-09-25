@@ -7,10 +7,15 @@
     "plugin": "dev.propulsionteam.propulsionsimulated.mixin.plugin.PropulsionMixinPlugin",
     "mixins": [
         "BasinBlockEntityMixin",
+        "BearingContraptionMixin",
+        "CreativeModeTabMixin",
         "FluidShellProjectileMixin",
         "SchematicPlacePacketMixin"
     ],
-    "client": [],
+    "client": [
+        "client.CreativeModeInventoryScreenMixin",
+        "client.SimulatedCreativeTabMixin"
+    ],
     "server": [],
     "injectors": {
       "defaultRequire": 1

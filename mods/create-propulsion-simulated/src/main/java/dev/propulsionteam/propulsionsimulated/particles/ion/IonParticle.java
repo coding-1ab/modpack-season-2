@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import dev.ryanhcode.sable.api.particle.ParticleSubLevelKickable;
+import dev.ryanhcode.sable.mixinterface.particle.ParticleExtension;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
@@ -17,7 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
-public class IonParticle extends SimpleAnimatedParticle {
+public class IonParticle extends SimpleAnimatedParticle implements ParticleSubLevelKickable {
 
     protected float getBaseQuadSize() { return 0.95f; }
     protected float getEndQuadSize() { return 0.2f; }
@@ -40,25 +42,30 @@ public class IonParticle extends SimpleAnimatedParticle {
     private final float endSize;
     private final List<ResourceLocation> overrideTextures;
     private TextureAtlasSprite[] cachedOverrideSprites;
-    double dx;
-    double dy;
-    double dz;
-
+    private final float startupProgress;
+    /** World-space nozzle motion, kept separate so ion drag cannot make the craft overtake its exhaust. */
+    private final Vec3 inheritedVelocity;
+    private final float trailCoverage;
+    private boolean sableManagedMotion;
     protected IonParticle(ClientLevel level, double x, double y, double z,
                             double dx, double dy, double dz,
                             SpriteSet spriteSet, IonParticleData data) {
         super(level, x, y, z, spriteSet, 0);
         this.spriteSet = spriteSet;
         this.overrideTextures = data.overrideTextures();
+        this.startupProgress = data.startupProgress() == null ? 1.0f : Mth.clamp(data.startupProgress(), 0.0f, 1.0f);
+        this.inheritedVelocity = data.inheritedVelocity();
+        this.trailCoverage = data.trailCoverage();
         this.hasPhysics = true;
         this.friction = getParticleFriction();
-        this.lifetime = getBaseLifetime();
+        this.lifetime = Math.round(Mth.lerp(this.startupProgress, 10.0f, getBaseLifetime()));
 
-        this.dx = dx;
-        this.dy = dy;
-        this.dz = dz;
+        this.xd = dx;
+        this.yd = dy;
+        this.zd = dz;
 
-        this.quadSize = data.overrideSize() != null ? data.overrideSize() : getBaseQuadSize();
+        this.quadSize = (data.overrideSize() != null ? data.overrideSize() : getBaseQuadSize())
+                * Mth.lerp(this.startupProgress, 0.38f, 1.0f);
         float scale = data.overrideSize() != null ? (data.overrideSize() / getBaseQuadSize()) : 1.0f;
         this.endSize = getEndQuadSize() * scale;
         this.startSize = this.quadSize;
@@ -81,7 +88,7 @@ public class IonParticle extends SimpleAnimatedParticle {
             int rgb = data.overrideColor() & 0xFFFFFF;
             this.setColor(((rgb >> 16) & 0xFF) / 255f, ((rgb >> 8) & 0xFF) / 255f, (rgb & 0xFF) / 255f);
         }
-        this.setAlpha(1.0f);
+        this.setAlpha(1.0f - this.trailCoverage);
         this.pickSpriteAndSize();
     }
 
@@ -98,34 +105,20 @@ public class IonParticle extends SimpleAnimatedParticle {
         }
 
         //Velocity before possible collision
-        double intendedMoveX = this.dx * getSpeedMultiplier();
-        double intendedMoveY = this.dy * getSpeedMultiplier();
-        double intendedMoveZ = this.dz * getSpeedMultiplier();
+        double intendedMoveX = this.xd * getSpeedMultiplier() + this.inheritedVelocity.x;
+        double intendedMoveY = this.yd * getSpeedMultiplier() + this.inheritedVelocity.y;
+        double intendedMoveZ = this.zd * getSpeedMultiplier() + this.inheritedVelocity.z;
 
         double prevX = this.x;
         double prevY = this.y;
         double prevZ = this.z;
 
-        //Actual movement
-        Vec3 totalMove = new Vec3(intendedMoveX, intendedMoveY, intendedMoveZ);
-        double totalDist = totalMove.length();
-        if (totalDist > 0.0D) {
-            int steps = (int)Math.ceil(totalDist / 0.5D);
-            Vec3 stepMove = totalMove.scale(1.0D / steps);
-            for (int i = 0; i < steps; ++i) {
-                double stepPrevX = this.x;
-                double stepPrevY = this.y;
-                double stepPrevZ = this.z;
-                this.move(stepMove.x, stepMove.y, stepMove.z);
-                double movedX = this.x - stepPrevX;
-                double movedY = this.y - stepPrevY;
-                double movedZ = this.z - stepPrevZ;
-                final double check = 1.0E-6D;
-                if (Math.abs(movedX - stepMove.x) > check || Math.abs(movedY - stepMove.y) > check || Math.abs(movedZ - stepMove.z) > check) {
-                    break;
-                }
-            }
+        if (((ParticleExtension) this).sable$getTrackingSubLevel() != null) {
+            this.sableManagedMotion = true;
         }
+
+        // Move once per tick so Sable can apply one exact sub-level pose delta.
+        this.move(intendedMoveX, intendedMoveY, intendedMoveZ);
         double actualMoveX = this.x - prevX;
         double actualMoveY = this.y - prevY;
         double actualMoveZ = this.z - prevZ;
@@ -133,7 +126,8 @@ public class IonParticle extends SimpleAnimatedParticle {
         //Determine collision and its normal
         boolean collisionDetected = false;
         Vec3 collisionNormal = null;
-        if (this.onGround) {
+        if (this.sableManagedMotion) {
+        } else if (this.onGround) {
             collisionDetected = true;
             collisionNormal = new Vec3(0, 1, 0);
         } else {
@@ -155,7 +149,7 @@ public class IonParticle extends SimpleAnimatedParticle {
 
         //We actually collided with something, lets resolve velocity!
         if (collisionDetected && collisionNormal != null) {
-            Vec3 incomingVel = new Vec3(this.dx, this.dy, this.dz);
+            Vec3 incomingVel = new Vec3(this.xd, this.yd, this.zd);
             if (incomingVel.normalize().dot(collisionNormal) > COLLISION_IGNORE_DOT_THRESHOLD) {
                 //Nothing ever happens, we collide backwards here, which should not be resolved
             } else {
@@ -210,33 +204,40 @@ public class IonParticle extends SimpleAnimatedParticle {
                     Vec3 newVel = desiredNormalVel.add(desiredTangentialVel);
                     double newVelMagnitude = newVel.length();
                     if (newVelMagnitude > 1e-5) {
-                        this.dx = (newVel.x / newVelMagnitude) * incomingVel.length() * COLLISION_SPEED_RETENTION;
-                        this.dy = (newVel.y / newVelMagnitude) * incomingVel.length() * COLLISION_SPEED_RETENTION;
-                        this.dz = (newVel.z / newVelMagnitude) * incomingVel.length() * COLLISION_SPEED_RETENTION;
+                        this.xd = (newVel.x / newVelMagnitude) * incomingVel.length() * COLLISION_SPEED_RETENTION;
+                        this.yd = (newVel.y / newVelMagnitude) * incomingVel.length() * COLLISION_SPEED_RETENTION;
+                        this.zd = (newVel.z / newVelMagnitude) * incomingVel.length() * COLLISION_SPEED_RETENTION;
                     } else { //Fallback
-                        this.dx = spreadPlaneDirection.x * incomingVel.length() * COLLISION_SPEED_RETENTION * 0.5;
-                        this.dy = spreadPlaneDirection.y * incomingVel.length() * COLLISION_SPEED_RETENTION * 0.5;
-                        this.dz = spreadPlaneDirection.z * incomingVel.length() * COLLISION_SPEED_RETENTION * 0.5;
+                        this.xd = spreadPlaneDirection.x * incomingVel.length() * COLLISION_SPEED_RETENTION * 0.5;
+                        this.yd = spreadPlaneDirection.y * incomingVel.length() * COLLISION_SPEED_RETENTION * 0.5;
+                        this.zd = spreadPlaneDirection.z * incomingVel.length() * COLLISION_SPEED_RETENTION * 0.5;
                     }
 
                 } else { //Incoming speed too low, slow down
-                    this.dx *= 0.1; this.dy *= 0.1; this.dz *= 0.1;
+                    this.xd *= 0.1; this.yd *= 0.1; this.zd *= 0.1;
                 }
             }
         }
 
-        this.dx += (this.random.nextDouble() - 0.5d) * getFluctuation();
-        this.dy += (this.random.nextDouble() - 0.5d) * getFluctuation();
-        this.dz += (this.random.nextDouble() - 0.5d) * getFluctuation();
-        this.dx *= this.friction;
-        this.dy *= this.friction;
-        this.dz *= this.friction;
+        double controlledFluctuation = getFluctuation() * Mth.lerp(this.startupProgress, 0.12f, 1.0f);
+        this.xd += (this.random.nextDouble() - 0.5d) * controlledFluctuation;
+        this.yd += (this.random.nextDouble() - 0.5d) * controlledFluctuation;
+        this.zd += (this.random.nextDouble() - 0.5d) * controlledFluctuation;
+        this.xd *= this.friction;
+        this.yd *= this.friction;
+        this.zd *= this.friction;
 
         this.pickSpriteAndSize();
     }
 
     private void pickSpriteAndSize() {
         final float progress = Mth.clamp((float) this.age / (float) this.lifetime, 0.0f, 1.0f);
+        if (startupProgress < 1.0f) {
+            float pulse = 0.82f + 0.18f * Mth.sin((this.age + startupProgress * 10.0f) * 1.7f);
+            this.setAlpha(Mth.clamp(pulse, 0.55f, 1.0f) * presentationReveal());
+        } else {
+            this.setAlpha(presentationReveal());
+        }
         final int frameIndex = Mth.clamp((int) (progress * SPRITE_COUNT), 0, SPRITE_COUNT - 1);
 
         if (this.cachedOverrideSprites != null) {
@@ -248,10 +249,25 @@ public class IonParticle extends SimpleAnimatedParticle {
         this.quadSize = Mth.lerp(progress, this.startSize, this.endSize);
     }
 
+    private float presentationReveal() {
+        float reveal = Mth.clamp(this.age / 2.0f, 0.0f, 1.0f);
+        return Mth.lerp(reveal, 1.0f - this.trailCoverage, 1.0f);
+    }
+
     @Nonnull
     @Override
     public ParticleRenderType getRenderType(){
         return ParticleRenderType.PARTICLE_SHEET_LIT;
+    }
+
+    @Override
+    public boolean sable$shouldKickFromTracking() {
+        return true;
+    }
+
+    @Override
+    public boolean sable$shouldCollideWithTrackingSubLevel() {
+        return false;
     }
 
     public static class Factory implements ParticleProvider<IonParticleData>{

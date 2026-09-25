@@ -26,6 +26,9 @@ public class VectorRedstoneLinkBehaviour extends BlockEntityBehaviour implements
     public static final BehaviourType<VectorRedstoneLinkBehaviour> DOWN_TYPE = new BehaviourType<>();
     public static final BehaviourType<VectorRedstoneLinkBehaviour> UP_TYPE = new BehaviourType<>();
 
+    public static final java.util.List<BehaviourType<VectorRedstoneLinkBehaviour>> RCS_TYPES = java.util.List.of(
+            new BehaviourType<>(), new BehaviourType<>(), new BehaviourType<>(), new BehaviourType<>());
+
     private enum Mode {
         TRANSMIT, RECEIVE
     }
@@ -159,6 +162,7 @@ public class VectorRedstoneLinkBehaviour extends BlockEntityBehaviour implements
         if (!changed)
             return;
 
+        blockEntity.setChanged();
         blockEntity.sendData();
         Create.REDSTONE_LINK_NETWORK_HANDLER.addToNetwork(getWorld(), this);
     }

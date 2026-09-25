@@ -22,6 +22,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -35,7 +36,6 @@ import java.util.Locale;
 public class IonThrusterBlockEntity extends ThrusterBlockEntity {
     private int energyStored;
     private double energyDrainAccumulator;
-    private long lastEnergyDrainGameTime = -1L;
     private double lastConsumedFePerTick;
 
     private final IEnergyStorage energyHandler = new IEnergyStorage() {
@@ -94,8 +94,19 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
     @Override
     public void tick() {
         // Ion thrusters should evaluate power/consumption every server tick so FE usage is stable and responsive.
-        this.isThrustDirty = true;
+        if (requiresPerTickEnergyUpdate()) {
+            this.isThrustDirty = true;
+        }
         super.tick();
+    }
+
+    protected boolean requiresPerTickEnergyUpdate() {
+        return true;
+    }
+
+    @Override
+    protected boolean usesFluidFuelAccounting() {
+        return false;
     }
 
     @Override
@@ -110,6 +121,7 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
     @Override
     public void updateThrust(BlockState currentBlockState) {
         if (!isController() && isMultiblock()) {
+            setThrustAndSync(0.0f);
             isThrustDirty = false;
             return;
         }
@@ -119,19 +131,13 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
         }
 
         float thrust = 0;
-        float currentPower = getPower();
+        float currentPower = getEffectiveThrottle();
 
         if (currentPower > 0 && energyStored > 0) {
-            float obstructionEffect = calculateObstructionEffect();
-            float thrustPercentage = Math.min(currentPower, obstructionEffect);
+            float thrustPercentage = getEffectiveThrustPercentage();
 
             if (thrustPercentage > 0) {
-                long currentGameTime = level != null ? level.getGameTime() : 0L;
-                int ticksElapsed = 1;
-                if (lastEnergyDrainGameTime >= 0L) {
-                    ticksElapsed = (int) Math.max(0L, currentGameTime - lastEnergyDrainGameTime);
-                }
-                lastEnergyDrainGameTime = currentGameTime;
+                int ticksElapsed = getThrustUpdateIntervalTicks();
 
                 // Config value is FE/t at full throttle; scale by throttle and elapsed ticks.
                 double requestedDrain = energyDrainAccumulator
@@ -142,8 +148,10 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
                 int consumed = Math.min(energyStored, totalDrain);
                 if (consumed > 0) {
                     energyStored -= consumed;
-                    float consumptionRatio = (float) consumed / (float) totalDrain;
-                        float baseThrustPn = (float) (PropulsionConfig.ION_THRUSTER_BASE_THRUST.get() * getThrustUnitsPerKn());
+                }
+                float consumptionRatio = IonThrusterEnergyMath.poweredFraction(energyStored + consumed, totalDrain, consumed);
+                if (consumptionRatio > 0.0f) {
+                    float baseThrustPn = (float) (PropulsionConfig.ION_THRUSTER_BASE_THRUST.get() * getThrustUnitsPerKn());
                     baseThrustPn *= (float) calculateAtmosphericFactor();
                     thrust = baseThrustPn * thrustPercentage * consumptionRatio;
                 }
@@ -173,27 +181,22 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
         }
         int n = width * width * width;
         float thrust = 0.0f;
-        float currentPower = getPower();
+        float currentPower = getEffectiveThrottle();
 
         if (currentPower > 0) {
-            float obstructionEffect = calculateObstructionEffect();
-            float thrustPercentage = Math.min(currentPower, obstructionEffect);
+            float thrustPercentage = getEffectiveThrustPercentage();
             if (thrustPercentage > 0) {
-                long currentGameTime = level.getGameTime();
-                int ticksElapsed = 1;
-                if (lastEnergyDrainGameTime >= 0L) {
-                    ticksElapsed = (int) Math.max(0L, currentGameTime - lastEnergyDrainGameTime);
-                }
-                lastEnergyDrainGameTime = currentGameTime;
+                int ticksElapsed = getThrustUpdateIntervalTicks();
 
                 double requestedDrain = energyDrainAccumulator
                         + (double) ticksElapsed * thrustPercentage * PropulsionConfig.ION_THRUSTER_FE_PER_TICK_AT_FULL_THROTTLE.get() * n;
                 int totalDrain = (int) Math.floor(requestedDrain);
                 energyDrainAccumulator = requestedDrain - totalDrain;
 
+                int energyBeforeDrain = getTotalEnergyStoredFe();
                 int consumed = drainEnergyFromMultiblock(totalDrain);
-                if (consumed > 0 && totalDrain > 0) {
-                    float consumptionRatio = (float) consumed / (float) totalDrain;
+                float consumptionRatio = IonThrusterEnergyMath.poweredFraction(energyBeforeDrain, totalDrain, consumed);
+                if (consumptionRatio > 0.0f) {
                     float baseThrustPn = (float) (PropulsionConfig.ION_THRUSTER_BASE_THRUST.get() * getThrustUnitsPerKn());
                     baseThrustPn *= (float) calculateAtmosphericFactor();
                     thrust = baseThrustPn * thrustPercentage * consumptionRatio * n * getIonMultiblockThrustMultiplier(width);
@@ -337,14 +340,6 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
     }
 
     @Override
-    public boolean shouldEmitParticles() {
-        if (isMultiblock() && !isController()) {
-            return false;
-        }
-        return getThrottle() > 0 && getTotalEnergyStoredFe() > 0;
-    }
-
-    @Override
     public IFluidHandler getFluidHandler(final Direction side) {
         return null;
     }
@@ -357,7 +352,8 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
 
     @Override
     public boolean isVisuallyActive() {
-        return this.getThrottle() > 0.0d && this.energyStored > 0;
+        return this.getEffectiveThrottle() > 0.0d
+                && (this.getTotalEnergyStoredFe() > 0 || this.isFadingOut());
     }
 
     @Override
@@ -391,6 +387,10 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
 
     public int getEnergyCapacity() {
         return PropulsionConfig.ION_THRUSTER_ENERGY_CAPACITY_FE.get();
+    }
+
+    public int getTotalEnergyCapacityForComputer() {
+        return this.getTotalEnergyCapacityFe();
     }
 
     protected Direction getEnergyInputSide() {
@@ -449,7 +449,7 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
                 .forGoggles(tooltip);
     }
 
-    private void addIonThrusterOutputDetails(final List<Component> tooltip) {
+    protected void addIonThrusterOutputDetails(final List<Component> tooltip) {
         float obstructionEfficiency = 100;
         ChatFormatting tooltipColor = ChatFormatting.GREEN;
         int scanLength = PropulsionConfig.OBSTRUCTION_SCAN_LENGTH.get();
@@ -529,7 +529,6 @@ public class IonThrusterBlockEntity extends ThrusterBlockEntity {
         this.energyStored = tag.getInt("EnergyStored");
         this.energyDrainAccumulator = tag.getDouble("EnergyDrainAccumulator");
         this.lastConsumedFePerTick = tag.getDouble("LastConsumedFePerTick");
-        this.lastEnergyDrainGameTime = -1L;
         this.clampEnergyToCapacity();
         super.read(tag, registries, clientPacket);
         // Preserve multiblock connectivity state loaded by base class.

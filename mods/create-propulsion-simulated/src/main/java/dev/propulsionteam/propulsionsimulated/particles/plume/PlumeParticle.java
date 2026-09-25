@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import dev.ryanhcode.sable.api.particle.ParticleSubLevelKickable;
+import dev.ryanhcode.sable.mixinterface.particle.ParticleExtension;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
@@ -17,7 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
-public class PlumeParticle extends SimpleAnimatedParticle {
+public class PlumeParticle extends SimpleAnimatedParticle implements ParticleSubLevelKickable {
     //Plume
     protected float getPlumeSpread() { return 0.05f; }
     protected float getPlumeBaseQuadSize() { return 2.0f; }
@@ -59,8 +61,13 @@ public class PlumeParticle extends SimpleAnimatedParticle {
     private boolean hasCollided = false;
     private final List<ResourceLocation> overrideTextures;
     private TextureAtlasSprite[] cachedOverrideSprites;
+    private final float startupProgress;
+    /** World-space nozzle motion, kept separate so plume drag cannot make the craft overtake its exhaust. */
+    private final Vec3 inheritedVelocity;
+    private final float trailCoverage;
+    private boolean sableManagedMotion;
+    private Vec3 sableResolvedSpreadDirection;
 
-    double dx; double dy; double dz;
     float baseSize;
 
 
@@ -70,20 +77,26 @@ public class PlumeParticle extends SimpleAnimatedParticle {
         super(level, x, y, z, spriteSet, 0);
         this.spriteSet = spriteSet;
         this.overrideTextures = data.overrideTextures();
+        this.startupProgress = data.startupProgress() == null ? 1.0f : Mth.clamp(data.startupProgress(), 0.0f, 1.0f);
+        this.inheritedVelocity = data.inheritedVelocity();
+        this.trailCoverage = data.trailCoverage();
         //Initialize plume state
-        this.quadSize *= getPlumeBaseQuadSize();
+        this.quadSize *= getPlumeBaseQuadSize()
+                * (data.overrideSize() == null ? 1.0f : data.overrideSize())
+                * Mth.lerp(this.startupProgress, 1.7f, 1.0f);
         this.baseSize = this.quadSize;
-        this.lifetime = getPlumeBaseLifetime() + random.nextInt(5);
+        this.lifetime = Math.round(Mth.lerp(this.startupProgress, 28.0f, getPlumeBaseLifetime())) + random.nextInt(5);
         this.friction = getPlumeFriction();
-        this.dx = dxSource + getRandomSpread();
-        this.dy = dySource + getRandomSpread();
-        this.dz = dzSource + getRandomSpread();
+        float ignitionSpread = Mth.lerp(this.startupProgress, 4.0f, 1.0f);
+        this.xd = dxSource + getRandomSpread() * ignitionSpread;
+        this.yd = dySource + getRandomSpread() * ignitionSpread;
+        this.zd = dzSource + getRandomSpread() * ignitionSpread;
         this.hasPhysics = true;
-        this.currentSpeedMultiplier = getPlumeSpeedMultiplier();
+        this.currentSpeedMultiplier = getPlumeSpeedMultiplier() * Mth.lerp(this.startupProgress, 1.45f, 1.0f);
         this.currentFriction = getPlumeFriction();
         this.currentState = ParticleState.PLUME;
         //Calculate spread direction
-        Vec3 initialVel = new Vec3(this.dx, this.dy, this.dz).normalize();
+        Vec3 initialVel = new Vec3(this.xd, this.yd, this.zd).normalize();
         Vec3 nonParallel = new Vec3(1, 0, 0);
         if (Math.abs(initialVel.dot(nonParallel)) > 0.99) {
             nonParallel = new Vec3(0, 1, 0);
@@ -92,7 +105,8 @@ public class PlumeParticle extends SimpleAnimatedParticle {
         Vec3 v = initialVel.cross(u).normalize();
         double randomAngle = this.random.nextDouble() * 2.0 * Math.PI;
         this.spreadDirection = u.scale(Math.cos(randomAngle)).add(v.scale(Math.sin(randomAngle)));
-        this.spreadMagnitude = 0.1f + this.random.nextFloat() * (0.8f - 0.1f); //0.1 - 0.8
+        this.spreadMagnitude = (0.1f + this.random.nextFloat() * (0.8f - 0.1f))
+                * Mth.lerp(this.startupProgress, 2.0f, 1.0f); // ignition begins wide, then settles
         this.smokeTransitionAge = BASE_SMOKE_TRANSITION_AGE + this.random.nextIntBetweenInclusive(-2, 2);
         this.smokeLift = getSmokeBaseLift() + -0.01f + this.random.nextFloat() * (0.03f - -0.01f); //-0.1 - 0.03
 
@@ -115,7 +129,7 @@ public class PlumeParticle extends SimpleAnimatedParticle {
             int rgb = data.overrideColor() & 0xFFFFFF;
             this.setColor(((rgb >> 16) & 0xFF) / 255f, ((rgb >> 8) & 0xFF) / 255f, (rgb & 0xFF) / 255f);
         }
-        setAlpha(1);
+        setAlpha(1.0f - this.trailCoverage);
     }
 
     @Override
@@ -131,34 +145,22 @@ public class PlumeParticle extends SimpleAnimatedParticle {
         }
 
         //Velocity before possible collision
-        double intendedMoveX = this.dx * this.currentSpeedMultiplier;
-        double intendedMoveY = this.dy * this.currentSpeedMultiplier;
-        double intendedMoveZ = this.dz * this.currentSpeedMultiplier;
+        double intendedMoveX = this.xd * this.currentSpeedMultiplier + this.inheritedVelocity.x;
+        double intendedMoveY = this.yd * this.currentSpeedMultiplier + this.inheritedVelocity.y;
+        double intendedMoveZ = this.zd * this.currentSpeedMultiplier + this.inheritedVelocity.z;
 
         double prevX = this.x;
         double prevY = this.y;
         double prevZ = this.z;
 
-        //Actual movement
-        Vec3 totalMove = new Vec3(intendedMoveX, intendedMoveY, intendedMoveZ);
-        double totalDist = totalMove.length();
-        if (totalDist > 0.0D) {
-            int steps = (int)Math.ceil(totalDist / 0.5D);
-            Vec3 stepMove = totalMove.scale(1.0D / steps);
-            for (int i = 0; i < steps; ++i) {
-                double stepPrevX = this.x;
-                double stepPrevY = this.y;
-                double stepPrevZ = this.z;
-                this.move(stepMove.x, stepMove.y, stepMove.z);
-                double movedX = this.x - stepPrevX;
-                double movedY = this.y - stepPrevY;
-                double movedZ = this.z - stepPrevZ;
-                final double check = 1.0E-6D;
-                if (Math.abs(movedX - stepMove.x) > check || Math.abs(movedY - stepMove.y) > check || Math.abs(movedZ - stepMove.z) > check) {
-                    break;
-                }
-            }
+        var trackingSubLevel = ((ParticleExtension) this).sable$getTrackingSubLevel();
+        if (trackingSubLevel != null) {
+            this.sableManagedMotion = true;
+            this.sableResolvedSpreadDirection =
+                    trackingSubLevel.logicalPose().transformNormal(this.spreadDirection);
         }
+
+        this.move(intendedMoveX, intendedMoveY, intendedMoveZ);
         double actualMoveX = this.x - prevX;
         double actualMoveY = this.y - prevY;
         double actualMoveZ = this.z - prevZ;
@@ -166,7 +168,8 @@ public class PlumeParticle extends SimpleAnimatedParticle {
         //Determine collision and its normal
         boolean collisionDetected = false;
         Vec3 collisionNormal = null;
-        if (this.onGround) {
+        if (this.sableManagedMotion) {
+        } else if (this.onGround) {
             collisionDetected = true;
             collisionNormal = new Vec3(0, 1, 0);
         } else {
@@ -188,7 +191,7 @@ public class PlumeParticle extends SimpleAnimatedParticle {
 
         //We actually collided with something, lets resolve velocity!
         if (collisionDetected && collisionNormal != null) {
-            Vec3 incomingVel = new Vec3(this.dx, this.dy, this.dz);
+            Vec3 incomingVel = new Vec3(this.xd, this.yd, this.zd);
             if (incomingVel.normalize().dot(collisionNormal) > COLLISION_IGNORE_DOT_THRESHOLD) {
                 //Nothing ever happens, we collide backwards here, which should not be resolved
             } else {
@@ -243,17 +246,17 @@ public class PlumeParticle extends SimpleAnimatedParticle {
                     Vec3 newVel = desiredNormalVel.add(desiredTangentialVel);
                     double newVelMagnitude = newVel.length();
                     if (newVelMagnitude > 1e-5) {
-                        this.dx = (newVel.x / newVelMagnitude) * incomingVel.length() * COLLISION_SPEED_RETENTION;
-                        this.dy = (newVel.y / newVelMagnitude) * incomingVel.length() * COLLISION_SPEED_RETENTION;
-                        this.dz = (newVel.z / newVelMagnitude) * incomingVel.length() * COLLISION_SPEED_RETENTION;
+                        this.xd = (newVel.x / newVelMagnitude) * incomingVel.length() * COLLISION_SPEED_RETENTION;
+                        this.yd = (newVel.y / newVelMagnitude) * incomingVel.length() * COLLISION_SPEED_RETENTION;
+                        this.zd = (newVel.z / newVelMagnitude) * incomingVel.length() * COLLISION_SPEED_RETENTION;
                     } else { //Fallback
-                        this.dx = spreadPlaneDirection.x * incomingVel.length() * COLLISION_SPEED_RETENTION * 0.5;
-                        this.dy = spreadPlaneDirection.y * incomingVel.length() * COLLISION_SPEED_RETENTION * 0.5;
-                        this.dz = spreadPlaneDirection.z * incomingVel.length() * COLLISION_SPEED_RETENTION * 0.5;
+                        this.xd = spreadPlaneDirection.x * incomingVel.length() * COLLISION_SPEED_RETENTION * 0.5;
+                        this.yd = spreadPlaneDirection.y * incomingVel.length() * COLLISION_SPEED_RETENTION * 0.5;
+                        this.zd = spreadPlaneDirection.z * incomingVel.length() * COLLISION_SPEED_RETENTION * 0.5;
                     }
 
                 } else { //Incoming speed too low, slow down
-                    this.dx *= 0.1; this.dy *= 0.1; this.dz *= 0.1;
+                    this.xd *= 0.1; this.yd *= 0.1; this.zd *= 0.1;
                 }
             }
         }
@@ -264,7 +267,7 @@ public class PlumeParticle extends SimpleAnimatedParticle {
             this.friction = getSmokeFriction();
         }
         if (currentState == ParticleState.SMOKE) {
-            this.dy += this.smokeLift;
+            this.yd += this.smokeLift;
         }
         //Visual update
         float percent = (float)this.age / (float)this.lifetime;
@@ -278,17 +281,22 @@ public class PlumeParticle extends SimpleAnimatedParticle {
         if (this.age >= presmokeAge && !this.hasCollided) {
             float smoke_percent = (this.age - presmokeAge) / (this.lifetime - presmokeAge);
             float aged_spread_magnitude = (0.8f - smoke_percent) * this.spreadMagnitude; //It slows down at last frames actually
-            this.dx += this.spreadDirection.x * getSmokeSpreadMagnitude() * aged_spread_magnitude;
-            this.dy += this.spreadDirection.y * getSmokeSpreadMagnitude() * aged_spread_magnitude;
-            this.dz += this.spreadDirection.z * getSmokeSpreadMagnitude() * aged_spread_magnitude;
+            Vec3 resolvedSpread = this.sableResolvedSpreadDirection == null
+                    ? this.spreadDirection
+                    : this.sableResolvedSpreadDirection;
+            this.xd += resolvedSpread.x * getSmokeSpreadMagnitude() * aged_spread_magnitude;
+            this.yd += resolvedSpread.y * getSmokeSpreadMagnitude() * aged_spread_magnitude;
+            this.zd += resolvedSpread.z * getSmokeSpreadMagnitude() * aged_spread_magnitude;
         }
 
         //Friction
-        this.dx *= this.currentFriction;
-        this.dy *= this.currentFriction;
-        this.dz *= this.currentFriction;
+        this.xd *= this.currentFriction;
+        this.yd *= this.currentFriction;
+        this.zd *= this.currentFriction;
 
         this.pickSprite();
+        float reveal = Mth.clamp(this.age / 2.0f, 0.0f, 1.0f);
+        this.setAlpha(Mth.lerp(reveal, 1.0f - this.trailCoverage, 1.0f));
     }
 
     //Helpers
@@ -328,6 +336,16 @@ public class PlumeParticle extends SimpleAnimatedParticle {
     @Nonnull
     public ParticleRenderType getRenderType(){
         return ParticleRenderType.PARTICLE_SHEET_LIT;
+    }
+
+    @Override
+    public boolean sable$shouldKickFromTracking() {
+        return true;
+    }
+
+    @Override
+    public boolean sable$shouldCollideWithTrackingSubLevel() {
+        return false;
     }
 
     //Factory
