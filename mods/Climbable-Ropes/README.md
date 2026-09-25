@@ -1,8 +1,8 @@
 # Climbable Ropes for Create Aeronautics
 
 <p align="center">
-  <a href="https://modrinth.com/mod/create-aeronautics-climbable-rope"><img src="https://img.shields.io/modrinth/dt/jImqv1M5?logo=modrinth&label=Modrinth&color=00AF5C&style=for-the-badge" alt="Modrinth Downloads"></a>
   <a href="https://www.curseforge.com/projects/1528764"><img src="https://img.shields.io/curseforge/dt/1528764?logo=curseforge&label=CurseForge&color=F16436&style=for-the-badge" alt="CurseForge Downloads"></a>
+  <a href="https://modrinth.com/mod/create-aeronautics-climbable-rope"><img src="https://img.shields.io/modrinth/dt/jImqv1M5?logo=modrinth&label=Modrinth&color=00AF5C&style=for-the-badge" alt="Modrinth Downloads"></a>
 </p>
 
 <p align="center">
@@ -11,7 +11,7 @@
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
 </p>
 
-NeoForge addon for [Create: Aeronautics](https://modrinth.com/mod/create-aeronautics), specifically the bundled Simulated physics module that handles ropes. Adds two empty-hand climb modes alongside Simulated's existing wrench-driven zipline system: hanging rope strands (vertical by default; the angle gate is configurable up to fully horizontal), and plunger-fired ropes between paired `LaunchedPlungerEntity` projectiles.
+NeoForge addon for [Create: Aeronautics](https://modrinth.com/mod/create-aeronautics), specifically the bundled Simulated physics module that handles ropes. Adds two empty-hand climb modes alongside Simulated's existing wrench-driven zipline system: hanging rope strands (any angle by default; the gate is configurable down to vertical-only), and plunger-fired ropes between paired `LaunchedPlungerEntity` projectiles.
 
 <p align="center">
   <img src="docs/images/climbable-ropes-1.jpg" alt="Player climbing a rope hanging from an airship at sunset" width="720">
@@ -23,11 +23,13 @@ Simulated already has a rope-strand riding system (`ZiplineClientManager`) that 
 
 This mod adds two **separate** climb modes driven by empty-hand interaction.
 
+All three modes below carry the player with the rope when it is attached to a moving Sable sub-level (an ascending, descending, or flying ship). Each tick the rope's own motion is fed forward (strand points expose their previous-tick position; plunger ends use the sub-level's current pose against its last pose), minus whatever motion Sable already applies to a player standing on that sub-level, so the snap spring only corrects residual error instead of chasing the rope. Letting go keeps the ship's velocity.
+
 ### Hanging rope strands
 
 - The player right-clicks a rope strand with an **empty main hand**.
-- A `ClientTickEvent.Post` handler (`ClimbController`) raycasts against rope strands using Simulated's own `ZiplineClientManager.raycastRope` helper.
-- If a strand within reach is hit and the segment is within `maxClimbAngleFromVertical` of vertical (default ~32°, configurable up to 90° for fully horizontal ropes), we record the rope UUID, send Simulated's `RopeRidingPacket` so the server treats the player as riding (no fall damage, hanging animation, etc.), and run per-tick physics.
+- A `ClientTickEvent.Post` handler (`RopeRideDispatcher`) routes the click to `StrandClimbController`, which runs the shared closest-approach test (`HoverRay`, also used for plunger ropes) against every strand segment and takes the nearest one that passes within `ropeHoverRadius` of the look ray, lies inside block-interaction range, and is not behind whatever block the crosshair already targets.
+- If a strand within reach is hit and the segment is within `maxClimbAngleFromVertical` of vertical (default 90°, so any angle; lower it to require near-vertical ropes), we record the rope UUID, send Simulated's `RopeRidingPacket` so the server treats the player as riding (no fall damage, hanging animation, etc.), and run per-tick physics.
 - Climb motion follows the local rope tangent rather than pure Y, with arc-length-based top/bottom limits and a 3D snap-pull, so diagonal and horizontal climbs feel natural.
 - Forward direction (W) is locked at embark: vertical-ish ropes use the higher-Y endpoint; for shallower ropes the player's look direction wins, so W follows how the player attached, not how the rope was placed.
 - W climbs up, S descends, sprint + S slides faster (smooth acceleration up, smooth coast back down). On near-horizontal ropes, slide acceleration scales with `|tangent.y|`, so a flat rope just travels at descend speed.
@@ -35,7 +37,7 @@ This mod adds two **separate** climb modes driven by empty-hand interaction.
 ### Plunger ropes
 
 - Two paired `LaunchedPlungerEntity` projectiles (fired from Simulated's Plunger Launcher) form a rope between them.
-- `PlungerClimbController` iterates `ClientLevel.entitiesForRendering()` for plungers, computes endpoint positions in world render space (accounting for Sable sublevel transforms so ropes attached to assembled physics objects work), and ray-segment-tests against each pair.
+- `PlungerRope` iterates `ClientLevel.entitiesForRendering()` for plungers, computes endpoint positions in world render space (accounting for Sable sublevel transforms so ropes attached to assembled physics objects work), and ray-segment-tests against each pair; `PlungerClimbController` drives the climb along the pair it picks.
 - Embark direction is locked when grabbing the rope. For vertical-ish ropes W goes to the upper end; otherwise W goes toward whichever end the player is facing.
 - Slide acceleration and terminal speed scale with `sin(angle from horizontal)`, so vertical plunger ropes accelerate fastest and near-horizontal ropes don't slide beyond the descend baseline.
 - The same `RopeRidingPacket` signal drives the hanging animation in multiplayer.
@@ -45,20 +47,21 @@ This mod adds two **separate** climb modes driven by empty-hand interaction.
 - Right-clicking a plunger rope while holding a `CHAIN_RIDEABLE`-tagged item (typically Create's wrench) embarks the player as a zipline rider rather than a climber.
 - `PlungerZiplineController` mirrors Simulated's `ZiplineClientManager.ridingTick` physics: per-tick damping (`v * -0.6`, with the along-rope component subtracted), assistance (`dir * v.dot(dir) * 0.04`), and a spring force pulling the player anchor toward the closest point on the segment. Gravity and normal `WASD` motion come from vanilla player physics, so a horizontal plunger rope can be walked across as a temporary bridge.
 - No steepness gate: plunger ropes are taut straight lines, so any angle is rideable (unlike the strand zipline which gates by `maxRopeZiplineAngle`).
-- Dismount on Sneak, fly toggle, more than 5 ticks grounded, plunger removed/unplunged, or pushed past either endpoint with `velocity.dot(dir) > 0.6`.
+- Dismount on Sneak, fly toggle, more than 5 ticks grounded, plunger removed/unplunged, or pushed past either endpoint with `velocity.dot(dir) > 0.6`. On a moving sub-level the rope's motion is applied to the player's position rather than `deltaMovement` (vanilla drag would erode it and skew the rope-relative physics), and any dismount hands the ship's velocity back so the rider keeps its momentum.
 
 ## Building
 
-This depends on Simulated's compiled jar. Either:
+Simulated has no public maven; it ships only jar-in-jar'd inside Create: Aeronautics. The build extracts Simulated's compiled classes from that bundle automatically (downloading Create: Aeronautics from Modrinth, pinned by `create_aeronautics_version` in `gradle.properties`), so no separate Simulated checkout is required.
 
-- Build Simulated locally first (`gradlew :simulated:neoforge:build` in `Simulated-Project/`), or
-- Drop a built `simulated-neoforge-*.jar` into `./libs/`.
+```sh
+gradlew build
+```
 
-Then run `gradlew build`.
+The extracted Simulated jar lands at `build/extracted-simulated/simulated.jar`; the output mod jar lands in `build/libs/climbable_ropes-<version>.jar`.
 
 ## Controls
 
-To grab on: look at a near-vertical rope strand or a plunger rope within block-interaction range, with an **empty main hand**, and right-click.
+To grab on: look at a rope strand or a plunger rope within block-interaction range, with an **empty main hand**, and right-click.
 
 While climbing:
 
@@ -136,4 +139,4 @@ Defaults preserve the standard behavior; these affect physics feel and targeting
 | `enableClimbAnimation` | `true` | Play the rope-climb body/arm/leg animations while attached to a rope. |
 | `animationSpeedMultiplier` | `1.0` | Playback-speed multiplier for the climb animations. `1.0` is the authored speed. |
 
-Animations are driven by [KosmX's Player Animator](https://modrinth.com/mod/player-animator), an MIT-licensed library. Climbable Ropes bundles it via jar-in-jar, so end users do not install it separately. If a standalone copy is also present, NeoForge deduplicates by version and loads whichever is newer.
+Animations are driven by [KosmX's Player Animator](https://modrinth.com/mod/player-animator), an MIT-licensed library. Climbable Ropes bundles it via jar-in-jar, so end users do not install it separately. If a standalone copy is also present, NeoForge deduplicates by version and loads whichever is newer. When Entity Model Features is installed, its custom player animations (for example Fresh Animations: Player Extension) are paused for a player while a climb animation plays or while the player hangs in Create's skyhook pose (flat ropes, ziplines, and Create's own chain conveyors), and resume as soon as they let go, so neither pose is overwritten. Setting `enableClimbAnimation` to `false` turns this pausing off along with the animations.

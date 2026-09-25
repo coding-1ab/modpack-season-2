@@ -1,11 +1,14 @@
-package dev.matejhozlar.climbableropes;
+package dev.matejhozlar.climbableropes.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.matejhozlar.climbableropes.ClimbableRopes;
+import dev.matejhozlar.climbableropes.ClimbableRopesConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
@@ -19,16 +22,16 @@ import java.util.Set;
 import java.util.UUID;
 
 @EventBusSubscriber(modid = ClimbableRopes.MODID, value = Dist.CLIENT)
-public final class ClimbAnimationRenderer {
+public final class ClimbPoseAligner {
     private static final Vec3 WORLD_UP = new Vec3(0.0, 1.0, 0.0);
     private static final double ALIGN_SMOOTHING = 0.2;
 
     private static final Map<UUID, Vec3> ALIGNED_UP = new HashMap<>();
     private static final Set<UUID> TRANSFORMED = new HashSet<>();
 
-    private ClimbAnimationRenderer() {}
+    private ClimbPoseAligner() {}
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onRenderPlayerPre(RenderPlayerEvent.Pre event) {
         if (!ClimbableRopesConfig.ENABLE_CLIMB_ANIMATION.get()) return;
 
@@ -82,7 +85,7 @@ public final class ClimbAnimationRenderer {
             return;
         }
         ALIGNED_UP.keySet().removeIf(id -> mc.level.getPlayerByUUID(id) == null);
-        TRANSFORMED.removeIf(id -> mc.level.getPlayerByUUID(id) == null);
+        TRANSFORMED.clear();
     }
 
     private static Vec3 tangentFor(Player entity) {

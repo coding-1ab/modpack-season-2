@@ -1,4 +1,4 @@
-package dev.matejhozlar.climbableropes;
+package dev.matejhozlar.climbableropes.client;
 
 import dev.kosmx.playerAnim.api.layered.IAnimation;
 import dev.kosmx.playerAnim.api.layered.KeyframeAnimationPlayer;
@@ -9,17 +9,19 @@ import dev.kosmx.playerAnim.core.data.KeyframeAnimation;
 import dev.kosmx.playerAnim.core.util.Ease;
 import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationAccess;
 import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationRegistry;
+import dev.matejhozlar.climbableropes.ClimbableRopes;
+import dev.matejhozlar.climbableropes.ClimbableRopesConfig;
 import dev.matejhozlar.climbableropes.network.ClimbAnimUpdatePacket;
 import dev.matejhozlar.climbableropes.network.ClimbableRopesNetwork;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.Objects;
-import java.util.UUID;
 
 @OnlyIn(Dist.CLIENT)
 public final class ClimbAnimationController {
@@ -43,7 +45,7 @@ public final class ClimbAnimationController {
 
     private static ModifierLayer<IAnimation> layer;
     private static SpeedModifier speedModifier;
-    private static UUID registeredFor;
+    private static LocalPlayer attachedPlayer;
     private static ClimbMode currentMode;
     private static ResourceLocation currentAnimId;
     private static Vec3 ropeTangent;
@@ -112,6 +114,16 @@ public final class ClimbAnimationController {
         return layer != null && (currentAnimId != null || embarkPending);
     }
 
+    public static boolean isLocalPlayerAttached() {
+        return currentMode != null;
+    }
+
+    public static boolean isCustomPoseActive(Player player) {
+        LocalPlayer local = Minecraft.getInstance().player;
+        if (local != null && player.getUUID().equals(local.getUUID())) return isCustomPoseActive();
+        return RemoteClimbAnimations.isCustomPoseActive(player.getUUID());
+    }
+
     public static Vec3 currentRopeTangent() {
         return currentAnimId != null ? ropeTangent : null;
     }
@@ -133,18 +145,22 @@ public final class ClimbAnimationController {
         return len > 1.0e-6 && Math.abs(tangent.y) / len >= VERTICAL_TANGENT_Y;
     }
 
+    public static void reset() {
+        removeLayer();
+        syncRefreshCounter = 0;
+    }
+
     private static void removeLayer() {
         if (layer == null) return;
-        LocalPlayer player = Minecraft.getInstance().player;
-        if (player != null) {
+        if (attachedPlayer != null) {
             try {
-                PlayerAnimationAccess.getPlayerAnimLayer(player).removeLayer(layer);
+                PlayerAnimationAccess.getPlayerAnimLayer(attachedPlayer).removeLayer(layer);
             } catch (IllegalArgumentException ignored) {
             }
         }
         layer = null;
         speedModifier = null;
-        registeredFor = null;
+        attachedPlayer = null;
         currentMode = null;
         currentAnimId = null;
         ropeTangent = null;
@@ -152,8 +168,7 @@ public final class ClimbAnimationController {
     }
 
     private static void ensureLayer(LocalPlayer player) {
-        UUID id = player.getUUID();
-        if (layer != null && id.equals(registeredFor)) return;
+        if (layer != null && player == attachedPlayer) return;
         if (layer != null) removeLayer();
 
         layer = new ModifierLayer<>();
@@ -162,7 +177,7 @@ public final class ClimbAnimationController {
         layer.addModifierLast(speedModifier);
 
         PlayerAnimationAccess.getPlayerAnimLayer(player).addAnimLayer(LAYER_PRIORITY, layer);
-        registeredFor = id;
+        attachedPlayer = player;
     }
 
     private static void applyAnimation(ResourceLocation id, boolean fade) {
