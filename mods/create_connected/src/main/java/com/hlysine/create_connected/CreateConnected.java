@@ -7,6 +7,7 @@ import com.hlysine.create_connected.config.CCConfigs;
 import com.hlysine.create_connected.datagen.CCDatagen;
 import com.hlysine.create_connected.datagen.advancements.CCAdvancements;
 import com.hlysine.create_connected.datagen.advancements.CCTriggers;
+import com.hlysine.create_connected.registries.*;
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.api.registry.CreateBuiltInRegistries;
 import com.simibubi.create.foundation.data.CreateRegistrate;
@@ -55,6 +56,7 @@ public class CreateConnected {
 
         REGISTRATE.setCreativeTab(CCCreativeTabs.MAIN);
         CCSoundEvents.prepare();
+        CCDataComponents.register(modEventBus);
         CCBlocks.register();
         CCItems.register();
         CCBlockEntityTypes.register();
@@ -82,6 +84,8 @@ public class CreateConnected {
             CCMountedStorageTypes.register();
             CCDisplaySources.register();
             CCDisplayTargets.register();
+            CCUnpackingHandlers.register();
+            CCInventoryIdentifiers.register();
         });
     }
 

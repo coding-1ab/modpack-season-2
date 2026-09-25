@@ -2,10 +2,14 @@ package com.hlysine.create_connected.datagen.recipes;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
-import com.hlysine.create_connected.CCBlocks;
-import com.hlysine.create_connected.CCItems;
 import com.hlysine.create_connected.CreateConnected;
 import com.hlysine.create_connected.compat.CopycatsManager;
+import com.hlysine.create_connected.compat.DyeDepotCompat;
+import com.hlysine.create_connected.compat.Mods;
+import com.hlysine.create_connected.content.kineticbattery.KineticBatteryBlockEntity;
+import com.hlysine.create_connected.registries.CCBlocks;
+import com.hlysine.create_connected.registries.CCDataComponents;
+import com.hlysine.create_connected.registries.CCItems;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -38,9 +42,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.common.conditions.ICondition;
-import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
-import net.neoforged.neoforge.common.conditions.NotCondition;
+import net.neoforged.neoforge.common.conditions.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -207,6 +209,26 @@ public class CCStandardRecipes extends BaseRecipeProvider {
                     .pattern("iri")
             );
 
+    @Deprecated(forRemoval = true, since = "1.3.0")
+    @SuppressWarnings("removal")
+    GeneratedRecipe CHARGED_KINETIC_BATTERY = create(CCBlocks.KINETIC_BATTERY).unlockedBy(CCItems.CHARGED_KINETIC_BATTERY::get)
+            .withSuffix("_from_charged")
+            .requiresResultFeature()
+            .modifyStack(stack -> {
+                stack.set(CCDataComponents.KINETIC_BATTERY_CHARGE, KineticBatteryBlockEntity.getMaxBatteryLevel());
+                return stack;
+            })
+            .viaShapeless(b -> b
+                    .requires(CCItems.CHARGED_KINETIC_BATTERY)
+            );
+
+    GeneratedRecipe DISCHARGE_KINETIC_BATTERY = create(CCBlocks.KINETIC_BATTERY).unlockedBy(CCBlocks.KINETIC_BATTERY::get)
+            .withSuffix("_discharge")
+            .requiresResultFeature()
+            .viaShapeless(b -> b
+                    .requires(CCBlocks.KINETIC_BATTERY)
+            );
+
     GeneratedRecipe SEQUENCED_PULSE_GENERATOR = create(CCBlocks.SEQUENCED_PULSE_GENERATOR).unlockedBy(CCItems.CONTROL_CHIP::get)
             .requiresResultFeature()
             .viaShaped(b -> b
@@ -303,22 +325,63 @@ public class CCStandardRecipes extends BaseRecipeProvider {
     GeneratedRecipe EMPTY_CATALYST_FROM_SMOKING = clearFanCatalyst("smoking", CCBlocks.FAN_SMOKING_CATALYST);
     GeneratedRecipe EMPTY_CATALYST_FROM_SPLASHING = clearFanCatalyst("splashing", CCBlocks.FAN_SPLASHING_CATALYST);
     GeneratedRecipe EMPTY_CATALYST_FROM_HAUNTING = clearFanCatalyst("haunting", CCBlocks.FAN_HAUNTING_CATALYST);
-    GeneratedRecipe EMPTY_CATALYST_FROM_FREEZING = clearFanCatalyst("freezing", CCBlocks.FAN_FREEZING_CATALYST);
-    GeneratedRecipe EMPTY_CATALYST_FROM_SEETHING = clearFanCatalyst("seething", CCBlocks.FAN_SEETHING_CATALYST);
-    GeneratedRecipe EMPTY_CATALYST_FROM_SANDING = clearFanCatalyst("sanding", CCBlocks.FAN_SANDING_CATALYST);
-    GeneratedRecipe EMPTY_CATALYST_FROM_ENRICHED = clearFanCatalyst("enriched", CCBlocks.FAN_ENRICHED_CATALYST);
-    GeneratedRecipe EMPTY_CATALYST_FROM_ENDING_DRAGONS_BREATH = clearFanCatalyst("ending_dragons_breath", CCBlocks.FAN_ENDING_CATALYST_DRAGONS_BREATH);
-    GeneratedRecipe EMPTY_CATALYST_FROM_ENDING_DRAGON_HEAD = clearFanCatalyst("ending_dragon_head", CCBlocks.FAN_ENDING_CATALYST_DRAGON_HEAD);
-    GeneratedRecipe EMPTY_CATALYST_FROM_WITHERING = clearFanCatalyst("withering", CCBlocks.FAN_WITHERING_CATALYST);
-    GeneratedRecipe EMPTY_CATALYST_FROM_CHOCOLATE_COATING = clearFanCatalyst("chocolate_coating", CCBlocks.FAN_CHOCOLATE_COATING_CATALYST);
-    GeneratedRecipe EMPTY_CATALYST_FROM_HONEY_COATING = clearFanCatalyst("honey_coating", CCBlocks.FAN_HONEY_COATING_CATALYST);
-    GeneratedRecipe EMPTY_CATALYST_FROM_EXPLODING = clearFanCatalyst("exploding", CCBlocks.FAN_EXPLODING_CATALYST);
-    GeneratedRecipe EMPTY_CATALYST_FROM_RESONANCE = clearFanCatalyst("resonance", CCBlocks.FAN_RESONANCE_CATALYST);
-    GeneratedRecipe EMPTY_CATALYST_FROM_SCULKING = clearFanCatalyst("sculking", CCBlocks.FAN_SCULKING_CATALYST);
-    GeneratedRecipe EMPTY_CATALYST_FROM_PURIFYING = clearFanCatalyst("purifying", CCBlocks.FAN_PURIFYING_CATALYST);
-    GeneratedRecipe EMPTY_CATALYST_FROM_TRANSMUTATION = clearFanCatalyst("transmutation", CCBlocks.FAN_TRANSMUTATION_CATALYST);
-    GeneratedRecipe EMPTY_CATALYST_FROM_GLOOMING = clearFanCatalyst("glooming", CCBlocks.FAN_GLOOMING_CATALYST);
-    GeneratedRecipe EMPTY_CATALYST_FROM_SOUL_STRIPPING = clearFanCatalyst("soul_stripping", CCBlocks.FAN_SOUL_STRIPPING_CATALYST);
+    GeneratedRecipe EMPTY_CATALYST_FROM_FREEZING = clearFanCatalyst("freezing", CCBlocks.FAN_FREEZING_CATALYST,
+            new OrCondition(List.of(
+                    new ModLoadedCondition(Mods.DREAMS_DESIRES.id()),
+                    new ModLoadedCondition(Mods.GARNISHED.id()),
+                    new ModLoadedCondition(Mods.DRAGONS_PLUS.id())
+            )));
+    GeneratedRecipe EMPTY_CATALYST_FROM_SEETHING = clearFanCatalyst("seething", CCBlocks.FAN_SEETHING_CATALYST,
+            new ModLoadedCondition(Mods.DREAMS_DESIRES.id()));
+    GeneratedRecipe EMPTY_CATALYST_FROM_SANDING = clearFanCatalyst("sanding", CCBlocks.FAN_SANDING_CATALYST,
+            new OrCondition(List.of(
+                    new ModLoadedCondition(Mods.DREAMS_DESIRES.id()),
+                    new ModLoadedCondition(Mods.DRAGONS_PLUS.id())
+            )));
+    GeneratedRecipe EMPTY_CATALYST_FROM_ENRICHED = clearFanCatalyst("enriched", CCBlocks.FAN_ENRICHED_CATALYST,
+            new ModLoadedCondition(Mods.NUCLEAR.id()));
+    GeneratedRecipe EMPTY_CATALYST_FROM_ENDING_DRAGONS_BREATH = clearFanCatalyst("ending_dragons_breath", CCBlocks.FAN_ENDING_CATALYST_DRAGONS_BREATH,
+            new ModLoadedCondition(Mods.DRAGONS_PLUS.id()));
+    GeneratedRecipe EMPTY_CATALYST_FROM_ENDING_DRAGON_HEAD = clearFanCatalyst("ending_dragon_head", CCBlocks.FAN_ENDING_CATALYST_DRAGON_HEAD,
+            new ModLoadedCondition(Mods.DRAGONS_PLUS.id()));
+    GeneratedRecipe EMPTY_CATALYST_FROM_WITHERING = clearFanCatalyst("withering", CCBlocks.FAN_WITHERING_CATALYST,
+            FalseCondition.INSTANCE);
+    GeneratedRecipe EMPTY_CATALYST_FROM_CHOCOLATE_COATING = clearFanCatalyst("chocolate_coating", CCBlocks.FAN_CHOCOLATE_COATING_CATALYST,
+            new ModLoadedCondition(Mods.MORE_CATALYSTS.id()));
+    GeneratedRecipe EMPTY_CATALYST_FROM_HONEY_COATING = clearFanCatalyst("honey_coating", CCBlocks.FAN_HONEY_COATING_CATALYST,
+            new ModLoadedCondition(Mods.MORE_CATALYSTS.id()));
+    GeneratedRecipe EMPTY_CATALYST_FROM_EXPLODING = clearFanCatalyst("exploding", CCBlocks.FAN_EXPLODING_CATALYST,
+            new ModLoadedCondition(Mods.MORE_CATALYSTS.id()));
+    GeneratedRecipe EMPTY_CATALYST_FROM_RESONANCE = clearFanCatalyst("resonance", CCBlocks.FAN_RESONANCE_CATALYST,
+            new ModLoadedCondition(Mods.MORE_CATALYSTS.id()));
+    GeneratedRecipe EMPTY_CATALYST_FROM_SCULKING = clearFanCatalyst("sculking", CCBlocks.FAN_SCULKING_CATALYST,
+            new ModLoadedCondition(Mods.MORE_CATALYSTS.id()));
+    GeneratedRecipe EMPTY_CATALYST_FROM_PURIFYING = clearFanCatalyst("purifying", CCBlocks.FAN_PURIFYING_CATALYST,
+            new ModLoadedCondition(Mods.MORE_CATALYSTS.id()));
+    GeneratedRecipe EMPTY_CATALYST_FROM_TRANSMUTATION = clearFanCatalyst("transmutation", CCBlocks.FAN_TRANSMUTATION_CATALYST,
+            new ModLoadedCondition(Mods.SHIMMER.id()));
+    GeneratedRecipe EMPTY_CATALYST_FROM_GLOOMING = clearFanCatalyst("glooming", CCBlocks.FAN_GLOOMING_CATALYST,
+            new ModLoadedCondition(Mods.SHIMMER.id()));
+    GeneratedRecipe EMPTY_CATALYST_FROM_SOUL_STRIPPING = clearFanCatalyst("soul_stripping", CCBlocks.FAN_SOUL_STRIPPING_CATALYST,
+            new ModLoadedCondition(Mods.NETHER_INDUSTRY.id()));
+
+    GeneratedRecipe EMPTY_CATALYST_FROM_DYES = clearFanDyeingCatalysts();
+
+    private GeneratedRecipe clearFanDyeingCatalysts() {
+        CCBlocks.FAN_DYEING_CATALYSTS.forEach((color, block) -> {
+            ICondition hasDyeingMods = new OrCondition(List.of(
+                    new ModLoadedCondition(Mods.GARNISHED.id()),
+                    new ModLoadedCondition(Mods.DRAGONS_PLUS.id())
+            ));
+            String namespace = DyeDepotCompat.getColorNamespace(color);
+            boolean isVanilla = namespace.equals(ResourceLocation.DEFAULT_NAMESPACE);
+            clearFanCatalyst((isVanilla ? "" : (namespace + "_")) + color.getName() + "_dye", block,
+                    isVanilla
+                            ? hasDyeingMods
+                            : new AndCondition(List.of(hasDyeingMods, new ModLoadedCondition(Mods.DYE_DEPOT.id()))));
+        });
+        return null;
+    }
 
     private final Marker PALETTES = enterFolder("palettes");
 
@@ -465,6 +528,17 @@ public class CCStandardRecipes extends BaseRecipeProvider {
                 );
     }
 
+    GeneratedRecipe clearFanCatalyst(String key, ItemProviderEntry<? extends ItemLike, ? extends ItemLike> from, ICondition condition) {
+        return create(CCBlocks.EMPTY_FAN_CATALYST)
+                .withSuffix("_from_" + key)
+                .unlockedBy(CCBlocks.EMPTY_FAN_CATALYST::get)
+                .withCondition(condition)
+                .requiresResultFeature()
+                .viaShapeless(b -> b
+                        .requires(from)
+                );
+    }
+
     GeneratedRecipe copycat(ItemProviderEntry<? extends ItemLike, ? extends ItemLike> result, int resultCount) {
         if (CopycatsManager.convert(result) != result)
             create(() -> CopycatsManager.convert(result)).withSuffix("_compat")
@@ -497,12 +571,14 @@ public class CCStandardRecipes extends BaseRecipeProvider {
 
         private Supplier<ItemPredicate> unlockedBy;
         private int amount;
+        private Function<ItemStack, ItemStack> stackModifier;
 
         private GeneratedRecipeBuilder(String path) {
             this.path = path;
             this.recipeConditions = new ArrayList<>();
             this.suffix = "";
             this.amount = 1;
+            this.stackModifier = stack -> stack;
         }
 
         public GeneratedRecipeBuilder(String path, Supplier<? extends ItemLike> result) {
@@ -517,6 +593,11 @@ public class CCStandardRecipes extends BaseRecipeProvider {
 
         GeneratedRecipeBuilder returns(int amount) {
             this.amount = amount;
+            return this;
+        }
+
+        GeneratedRecipeBuilder modifyStack(Function<ItemStack, ItemStack> stackModifier) {
+            this.stackModifier = stackModifier;
             return this;
         }
 
@@ -581,7 +662,7 @@ public class CCStandardRecipes extends BaseRecipeProvider {
         // FIXME 5.1 refactor - recipe categories as markers instead of sections?
         GeneratedRecipe viaShaped(UnaryOperator<ShapedRecipeBuilder> builder) {
             return register(consumer -> {
-                ShapedRecipeBuilder b = builder.apply(ShapedRecipeBuilder.shaped(category == null ? RecipeCategory.MISC : category, result.get(), amount));
+                ShapedRecipeBuilder b = builder.apply(ShapedRecipeBuilder.shaped(category == null ? RecipeCategory.MISC : category, stackModifier.apply(new ItemStack(result.get(), amount))));
                 if (unlockedBy != null)
                     b.unlockedBy("has_item", inventoryTrigger(unlockedBy.get()));
                 if (!recipeConditions.isEmpty()) {
@@ -593,7 +674,7 @@ public class CCStandardRecipes extends BaseRecipeProvider {
 
         GeneratedRecipe viaShapeless(UnaryOperator<ShapelessRecipeBuilder> builder) {
             return register(consumer -> {
-                ShapelessRecipeBuilder b = builder.apply(ShapelessRecipeBuilder.shapeless(category == null ? RecipeCategory.MISC : category, result.get(), amount));
+                ShapelessRecipeBuilder b = builder.apply(ShapelessRecipeBuilder.shapeless(category == null ? RecipeCategory.MISC : category, stackModifier.apply(new ItemStack(result.get(), amount))));
                 if (unlockedBy != null)
                     b.unlockedBy("has_item", inventoryTrigger(unlockedBy.get()));
                 if (!recipeConditions.isEmpty()) {

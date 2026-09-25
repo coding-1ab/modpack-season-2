@@ -1,7 +1,7 @@
 package com.hlysine.create_connected.compat;
 
-import com.hlysine.create_connected.CCBlocks;
-import com.hlysine.create_connected.CCItems;
+import com.hlysine.create_connected.registries.CCBlocks;
+import com.hlysine.create_connected.registries.CCItems;
 import com.hlysine.create_connected.CreateConnected;
 import com.hlysine.create_connected.config.CCConfigs;
 import com.tterrag.registrate.util.entry.BlockEntry;
@@ -118,9 +118,12 @@ public class CopycatsManager {
     }
 
     public static void enqueueMigration(Level level, BlockPos pos) {
-        migrationQueue
-                .computeIfAbsent(level, $ -> Collections.synchronizedSet(new LinkedHashSet<>()))
-                .add(pos);
+        synchronized (migrationQueue) {
+            Set<BlockPos> list = migrationQueue.computeIfAbsent(level, $ -> Collections.synchronizedSet(new LinkedHashSet<>()));
+            synchronized (list) {
+                list.add(pos);
+            }
+        }
     }
 
     public static void onLevelTick(LevelTickEvent.Post event) {

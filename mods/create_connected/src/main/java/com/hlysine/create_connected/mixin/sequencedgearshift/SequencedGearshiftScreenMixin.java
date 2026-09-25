@@ -1,6 +1,6 @@
 package com.hlysine.create_connected.mixin.sequencedgearshift;
 
-import com.hlysine.create_connected.CCSequencerInstructions;
+import com.hlysine.create_connected.registries.CCSequencerInstructions;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.simibubi.create.content.kinetics.transmission.sequencer.Instruction;

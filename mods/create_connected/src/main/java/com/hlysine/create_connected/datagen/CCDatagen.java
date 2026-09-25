@@ -2,9 +2,9 @@ package com.hlysine.create_connected.datagen;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.hlysine.create_connected.CCJukeboxSongs;
-import com.hlysine.create_connected.CCPonderPlugin;
-import com.hlysine.create_connected.CCSoundEvents;
+import com.hlysine.create_connected.registries.CCJukeboxSongs;
+import com.hlysine.create_connected.registries.CCPonderPlugin;
+import com.hlysine.create_connected.registries.CCSoundEvents;
 import com.hlysine.create_connected.CreateConnected;
 import com.hlysine.create_connected.datagen.advancements.CCAdvancements;
 import com.hlysine.create_connected.datagen.recipes.CCStandardRecipes;
@@ -51,6 +51,7 @@ public class CCDatagen {
 
     private static void addExtraRegistrateData() {
         CCTagGen.addGenerators();
+        CCDataMapGen.addGenerators();
 
         CreateConnected.getRegistrate().addDataGenerator(ProviderType.LANG, provider -> {
             BiConsumer<String, String> langConsumer = provider::add;

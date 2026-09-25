@@ -1,6 +1,6 @@
 package com.hlysine.create_connected.content.kineticbattery;
 
-import com.hlysine.create_connected.CCBlocks;
+import com.hlysine.create_connected.registries.CCBlocks;
 import com.simibubi.create.content.kinetics.mechanicalArm.AllArmInteractionPointTypes;
 import com.simibubi.create.content.kinetics.mechanicalArm.ArmBlockEntity;
 import com.simibubi.create.content.kinetics.mechanicalArm.ArmInteractionPoint;
@@ -21,7 +21,7 @@ public class KineticBatteryInteractionPoint extends AllArmInteractionPointTypes.
     public ItemStack insert(ArmBlockEntity armBlockEntity, ItemStack stack, boolean simulate) {
         ItemStack input = stack.copy();
         InteractionResultHolder<ItemStack> res =
-                KineticBatteryBlock.tryInsert(cachedState, level, pos, input, false, false, simulate);
+                KineticBatteryBlock.tryInsert(cachedState, level, pos, input, false, simulate);
         ItemStack remainder = res.getObject();
         if (input.isEmpty()) {
             return remainder;

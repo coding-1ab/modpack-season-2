@@ -5,16 +5,25 @@ import com.hlysine.create_connected.config.CServer;
 import com.hlysine.create_connected.content.ISplitShaftBlockEntity;
 import com.hlysine.create_connected.datagen.advancements.AdvancementBehaviour;
 import com.hlysine.create_connected.datagen.advancements.CCAdvancements;
+import com.hlysine.create_connected.mixin.kineticbattery.KineticNetworkAccessor;
+import com.hlysine.create_connected.registries.CCDataComponents;
 import com.simibubi.create.content.contraptions.bearing.WindmillBearingBlockEntity;
+import com.simibubi.create.content.kinetics.KineticNetwork;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import com.simibubi.create.content.kinetics.belt.BeltBlock;
 import com.simibubi.create.content.redstone.thresholdSwitch.ThresholdSwitchObservable;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollOptionBehaviour;
+import com.simibubi.create.foundation.utility.CreateLang;
 import joptsimple.internal.Strings;
+import net.createmod.catnip.codecs.CatnipCodecUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -29,12 +38,14 @@ import static com.hlysine.create_connected.content.kineticbattery.KineticBattery
 public class KineticBatteryBlockEntity extends GeneratingKineticBlockEntity implements ISplitShaftBlockEntity, ThresholdSwitchObservable {
 
     private static final int SYNC_RATE = 20;
-    public static final double CHARGE_THRESHOlD = 3600 * 20;
 
     private double batteryLevel;
+    private DataComponentPatch componentPatch = DataComponentPatch.EMPTY;
 
     private int syncCooldown;
     protected boolean queuedSync;
+    private float consumedStress = -1;
+    private boolean applyMinStress = false;
 
     protected ScrollOptionBehaviour<WindmillBearingBlockEntity.RotationDirection> movementDirection;
 
@@ -72,12 +83,12 @@ public class KineticBatteryBlockEntity extends GeneratingKineticBlockEntity impl
         return CServer.BatteryDischargeRPM.get();
     }
 
-    public int getCrudeBatteryLevel(int totalLevels) {
-        if (batteryLevel >= getMaxBatteryLevel())
+    public static int getCrudeBatteryLevel(double level, int totalLevels) {
+        if (level >= getMaxBatteryLevel())
             return totalLevels;
-        if (batteryLevel <= 0)
+        if (level <= 0)
             return 0;
-        return (int) Math.floor((batteryLevel / getMaxBatteryLevel()) * (totalLevels - 1)) + 1;
+        return (int) Math.floor((level / getMaxBatteryLevel()) * (totalLevels - 1)) + 1;
     }
 
     @Override
@@ -86,22 +97,27 @@ public class KineticBatteryBlockEntity extends GeneratingKineticBlockEntity impl
 
         if (syncCooldown > 0) {
             syncCooldown--;
-            if (syncCooldown == 0 && queuedSync)
+            if (syncCooldown == 0 && queuedSync) {
+                if (!getLevel().isClientSide() && isDischarging(getBlockState()) && batteryLevel > 0) {
+                    updateMinStress();
+                }
                 sendData();
+            }
         }
 
         if (getSpeed() == 0 || !hasNetwork())
             return;
+
         boolean changed = false;
         if (isDischarging(getBlockState())) {
-            if (batteryLevel > 0 && stress > 0) {
+            if (batteryLevel > 0) {
                 if (lastCapacityProvided == 0) {
                     calculateAddedStressCapacity();
                 }
-                batteryLevel = Math.max(batteryLevel - lastCapacityProvided * Math.abs(getGeneratedSpeed()), 0);
-                changed = true;
-            } else if (batteryLevel > 0) {
-                batteryLevel = Math.max(batteryLevel - CServer.BatteryMinDischarge.get(), 0);
+                if (consumedStress < 0) {
+                    updateConsumedStress();
+                }
+                batteryLevel = Math.max(batteryLevel - getConsumedStress(), 0);
                 changed = true;
             }
         } else {
@@ -117,8 +133,65 @@ public class KineticBatteryBlockEntity extends GeneratingKineticBlockEntity impl
             updateLevel();
     }
 
+    @Override
+    public void updateFromNetwork(float maxStress, float currentStress, int networkSize) {
+        super.updateFromNetwork(maxStress, currentStress, networkSize);
+        updateConsumedStress();
+    }
+
+    private void updateConsumedStress() {
+        if (getLevel().isClientSide()) {
+            if (consumedStress < 0) {
+                consumedStress = 0;
+            }
+            return;
+        }
+        KineticNetwork network = getOrCreateNetwork();
+
+        float presentCapacity = 0;
+        int batteryCount = 0;
+        for (KineticBlockEntity be : network.sources.keySet()) {
+            if (be instanceof KineticBatteryBlockEntity) {
+                batteryCount += 1;
+                continue;
+            }
+            presentCapacity += network.getActualCapacityOf(be);
+        }
+        float batteryCapacity = stress - presentCapacity - ((KineticNetworkAccessor) network).getUnloadedStress();
+        if (batteryCapacity <= 0) {
+            consumedStress = 0;
+        } else {
+            consumedStress = batteryCapacity / batteryCount;
+        }
+
+        updateMinStress();
+        sendDataImmediately();
+    }
+
+    private void updateMinStress() {
+        if (stress > CServer.BatteryMinDischarge.get().floatValue()) {
+            applyMinStress = false;
+            return;
+        }
+        KineticNetwork network = getOrCreateNetwork();
+        applyMinStress = false;
+        for (KineticBlockEntity be : network.members.keySet()) {
+            if (BeltBlock.canTransportObjects(be.getBlockState())) {
+                applyMinStress = true;
+                break;
+            }
+        }
+    }
+
+    public float getConsumedStress() {
+        if (applyMinStress) {
+            return Math.max(CServer.BatteryMinDischarge.get().floatValue(), consumedStress);
+        }
+        return Math.max(0, consumedStress);
+    }
+
     private void updateLevel() {
-        int crudeLevel = getCrudeBatteryLevel(5);
+        int crudeLevel = getCrudeBatteryLevel(getBatteryLevel(), 5);
         int oldLevel = getBlockState().getValue(LEVEL);
         if (oldLevel != crudeLevel) {
             if (crudeLevel == 5) {
@@ -129,6 +202,14 @@ public class KineticBatteryBlockEntity extends GeneratingKineticBlockEntity impl
         sendData();
     }
 
+    public WindmillBearingBlockEntity.RotationDirection getRotationDirection() {
+        return movementDirection.get();
+    }
+
+    public void setRotationDirection(WindmillBearingBlockEntity.RotationDirection direction) {
+        movementDirection.setValue(direction.ordinal());
+    }
+
     public double getBatteryLevel() {
         return batteryLevel;
     }
@@ -137,6 +218,24 @@ public class KineticBatteryBlockEntity extends GeneratingKineticBlockEntity impl
         this.batteryLevel = batteryLevel;
         updateLevel();
         sendDataImmediately();
+    }
+
+    public void setComponentPatch(DataComponentPatch componentPatch) {
+        this.componentPatch = componentPatch;
+    }
+
+    public DataComponentPatch getComponentPatch() {
+        return componentPatch;
+    }
+
+    @Override
+    protected void applyImplicitComponents(DataComponentInput componentInput) {
+        setBatteryLevel(componentInput.getOrDefault(CCDataComponents.KINETIC_BATTERY_CHARGE, 0.0));
+    }
+
+    @Override
+    protected void collectImplicitComponents(DataComponentMap.Builder components) {
+        components.set(CCDataComponents.KINETIC_BATTERY_CHARGE, getBatteryLevel());
     }
 
     public void sendDataImmediately() {
@@ -196,6 +295,9 @@ public class KineticBatteryBlockEntity extends GeneratingKineticBlockEntity impl
         super.read(compound, registries, clientPacket);
         batteryLevel = compound.getFloat("batteryLevel");
         queuedSync = compound.getBoolean("queuedSync");
+        consumedStress = compound.getFloat("consumedStress");
+        applyMinStress = compound.getBoolean("applyMinStress");
+        componentPatch = CatnipCodecUtils.decode(DataComponentPatch.CODEC, registries, compound.getCompound("Components")).orElse(DataComponentPatch.EMPTY);
     }
 
     @Override
@@ -203,6 +305,9 @@ public class KineticBatteryBlockEntity extends GeneratingKineticBlockEntity impl
         super.write(compound, registries, clientPacket);
         compound.putDouble("batteryLevel", batteryLevel);
         compound.putBoolean("queuedSync", queuedSync);
+        compound.putFloat("consumedStress", consumedStress);
+        compound.putBoolean("applyMinStress", applyMinStress);
+        compound.put("Components", CatnipCodecUtils.encode(DataComponentPatch.CODEC, registries, componentPatch).orElse(new CompoundTag()));
     }
 
     @Override
@@ -212,7 +317,7 @@ public class KineticBatteryBlockEntity extends GeneratingKineticBlockEntity impl
         ConnectedLang.builder().add(ConnectedLang.translateDirect("battery.charge")
                         .withStyle(ChatFormatting.GRAY)
                         .append(" ")
-                        .append(barComponent(0, getCrudeBatteryLevel(20), 20)))
+                        .append(barComponent(0, getCrudeBatteryLevel(getBatteryLevel(), 20), 20)))
                 .forGoggles(tooltip);
         ConnectedLang.number(batteryLevel / 3600 / 20)
                 .style(ChatFormatting.BLUE)
@@ -223,6 +328,24 @@ public class KineticBatteryBlockEntity extends GeneratingKineticBlockEntity impl
                         .add(ConnectedLang.translate("generic.unit.su_hours"))
                         .style(ChatFormatting.DARK_GRAY))
                 .forGoggles(tooltip, 1);
+        if (isDischarging(getBlockState()) && getBatteryLevel() > 0) {
+            ConnectedLang.translate("battery.consumption")
+                    .style(ChatFormatting.GRAY)
+                    .forGoggles(tooltip);
+            if (consumedStress == 0 && getConsumedStress() > 0) {
+                CreateLang.number(getConsumedStress())
+                        .translate("generic.unit.stress")
+                        .style(ChatFormatting.BLUE)
+                        .space()
+                        .add(ConnectedLang.translate("battery.powering_belts").style(ChatFormatting.DARK_GRAY))
+                        .forGoggles(tooltip, 1);
+            } else {
+                CreateLang.number(getConsumedStress())
+                        .translate("generic.unit.stress")
+                        .style(ChatFormatting.BLUE)
+                        .forGoggles(tooltip, 1);
+            }
+        }
 
 
         super.addToGoggleTooltip(tooltip, isPlayerSneaking);
@@ -234,10 +357,8 @@ public class KineticBatteryBlockEntity extends GeneratingKineticBlockEntity impl
         boolean complete = isCurrentStageComplete(getBlockState());
         boolean discharging = isDischarging(getBlockState());
 
-        if (discharging && !complete && stress > 0) {
+        if (discharging && !complete) {
             return ConnectedLang.translateDirect("battery.status.discharging");
-        } else if (discharging && !complete) {
-            return ConnectedLang.translateDirect("battery.status.power_saving");
         } else if (!discharging && !complete) {
             return ConnectedLang.translateDirect("battery.status.charging");
         } else if (!discharging && complete) {
@@ -247,7 +368,7 @@ public class KineticBatteryBlockEntity extends GeneratingKineticBlockEntity impl
         }
     }
 
-    private MutableComponent barComponent(int minValue, int level, int maxValue) {
+    static MutableComponent barComponent(int minValue, int level, int maxValue) {
         return Component.empty()
                 .append(bars(java.lang.Math.max(0, minValue - 1), ChatFormatting.DARK_GREEN))
                 .append(bars(minValue > 0 ? 1 : 0, ChatFormatting.GREEN))
@@ -258,7 +379,7 @@ public class KineticBatteryBlockEntity extends GeneratingKineticBlockEntity impl
 
     }
 
-    private MutableComponent bars(int level, ChatFormatting format) {
+    static MutableComponent bars(int level, ChatFormatting format) {
         return Component.literal(Strings.repeat('|', level))
                 .withStyle(format);
     }

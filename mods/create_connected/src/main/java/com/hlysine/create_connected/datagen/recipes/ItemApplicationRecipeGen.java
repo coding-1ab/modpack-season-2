@@ -1,20 +1,19 @@
 package com.hlysine.create_connected.datagen.recipes;
 
-import com.hlysine.create_connected.CCBlocks;
 import com.hlysine.create_connected.CreateConnected;
+import com.hlysine.create_connected.compat.DyeDepotCompat;
 import com.hlysine.create_connected.compat.Mods;
+import com.hlysine.create_connected.registries.CCBlocks;
 import com.simibubi.create.AllFluids;
 import com.simibubi.create.AllItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.common.conditions.FalseCondition;
-import net.neoforged.neoforge.common.conditions.ICondition;
-import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
-import net.neoforged.neoforge.common.conditions.OrCondition;
+import net.neoforged.neoforge.common.conditions.*;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -86,6 +85,32 @@ public class ItemApplicationRecipeGen extends com.simibubi.create.api.data.recip
     GeneratedRecipe SOUL_STRIPPING_CATALYST = fanCatalystFromEmpty(
             "soul_stripping_catalyst", new SimpleDatagenIngredient(Mods.NETHER_INDUSTRY, "mysterious_ancient_mechanism").toVanilla(), CCBlocks.FAN_SOUL_STRIPPING_CATALYST::asItem,
             new ModLoadedCondition(Mods.NETHER_INDUSTRY.id()));
+
+    GeneratedRecipe FAN_DYEING_CATALYSTS = applyFanDyeingCatalysts();
+
+    private GeneratedRecipe applyFanDyeingCatalysts() {
+        CCBlocks.FAN_DYEING_CATALYSTS.forEach((color, block) -> {
+            String namespace = DyeDepotCompat.getColorNamespace(color);
+            boolean isVanilla = namespace.equals(ResourceLocation.DEFAULT_NAMESPACE);
+            fanCatalystFromEmpty(
+                    color.getName() + "_dyeing_catalyst_dragons_plus",
+                    new SimpleDatagenIngredient(Mods.DRAGONS_PLUS, (isVanilla ? "" : (namespace + "_")) + color.getName() + "_dye_bucket").toVanilla(),
+                    block::asItem,
+                    isVanilla
+                            ? new ModLoadedCondition(Mods.DRAGONS_PLUS.id())
+                            : new AndCondition(List.of(new ModLoadedCondition(Mods.DRAGONS_PLUS.id()), new ModLoadedCondition(Mods.DYE_DEPOT.id())))
+            );
+            fanCatalystFromEmpty(
+                    color.getName() + "_dyeing_catalyst_garnished",
+                    new SimpleDatagenIngredient(Mods.GARNISHED, (isVanilla ? "" : (namespace + "_")) + color.getName() + "_mastic_resin_bucket").toVanilla(),
+                    block::asItem,
+                    isVanilla
+                            ? new ModLoadedCondition(Mods.GARNISHED.id())
+                            : new AndCondition(List.of(new ModLoadedCondition(Mods.GARNISHED.id()), new ModLoadedCondition(Mods.DYE_DEPOT.id())))
+            );
+        });
+        return null;
+    }
 
     protected GeneratedRecipe fanCatalystFromEmpty(String type, ItemLike ingredient, Supplier<ItemLike> output) {
         return fanCatalystFromEmpty(type, Ingredient.of(ingredient), output);

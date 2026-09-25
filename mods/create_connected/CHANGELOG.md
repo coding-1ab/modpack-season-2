@@ -2,8 +2,146 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
+to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## 1.3.3 - 2026-08-31
+
+### Added
+
+- Mechanical crafter compatibility for inventory access ports / inventory bridges
+    - When packagers unpack into inventory extensions, the crafting layout is preserved when connected to mechanical
+      crafters
+    - Crafting is automatically triggered after insertion
+    - Inventory bridges can now connect a packager to two mechanical crafters, and insert ingredients to the first
+      available crafter for double crafting speed
+    - All crafting ingredients must pass the set filter on an inventory bridge for the whole recipe to unpack
+
+### Fixed
+
+- Performance issues with inventory access ports / inventory bridges (#294)
+- Inventory access ports not unlocking after losing redstone signal
+- Duplicate stock count when an inventory is connected to multiple stock links via inventory access ports (#305)
+- Sequenced pulse generator getting stuck in "wait until" instructions (#296)
+- Rare concurrent modification in copycat migration
+
+## 1.3.2 - 2026-06-22
+
+### Fixed
+
+- Ticking block entity crash due to concurrent modification when Kinetic Batteries are connected to specific blocks from
+  other mods
+
+## 1.3.1 - 2026-06-21
+
+### Fixed
+
+- Tag errors due to missing compat blocks for Dye Depot and Create: Simulated
+
+## 1.3.0 - 2026-06-21
+
+### **This version onward is not compatible with Minecraft 1.20.1 or earlier**
+
+### Added
+
+- **Item filter support when extracting items via inventory bridges**
+    - This can also be used to control which items are visible in stock link networks
+- Fan catalyst compatibility with Dye Depot
+    - Create: Dragons Plus is required for this to work
+- Placement helpers for crank wheels
+- Neoforge events before and after the feature toggle system refreshes JEI item list
+    - Modpack creators may use these events to add compatibility with stage-based progression mods
+
+### Changed
+
+- **Kinetic Battery rework**
+    - Kinetic Batteries now discharge according to actual stress consumption
+    - Batteries no longer discharge if other kinetic sources in the network are providing enough stress capacity to
+      cover the consumption
+    - Battery items now carry NBT data to retain charge
+    - Batteries placed in a chain share their redstone signal
+- The creative tab now uses a brass gearbox as icon
+
+### Fixed
+
+- Sequenced pulse generator getting stuck after one activation
+
+## 1.2.3 - 2026-06-21 [1.20.1 only]
+
+### Added
+
+- Forge events before and after the feature toggle system refreshes JEI item list
+    - Modpack creators may use these events to add compatibility with stage-based progression mods
+
+### Fixed
+
+- Sequenced pulse generator getting stuck after one activation
+
+## 1.2.2 - 2026-06-09
+
+### Fixed
+
+- Crash on dedicated servers due to client class access when rendering mob heads in fan catalysts
+
+## 1.2.1 - 2026-06-09
+
+### Added
+
+- Fan dyeing catalysts for Create: Garnished and Create: Dragons Plus
+
+### Changed
+
+- Fan exploding catalyst now uses an animated model (thanks @JustAGuy4447)
+
+### Fixed
+
+- Missing texture on diagonal encased brass chute
+- Brass chute incorrectly accepting industrial iron block for encasing
+- Missing sound effects for steam engines on fluid vessels
+- Pixel glitch on Sequenced Pulse Generator screen
+- Hardcoded "su-hours" unit in Kinetic Battery display source (thanks @VladisCrafter)
+- Dashboard not being able to be re-dyed (thanks @VladisCrafter)
+
+## 1.2.0 - 2026-05-25
+
+### Breaking code changes
+
+- Mod registrations moved to `registries` package
+
+### Added
+
+- **Dashboard**
+    - A mini-display that can send info to the HUD of players sitting in front
+- **Brass Chute**
+    - Middle ground between a regular chute and a smart chute. Supports diagonal item transport and can extract 64 items
+      at a time.
+- **Catalyst compatibilities for Create: More Catalysts, Create: Shimmer and Create: Nether Industry**
+    - Enables bulk chocolate coating, honey coating, exploding, glooming, purifying, resonance, sculking, soul stripping
+      and transmutation (thanks @HgTlPbBi-4 and @JustAGuy4447 for implementation)
+
+### Changed
+
+- **Reworked Sequenced Pulse Generator**
+    - Faster reaction time of 1 game tick instead of 2
+    - New instructions for signal strength comparison, arithmetic and bitwise operations
+    - GUI improvements
+- **Centrifugal clutch now accepts a maximum or minimum speed threshold**
+    - Configured via the value panel
+- **Linked transmitters can now be locked by waxing and unlocked with an axe**
+- Updated ponder and tooltip for Kinetic Battery to explain power saving mode
+- Brass gearbox rotation can only be toggled with a wrench now to avoid misclicks
+- Inventory access ports and inventory bridges can no longer be used to bypass restriction between packagers and
+  portable storage interfaces
+- Retextured the Redstone Link Wildcard (thanks @ThatB0i)
+- Updated usage and license information in the readme and license files
+
+### Fixed
+
+- Linked receivers losing signal on server restart
+- Brass gearbox not rotating properly in schematics and contraption disassembly
+- Linked transmitter losing texture transparency with certain mod combinations
+- Wrench rotation of crank wheels not updating properly
+- Missing audio in crank wheels
 
 ## 1.1.16 - 2026-05-06
 
@@ -21,7 +159,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - **Kinetic Batteries now have a minimum su consumption of 1**
-  - They will now run out of charge after 512 hours if they are used to power structures that have no stress impact
+    - They will now run out of charge after 512 hours if they are used to power structures that have no stress impact
 
 ### Fixed
 
@@ -33,7 +171,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Cross connector compatibility with Create: Aeronautics - no longer interferes with the swivel bearing (thanks @KIN-4096)
+- Cross connector compatibility with Create: Aeronautics - no longer interferes with the swivel bearing (thanks
+  @KIN-4096)
 - Redstone link wildcard compatibility with Sable - now works across physics contraptions (thanks @electicsteve)
 - Ponder entry for Kinetic Bridge
 
@@ -87,7 +226,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Redo fix: incompatibility with Create: Steam n Rails due to both mods registering the same set of interaction behaviors
+- Redo fix: incompatibility with Create: Steam n Rails due to both mods registering the same set of interaction
+  behaviors
 
 ## 1.1.6 - 2025-06-23
 
@@ -134,15 +274,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **Kinetic Bridge**
-  - Transfer stress capacity from one network to another while keeping the networks separate
+    - Transfer stress capacity from one network to another while keeping the networks separate
 - **Kinetic Battery**
-  - Stores kinetic stress for later use. Retains charge in item form to enable long-distance energy transport
+    - Stores kinetic stress for later use. Retains charge in item form to enable long-distance energy transport
 - **Redstone Link Wildcard**
-  - Allows a redstone link frequency slot to match any item, including air
+    - Allows a redstone link frequency slot to match any item, including air
 - **Cross Connector**
-  - Relays rotation in two directions independently
+    - Relays rotation in two directions independently
 - **Catalyst compatibilities for Create: Dragons Plus, Create: Nuclear and Create: Henry**
-  - Enables bulk freezing, sanding, ending, enriched and withering for the compatible mods
+    - Enables bulk freezing, sanding, ending, enriched and withering for the compatible mods
 
 ### Fixed
 
@@ -273,8 +413,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - A new config for Fluid Vessels to limit the maximum boiler level
-- Translations for new features in Russian, Japanese and Simplified Chinese (
-  thanks [Crowdin contributors](https://crowdin.com/project/create-connected-mod/reports/top-members)!)
+- Translations for new features in Russian, Japanese and Simplified Chinese
+  (thanks [Crowdin contributors](https://crowdin.com/project/create-connected-mod/reports/top-members)!)
 
 ### Fixed
 
@@ -297,8 +437,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Hand Crank + Cogwheels = Crank Wheels
 - Fan Freezing Catalyst
     - Works with bulk freezing in Create: Garnished and Create: Dreams & Desires
-- New translations and new languages (
-  thanks [Crowdin contributors](https://crowdin.com/project/create-connected-mod/reports/top-members)!)
+- New translations and new languages
+  (thanks [Crowdin contributors](https://crowdin.com/project/create-connected-mod/reports/top-members)!)
 
 ### Fixed
 

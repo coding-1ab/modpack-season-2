@@ -1,7 +1,7 @@
 package com.hlysine.create_connected.content.kineticbattery;
 
 
-import com.hlysine.create_connected.CCBlocks;
+import com.hlysine.create_connected.registries.CCBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
+@Deprecated(forRemoval = true, since = "1.3.0")
 public class ChargedKineticBatteryItem extends BlockItem {
 
     public ChargedKineticBatteryItem(Properties builder) {

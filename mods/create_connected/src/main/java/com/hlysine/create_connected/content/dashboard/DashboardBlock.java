@@ -1,6 +1,6 @@
 package com.hlysine.create_connected.content.dashboard;
 
-import com.hlysine.create_connected.CCBlockEntityTypes;
+import com.hlysine.create_connected.registries.CCBlockEntityTypes;
 import com.mojang.serialization.MapCodec;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllShapes;
@@ -17,6 +17,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.HoneycombItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SignApplicator;
@@ -102,7 +103,7 @@ public class DashboardBlock extends HorizontalDirectionalBlock implements IWrenc
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
 
-        if (heldItem.getItem() instanceof final SignApplicator signApplicator) {
+        if (heldItem.getItem() instanceof final SignApplicator signApplicator && !(heldItem.getItem() instanceof HoneycombItem)) {
             final MutableBoolean success = new MutableBoolean(false);
             this.withBlockEntityDo(level, blockPos, be -> {
                 final SignBlockEntity dummySign = new SignBlockEntity(blockPos, Blocks.OAK_SIGN.defaultBlockState());
@@ -115,7 +116,7 @@ public class DashboardBlock extends HorizontalDirectionalBlock implements IWrenc
                     success.setTrue();
                 }
             });
-            return success.booleanValue() ? ItemInteractionResult.SUCCESS : ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return ItemInteractionResult.SUCCESS;
         }
 
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;

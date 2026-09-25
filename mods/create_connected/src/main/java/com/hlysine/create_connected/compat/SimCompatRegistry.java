@@ -1,7 +1,7 @@
 package com.hlysine.create_connected.compat;
 
 import com.hlysine.create_connected.CreateConnected;
-import com.hlysine.create_connected.PreciseItemUseOverrides;
+import com.hlysine.create_connected.registries.PreciseItemUseOverrides;
 import com.hlysine.create_connected.content.linkedtransmitter.*;
 import com.hlysine.create_connected.datagen.CCBlockStateGen;
 import com.simibubi.create.AllTags;
@@ -27,6 +27,7 @@ public class SimCompatRegistry {
             .blockstate(CCBlockStateGen.linkedLeverNoPower(
                     Simulated.path("block/throttle_lever/block")
             ))
+            .asOptional()
             .register();
 
     public static final BlockEntityEntry<LinkedThrottleLeverBlockEntity> LINKED_THROTTLE_LEVER_ENTITY = REGISTRATE

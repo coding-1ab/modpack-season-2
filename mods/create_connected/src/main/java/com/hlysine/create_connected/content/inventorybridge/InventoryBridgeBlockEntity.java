@@ -1,8 +1,10 @@
 package com.hlysine.create_connected.content.inventorybridge;
 
-import com.hlysine.create_connected.CCBlockEntityTypes;
+import com.hlysine.create_connected.registries.CCBlockEntityTypes;
 import com.hlysine.create_connected.CreateConnected;
 import com.hlysine.create_connected.content.inventoryaccessport.WrappedItemHandler;
+import com.simibubi.create.api.packager.InventoryIdentifier;
+import com.simibubi.create.content.logistics.packager.IdentifiedInventory;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
@@ -42,6 +44,11 @@ public class InventoryBridgeBlockEntity extends SmartBlockEntity {
     public FilteringBehaviour positiveFilter;
 
     private boolean powered;
+
+    private IItemHandler cachedNegativeHandler;
+    private IItemHandler cachedPositiveHandler;
+    private boolean negativeHandlerDirty = true;
+    private boolean positiveHandlerDirty = true;
 
     public InventoryBridgeBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -113,6 +120,8 @@ public class InventoryBridgeBlockEntity extends SmartBlockEntity {
     public void updateConnectedInventory() {
         negativeInventory.findNewCapability();
         positiveInventory.findNewCapability();
+        negativeHandlerDirty = true;
+        positiveHandlerDirty = true;
         boolean previouslyPowered = powered;
         powered = level.hasNeighborSignal(worldPosition);
         if (powered != previouslyPowered) {
@@ -126,6 +135,14 @@ public class InventoryBridgeBlockEntity extends SmartBlockEntity {
                     .setValue(ATTACHED_POSITIVE, attachedPositive);
             level.setBlockAndUpdate(worldPosition, state);
         }
+    }
+
+    @Nullable
+    public InventoryIdentifier getInventoryId() {
+        // best we can do is identify as one of the two connected inventory
+        // not currently possible to completely dedupe inventory contents in stock networks
+        IdentifiedInventory inv = negativeInventory.getIdentifiedInventory();
+        return inv == null ? null : inv.identifier();
     }
 
     @Override
@@ -142,16 +159,22 @@ public class InventoryBridgeBlockEntity extends SmartBlockEntity {
 
     private IItemHandler getNegativeHandler() {
         if (powered) return null;
-        IItemHandler handler = negativeInventory.getInventory();
-        if (handler instanceof WrappedItemHandler) return null;
-        return handler;
+        if (negativeHandlerDirty) {
+            IItemHandler h = negativeInventory.getInventory();
+            cachedNegativeHandler = (h instanceof WrappedItemHandler) ? null : h;
+            negativeHandlerDirty = false;
+        }
+        return cachedNegativeHandler;
     }
 
     private IItemHandler getPositiveHandler() {
         if (powered) return null;
-        IItemHandler handler = positiveInventory.getInventory();
-        if (handler instanceof WrappedItemHandler) return null;
-        return handler;
+        if (positiveHandlerDirty) {
+            IItemHandler h = positiveInventory.getInventory();
+            cachedPositiveHandler = (h instanceof WrappedItemHandler) ? null : h;
+            positiveHandlerDirty = false;
+        }
+        return cachedPositiveHandler;
     }
 
     private void refreshCapability() {
@@ -161,14 +184,16 @@ public class InventoryBridgeBlockEntity extends SmartBlockEntity {
 
     private class InventoryBridgeHandler implements WrappedItemHandler {
 
-        private final ThreadLocal<Boolean> recursionGuard = ThreadLocal.withInitial(() -> false);
+        private static boolean inRecursion = false;
 
         private <T> T preventRecursion(Supplier<T> value, T defaultValue) {
-            if (recursionGuard.get()) return defaultValue;
-            recursionGuard.set(true);
-            T result = value.get();
-            recursionGuard.set(false);
-            return result;
+            if (inRecursion) return defaultValue;
+            inRecursion = true;
+            try {
+                return value.get();
+            } finally {
+                inRecursion = false;
+            }
         }
 
         @Override
@@ -196,12 +221,36 @@ public class InventoryBridgeBlockEntity extends SmartBlockEntity {
                 if (handler1 == null && handler2 == null) {
                     return ItemStack.EMPTY;
                 } else if (handler1 == null) {
-                    return handler2.getStackInSlot(slot);
+                    ItemStack stack = handler2.getStackInSlot(slot);
+                    boolean negative = negativeFilter.test(stack);
+                    boolean positive = positiveFilter.test(stack);
+                    if (!positive) return ItemStack.EMPTY;
+                    if (negative && !negativeFilter.getFilter().isEmpty() && positiveFilter.getFilter().isEmpty())
+                        return ItemStack.EMPTY;
+                    return stack;
                 } else if (handler2 == null) {
-                    return handler1.getStackInSlot(slot);
+                    ItemStack stack = handler1.getStackInSlot(slot);
+                    boolean negative = negativeFilter.test(stack);
+                    boolean positive = positiveFilter.test(stack);
+                    if (!negative) return ItemStack.EMPTY;
+                    if (positive && !positiveFilter.getFilter().isEmpty() && negativeFilter.getFilter().isEmpty())
+                        return ItemStack.EMPTY;
+                    return stack;
                 } else {
                     int size1 = handler1.getSlots();
-                    return slot < size1 ? handler1.getStackInSlot(slot) : handler2.getStackInSlot(slot - size1);
+                    ItemStack stack = slot < size1 ? handler1.getStackInSlot(slot) : handler2.getStackInSlot(slot - size1);
+                    boolean negative = negativeFilter.test(stack);
+                    boolean positive = positiveFilter.test(stack);
+                    if (!negative && !positive) return ItemStack.EMPTY;
+                    if (negative && !positive && slot >= size1) return ItemStack.EMPTY;
+                    if (positive && !negative && slot < size1) return ItemStack.EMPTY;
+                    boolean negativeFilterEmpty = negativeFilter.getFilter().isEmpty();
+                    boolean positiveFilterEmpty = positiveFilter.getFilter().isEmpty();
+                    if (!negativeFilterEmpty || !positiveFilterEmpty) {
+                        if (slot >= size1 && negative && positiveFilterEmpty) return ItemStack.EMPTY;
+                        if (slot < size1 && positive && negativeFilterEmpty) return ItemStack.EMPTY;
+                    }
+                    return stack;
                 }
             }, ItemStack.EMPTY);
         }
@@ -255,11 +304,35 @@ public class InventoryBridgeBlockEntity extends SmartBlockEntity {
                 if (handler1 == null && handler2 == null) {
                     return ItemStack.EMPTY;
                 } else if (handler1 == null) {
+                    ItemStack stack = handler2.extractItem(slot, amount, true);
+                    boolean negative = negativeFilter.test(stack);
+                    boolean positive = positiveFilter.test(stack);
+                    if (!positive) return ItemStack.EMPTY;
+                    if (negative && !negativeFilter.getFilter().isEmpty() && positiveFilter.getFilter().isEmpty())
+                        return ItemStack.EMPTY;
                     return handler2.extractItem(slot, amount, simulate);
                 } else if (handler2 == null) {
+                    ItemStack stack = handler1.extractItem(slot, amount, true);
+                    boolean negative = negativeFilter.test(stack);
+                    boolean positive = positiveFilter.test(stack);
+                    if (!negative) return ItemStack.EMPTY;
+                    if (positive && !positiveFilter.getFilter().isEmpty() && negativeFilter.getFilter().isEmpty())
+                        return ItemStack.EMPTY;
                     return handler1.extractItem(slot, amount, simulate);
                 } else {
                     int size1 = handler1.getSlots();
+                    ItemStack stack = slot < size1 ? handler1.extractItem(slot, amount, true) : handler2.extractItem(slot - size1, amount, true);
+                    boolean negative = negativeFilter.test(stack);
+                    boolean positive = positiveFilter.test(stack);
+                    if (!negative && !positive) return ItemStack.EMPTY;
+                    if (negative && !positive && slot >= size1) return ItemStack.EMPTY;
+                    if (positive && !negative && slot < size1) return ItemStack.EMPTY;
+                    boolean negativeFilterEmpty = negativeFilter.getFilter().isEmpty();
+                    boolean positiveFilterEmpty = positiveFilter.getFilter().isEmpty();
+                    if (!negativeFilterEmpty || !positiveFilterEmpty) {
+                        if (slot >= size1 && negative && positiveFilterEmpty) return ItemStack.EMPTY;
+                        if (slot < size1 && positive && negativeFilterEmpty) return ItemStack.EMPTY;
+                    }
                     return slot < size1 ? handler1.extractItem(slot, amount, simulate) : handler2.extractItem(slot - size1, amount, simulate);
                 }
             }, ItemStack.EMPTY);
