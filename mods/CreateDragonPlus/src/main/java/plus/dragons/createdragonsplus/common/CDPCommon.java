@@ -28,17 +28,23 @@ import net.minecraft.server.RegistryLayer;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack.Position;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLConstructModEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import plus.dragons.createdragonsplus.common.fluids.dye.DyeColors;
+import plus.dragons.createdragonsplus.common.fluids.dye.DyeVariantRegistry;
+import plus.dragons.createdragonsplus.common.fluids.dye.RegisterDyeVariantsEvent;
 import plus.dragons.createdragonsplus.common.registry.CDPBlockEntities;
 import plus.dragons.createdragonsplus.common.registry.CDPBlockFreezers;
 import plus.dragons.createdragonsplus.common.registry.CDPBlocks;
+import plus.dragons.createdragonsplus.common.registry.CDPCauldrons;
 import plus.dragons.createdragonsplus.common.registry.CDPConditions;
 import plus.dragons.createdragonsplus.common.registry.CDPCreativeModeTabs;
 import plus.dragons.createdragonsplus.common.registry.CDPCriterions;
@@ -51,7 +57,8 @@ import plus.dragons.createdragonsplus.common.registry.CDPRecipes;
 import plus.dragons.createdragonsplus.config.CDPConfig;
 import plus.dragons.createdragonsplus.data.internal.CDPRuntimeRecipeProvider;
 import plus.dragons.createdragonsplus.data.runtime.RuntimePackResources;
-import plus.dragons.createdragonsplus.integration.CDPIntegrations;
+import plus.dragons.createdragonsplus.integration.CDPCompatFix;
+import plus.dragons.createdragonsplus.integration.CDPIntegrationContributions;
 
 @Mod(CDPCommon.ID)
 public class CDPCommon {
@@ -61,15 +68,29 @@ public class CDPCommon {
     public static final CDPRegistrate REGISTRATE = new CDPRegistrate(ID)
             .setTooltipModifier(item -> new ItemDescription.Modifier(item, FontHelper.Palette.STANDARD_CREATE));
     private final ModContainer modContainer;
+    private final IEventBus modBus;
     private final Component runtimePackTitle = REGISTRATE
             .addLang("pack", asResource("runtime"), NAME);
     private final Component runtimePackDescription = REGISTRATE
             .addLang("pack", asResource("runtime"), "description", NAME + " Runtime Generated Resources");
-    private static final ResourceManagerReloadListener RELOAD_LISTENER = resourceManager -> CDPFanProcessingTypes.COLORING.values().forEach(t -> t.get().recreateCache());
+    private static final ResourceManagerReloadListener RELOAD_LISTENER = resourceManager -> {
+        CDPFanProcessingTypes.COLORING.values().forEach(t -> t.get().recreateCache());
+        CDPItemAttributes.recreateCache();
+    };
 
     public CDPCommon(IEventBus modBus, ModContainer modContainer) {
         this.modContainer = modContainer;
+        this.modBus = modBus;
         REGISTRATE.registerEventListeners(modBus);
+        modBus.register(this);
+        modBus.register(new CDPConfig(modContainer));
+        NeoForge.EVENT_BUS.addListener(CDPCommon::addReloadListeners);
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void construct(final FMLConstructModEvent event) {
+        bootstrapDyeVariants();
+        CDPCauldrons.register(modBus);
         CDPFluids.register(modBus);
         CDPBlocks.register(modBus);
         CDPBlockEntities.register(modBus);
@@ -81,15 +102,21 @@ public class CDPCommon {
         CDPFanProcessingTypes.register(modBus);
         CDPItemAttributes.register(modBus);
         CDPDataMaps.register(modBus);
-        modBus.register(this);
-        modBus.register(new CDPConfig(modContainer));
-        NeoForge.EVENT_BUS.addListener(CDPCommon::addReloadListeners);
+    }
+
+    private void bootstrapDyeVariants() {
+        if (DyeVariantRegistry.isFrozen())
+            return;
+        var builder = new DyeVariantRegistry.Builder();
+        DyeColors.registerVanilla(builder);
+        CDPIntegrationContributions.gatherDyeVariants(new RegisterDyeVariantsEvent(builder));
+        DyeVariantRegistry.freeze(builder.build());
     }
 
     @SubscribeEvent
     public void setup(final FMLCommonSetupEvent event) {
         event.enqueueWork(CDPBlockFreezers::register);
-        event.enqueueWork(CDPIntegrations::register);
+        event.enqueueWork(CDPCompatFix::register);
     }
 
     public static void addReloadListeners(AddReloadListenerEvent event) {

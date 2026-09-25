@@ -22,30 +22,38 @@ import com.simibubi.create.api.effect.OpenPipeEffectHandler;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.fluids.FluidStack;
 import plus.dragons.createdragonsplus.common.registry.CDPFanProcessingTypes;
-import plus.dragons.createdragonsplus.mixin.create.FanProcessingAccessor;
+import plus.dragons.createdragonsplus.config.CDPConfig;
 
 public class DyeFluidOpenPipeEffect implements OpenPipeEffectHandler {
-    private final DyeColor color;
+    private final DyeVariant variant;
 
-    public DyeFluidOpenPipeEffect(DyeColor color) {
-        this.color = color;
+    public DyeFluidOpenPipeEffect(DyeVariant variant) {
+        this.variant = variant;
     }
 
     @Override
     public void apply(Level level, AABB area, FluidStack fluid) {
-        var type = CDPFanProcessingTypes.COLORING.get(this.color).get();
+        if (level.isClientSide)
+            return;
+        var config = CDPConfig.dyeFluid();
+        boolean colorItems = config.dyeFluidOpenPipeColorsItems.get();
+        boolean colorLivingEntities = config.dyeFluidOpenPipeColorsLivingEntities.get();
+        if (!colorItems && !colorLivingEntities)
+            return;
+
+        var type = CDPFanProcessingTypes.COLORING.get(this.variant.id()).get();
         var entities = level.getEntities((Entity) null, area,
-                entity -> entity instanceof ItemEntity || entity instanceof LivingEntity);
+                entity -> colorItems && entity instanceof ItemEntity
+                        || colorLivingEntities && entity instanceof LivingEntity);
         for (var entity : entities) {
             if (entity instanceof ItemEntity itemEntity) {
-                FanProcessingAccessor.invokeApplyProcessing(itemEntity, type);
+                type.applyContactColoring(itemEntity, level);
             } else if (entity instanceof LivingEntity livingEntity) {
-                type.applyColoring(livingEntity, level);
+                type.applyContactColoring(livingEntity, level);
             }
         }
     }

@@ -37,6 +37,7 @@ import net.neoforged.fml.loading.FMLLoader;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import plus.dragons.createdragonsplus.common.CDPCommon;
 import plus.dragons.createdragonsplus.config.CDPConfig;
+import plus.dragons.createdragonsplus.integration.jei.category.AutomatedColoringCategory;
 import plus.dragons.createdragonsplus.integration.jei.category.FanColoringCategory;
 import plus.dragons.createdragonsplus.integration.jei.category.FanEndingCategory;
 import plus.dragons.createdragonsplus.integration.jei.category.FanFreezingCategory;
@@ -58,6 +59,8 @@ public class CDPJeiPlugin implements IModPlugin {
         this.categories.clear();
         if (CDPConfig.recipes().enableBulkColoring.get())
             this.categories.add(FanColoringCategory.create());
+        if (CDPConfig.features().dyeFluids.get())
+            this.categories.add(AutomatedColoringCategory.create());
         if (CDPConfig.recipes().enableBulkFreezing.get())
             this.categories.add(FanFreezingCategory.create());
         if (CDPConfig.recipes().enableBulkSanding.get())

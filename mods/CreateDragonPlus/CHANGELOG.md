@@ -1,17 +1,9 @@
-## Create: Dragons Plus 1.10.1
+## Create: Dragons Plus 1.11.9
 
 ### Update
-* Add Bulgarian Localization by @Boris Valkov
-* Update French Localization by @Achille
 
-### Change
-* Sable Integration Feature setting has been moved to Global Feature setting so It should prevent some loading issue from happening.
-* Sable Integration now loads with Sable instead of Create Aeronautics
+* Added grouped Ponder tag cards with animated cycling and scroll selection, plus a shared API for conditional contributions from multiple source sets.
 
 ### Fix
-* Fix When paired with Supplementaries, coloring sand will turn it into suspicious sand with the dye inside.
-* Fix Potion of Immersive Engineering can not be taken out via Fluid Hatch
-* Fix Crash with sable only
-* Fix a KubeJS related error (if issue still persist please report)
-* Fix Floor Differences About Vanilla Create Ponder
-* Fix JEI Sanding Category icon error due to Quicksand lacking item model for block
+
+* Fixed loot table loading errors for Fragile Fluid Tanks and Levitite Fragile Fluid Tanks when Simulated is not installed. (#130)
