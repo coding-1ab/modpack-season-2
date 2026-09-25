@@ -33,17 +33,12 @@ subprojects {
         mavenLocal()
         mavenCentral()
 
-        exclusiveContent { // Sable
-            forRepository {
-                maven {
-                    url = "https://maven.ryanhcode.dev/releases"
-                    name = "RyanHCode Maven"
-                }
-            }
-            filter {
-                includeGroup("dev.ryanhcode.sable")
-                includeGroup("dev.ryanhcode.sable-companion")
-            }
+        maven {
+            url = "https://maven.ryanhcode.dev/releases"
+        }
+
+        maven {
+            url = "https://maven.ryanhcode.dev/snapshots"
         }
 
         def ryanUsername = System.getenv('local_maven_user') ?: project.findProperty('ryanhcodeMavenUser') ?: ''

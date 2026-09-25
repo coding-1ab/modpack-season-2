@@ -63,7 +63,7 @@ import org.joml.Vector3dc;
 import java.util.Collection;
 import java.util.List;
 
-public class WheelMountBlockEntity extends KineticBlockEntity implements BlockEntitySubLevelActor, Clearable, ClipboardCloneable, SpecialBlockEntityItemRequirement {
+public class WheelMountBlockEntity extends KineticBlockEntity implements BlockEntitySubLevelActor, Clearable, ClipboardCloneable {
     private static final MutableComponent SCROLL_OPTION_TITLE = OffroadLang.translate("scroll_option.suspension_strength").component();
     private static final double MAX_ALLOWED_EXTENSION = 0.65;
     private static final double NO_WHEEL_EXTENSION = 0.5;
@@ -204,6 +204,8 @@ public class WheelMountBlockEntity extends KineticBlockEntity implements BlockEn
             } else {
                 this.touchingFriction = 1.0;
             }
+
+            this.touchingFriction = Math.max(this.touchingFriction, tire.minimumFriction());
 
             final double brakeStrength = this.level.getSignal(blockPos.above(), Direction.UP) / 15.0;
             final double surfaceBraking = Math.min(this.touchingFriction, 1.0);
@@ -440,8 +442,8 @@ public class WheelMountBlockEntity extends KineticBlockEntity implements BlockEn
         final Direction d2 = facing.getCounterClockWise();
         final BlockPos pos = this.getBlockPos();
 
-        final int signalLeft = this.level.getSignal(pos.relative(d1), d2);
-        final int signalRight = this.level.getSignal(pos.relative(d2), d1);
+        final int signalLeft = this.level.getSignal(pos.relative(d1), d1);
+        final int signalRight = this.level.getSignal(pos.relative(d2), d2);
         final int signal = signalLeft - signalRight;
 
         final boolean sendData = signal != this.lastServerSteeringSignal || signalLeft != this.lastServerSteeringSignalLeft || signalRight != this.lastServerSteeringSignalRight;

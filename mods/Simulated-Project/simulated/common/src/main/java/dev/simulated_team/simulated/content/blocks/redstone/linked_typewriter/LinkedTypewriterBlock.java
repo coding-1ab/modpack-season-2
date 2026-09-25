@@ -9,7 +9,6 @@ import com.simibubi.create.foundation.block.IBE;
 import dev.simulated_team.simulated.data.SimLang;
 import dev.simulated_team.simulated.index.SimBlockEntityTypes;
 import dev.simulated_team.simulated.index.SimBlockShapes;
-import dev.simulated_team.simulated.mixin_interface.PlayerTypewriterExtension;
 import dev.simulated_team.simulated.service.SimMenuService;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -136,7 +135,6 @@ public class LinkedTypewriterBlock extends HorizontalDirectionalBlock implements
 
                 // disconnect if the user is interacting with this typewriter again
                 if (be.checkUser(uuid)) {
-                    ((PlayerTypewriterExtension) player).simulated$setCurrentTypewriter(null);
                     be.disconnectUser();
                     success.setTrue();
                 }

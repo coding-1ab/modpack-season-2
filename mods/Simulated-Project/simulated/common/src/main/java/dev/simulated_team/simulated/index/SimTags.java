@@ -32,6 +32,7 @@ public class SimTags {
         public static final TagKey<Block> AIRTIGHT = create("aeronautics", "airtight");
 
         public static final TagKey<Block> SUPER_LIGHT = create("sable", "super_light");
+        public static final TagKey<Block> QUARTER_VOLUME = create("sable", "quarter_volume");
         public static final TagKey<Block> LIGHT = create("sable", "light");
         public static final TagKey<Block> DIODE = create("sable", "diode");
 
@@ -81,6 +82,10 @@ public class SimTags {
 
         private static TagKey<Item> create(final String path) {
             return TagKey.create(Registries.ITEM, Simulated.path(path));
+        }
+
+        public static TagKey<Item> dyesTag(DyeColor dyeColor) {
+            return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "dyes/" + dyeColor.getName()));
         }
 
         public static void addGenerators() {

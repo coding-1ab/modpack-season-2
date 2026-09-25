@@ -4,8 +4,8 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import dev.ryanhcode.sable.Sable;
 import dev.ryanhcode.sable.api.block.BlockEntitySubLevelActor;
-import dev.ryanhcode.sable.api.physics.constraint.fixed.FixedConstraintConfiguration;
-import dev.ryanhcode.sable.api.physics.constraint.fixed.FixedConstraintHandle;
+import dev.ryanhcode.sable.api.physics.constraint.FixedConstraintConfiguration;
+import dev.ryanhcode.sable.api.physics.constraint.FixedConstraintHandle;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
@@ -163,10 +163,11 @@ public class DockingConnectorBlockEntity extends SmartBlockEntity implements Sim
                 }
             }
         }
-        final boolean previousExtended = this.isExtended();
+        final boolean wasFullyExtended = this.extension.getValue() == 1.0;
         this.extension.tickChaser();
-        if (previousExtended != this.isExtended())
-            this.level.setBlock(this.getBlockPos(), this.getBlockState().setValue(DockingConnectorBlock.EXTENDED, this.isExtended()), 6);
+        final boolean isFullyExtended = this.extension.getValue() == 1.0;
+        if (wasFullyExtended != isFullyExtended)
+            this.level.setBlock(this.getBlockPos(), this.getBlockState().setValue(DockingConnectorBlock.EXTENDED, isFullyExtended), 6);
         final float previousFeetValue = this.feet.getValue();
         this.feet.updateChaseTarget(this.hasOtherConnector() || this.virtualLock ? 1 : 0);
         this.feet.tickChaser();
