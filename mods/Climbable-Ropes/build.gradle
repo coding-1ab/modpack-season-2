@@ -1,0 +1,189 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev' version '2.0.141'
+    id 'idea'
+}
+
+tasks.named('wrapper', Wrapper).configure {
+    distributionType = Wrapper.DistributionType.BIN
+}
+
+version = mod_version
+group = mod_group_id
+
+repositories {
+    maven {
+        name = "RyanHCode"
+        url = "https://maven.ryanhcode.dev/releases"
+    }
+    maven {
+        name = "CreateMod"
+        url = "https://maven.createmod.net"
+    }
+    maven {
+        name = "DevOS"
+        url = "https://mvn.devos.one/snapshots"
+    }
+    maven {
+        name = "BlameJared"
+        url = "https://maven.blamejared.com"
+    }
+    maven {
+        name = "KosmX"
+        url = "https://maven.kosmx.dev/"
+    }
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "Modrinth"
+                url = "https://api.modrinth.com/maven"
+            }
+        }
+        filter {
+            includeGroup "maven.modrinth"
+        }
+    }
+}
+
+base {
+    archivesName = mod_id
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+neoForge {
+    version = project.neo_version
+
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
+    }
+
+    runs {
+        client {
+            client()
+        }
+        server {
+            server()
+            gameDirectory = file('run/server')
+            programArgument '--nogui'
+        }
+        configureEach {
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+            logLevel = org.slf4j.event.Level.DEBUG
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+}
+
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+    aeronauticsBundle
+}
+
+var extractedSimulatedDir = layout.buildDirectory.dir("extracted-simulated")
+
+// Simulated has no public maven and is only shipped jar-in-jar'd inside Create:
+// Aeronautics. Pull its compiled classes straight out of that bundle so the API
+// we compile against is byte-identical to the one we run against, with no
+// separate Simulated checkout/build to keep in sync.
+var extractSimulated = tasks.register("extractSimulated", Copy) {
+    inputs.files(configurations.aeronauticsBundle)
+    from { configurations.aeronauticsBundle.collect { zipTree(it) } }
+    include "META-INF/jarjar/*simulated*.jar"
+    eachFile { it.relativePath = new RelativePath(true, "simulated.jar") }
+    includeEmptyDirs = false
+    into extractedSimulatedDir
+    // Copy reports success even when the include matches nothing, which would
+    // surface later as a baffling "cannot find ZiplineClientManager" during
+    // compileJava; fail at the source if the bundle layout ever changes.
+    doLast {
+        if (!extractedSimulatedDir.get().file("simulated.jar").asFile.exists()) {
+            throw new GradleException("No Simulated jar-in-jar found in create-aeronautics ${create_aeronautics_version}; the bundle's META-INF/jarjar layout may have changed.")
+        }
+    }
+}
+
+var simulatedCompileJar = files(extractedSimulatedDir.map { it.file("simulated.jar") })
+simulatedCompileJar.builtBy(extractSimulated)
+
+dependencies {
+    compileOnly("dev.ryanhcode.sable:sable-neoforge-${minecraft_version}:${sable_version}") {
+        exclude group: "foundry.veil"
+    }
+    compileOnly("dev.ryanhcode.sable-companion:sable-companion-common-${minecraft_version}:${sable_companion_version}")
+    compileOnly("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
+    compileOnly("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
+    compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
+
+    compileOnly simulatedCompileJar
+
+    aeronauticsBundle("maven.modrinth:create-aeronautics:${create_aeronautics_version}+mc${minecraft_version}") { transitive = false }
+
+    compileOnly("foundry.veil:veil-neoforge-${minecraft_version}:${veil_version}") { transitive = false }
+
+    compileOnly("dev.kosmx.player-anim:player-animation-lib-forge:${player_anim_version}")
+    localRuntime("dev.kosmx.player-anim:player-animation-lib-forge:${player_anim_version}")
+    // Bundle the (MIT-licensed) Player Animator library so end users do not install it separately.
+    // NeoForge deduplicates by version, so a standalone copy in mods/ takes precedence when newer.
+    jarJar("dev.kosmx.player-anim:player-animation-lib-forge") {
+        version {
+            strictly "[2.0.4,)"
+            prefer "${player_anim_version}"
+        }
+    }
+
+    compileOnly("maven.modrinth:entity-model-features:${emf_version}")
+    compileOnly("maven.modrinth:entitytexturefeatures:${etf_version}")
+
+    // create-aeronautics jar-in-jars Simulated, Aeronautics, and Offroad at runtime.
+    localRuntime("maven.modrinth:sable:${sable_mod_version}+mc${minecraft_version}")
+    localRuntime("maven.modrinth:create:${create_mod_version}+mc${minecraft_version}")
+    localRuntime("maven.modrinth:create-aeronautics:${create_aeronautics_version}+mc${minecraft_version}")
+    localRuntime("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
+}
+
+var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
+    var replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            create_mod_version     : create_mod_version,
+            simulated_version_range: simulated_version_range,
+            sable_version_range    : sable_version_range,
+            player_anim_mod_version: player_anim_mod_version,
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from "src/main/templates"
+    into "build/generated/sources/modMetadata"
+}
+sourceSets.main.resources.srcDir generateModMetadata
+neoForge.ideSyncTask generateModMetadata
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+tasks.withType(JavaExec).configureEach {
+    if (name.startsWith('run')) {
+        standardInput = System.in
+    }
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
