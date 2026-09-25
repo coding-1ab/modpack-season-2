@@ -23,7 +23,7 @@ def run_command(workdir, command_array):
 
 for project in os.listdir("mods"):
     workdir = f"mods/{project}"
-    if not Path(workdir + "/.git").exists():
+    if not Path(workdir + "/gradlew").exists():
         print("\033[31m-------------------------\033[0m")
         print(f"\033[31mCorrupted mod clone detected at {workdir}\033[0m")
         print("\033[31m-------------------------\033[0m")

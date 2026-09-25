@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import subprocess
 
 for project in os.listdir("mods"):
@@ -14,6 +15,9 @@ for project in os.listdir("mods"):
         continue
 
     workdir = f"mods/{project}"
+    if not Path(workdir + "/.git").exists():
+        continue
+
     remotes = subprocess.check_output(["git", "remote"], cwd=workdir).decode().strip().split("\n")
     if "upstream" not in remotes:
         try:
