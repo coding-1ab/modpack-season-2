@@ -1,0 +1,233 @@
+plugins {
+    id 'idea'
+    id 'java-library'
+    id 'maven-publish'
+    id 'net.neoforged.moddev' version '2.0.141'
+    id "me.modmuss50.mod-publish-plugin" version "0.8.4"
+    id "com.diffplug.spotless" version "7.0.2"
+}
+
+tasks.named('wrapper', Wrapper).configure {
+    distributionType = Wrapper.DistributionType.BIN
+}
+
+version = mod_version
+group = mod_group_id
+
+repositories {
+    mavenLocal()
+}
+
+base {
+    archivesName = mod_id
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+sourceSets {
+    main.resources {
+        srcDir 'src/generated/resources'
+    }
+    coremod
+}
+
+neoForge {
+    version = project.neo_version
+
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
+    }
+
+    interfaceInjectionData {
+        from "src/interfaces.json"
+        publish file("src/interfaces.json")
+    }
+
+    addModdingDependenciesTo sourceSets.coremod
+
+    runs {
+        client {
+            client()
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        server {
+            server()
+            programArgument '--nogui'
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        gameTestServer {
+            type = "gameTestServer"
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        data {
+            data()
+            programArguments.addAll '--mod', project.mod_id,
+                                    '--all',
+                                    '--output', file('src/generated/resources/').getAbsolutePath(),
+                                    '--existing', file('src/main/resources/').getAbsolutePath()
+        }
+
+        configureEach {
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+            logLevel = org.slf4j.event.Level.DEBUG
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+
+        "coremod" {
+            sourceSet(sourceSets.coremod)
+        }
+    }
+}
+
+tasks.register("coremodJar", Jar) {
+    from(sourceSets.coremod.output)
+    archiveClassifier = "coremod"
+    manifest {
+        attributes(
+                "Automatic-Module-Name": "${mod_id}.coremod",
+                "FMLModType": "LIBRARY"
+        )
+    }
+}
+
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
+
+repositories {
+    maven {
+        url "https://maven2.bai.lol"
+        content {
+            includeGroup "mcp.mobius.waila"
+        }
+    }
+    maven { url "https://api.modrinth.com/maven" }
+}
+
+dependencies {
+    jarJar files(tasks.coremodJar)
+    compileOnly("maven.modrinth:oh-the-biomes-weve-gone:${bwg_version}")
+    compileOnly("mcp.mobius.waila:wthit-api:neo-${wthit_version}")
+    compileOnly("maven.modrinth:jade:${jade_version}")
+    coremodCompileOnly(coremodAnnotationProcessor('com.google.auto.service:auto-service:1.0.1'))
+}
+
+var replaceProperties = [
+        minecraft_version                   : minecraft_version,
+        minecraft_version_range             : minecraft_version_range,
+        neo_version                         : neo_version,
+        neo_version_range                   : neo_version_range,
+        loader_version_range                : loader_version_range,
+        mod_id                              : mod_id,
+        mod_name                            : mod_name,
+        mod_license                         : mod_license,
+        mod_version                         : mod_version,
+        mod_authors                         : mod_authors,
+        mod_description                     : mod_description,
+        mod_github                          : mod_github,
+        mod_logo                            : mod_logo
+]
+
+var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from "src/main/templates"
+    into "build/generated/sources/modMetadata"
+}
+
+sourceSets.main.resources.srcDir generateModMetadata
+neoForge.ideSyncTask generateModMetadata
+
+var generateCoreModMetaData = tasks.register("generateCoremodMetadata", ProcessResources) {
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from "src/coremod/templates"
+    into "build/generated/sources/coremodMetadata"
+}
+
+sourceSets.coremod.resources.srcDir generateCoreModMetaData
+neoForge.ideSyncTask generateCoreModMetaData
+
+tasks.withType(Jar) {
+    from "LICENSE.txt"
+    exclude ".cache"
+}
+
+spotless {
+    java {
+        endWithNewline()
+        leadingTabsToSpaces()
+        removeUnusedImports()
+        toggleOffOn()
+        importOrder()
+        eclipse().configFile "codeformat/formatter-config.xml"
+        licenseHeaderFile "codeformat/HEADER.txt"
+    }
+}
+
+build.dependsOn(spotlessApply)
+
+java {
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            artifactId = mod_artifact_id + "-" + minecraft_version
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            name "DragonsPlus"
+            url "https://maven.dragons.plus/releases"
+            credentials(PasswordCredentials)
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+    }
+}
+
+publishMods {
+    file = jar.archiveFile
+    additionalFiles.from sourcesJar.archiveFile
+    changelog = project.file("CHANGELOG.md").text
+    version = mod_version
+    type = BETA
+    displayName = "Quicksand ${mod_version} for ${minecraft_version}"
+    modLoaders.add("neoforge")
+
+    curseforge {
+        projectId = "700411"
+        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+        minecraftVersions.add(minecraft_version)
+    }
+
+    modrinth {
+        projectId = "HH5U2JMF"
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        minecraftVersions.add(minecraft_version)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
