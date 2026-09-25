@@ -1,57 +1,45 @@
-# 빌드
-1. 이 리포지토리와 서브모듈을 내려받는다. 이미 git pull로 받았다면 아래 명령어로 서브모듈을 내려받을 수 있다:
+# 모드팩 개발
+
+모드 29개의 소스는 모두 이 저장소의 `mods/`에 있습니다. 전체 모드팩을 작업할 때는 저장소를 한 번만 복제하면 됩니다. 별도의 서브모듈 초기화는 필요하지 않습니다.
+
 ```sh
-git submodule update --recursive --init --remote
+git clone https://github.com/coding-1ab/modpack-season-2.git
+cd modpack-season-2
 ```
 
-2. 각 서브모듈의 HEAD를 브랜치에 부착한다. `attach.py`를 실행하면 알아서 해준다:
-```sh
-python3 attach.py
-```
+Gradle 데몬에는 Java 25가 필요합니다. 이 저장소에서 Gradle을 실행할 때 `JAVA_HOME`을 JDK 25 설치 경로로 지정합니다. 클라이언트 실행 명령은 다음과 같습니다.
 
-3. 마인크래프트를 실행하려면 루트에서 아래 명령어를 친다:
 ```sh
-# 모장 로그인 없이 실행
+# 로그인 없이 실행
 ./gradlew runClient
 
-# 모장 로그인하고 실행
+# 로그인 후 실행
 ./gradlew runClientAuth
 ```
-주의사항: 기본적으로 parallel execution이 활성화 되어있기 때문에 컴퓨터 코어 수가 많으면 메모리를 전부 사용할 수 있음.
-gradle.properties에서 parallel execution을 임시로 비활성화 할 수 있음.
 
-# 새로운 모드 소스 추가
-추가하는 모든 모드의 소스의 서브 모듈은 무조건 branch가 설정되어야만 함.
-`attach.py`가 동작하기 위해선 .gitmodules에 브랜치각 설정되어야만 하기 때문.
+병렬 실행이 기본으로 활성화되어 있습니다. 메모리가 부족하면 `gradle.properties`에서 병렬 실행을 임시로 끌 수 있습니다.
 
-# 업데이트 및 문제 해결
-만약 다른 기여자가 새로운 모드 소스를 추가한다면 그 서브 모듈이 이상하게 클론되어 실행이 안될 수 있음.
-아니면 이미 클론한 모드 소스의 리모트 URL이 변경된다면 그 서브 모듈에 이게 제대로 반영이 안될 수 있음.
-그럴 때는 `try_update_and_fix.py`를 실행해볼 것.
-(아마도) 문제가 해결될 것임.
+## 개별 모드 작업
 
-# 모드 업스트림 확인
-모드의 업스트림 소스에 새로운 커밋이 있는지 확인하려면 `check_update.py`를 실행하면 된다. 아래와 같은 출력이 나오면 받아올 커밋이 있는 것이다:
+Josh CLI를 사용하면 모드 하나의 파일과 이력만 보이는 작업 디렉터리를 만들 수 있습니다. 디렉터리 이름의 대소문자를 실제 `mods/` 경로와 일치시켜야 합니다. 다음은 `AppleSkin`을 별도로 작업하는 예시입니다.
+
+```sh
+cargo install josh-cli --locked --git https://github.com/josh-project/josh.git
+josh clone https://github.com/coding-1ab/modpack-season-2.git :/mods/AppleSkin ./AppleSkin --branch master
+cd AppleSkin
 ```
-+git fetch upstream (in mods/Veil)
 
-+git log --oneline origin/1.21..upstream/1.21 (in mods/Veil)
-업스트림에서 받아와야 하는 새로운 커밋들:
-8f5db3b13 Add maven and discord badge icons
-297261046 Update README with Modrinth and CurseForge links
-76cc9c148 Fix crash with sodium
-cdf04a166 Add VeilRegisterInspectorsEvent
-d72219b74 Add command for controlling post processing
-df732f1cd Add ImGuiMC repo
-0212f03e2 Update publishing
-1cede3c1d Update changelog.md
-4a102b271 Update loom
-6985c7500 Remove unused resources
-76dbd98d6 Move test packs to example mod
-45293978f Update changelog.md
-0de6aa712 Remove deprecated features
-c1a92615d Remove ImGui hard dependency
-eca242f9f Migrate to imguimc
-fb8132930 Update VeilMixinPlugin.java
+변경 사항은 평소처럼 커밋하고 Josh로 중앙 저장소에 반영합니다. 다른 사람이 중앙 저장소를 갱신한 경우에는 먼저 필터링된 변경 사항을 가져옵니다.
+
+```sh
+josh changes pull
+git add .
+git commit -m "AppleSkin 수정"
+josh push
 ```
-이럴 때는 `mods/Veil`에서 업스트림을 병합하면 된다.
+
+다른 모드도 `:/mods/AppleSkin`과 작업 디렉터리 이름을 해당 모드의 실제 경로로 바꾸면 됩니다. Josh CLI는 작업 디렉터리와 이력의 표시 범위를 필터링하지만, 중앙 저장소의 Git 객체 전체를 내려받습니다. 외부 모드 포크로 변경을 자동 반영하지 않습니다.
+
+## 기존 모드 포크의 변경 사항
+
+기존 모드 포크와 업스트림 저장소는 모노레포와 별개의 Git 저장소입니다. 포크의 변경 사항을 가져와야 할 때는 해당 저장소의 이력을 확인하고 필요한 변경을 중앙 저장소의 `mods/` 경로에 반영해야 합니다. Josh는 개별 모드 작업 디렉터리와 중앙 저장소 사이의 변경을 동기화하지만, 외부 포크를 자동으로 갱신하지는 않습니다.
