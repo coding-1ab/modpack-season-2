@@ -2,11 +2,13 @@ package com.buuz135.functionalstorage.block.tile;
 
 import com.buuz135.functionalstorage.FunctionalStorage;
 import com.buuz135.functionalstorage.block.DrawerBlock;
+import com.buuz135.functionalstorage.client.gui.DrawerPriorityGuiAddon;
 import com.buuz135.functionalstorage.item.ConfigurationToolItem;
 import com.buuz135.functionalstorage.item.FSAttachments;
 import com.buuz135.functionalstorage.item.LinkingToolItem;
 import com.buuz135.functionalstorage.item.UpgradeItem;
 import com.buuz135.functionalstorage.item.component.SizeProvider;
+import com.buuz135.functionalstorage.util.StorageTags;
 import com.hrznstudio.titanium.annotation.Save;
 import com.hrznstudio.titanium.block.BasicTileBlock;
 import com.hrznstudio.titanium.block.RotatableBlock;
@@ -18,6 +20,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.SectionPos;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -28,8 +31,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.util.INBTSerializable;
@@ -56,6 +61,8 @@ public abstract class ControllableDrawerTile<T extends ControllableDrawerTile<T>
     private boolean isVoid = false;
     @Save
     private boolean isStorageUpgradeLocked = false;
+    @Save
+    private int priority = 0;
 
     public final Supplier<DataComponentType<SizeProvider>> sizeUpgradeComponent;
     @Save
@@ -87,7 +94,7 @@ public abstract class ControllableDrawerTile<T extends ControllableDrawerTile<T>
                             .setOnSlotChanged((itemStack, integer) -> {
                                 needsUpgradeCache = true;
                                 if (controllerPos != null) {
-                                    if(this.level.getBlockEntity(controllerPos) instanceof StorageControllerTile controllerTile)
+                                    if(getLoadedBlockEntity(controllerPos) instanceof StorageControllerTile controllerTile)
                                         controllerTile.getConnectedDrawers().rebuild();
                                 }
                             })
@@ -113,7 +120,29 @@ public abstract class ControllableDrawerTile<T extends ControllableDrawerTile<T>
         compoundTag.put("storageUpgrades", storageUpgrades.serializeNBT(provider));
         super.saveAdditional(compoundTag, provider);
     }
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if (level == null || level.isClientSide()) return;
 
+        if (controllerPos != null) {
+            LevelChunk chunk = getLoadedChunk(controllerPos);
+            if (chunk != null) {
+                BlockEntity be = chunk.getBlockEntity(controllerPos);
+                if (be instanceof StorageControllerTile<?> controllerTile) {
+                    boolean isInController = controllerTile.getConnectedDrawers()
+                            .getConnectedDrawers()
+                            .contains(this.getBlockPos().asLong());
+
+                    if (!isInController) {
+                        controllerTile.addConnectedDrawers(LinkingToolItem.ActionMode.ADD, getBlockPos());
+                    }
+                } else {
+                    this.controllerPos = null;
+                }
+            }
+        }
+    }
     @Override
     @OnlyIn(Dist.CLIENT)
     public void initClient() {
@@ -140,6 +169,7 @@ public abstract class ControllableDrawerTile<T extends ControllableDrawerTile<T>
                 return Component.translatable("key.categories.inventory").getString();
             }
         });
+        addGuiAddonFactory(() -> new DrawerPriorityGuiAddon(114, 16, this::getPriority, this::getBlockPos));
     }
 
     @Override
@@ -174,6 +204,7 @@ public abstract class ControllableDrawerTile<T extends ControllableDrawerTile<T>
             });
         }
         this.controllerPos = controllerPos;
+        this.markForUpdate();
     }
 
     public void clearControllerPos()
@@ -184,6 +215,30 @@ public abstract class ControllableDrawerTile<T extends ControllableDrawerTile<T>
     public float getStorageMultiplier() {
         maybeCacheUpgrades();
         return storageSize;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        if (this.priority == priority) {
+            return;
+        }
+        this.priority = priority;
+        markForUpdate();
+        if (isServer() && controllerPos != null) {
+            TileUtil.getTileEntity(getLevel(), controllerPos, StorageControllerTile.class).ifPresent(controllerTile -> {
+                controllerTile.getConnectedDrawers().rebuild();
+                controllerTile.markForUpdate();
+            });
+        }
+    }
+
+    public void updateComparatorOutput() {
+        if (level != null && !level.isClientSide()) {
+            level.updateNeighbourForOutputSignal(worldPosition, getBlockState().getBlock());
+        }
     }
 
     public boolean isVoid() {
@@ -198,6 +253,24 @@ public abstract class ControllableDrawerTile<T extends ControllableDrawerTile<T>
 
     public void setNeedsUpgradeCache(boolean needsUpgradeCache) {
         this.needsUpgradeCache = needsUpgradeCache;
+    }
+
+    protected boolean canUseStorageUpgradeWithCreative(ItemStack stack, int slot) {
+        boolean insertingCreative = stack.is(FunctionalStorage.CREATIVE_UPGRADE);
+        boolean insertingCreativeIncompatible = stack.is(StorageTags.CREATIVE_VENDING_UPGRADE_INCOMPATIBLE);
+        if (!insertingCreative && !insertingCreativeIncompatible) {
+            return true;
+        }
+        for (int i = 0; i < storageUpgrades.getSlots(); i++) {
+            if (i == slot) {
+                continue;
+            }
+            ItemStack stored = storageUpgrades.getStackInSlot(i);
+            if ((insertingCreative && stored.is(StorageTags.CREATIVE_VENDING_UPGRADE_INCOMPATIBLE)) || (insertingCreativeIncompatible && stored.is(FunctionalStorage.CREATIVE_UPGRADE))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public InteractionResult onSlotActivated(Player playerIn, InteractionHand hand, Direction facing, double hitX, double hitY, double hitZ, int slot) {
@@ -323,6 +396,12 @@ public abstract class ControllableDrawerTile<T extends ControllableDrawerTile<T>
     }
 
     public boolean isEverythingEmpty() {
+        if (getPriority() != 0) {
+            return false;
+        }
+        if (isLocked()) {
+            return false;
+        }
         for (int i = 0; i < getStorageUpgrades().getSlots(); i++) {
             if (!getStorageUpgrades().getStackInSlot(i).isEmpty()) {
                 return false;
@@ -334,6 +413,45 @@ public abstract class ControllableDrawerTile<T extends ControllableDrawerTile<T>
             }
         }
         return true;
+    }
+
+    @Override
+    public void invalidateCapabilities() {
+        super.invalidateCapabilities();
+        if (level != null && !level.isClientSide() && controllerPos != null) {
+            BlockEntity be = getLoadedBlockEntity(controllerPos);
+            if (be instanceof StorageControllerTile<?> controllerTile) {
+                controllerTile.getConnectedDrawers().rebuild();
+            }
+        }
+    }
+
+    @Override
+    public void onChunkUnloaded() {
+        super.onChunkUnloaded();
+        if (level != null && !level.isClientSide() && controllerPos != null) {
+            BlockEntity be = getLoadedBlockEntity(controllerPos);
+            if (be instanceof StorageControllerTile<?> controllerTile) {
+                controllerTile.getConnectedDrawers().rebuild();
+            }
+        }
+    }
+
+    private BlockEntity getLoadedBlockEntity(BlockPos pos) {
+        LevelChunk chunk = getLoadedChunk(pos);
+        return chunk == null ? null : chunk.getBlockEntity(pos);
+    }
+
+    private LevelChunk getLoadedChunk(BlockPos pos) {
+        if (level == null || level.isOutsideBuildHeight(pos)) {
+            return null;
+        }
+        return level.getChunkSource().getChunkNow(SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()));
+    }
+
+    @Override
+    public void clearRemoved() {
+        super.clearRemoved();
     }
 
     public abstract InventoryComponent<ControllableDrawerTile<T>> getStorageUpgradesConstructor();

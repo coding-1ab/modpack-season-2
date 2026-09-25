@@ -62,7 +62,7 @@ public abstract class ItemControllableDrawerTile<T extends ItemControllableDrawe
             if (!stack.isEmpty() && getStorage().insertItem(slot, stack, true).getCount() != stack.getCount()) {
                 playerIn.setItemInHand(hand, getStorage().insertItem(slot, stack, false));
                 return InteractionResult.SUCCESS;
-            } else if (System.currentTimeMillis() - INTERACTION_LOGGER.getOrDefault(playerIn.getUUID(), System.currentTimeMillis()) < 300) {
+            } else if (System.currentTimeMillis() - INTERACTION_LOGGER.getOrDefault(playerIn.getUUID(), System.currentTimeMillis()) < 300 && !getStorage().getStackInSlot(slot).isEmpty()) {
                 for (ItemStack itemStack : playerIn.getInventory().items) {
                     if (!itemStack.isEmpty() && getStorage().insertItem(slot, itemStack, true).getCount() != itemStack.getCount()) {
                         itemStack.setCount(getStorage().insertItem(slot, itemStack.copy(), false).getCount());
@@ -125,6 +125,7 @@ public abstract class ItemControllableDrawerTile<T extends ItemControllableDrawe
         }
                 .setInputFilter((stack, integer) -> {
                     if (isStorageUpgradeLocked()) return false;
+                    if (!canUseStorageUpgradeWithCreative(stack, integer)) return false;
                     if (stack.is(FunctionalStorage.CREATIVE_UPGRADE)) return true;
                     if (!stack.has(FSAttachments.ITEM_STORAGE_MODIFIER)) return false;
 
@@ -140,6 +141,7 @@ public abstract class ItemControllableDrawerTile<T extends ItemControllableDrawe
                 })
                 .setOnSlotChanged((stack, integer) -> {
                     setNeedsUpgradeCache(true);
+                    updateComparatorOutput();
                 })
                 .setSlotLimit(1);
     }
@@ -155,6 +157,9 @@ public abstract class ItemControllableDrawerTile<T extends ItemControllableDrawe
     }
 
     public boolean isEverythingEmpty() {
+        if (getPriority() != 0) {
+            return false;
+        }
         for (int i = 0; i < getStorage().getSlots(); i++) {
             if (!getStorage().getStackInSlot(i).isEmpty()) {
                 return false;

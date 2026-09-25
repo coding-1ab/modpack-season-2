@@ -3,6 +3,7 @@ package com.buuz135.functionalstorage.block;
 import com.buuz135.functionalstorage.FunctionalStorage;
 import com.buuz135.functionalstorage.block.tile.FluidDrawerTile;
 import com.buuz135.functionalstorage.client.item.FluidDrawerISTER;
+import com.buuz135.functionalstorage.inventory.item.FluidDrawerStackItemHandler;
 import com.buuz135.functionalstorage.item.FSAttachments;
 import com.buuz135.functionalstorage.util.NumberUtils;
 import com.buuz135.functionalstorage.util.Utils;
@@ -21,7 +22,6 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -29,7 +29,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -88,21 +90,21 @@ public class FluidDrawerBlock extends Drawer<FluidDrawerTile>{
             TitaniumShapedRecipeBuilder.shapedRecipe(this)
                     .pattern("PPP").pattern("PCP").pattern("PPP")
                     .define('P', ItemTags.PLANKS)
-                    .define('C', Items.BUCKET)
+                    .define('C', Tags.Items.BUCKETS_EMPTY)
                     .save(consumer);
         }
         if (type == FunctionalStorage.DrawerType.X_2) {
             TitaniumShapedRecipeBuilder.shapedRecipe(this, 2)
                     .pattern("PCP").pattern("PPP").pattern("PCP")
                     .define('P', ItemTags.PLANKS)
-                    .define('C', Items.BUCKET)
+                    .define('C', Tags.Items.BUCKETS_EMPTY)
                     .save(consumer);
         }
         if (type == FunctionalStorage.DrawerType.X_4) {
             TitaniumShapedRecipeBuilder.shapedRecipe(this, 4)
                     .pattern("CPC").pattern("PPP").pattern("CPC")
                     .define('P', ItemTags.PLANKS)
-                    .define('C', Items.BUCKET)
+                    .define('C', Tags.Items.BUCKETS_EMPTY)
                     .save(consumer);
         }
     }
@@ -148,6 +150,10 @@ public class FluidDrawerBlock extends Drawer<FluidDrawerTile>{
         public FluidDrawerItem(FluidDrawerBlock block, Properties props,  TitaniumTab tab) {
             super(block, props);
             this.drawerBlock = block;
+        }
+
+        public IFluidHandlerItem initCapabilities(ItemStack stack) {
+            return new FluidDrawerStackItemHandler(stack, this.drawerBlock.getType());
         }
 
         @Override

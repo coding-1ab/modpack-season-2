@@ -1,3 +1,38 @@
+# VERSION 1.5.8
+
+* Added a GUI for the armory cabinet
+* Added concurrency safety checks on the connected drawers system closes #505
+* Improved loading and unloading of chunks closes #502
+* Added check for locked state when breaking a drawer, closes #498
+* Fixed ender drawer only accepting up to 1 stack of items, closes #500
+* Fixed controller not checking for selectors properly when inserting, closes #501
+* Added a tooltip to the fluid drawers when holding a bucket tha explains how to interact, closes #497
+* Fixed empty drawers stealing your first item when right clicking them, closes #249 closes #324
+* Added a tag to configure what can be inserted inside a drawer `functionalstorage:armory_cabinet_insertable` closes #120 closes #224
+* Added proper comparator support closes #416 closes #217
+* Added a recipe to convert puller upgrades into pusher upgrades and vice-versa closes #390
+* Added a priority system for drawers linked to controllers, closes #447
+* Changed recipes that used an empty bucket to use the empty bucket tag, closes #471
+* Fluid drawers now will behave like a tank in item form, closes #479
+* Added tags to blacklist items from being used in drawers and being used in combination with the creative vending upgrade closes #465
+  * `functionalstorage:creative_vending_upgrade_incompatible`
+  * `functionalstorage:drawer_storage_denylist`
+  * `functionalstorage:fluid_drawer_storage_denylist`
+* Fixed compacting drawer having bigger size when it only had 2 slots configure closes #468
+
+# VERSION 1.5.6 & 1.5.7
+
+* Fix: validate drawer handler existence (#491) - Jet-fuel
+* fix: re-checking recipe on load - DoctorFTB
+* better ergonomics for directional storage upgrade - ClovisLd
+* update Korean translation (ko_kr.json) (#496) - jeffjks
+* fix: use slot limit instead of item stack limit for insertion/extraction (#477) - ImMorpheus
+* Fixed drawers inventory not using the inserted items stack size when it was the first time inserting a drawer, closes #495
+* Improvements to loading & unloading of drawers, closes #493
+* Fixed Vertical Facing Down Drawers having the wrong slot assigned to the interactions, closes #487
+* Added capabilities invalidation to the acess point, closes #476 closes #486
+* Fixed server hang when closing the world, closes #499
+
 # VERSION 1.5.5
 
 * Fixed FTB Compat memory leak - Satherov

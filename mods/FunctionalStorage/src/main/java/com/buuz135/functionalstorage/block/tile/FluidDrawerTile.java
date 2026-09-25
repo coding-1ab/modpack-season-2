@@ -45,6 +45,7 @@ public class FluidDrawerTile extends ControllableDrawerTile<FluidDrawerTile> {
             @Override
             public void onChange() {
                 syncObject(fluidHandler);
+                FluidDrawerTile.this.updateComparatorOutput();
             }
 
             @Override
@@ -109,6 +110,7 @@ public class FluidDrawerTile extends ControllableDrawerTile<FluidDrawerTile> {
                 return InteractionResult.PASS;
             }).orElse(InteractionResult.PASS)).orElse(InteractionResult.PASS);
             if (interactionResult == InteractionResult.SUCCESS) {
+                updateComparatorOutput();
                 return interactionResult;
             }
         }
@@ -124,6 +126,7 @@ public class FluidDrawerTile extends ControllableDrawerTile<FluidDrawerTile> {
                     var result = FluidUtil.tryFillContainerAndStow(stack, this.fluidHandler.getTankList()[slot], iItemHandler, Integer.MAX_VALUE, playerIn, true);
                     if (result.isSuccess()) {
                         playerIn.setItemInHand(InteractionHand.MAIN_HAND, result.getResult());
+                        updateComparatorOutput();
                     }
                 });
             });
@@ -157,6 +160,9 @@ public class FluidDrawerTile extends ControllableDrawerTile<FluidDrawerTile> {
     }
 
     public boolean isEverythingEmpty() {
+        if (getPriority() != 0) {
+            return false;
+        }
         for (int i = 0; i < getFluidHandler().getTanks(); i++) {
             if (!getFluidHandler().getFluidInTank(i).isEmpty()) {
                 return false;
@@ -207,6 +213,7 @@ public class FluidDrawerTile extends ControllableDrawerTile<FluidDrawerTile> {
         }
                 .setInputFilter((stack, integer) -> {
                     if (isStorageUpgradeLocked()) return false;
+                    if (!canUseStorageUpgradeWithCreative(stack, integer)) return false;
                     if (stack.getItem().equals(FunctionalStorage.STORAGE_UPGRADES.get(StorageUpgradeItem.StorageTier.IRON).get())) {
                         return true;
                     }
@@ -216,6 +223,7 @@ public class FluidDrawerTile extends ControllableDrawerTile<FluidDrawerTile> {
                     setNeedsUpgradeCache(true);
                     this.fluidHandler.setCapacity(getTankCapacity(getStorageMultiplier()));
                     syncObject(this.fluidHandler);
+                    updateComparatorOutput();
                 })
                 .setSlotLimit(1);
     }

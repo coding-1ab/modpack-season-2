@@ -5,10 +5,13 @@ import com.buuz135.functionalstorage.client.gui.DrawerInfoGuiAddon;
 import com.buuz135.functionalstorage.inventory.CompactingInventoryHandler;
 import com.buuz135.functionalstorage.item.FSAttachments;
 import com.buuz135.functionalstorage.util.CompactingUtil;
+import com.buuz135.functionalstorage.util.StorageTags;
 import com.hrznstudio.titanium.annotation.Save;
 import com.hrznstudio.titanium.block.BasicTileBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -28,6 +31,7 @@ public class SimpleCompactingDrawerTile extends ItemControllableDrawerTile<Simpl
 
     @Save
     public CompactingInventoryHandler handler;
+    @Save
     private boolean hasCheckedRecipes;
 
     public SimpleCompactingDrawerTile(BasicTileBlock<SimpleCompactingDrawerTile> base, BlockEntityType<SimpleCompactingDrawerTile> blockEntityType, BlockPos pos, BlockState state) {
@@ -36,6 +40,7 @@ public class SimpleCompactingDrawerTile extends ItemControllableDrawerTile<Simpl
             @Override
             public void onChange() {
                 SimpleCompactingDrawerTile.this.markForUpdate();
+                SimpleCompactingDrawerTile.this.updateComparatorOutput();
             }
 
             @Override
@@ -97,7 +102,7 @@ public class SimpleCompactingDrawerTile extends ItemControllableDrawerTile<Simpl
         ItemStack stack = playerIn.getItemInHand(hand);
         if (stack.getItem().equals(FunctionalStorage.CONFIGURATION_TOOL.get()) || stack.getItem().equals(FunctionalStorage.LINKING_TOOL.get()))
             return InteractionResult.PASS;
-        if (!handler.isSetup() && slot != -1) {
+        if (!handler.isSetup() && slot != -1 && !stack.is(StorageTags.DRAWER_STORAGE_DENYLIST)) {
             stack = playerIn.getItemInHand(hand).copy();
             stack.setCount(1);
             CompactingUtil compactingUtil = new CompactingUtil(this.level, 2);
