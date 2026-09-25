@@ -1,0 +1,81 @@
+{
+  "branches": [
+    "1.21.1"
+  ],
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    [
+      "@semantic-release/release-notes-generator",
+      {
+        "preset": "conventionalcommits",
+        "presetConfig": {
+          "types": [
+            { "type": "feat", "section": "✨ Features" },
+            { "type": "fix", "section": "🐛 Bug Fixes" },
+            { "type": "docs", "section": "📚 Documentation" },
+            { "type": "style", "section": "💄 Style Improvements" },
+            { "type": "ref", "section": "♻️ Code Refactoring" },
+            { "type": "perf", "section": "⚡ Performance Improvements" },
+            { "type": "test", "section": "✅ Tests" },
+            { "type": "build", "section": "📦 Build System" },
+            { "type": "ci", "section": "👷 CI/CD" },
+            { "type": "chore", "section": "🔧 Miscellaneous Changes" },
+            { "type": "imp", "section": "🚀 Improvements" }
+          ]
+        },
+        "parserOpts": {
+          "noteKeywords": ["BREAKING CHANGE", "BREAKING CHANGES"]
+        }
+      }
+    ],
+    [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "./gradlew :jar -Pmod_version=${nextRelease.version}"
+      }
+    ],
+    "@semantic-release/changelog",
+    [
+      "@semantic-release/git",
+      {
+        "assets": [
+          "CHANGELOG.md"
+        ],
+        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+      }
+    ],
+    [
+      "semantic-release-minecraft",
+      {
+        "game_versions": "1.21.1",
+        "mod_loaders": "neoforge",
+        "display_name": "[NeoForge 1.21.1] ${ nextRelease.version }",
+        "glob": "build/libs/neo_language_reload-${ nextRelease.version }.jar",
+        "curseforge": {
+          "project_id": "1297244",
+          "java_versions": 21,
+          "environments": "client"
+        },
+        "modrinth": {
+          "project_id": "QdvyilOW",
+          "version_number": "${ nextRelease.version }+neoforge"
+        }
+      }
+    ]
+  ],
+  "preset": "conventionalcommits",
+  "releaseRules": [
+    {
+      "type": "ref",
+      "release": "patch"
+    },
+    {
+      "type": "style",
+      "release": "patch"
+    },
+    {
+      "type": "imp",
+      "release": "patch"
+    }
+  ]
+}
