@@ -50,11 +50,6 @@
 	url = https://github.com/coding-1ab/CreateEnchantmentIndustry.git
 	branch = 1.21.1/6.0.0-dev
 	upstream = https://github.com/DragonsPlusMinecraft/CreateEnchantmentIndustry.git
-[submodule "mods/Quicksand"]
-	path = mods/Quicksand
-	url = https://github.com/coding-1ab/Quicksand.git
-	branch = 1.21.1
-	upstream = https://github.com/DragonsPlusMinecraft/Quicksand.git
 [submodule "mods/Spice-of-Life-Carrot-Edition"]
 	path = mods/Spice-of-Life-Carrot-Edition
 	url = https://github.com/coding-1ab/Spice-of-Life-Carrot-Edition.git
