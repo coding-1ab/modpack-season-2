@@ -9,5 +9,5 @@ import org.joml.Vector3dc;
  * @param pos2 the position in world space assumed to be inside the plot of the second sub-level (ex. a block position).
  * @param contacts whether or not these two bodies should collide physically.
  */
-public record SphericalConstraintConfiguration(Vector3dc pos1, Vector3dc pos2, boolean contacts) {
+public record SphericalConstraintConfiguration(Vector3dc pos1, Vector3dc pos2, boolean contacts) implements PhysicsConstraintConfiguration<SphericalConstraintHandle> {
 }
