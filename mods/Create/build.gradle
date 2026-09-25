@@ -157,6 +157,7 @@ dependencies {
     if (cc_tweaked_enable.toBoolean()) {
         compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-core-api:$cc_tweaked_version")
         compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-forge-api:$cc_tweaked_version")
+        compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-common-api:$cc_tweaked_version")
         localRuntimeOnly("cc.tweaked:cc-tweaked-$minecraft_version-forge:$cc_tweaked_version")
     }
 
