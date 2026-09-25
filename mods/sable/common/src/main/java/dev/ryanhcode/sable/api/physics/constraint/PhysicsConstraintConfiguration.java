@@ -9,7 +9,7 @@ import org.joml.Vector3dc;
  * A configuration for a physics constraint.
  * @param <T> the type of constraint handle this configuration produces
  */
-public sealed interface PhysicsConstraintConfiguration<T extends PhysicsConstraintHandle> permits FixedConstraintConfiguration, FreeConstraintConfiguration, GenericConstraintConfiguration, RotaryConstraintConfiguration {
+public sealed interface PhysicsConstraintConfiguration<T extends PhysicsConstraintHandle> permits FixedConstraintConfiguration, FreeConstraintConfiguration, GenericConstraintConfiguration, RotaryConstraintConfiguration, SphericalConstraintConfiguration {
 
     static void validateAnchors(final ServerSubLevelContainer container, final PhysicsPipelineBody bodyA, final PhysicsPipelineBody bodyB, final Vector3dc pos1, final Vector3dc pos2) {
         if (bodyA instanceof final ServerSubLevel subLevel) {

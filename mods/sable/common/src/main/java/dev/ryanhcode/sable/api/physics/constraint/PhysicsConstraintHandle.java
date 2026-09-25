@@ -6,7 +6,7 @@ import org.joml.Vector3d;
  * An active constraint tracked by the physics world.
  * Must be kept track of to be removed.
  */
-public sealed interface PhysicsConstraintHandle permits FreeConstraintHandle, FixedConstraintHandle, RotaryConstraintHandle, GenericConstraintHandle {
+public sealed interface PhysicsConstraintHandle permits FreeConstraintHandle, FixedConstraintHandle, RotaryConstraintHandle, GenericConstraintHandle, SphericalConstraintHandle {
 
     /**
      * Gets the latest global linear and angular joint impulses from the solver
