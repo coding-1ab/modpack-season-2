@@ -1,10 +1,12 @@
 package org.antarcticgardens.cna.data.recipe;
 
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllRecipeTypes;
 import com.simibubi.create.content.kinetics.crusher.CrushingRecipe;
 import com.simibubi.create.content.kinetics.deployer.DeployerApplicationRecipe;
 import com.simibubi.create.content.kinetics.deployer.ItemApplicationRecipe;
+import com.simibubi.create.content.kinetics.deployer.ManualApplicationRecipe;
 import com.simibubi.create.content.kinetics.mixer.CompactingRecipe;
 import com.simibubi.create.content.kinetics.mixer.MixingRecipe;
 import com.simibubi.create.content.kinetics.press.PressingRecipe;
@@ -17,6 +19,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
+import org.antarcticgardens.cna.CNABlocks;
 import org.antarcticgardens.cna.CNAItems;
 import org.antarcticgardens.cna.CNARecipeTypes;
 import org.antarcticgardens.cna.CNATags;
@@ -49,6 +52,12 @@ public class CNAProcessingRecipeGen extends CNARecipeProvider {
             .cutting(b -> b
                     .withItemIngredients(Ingredient.of(CNAItems.OVERCHARGED_IRON_SHEET))
                     .duration(100));
+
+    // ======================================================================================================= Manual Application
+
+    GeneratedRecipe HEAT_CASING = builder(CNABlocks.HEAT_CASING)
+            .manualApplication(b -> b
+                    .withItemIngredients(Ingredient.of(AllBlocks.INDUSTRIAL_IRON_BLOCK), Ingredient.of(AllItems.ZINC_INGOT)));
 
     // ======================================================================================================= Deploying
     
@@ -144,6 +153,16 @@ public class CNAProcessingRecipeGen extends CNARecipeProvider {
         protected GeneratedRecipe cutting(UnaryOperator<StandardProcessingRecipe.Builder<CuttingRecipe>> operator) {
             StandardProcessingRecipe.Serializer<CuttingRecipe> serializer = AllRecipeTypes.CUTTING.getSerializer();
             return create(operator, serializer.factory());
+        }
+
+        protected GeneratedRecipe manualApplication(UnaryOperator<ItemApplicationRecipe.Builder<ManualApplicationRecipe>> operator) {
+            return register(consumer -> {
+                ItemApplicationRecipe.Builder<ManualApplicationRecipe> builder = new ItemApplicationRecipe.Builder<>(ManualApplicationRecipe::new, createLocation());
+                if (result != null) {
+                    builder.output(result, amount);
+                }
+                operator.apply(builder).build(consumer);
+            });
         }
         
         protected GeneratedRecipe deploying(UnaryOperator<ItemApplicationRecipe.Builder<DeployerApplicationRecipe>> operator) {

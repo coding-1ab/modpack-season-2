@@ -37,7 +37,7 @@ processResources {
             "minecraftVersion": minecraftVersion,
             "neoforgeVersion" : neoforgeVersion,
             "eslVersion"      : eslVersion,
-            "createVersion"   : createVersionShort,
+            "createVersion"   : createVersion.replaceAll("\\-.*", ""),
             "cctVersion"      : cctVersion,
             "objLoader"       : objLoader,
     ]

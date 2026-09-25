@@ -30,6 +30,7 @@
     "create.tooltip.create_new_age.efficiency": "Efficiency: ",
     "create.tooltip.create_new_age.percent": "%s%%",
     "create.tooltip.create_new_age.magnetic_force": "Magnetic Force: ",
+    "create.tooltip.create_new_age.fuel_ticks_left": "Fuel Ticks left:",
     
     "create.tooltip.create_new_age.stress_limit_multiplier": "Stress Capacity Multiplier",
     "create.tooltip.create_new_age.additional_capacity": "Additional Capacity",

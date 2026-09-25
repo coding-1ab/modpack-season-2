@@ -1,6 +1,7 @@
 {
   "values": [
     "create_new_age:reactor_casing",
+    "create_new_age:reactor_encased_heat_pipe",
     "create_new_age:reactor_rod",
     "create_new_age:reactor_glass",
     "create_new_age:reactor_fuel_acceptor",

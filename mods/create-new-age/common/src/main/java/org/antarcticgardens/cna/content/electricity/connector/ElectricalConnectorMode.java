@@ -17,6 +17,6 @@ public enum ElectricalConnectorMode implements StringRepresentable {
 
     @Override
     public @NotNull String getSerializedName() {
-        return name().toLowerCase(Locale.ROOT);
+        return name().toLowerCase(Locale.ENGLISH);
     }
 }

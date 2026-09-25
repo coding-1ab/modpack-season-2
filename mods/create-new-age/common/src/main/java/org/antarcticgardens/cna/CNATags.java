@@ -16,16 +16,18 @@ import net.minecraft.world.level.block.Blocks;
 
 public class CNATags {
     public enum Block {
-        MAGNET,
-        STOPS_RADIATION;
-        
+        MAGNET(true),
+        STOPS_RADIATION(false);
+
+        public final boolean hasItemTag;
         public final TagKey<net.minecraft.world.level.block.Block> blockTag;
         public final TagKey<net.minecraft.world.item.Item> itemTag;
         
-        Block() {
+        Block(boolean hasItemTag) {
             ResourceLocation location = ResourceLocation.fromNamespaceAndPath(CreateNewAge.MOD_ID, CreateLang.asId(name()));
-            blockTag = TagKey.create(Registries.BLOCK, location);
-            itemTag = TagKey.create(Registries.ITEM, location);
+            this.hasItemTag = hasItemTag;
+            this.blockTag = TagKey.create(Registries.BLOCK, location);
+            this.itemTag = hasItemTag ? TagKey.create(Registries.ITEM, location) : null;
         }
         
         public static void load() {  }
