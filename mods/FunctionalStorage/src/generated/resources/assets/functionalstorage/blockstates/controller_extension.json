@@ -1,0 +1,43 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "functionalstorage:block/controller_extension",
+        "uvlock": true,
+        "y": 180
+      },
+      "when": {
+        "subfacing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "functionalstorage:block/controller_extension",
+        "uvlock": true
+      },
+      "when": {
+        "subfacing": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "functionalstorage:block/controller_extension",
+        "uvlock": true,
+        "y": 90
+      },
+      "when": {
+        "subfacing": "east"
+      }
+    },
+    {
+      "apply": {
+        "model": "functionalstorage:block/controller_extension",
+        "uvlock": true,
+        "y": 270
+      },
+      "when": {
+        "subfacing": "west"
+      }
+    }
+  ]
+}

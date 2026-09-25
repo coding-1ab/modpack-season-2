@@ -1,0 +1,18 @@
+{
+	"parent": "minecraft:block/block",
+	"loader": "neoforge:composite",
+	"textures": {
+		"particle": "functionalstorage:block/armory_front"
+	},
+	"children": {
+		"front": {
+			"parent": "functionalstorage:block/front",
+			"textures": {
+				"front": "functionalstorage:block/armory_front"
+			}
+		},
+		"side": {
+			"parent": "functionalstorage:block/side_machine"
+		}
+	}
+}

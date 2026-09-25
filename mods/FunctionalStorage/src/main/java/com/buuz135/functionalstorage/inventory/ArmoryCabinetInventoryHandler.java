@@ -1,0 +1,131 @@
+package com.buuz135.functionalstorage.inventory;
+
+import com.buuz135.functionalstorage.block.config.FunctionalStorageConfig;
+import com.buuz135.functionalstorage.util.StorageTags;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.world.item.AnimalArmorItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class ArmoryCabinetInventoryHandler implements IItemHandlerModifiable, INBTSerializable<CompoundTag> {
+
+    public List<ItemStack> stackList;
+
+    public ArmoryCabinetInventoryHandler() {
+        this.stackList = create();
+    }
+
+    @Override
+    public int getSlots() {
+        return FunctionalStorageConfig.ARMORY_CABINET_SIZE;
+    }
+
+    @NotNull
+    @Override
+    public ItemStack getStackInSlot(int slot) {
+        if (slot < this.stackList.size()){
+            return this.stackList.get(slot);
+        }
+        return ItemStack.EMPTY;
+    }
+
+    @NotNull
+    @Override
+    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+        if (slot < 0 || slot >= this.stackList.size()) return stack;
+        if (isValid(slot, stack)) {
+            if (!simulate) {
+                this.stackList.set(slot, stack.copyWithCount(1));
+                onChange();
+            }
+
+            return stack.getCount() > 1 ? stack.copyWithCount(stack.getCount() - 1) : ItemStack.EMPTY;
+        }
+        return stack;
+    }
+
+    public abstract void onChange();
+
+    @NotNull
+    @Override
+    public ItemStack extractItem(int slot, int amount, boolean simulate) {
+        if (slot < 0 || slot >= this.stackList.size()) return ItemStack.EMPTY;
+        var inSlot = this.stackList.get(slot).copy();
+        if (amount == 0 || inSlot.isEmpty()) return inSlot;
+        if (!simulate) {
+            stackList.set(slot, ItemStack.EMPTY);
+            onChange();
+        }
+        return inSlot;
+    }
+
+    @Override
+    public int getSlotLimit(int slot) {
+        return 1;
+    }
+
+    @Override
+    public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+        return isCertifiedStack(stack);
+    }
+
+    @Override
+    public void setStackInSlot(int slot, @NotNull ItemStack stack) {
+        if (slot < 0 || slot >= this.stackList.size()) return;
+        this.stackList.set(slot, stack.isEmpty() ? ItemStack.EMPTY : stack.copyWithCount(Math.min(1, stack.getCount())));
+        onChange();
+    }
+
+    private boolean isValid(int slot, @NotNull ItemStack stack) {
+        return !stack.isEmpty() && this.stackList.get(slot).isEmpty() && isCertifiedStack(stack);
+    }
+
+    private boolean isCertifiedStack(ItemStack stack){
+        if (stack.getCapability(Capabilities.ItemHandler.ITEM) != null) return false;
+        if (stack.is(StorageTags.ARMORY_CABINET_INSERTABLE)) return true;
+        if (stack.getMaxStackSize() > 1) return false;
+        return stack.isDamageableItem() || stack.isEnchantable() || stack.has(DataComponents.JUKEBOX_PLAYABLE) || stack.getItem() instanceof AnimalArmorItem || stack.is(Items.ENCHANTED_BOOK);
+    }
+
+    @Override
+    public CompoundTag serializeNBT(net.minecraft.core.HolderLookup.Provider provider) {
+        CompoundTag compoundTag = new CompoundTag();
+        for (int i = 0; i < this.stackList.size(); i++) {
+            ItemStack stack = this.stackList.get(i);
+            if (!stack.isEmpty()){
+                compoundTag.put(String.valueOf(i), stack.saveOptional(provider));
+            }
+        }
+        return compoundTag;
+    }
+
+    private List<ItemStack> create(){
+        List<ItemStack> stackList = new ArrayList<>();
+        for (int i = 0; i < FunctionalStorageConfig.ARMORY_CABINET_SIZE; i++) {
+            stackList.add(ItemStack.EMPTY);
+        }
+        return stackList;
+    }
+
+    @Override
+    public void deserializeNBT(net.minecraft.core.HolderLookup.Provider provider, CompoundTag nbt) {
+        this.stackList = create();
+        for (String allKey : nbt.getAllKeys()) {
+            int pos = Integer.parseInt(allKey);
+            if (pos < this.stackList.size()){
+                this.stackList.set(pos, ItemStack.CODEC.decode(RegistryOps.create(NbtOps.INSTANCE, provider), nbt.getCompound(allKey)).getOrThrow().getFirst());
+            }
+        }
+    }
+}
