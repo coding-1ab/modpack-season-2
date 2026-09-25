@@ -22,7 +22,6 @@ import dev.ryanhcode.sable.physics.impl.rapier.constraint.fixed.RapierFixedConst
 import dev.ryanhcode.sable.physics.impl.rapier.constraint.free.RapierFreeConstraintHandle;
 import dev.ryanhcode.sable.physics.impl.rapier.constraint.generic.RapierGenericConstraintHandle;
 import dev.ryanhcode.sable.physics.impl.rapier.constraint.rotary.RapierRotaryConstraintHandle;
-import dev.ryanhcode.sable.physics.impl.rapier.constraint.rotary.SphericalConstraintHandle;
 import dev.ryanhcode.sable.physics.impl.rapier.rope.RapierRopeHandle;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.SubLevel;
