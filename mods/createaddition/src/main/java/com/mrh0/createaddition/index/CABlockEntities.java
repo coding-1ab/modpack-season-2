@@ -1,6 +1,7 @@
 package com.mrh0.createaddition.index;
 
 import com.mrh0.createaddition.blocks.alternator.AlternatorBlockEntity;
+import com.mrh0.createaddition.blocks.alternator.AlternatorVisual;
 import com.mrh0.createaddition.blocks.connector.LargeConnectorBlockEntity;
 import com.mrh0.createaddition.blocks.connector.SmallConnectorBlockEntity;
 import com.mrh0.createaddition.blocks.connector.SmallLightConnectorBlockEntity;
@@ -8,6 +9,10 @@ import com.mrh0.createaddition.blocks.connector.base.ConnectorRenderer;
 import com.mrh0.createaddition.blocks.creative_energy.CreativeEnergyBlockEntity;
 import com.mrh0.createaddition.blocks.digital_adapter.DigitalAdapterBlockEntity;
 import com.mrh0.createaddition.blocks.electric_motor.*;
+import com.mrh0.createaddition.blocks.electric_pump.*;
+import com.mrh0.createaddition.blocks.servo_motor.ServoMotorBlockEntity;
+import com.mrh0.createaddition.blocks.servo_motor.ServoMotorRenderer;
+import com.mrh0.createaddition.blocks.servo_motor.ServoMotorVisual;
 import com.mrh0.createaddition.blocks.liquid_blaze_burner.*;
 import com.mrh0.createaddition.blocks.modular_accumulator.ModularAccumulatorBlockEntity;
 import com.mrh0.createaddition.blocks.modular_accumulator.ModularAccumulatorRenderer;
@@ -33,9 +38,23 @@ public class CABlockEntities {
 			.renderer(() -> ElectricMotorRenderer::new)
 			.register();
 	
+	public static final BlockEntityEntry<ElectricPumpBlockEntity> ELECTRIC_PUMP = CreateAddition.REGISTRATE
+			.blockEntity("electric_pump", ElectricPumpBlockEntity::new)
+			.visual(() -> ElectricPumpVisual::new)
+			.validBlocks(CABlocks.ELECTRIC_PUMP)
+			.renderer(() -> ElectricPumpRenderer::new)
+			.register();
+
+	public static final BlockEntityEntry<ServoMotorBlockEntity> SERVO_MOTOR = CreateAddition.REGISTRATE
+			.blockEntity("servo_motor", ServoMotorBlockEntity::new)
+			.visual(() -> ServoMotorVisual::new, false)
+			.validBlocks(CABlocks.SERVO_MOTOR)
+			.renderer(() -> ServoMotorRenderer::new)
+			.register();
+
 	public static final BlockEntityEntry<AlternatorBlockEntity> ALTERNATOR = CreateAddition.REGISTRATE
 			.blockEntity("alternator", AlternatorBlockEntity::new)
-			.visual(() -> OrientedRotatingVisual.of(AllPartialModels.SHAFT_HALF), false)
+			.visual(() -> AlternatorVisual::new, false)
 			.validBlocks(CABlocks.ALTERNATOR)
 			.renderer(() -> AlternatorRenderer::new)
 			.register();

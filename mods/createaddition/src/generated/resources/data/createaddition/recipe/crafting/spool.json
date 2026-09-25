@@ -2,20 +2,20 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "N": {
-      "tag": "c:nuggets/iron"
-    },
     "P": {
       "tag": "c:plates/iron"
+    },
+    "R": {
+      "tag": "c:rods/iron"
     }
   },
   "pattern": [
     "P",
-    "N",
+    "R",
     "P"
   ],
   "result": {
-    "count": 16,
+    "count": 24,
     "id": "createaddition:spool"
   }
 }

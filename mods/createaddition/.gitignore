@@ -28,3 +28,6 @@ changelog.txt
 CREDITS.txt
 /.apt_generated_tests/
 .cache/
+AGENTS.md
+.vscode
+libs/

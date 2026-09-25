@@ -403,6 +403,15 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 		if (queuedSync) tag.putBoolean("LazySync", true);
 	}
 
+	@Override
+	public void writeSafe(CompoundTag tag, HolderLookup.Provider registries) {
+		super.writeSafe(tag, registries);
+		if (isController()) {
+			tag.putInt("Size", width);
+			tag.putInt("Height", height);
+		}
+	}
+
 	public int getTotalAccumulatorSize() {
 		return width * width * height;
 	}
@@ -435,6 +444,7 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 			level.setBlock(getBlockPos(), state, Block.UPDATE_NEIGHBORS | Block.UPDATE_CLIENTS | Block.UPDATE_INVISIBLE);
 		}
 		setChanged();
+		if (isController()) sendDataImmediately();
 	}
 
 	@Override
@@ -477,7 +487,7 @@ public class ModularAccumulatorBlockEntity extends SmartBlockEntity implements I
 		ModularAccumulatorBlockEntity controllerTE = getControllerBE();
 		if (controllerTE == null) return false;
 
-		ObservePacketPayload.send(worldPosition, 0);
+		ObservePacketPayload.send(getController(), 0);
 
 		CALang.builder().add(Component.translatable(CreateAddition.MODID + ".tooltip.accumulator.info").withStyle(ChatFormatting.WHITE)).forGoggles(tooltip);
 		CALang.builder().add(Component.translatable(CreateAddition.MODID + ".tooltip.energy.stored").withStyle(ChatFormatting.GRAY)).forGoggles(tooltip);

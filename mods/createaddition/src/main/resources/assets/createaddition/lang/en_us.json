@@ -42,7 +42,7 @@
 	"item.createaddition.capacitor": "Capacitor",
 
 	"item.createaddition.diamond_grit": "Diamond Grit",
-	"item.createaddition.diamond_grit_sandpaper": "Diamond Grit Sandpaper",
+	"item.createaddition.diamond_grit_sandpaper": "Diamond Grit Sand Paper",
 	"item.createaddition.diamond_grit_sandpaper.tooltip.summary": "Can be used to _refine materials_. The process can be automated with a Deployer.",
 	"item.createaddition.diamond_grit_sandpaper.tooltip.condition1": "When Used",
 	"item.createaddition.diamond_grit_sandpaper.tooltip.behaviour1": "Applies polish to items held in the _offhand_ or lying on the _floor_ when _looking at them_",
@@ -103,7 +103,7 @@
 
 	"item.createaddition.electrum_amulet": "Pale Gold Amulet",
 	"item.createaddition.electrum_amulet.tooltip": "ELECTRUM_AMULET",
-	"item.createaddition.electrum_amulet.tooltip.summary": "When _life_ has got you down, clutching this _amulet_ in your pocket makes you feel like your _luck_ is about to change.",
+	"item.createaddition.electrum_amulet.tooltip.summary": "This _Amulet_ has a _SHOCKING⚡_ effect on your re-chargable items! Hold this in your hand and it will occasionally charge items in your other hand.",
 
 	"item.createaddition.brass_figurine": "Brass Figurine",
 	"item.createaddition.brass_figurine.tooltip": "BRASS_FIGURINE",
@@ -155,6 +155,9 @@
 	"statusbar.createaddition.wire.requires_high_current": "This connection requires a high current wire",
 
 	"block.createaddition.electric_motor": "Electric Motor",
+	"block.createaddition.electric_pump": "Electric Pump",
+
+	"block.createaddition.servo_motor": "Servo Motor",
 
 	"block.createaddition.alternator": "Alternator",
 
@@ -311,6 +314,13 @@
 
 	"createaddition.ponder.pei_redstone.header": "Redstone Control",
 	"createaddition.ponder.pei_redstone.text_1": "Redstone power will prevent the stationary interface from engaging.",
+
+	"createaddition.ponder.electric_pump_flow.header": "Fluid Transportation using Electric Pumps",
+	"createaddition.ponder.electric_pump_flow.text_1": "Electric Pumps govern the flow of their attached pipe networks",
+	"createaddition.ponder.electric_pump_flow.text_2": "Their arrow indicates the direction of flow",
+	"createaddition.ponder.electric_pump_flow.text_3": "The network behind is now pulling fluids...",
+	"createaddition.ponder.electric_pump_flow.text_4": "...while the network in front is transferring it outward",
+	"createaddition.ponder.electric_pump_flow.text_5": "A Wrench can be used to reverse the direction",
 
 	"createaddition.schedule.condition.energy_threshold": "Energy Cargo Condition",
 	"createaddition.schedule.condition.threshold.unit": "K⚡",

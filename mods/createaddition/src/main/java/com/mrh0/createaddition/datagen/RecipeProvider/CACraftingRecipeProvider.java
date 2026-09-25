@@ -165,14 +165,15 @@ public class CACraftingRecipeProvider extends RecipeProvider {
         utility.saveToCraftingFolder(
                 ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, CAItems.ELECTRUM_AMULET.asItem())
                         .pattern(" WW")
-                        .pattern("EEW")
+                        .pattern("EZW")
                         .pattern("GE ")
                         .define('W', CATagRegister.Items.ELECTRUM_WIRES)
                         .define('E', CATagRegister.Items.ELECTRUM_INGOTS)
-                        .define('G', Tags.Items.GEMS_EMERALD)
+                        .define('Z', CATagRegister.Items.ZINC_PLATES)
+                        .define('G', CATagRegister.Items.DIAMOND_DUSTS)
                         .unlockedBy("has_electrum_wire", has(CATagRegister.Items.ELECTRUM_WIRES))
                         .unlockedBy("has_electrum_ingot", has(CATagRegister.Items.ELECTRUM_INGOTS))
-                        .unlockedBy("has_emerald", has(Tags.Items.GEMS_EMERALD))
+                        .unlockedBy("has_diamond_dust", has(CATagRegister.Items.DIAMOND_DUSTS))
                         .unlockedBy("has_electrum_amulet", has(CAItems.ELECTRUM_AMULET))
         );
 
@@ -280,15 +281,25 @@ public class CACraftingRecipeProvider extends RecipeProvider {
         );
 
         utility.saveToCraftingFolder(
-                ShapedRecipeBuilder.shaped(RecipeCategory.MISC, CAItems.SPOOL.asItem(), 16)
+                ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, CABlocks.SERVO_MOTOR.asItem())
+                        .requires(AllBlocks.MECHANICAL_BEARING.asItem())
+                        .requires(CABlocks.ELECTRIC_MOTOR.asItem())
+                        .requires(AllItems.ELECTRON_TUBE.asItem())
+                        .unlockedBy("has_mechanical_bearing", has(AllBlocks.MECHANICAL_BEARING.asItem()))
+                        .unlockedBy("has_electric_motor", has(CABlocks.ELECTRIC_MOTOR.asItem()))
+                        .unlockedBy("has_electron_tube", has(AllItems.ELECTRON_TUBE.asItem()))
+        );
+
+        utility.saveToCraftingFolder(
+                ShapedRecipeBuilder.shaped(RecipeCategory.MISC, CAItems.SPOOL.asItem(), 24)
                         .pattern("P")
-                        .pattern("N")
+                        .pattern("R")
                         .pattern("P")
                         .define('P', CATagRegister.Items.commonTags("plates/iron"))
-                        .define('N', Tags.Items.NUGGETS_IRON)
+                        .define('R', CATagRegister.Items.RODS_IRON)
                         .unlockedBy("has_spool", has(CAItems.SPOOL.asItem()))
                         .unlockedBy("has_iron_plate", has(CATagRegister.Items.commonTags("plates/iron")))
-                        .unlockedBy("has_iron_nugget", has(Tags.Items.NUGGETS_IRON))
+                        .unlockedBy("has_iron_rod", has(CATagRegister.Items.RODS))
         );
 
         SimpleCookingRecipeBuilder.smoking(
@@ -334,6 +345,7 @@ public class CACraftingRecipeProvider extends RecipeProvider {
             recipeBuilder.save(this.output, ResourceLocation.fromNamespaceAndPath(modId, path));
         }
 
+        @SuppressWarnings("unused")
         private void saveToPath( RecipeBuilder recipeBuilder, String path) {
             saveToPath(recipeBuilder, path, CreateAddition.MODID);
         }

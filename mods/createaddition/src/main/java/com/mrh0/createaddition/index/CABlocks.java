@@ -20,11 +20,13 @@ import com.mrh0.createaddition.datagen.Models.BlockGenHelper;
 import com.mrh0.createaddition.energy.NodeMovementBehaviour;
 import com.mrh0.createaddition.blocks.creative_energy.CreativeEnergyBlock;
 import com.mrh0.createaddition.blocks.electric_motor.ElectricMotorBlock;
+import com.mrh0.createaddition.blocks.electric_pump.ElectricPumpBlock;
+import com.mrh0.createaddition.blocks.servo_motor.ServoMotorBlock;
 import com.mrh0.createaddition.blocks.liquid_blaze_burner.LiquidBlazeBurnerBlock;
 import com.mrh0.createaddition.blocks.redstone_relay.RedstoneRelayBlock;
 import com.mrh0.createaddition.blocks.rolling_mill.RollingMillBlock;
 import com.mrh0.createaddition.blocks.tesla_coil.TeslaCoilBlock;
-import com.mrh0.createaddition.item.BiomassPelletBlock;
+import com.mrh0.createaddition.item.BiomassPelletBlockItem;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.api.stress.BlockStressValues;
 import com.simibubi.create.content.processing.AssemblyOperatorBlockItem;
@@ -33,7 +35,6 @@ import com.simibubi.create.foundation.data.SharedProperties;
 import com.simibubi.create.foundation.item.ItemDescription;
 import com.simibubi.create.foundation.item.KineticStats;
 import com.simibubi.create.foundation.item.TooltipModifier;
-import com.simibubi.create.infrastructure.config.CStress;
 import com.tterrag.registrate.util.entry.BlockEntry;
 
 import static com.simibubi.create.foundation.data.TagGen.axeOrPickaxe;
@@ -67,6 +68,30 @@ public class CABlocks {
                     .andThen(TooltipModifier.mapNull(KineticStats.create(item))))
             .block("electric_motor", ElectricMotorBlock::new)
 			.initialProperties(SharedProperties::softMetal)
+			.transform(pickaxeOnly())
+			.blockstate(BlockGenHelper.directionalBlockState())
+            .onRegister(BlockStressValues.setGeneratorSpeed(256, true))
+            .onRegister((block) -> BlockStressValues.CAPACITIES.register(block, () -> CommonConfig.MAX_STRESS.get()/256f))
+			.item()
+			.transform(customItemModel())
+			.register();
+
+	public static final BlockEntry<ElectricPumpBlock> ELECTRIC_PUMP = CreateAddition.REGISTRATE
+            .block("electric_pump", ElectricPumpBlock::new)
+			.initialProperties(SharedProperties::softMetal)
+			.properties(p -> p.noOcclusion())
+			.transform(pickaxeOnly())
+			.blockstate(BlockGenHelper.pumpBlockState())
+			.item()
+			.transform(customItemModel())
+			.register();
+
+	public static final BlockEntry<ServoMotorBlock> SERVO_MOTOR = CreateAddition.REGISTRATE
+            .setTooltipModifierFactory(item -> new ItemDescription.Modifier(item, FontHelper.Palette.STANDARD_CREATE)
+                    .andThen(TooltipModifier.mapNull(KineticStats.create(item))))
+            .block("servo_motor", ServoMotorBlock::new)
+			.initialProperties(SharedProperties::softMetal)
+			.properties(p -> p.noOcclusion())
 			.transform(pickaxeOnly())
 			.blockstate(BlockGenHelper.directionalBlockState())
             .onRegister(BlockStressValues.setGeneratorSpeed(256, true))
@@ -184,6 +209,7 @@ public class CABlocks {
 	public static final BlockEntry<TeslaCoilBlock> TESLA_COIL = CreateAddition.REGISTRATE
 			.block("tesla_coil",  TeslaCoilBlock::new)
 			.initialProperties(SharedProperties::softMetal)
+			.properties(p -> p.lightLevel(state -> state.getValue(TeslaCoilBlock.POWERED) ? 10 : 0))
 			.blockstate(TeslaCoilBlock::makeBlockState)
 			.item(AssemblyOperatorBlockItem::new)
 			.transform(customItemModel())
@@ -243,7 +269,7 @@ public class CABlocks {
 			.initialProperties(() -> Blocks.DRIED_KELP_BLOCK)
 			.properties(p -> p.mapColor(MapColor.COLOR_GREEN))
 			.blockstate(BlockGenHelper.simpleBlock())
-			.item(BiomassPelletBlock::new)
+			.item(BiomassPelletBlockItem::new)
 			.transform(customItemModel())
 			.register();
 

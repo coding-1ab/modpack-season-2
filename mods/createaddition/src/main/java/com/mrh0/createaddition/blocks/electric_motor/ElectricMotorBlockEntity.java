@@ -11,7 +11,6 @@ import com.mrh0.createaddition.index.CABlocks;
 import com.mrh0.createaddition.index.CALang;
 import com.mrh0.createaddition.sound.CASoundScapes;
 import com.mrh0.createaddition.util.Util;
-import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.motor.KineticScrollValueBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -222,6 +221,7 @@ public class ElectricMotorBlockEntity extends GeneratingKineticBlockEntity {
 
 	// This is the callback used by the CC Peripheral!
 	public boolean setRPM(float rpm) {
+		if (!Float.isFinite(rpm)) return false;
 		rpm = Math.max(Math.min(rpm, CommonConfig.ELECTRIC_MOTOR_RPM_RANGE.get()), -CommonConfig.ELECTRIC_MOTOR_RPM_RANGE.get());
 		cc_new_rpm = rpm;
 		cc_update_rpm = true;
