@@ -1,0 +1,19 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "regions_unexplored"
+    }
+  ],
+  "type": "create:pressing",
+  "ingredients": [
+    {
+      "item": "regions_unexplored:silt_dirt"
+    }
+  ],
+  "results": [
+    {
+      "id": "regions_unexplored:silt_dirt_path"
+    }
+  ]
+}
