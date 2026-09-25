@@ -1,0 +1,30 @@
+package com.mrh0.createaddition.index;
+
+import com.mrh0.createaddition.CreateAddition;
+
+import dev.engine_room.flywheel.lib.model.baked.PartialModel;
+import net.minecraft.resources.ResourceLocation;
+
+public class CAPartials {
+
+	public static final PartialModel LIQUID_HAT = entity("liquid_hat");
+	public static final PartialModel SMALL_LIGHT = block("connector/small_light");
+	public static final PartialModel ACCUMULATOR_GUAGE = block("modular_accumulator/guage");
+	public static final PartialModel ACCUMULATOR_DIAL = block("modular_accumulator/dial");
+	public static final PartialModel PORTABLE_ENERGY_INTERFACE_MIDDLE = block("portable_energy_interface/block_middle");
+	public static final PartialModel PORTABLE_ENERGY_INTERFACE_MIDDLE_POWERED = block("portable_energy_interface/block_middle_powered");
+	public static final PartialModel PORTABLE_ENERGY_INTERFACE_TOP = block("portable_energy_interface/block_top");
+	public static final PartialModel ELECTRIC_PUMP_PARTIAL = block("electric_pump/block_pump_partial");
+
+	private static PartialModel block(String path) {
+		return PartialModel.of(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, "block/" + path));
+	}
+
+	private static PartialModel entity(String path) {
+		return PartialModel.of(ResourceLocation.fromNamespaceAndPath(CreateAddition.MODID, "entity/" + path));
+	}
+
+	public static void init() {
+		// init static fields
+	}
+}
