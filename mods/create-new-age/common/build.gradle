@@ -1,0 +1,21 @@
+dependencies {
+    neoForge("net.neoforged:neoforge:${project.neoforgeVersion}")
+
+    compileOnly("com.simibubi.create:create-${rootProject.minecraftVersion}:${rootProject.createVersion}:slim") { transitive = false }
+    implementation("net.createmod.ponder:ponder-neoforge:${ponderVersion}+mc${minecraftVersion}")
+    implementation("dev.engine-room.flywheel:flywheel-neoforge-${minecraftVersion}:${flywheelVersion}")
+    compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraftVersion}:${flywheelVersion}")
+    compileOnly("com.tterrag.registrate:Registrate:${rootProject.registrateVersion}")
+
+    compileOnly("cc.tweaked:cc-tweaked-${rootProject.minecraftVersion}-common-api:${rootProject.cctVersion}")
+    if (enableCCT.toBoolean()) {
+        // TODO: Make this platform agnostic
+        compileOnly("cc.tweaked:cc-tweaked-${rootProject.minecraftVersion}-forge-api:${rootProject.cctVersion}")
+    }
+
+//    modCompileOnly("net.fabricmc:fabric-loader:${project(":fabric").fabricLoaderVersion}")
+//    modCompileOnly("curse.maven:forge-config-api-port-fabric-547434:4583000")
+
+    compileOnly("com.github.spotbugs:spotbugs:4.9.8")
+    annotationProcessor(implementation("io.github.llamalad7:mixinextras-common:0.4.1"))
+}
