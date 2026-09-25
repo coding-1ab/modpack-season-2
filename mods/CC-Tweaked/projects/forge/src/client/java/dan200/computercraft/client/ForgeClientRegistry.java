@@ -1,0 +1,93 @@
+// SPDX-FileCopyrightText: 2022 The CC: Tweaked Developers
+//
+// SPDX-License-Identifier: MPL-2.0
+
+package dan200.computercraft.client;
+
+import dan200.computercraft.api.ComputerCraftAPI;
+import dan200.computercraft.api.client.turtle.RegisterTurtleModellersEvent;
+import dan200.computercraft.client.model.ExtraModels;
+import dan200.computercraft.client.model.turtle.TurtleModelLoader;
+import dan200.computercraft.client.turtle.TurtleUpgradeModellers;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModLoader;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.ModelEvent;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.event.RegisterShadersEvent;
+
+import java.io.IOException;
+
+/**
+ * Registers textures and models for items.
+ */
+@EventBusSubscriber(modid = ComputerCraftAPI.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+public final class ForgeClientRegistry {
+    private static final Object lock = new Object();
+    private static boolean gatheredModellers = false;
+
+    private ForgeClientRegistry() {
+    }
+
+    @SubscribeEvent
+    public static void registerModelLoaders(ModelEvent.RegisterGeometryLoaders event) {
+        event.register(ResourceLocation.fromNamespaceAndPath(ComputerCraftAPI.MOD_ID, "turtle"), TurtleModelLoader.INSTANCE);
+    }
+
+    /**
+     * Turtle upgrade modellers must be loaded before we gather additional models.
+     * <p>
+     * Unfortunately, due to the nature of parallel mod loading (resource loading and mod setup events are fired in
+     * parallel), there's no way to guarantee this using existing events. Instead, we piggyback off
+     * {@link ModelEvent.RegisterAdditional}, registering models the first time the event is fired.
+     */
+    private static void gatherModellers() {
+        if (gatheredModellers) return;
+        synchronized (lock) {
+            if (gatheredModellers) return;
+
+            gatheredModellers = true;
+            ModLoader.postEvent(new RegisterTurtleModellersEvent(TurtleUpgradeModellers::register));
+        }
+    }
+
+    @SubscribeEvent
+    public static void registerModels(ModelEvent.RegisterAdditional event) {
+        gatherModellers();
+        var extraModels = ExtraModels.loadAll(Minecraft.getInstance().getResourceManager());
+        ClientRegistry.registerExtraModels(x -> event.register(ModelResourceLocation.standalone(x)), extraModels);
+    }
+
+    @SubscribeEvent
+    public static void registerShaders(RegisterShadersEvent event) throws IOException {
+        ClientRegistry.registerShaders(event.getResourceProvider(), event::registerShader);
+    }
+
+    @SubscribeEvent
+    public static void onTurtleModellers(RegisterTurtleModellersEvent event) {
+        ClientRegistry.registerTurtleModellers(event);
+    }
+
+    @SubscribeEvent
+    public static void onItemColours(RegisterColorHandlersEvent.Item event) {
+        ClientRegistry.registerItemColours(event::register);
+    }
+
+    @SubscribeEvent
+    public static void registerMenuScreens(RegisterMenuScreensEvent event) {
+        ClientRegistry.registerMenuScreens(event::register);
+    }
+
+    @SubscribeEvent
+    public static void setupClient(FMLClientSetupEvent event) {
+        ClientRegistry.register();
+        event.enqueueWork(() -> ClientRegistry.registerMainThread(ItemProperties::register));
+    }
+}

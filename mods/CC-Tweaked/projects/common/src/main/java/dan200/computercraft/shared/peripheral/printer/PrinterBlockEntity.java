@@ -1,0 +1,281 @@
+// Copyright Daniel Ratcliffe, 2011-2022. Do not distribute without permission.
+//
+// SPDX-License-Identifier: LicenseRef-CCPL
+
+package dan200.computercraft.shared.peripheral.printer;
+
+import dan200.computercraft.api.peripheral.IPeripheral;
+import dan200.computercraft.shared.ModRegistry;
+import dan200.computercraft.shared.common.AbstractContainerBlockEntity;
+import dan200.computercraft.shared.computer.terminal.NetworkedTerminal;
+import dan200.computercraft.shared.container.BasicContainer;
+import dan200.computercraft.shared.container.BasicWorldlyContainer;
+import dan200.computercraft.shared.media.items.PrintoutData;
+import dan200.computercraft.shared.util.ColourUtils;
+import dan200.computercraft.shared.util.DataComponentUtil;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.Nullable;
+
+import java.util.List;
+
+public final class PrinterBlockEntity extends AbstractContainerBlockEntity implements BasicWorldlyContainer {
+    private static final String NBT_PRINTING = "Printing";
+    private static final String NBT_PAGE_TITLE = "PageTitle";
+
+    static final int SLOTS = 13;
+
+    private static final int[] BOTTOM_SLOTS = new int[]{ 7, 8, 9, 10, 11, 12 };
+    private static final int[] TOP_SLOTS = new int[]{ 1, 2, 3, 4, 5, 6 };
+    private static final int[] SIDE_SLOTS = new int[]{ 0 };
+
+    private final PrinterPeripheral peripheral = new PrinterPeripheral(this);
+    private final NonNullList<ItemStack> inventory = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
+
+    private final NetworkedTerminal page = new NetworkedTerminal(PrintoutData.LINE_LENGTH, PrintoutData.LINES_PER_PAGE, true);
+    private String pageTitle = "";
+    private boolean printing = false;
+
+    public PrinterBlockEntity(BlockEntityType<PrinterBlockEntity> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
+    }
+
+    public IPeripheral peripheral() {
+        return peripheral;
+    }
+
+    @Override
+    public void loadAdditional(CompoundTag nbt, HolderLookup.Provider registries) {
+        super.loadAdditional(nbt, registries);
+
+        // Read page
+        synchronized (page) {
+            printing = nbt.getBoolean(NBT_PRINTING);
+            pageTitle = nbt.getString(NBT_PAGE_TITLE);
+            page.readFromNBT(nbt);
+        }
+
+        // Read inventory
+        ContainerHelper.loadAllItems(nbt, inventory, registries);
+    }
+
+    @Override
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        // Write page
+        synchronized (page) {
+            tag.putBoolean(NBT_PRINTING, printing);
+            tag.putString(NBT_PAGE_TITLE, pageTitle);
+            page.writeToNBT(tag);
+        }
+
+        // Write inventory
+        ContainerHelper.saveAllItems(tag, inventory, registries);
+
+        super.saveAdditional(tag, registries);
+    }
+
+    boolean isPrinting() {
+        return printing;
+    }
+
+    @Override
+    public NonNullList<ItemStack> getItems() {
+        return inventory;
+    }
+
+    @Override
+    public void setItems(NonNullList<ItemStack> items) {
+        BasicContainer.defaultSetItems(inventory, items);
+    }
+
+    @Override
+    public void setChanged() {
+        super.setChanged();
+        updateBlockState();
+    }
+
+    @Override
+    public boolean canPlaceItem(int slot, ItemStack stack) {
+        if (slot == 0) {
+            return isInk(stack);
+        } else if (slot >= TOP_SLOTS[0] && slot <= TOP_SLOTS[TOP_SLOTS.length - 1]) {
+            return isPaper(stack);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int[] getSlotsForFace(Direction side) {
+        return switch (side) {
+            case DOWN -> BOTTOM_SLOTS; // Bottom (Out tray)
+            case UP -> TOP_SLOTS; // Top (In tray)
+            default -> SIDE_SLOTS; // Sides (Ink)
+        };
+    }
+
+    @Nullable
+    NetworkedTerminal getCurrentPage() {
+        synchronized (page) {
+            return printing ? page : null;
+        }
+    }
+
+    boolean startNewPage() {
+        synchronized (page) {
+            if (!canInputPage()) return false;
+            if (printing && !outputPage()) return false;
+            return inputPage();
+        }
+    }
+
+    boolean endCurrentPage() {
+        synchronized (page) {
+            return printing && outputPage();
+        }
+    }
+
+    int getInkLevel() {
+        var inkStack = inventory.get(0);
+        return isInk(inkStack) ? inkStack.getCount() : 0;
+    }
+
+    int getPaperLevel() {
+        var count = 0;
+        for (var i = 1; i < 7; i++) {
+            var paperStack = inventory.get(i);
+            if (isPaper(paperStack)) count += paperStack.getCount();
+        }
+        return count;
+    }
+
+    void setPageTitle(String title) {
+        synchronized (page) {
+            if (printing) pageTitle = title;
+        }
+    }
+
+    static boolean isInk(ItemStack stack) {
+        return ColourUtils.getStackColour(stack) != null;
+    }
+
+    static boolean isPaper(ItemStack stack) {
+        return stack.is(Items.PAPER) || stack.is(ModRegistry.Items.PRINTED_PAGE.get());
+    }
+
+    private boolean canInputPage() {
+        return getInkLevel() > 0 && getPaperLevel() > 0;
+    }
+
+    private boolean inputPage() {
+        var inkStack = inventory.get(0);
+        var dye = ColourUtils.getStackColour(inkStack);
+        if (dye == null) return false;
+
+        for (var i = 1; i < 7; i++) {
+            var paperStack = inventory.get(i);
+            if (paperStack.isEmpty() || !isPaper(paperStack)) continue;
+
+            // Setup the new page
+            page.setTextColour(dye.getId());
+
+            page.clear();
+
+            var printout = paperStack.get(ModRegistry.DataComponents.PRINTOUT.get());
+            if (printout != null) {
+                pageTitle = printout.title();
+                for (var y = 0; y < page.getHeight(); y++) {
+                    var line = printout.lines().get(y);
+                    page.setLine(y, line.text(), line.foreground(), "");
+                }
+            } else {
+                pageTitle = "";
+            }
+            page.setCursorPos(0, 0);
+
+            // Decrement ink
+            inkStack.shrink(1);
+            if (inkStack.isEmpty()) inventory.set(0, ItemStack.EMPTY);
+
+            // Decrement paper
+            paperStack.shrink(1);
+            if (paperStack.isEmpty()) {
+                inventory.set(i, ItemStack.EMPTY);
+                updateBlockState();
+            }
+
+            setChanged();
+            printing = true;
+            return true;
+        }
+        return false;
+    }
+
+    private boolean outputPage() {
+        var height = page.getHeight();
+        var lines = new PrintoutData.Line[height];
+        for (var i = 0; i < height; i++) {
+            lines[i] = new PrintoutData.Line(page.getLine(i).toString(), page.getTextColourLine(i).toString());
+        }
+
+        var stack = DataComponentUtil.createStack(
+            ModRegistry.Items.PRINTED_PAGE.get(),
+            ModRegistry.DataComponents.PRINTOUT.get(), new PrintoutData(pageTitle, List.of(lines))
+        );
+
+        for (var slot : BOTTOM_SLOTS) {
+            if (inventory.get(slot).isEmpty()) {
+                inventory.set(slot, stack);
+                updateBlockState();
+                setChanged();
+                printing = false;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void updateBlockState() {
+        boolean top = false, bottom = false;
+        for (var i = 1; i < 7; i++) {
+            var stack = inventory.get(i);
+            if (!stack.isEmpty() && isPaper(stack)) {
+                top = true;
+                break;
+            }
+        }
+        for (var i = 7; i < 13; i++) {
+            var stack = inventory.get(i);
+            if (!stack.isEmpty() && isPaper(stack)) {
+                bottom = true;
+                break;
+            }
+        }
+
+        updateBlockState(top, bottom);
+    }
+
+    private void updateBlockState(boolean top, boolean bottom) {
+        if (remove || level == null) return;
+
+        var state = getBlockState();
+        if (state.getValue(PrinterBlock.TOP) == top && state.getValue(PrinterBlock.BOTTOM) == bottom) return;
+
+        getLevel().setBlockAndUpdate(getBlockPos(), state.setValue(PrinterBlock.TOP, top).setValue(PrinterBlock.BOTTOM, bottom));
+    }
+
+    @Override
+    protected AbstractContainerMenu createMenu(int id, Inventory inventory) {
+        return new PrinterMenu(id, inventory, this);
+    }
+}
