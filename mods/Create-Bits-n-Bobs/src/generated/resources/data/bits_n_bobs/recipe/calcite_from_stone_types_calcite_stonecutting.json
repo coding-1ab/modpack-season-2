@@ -1,0 +1,16 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "bits_n_bobs:feature_enabled",
+      "feature": "tiles"
+    }
+  ],
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "tag": "create:stone_types/calcite"
+  },
+  "result": {
+    "count": 1,
+    "id": "minecraft:calcite"
+  }
+}
