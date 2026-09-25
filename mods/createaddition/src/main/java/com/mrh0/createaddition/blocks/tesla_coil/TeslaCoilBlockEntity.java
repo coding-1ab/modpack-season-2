@@ -297,13 +297,6 @@ public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements
 	@Override
 	public void onObserved(ServerPlayer player, ObservePacketPayload pkt) {
 		int timeRemaining = 0;
-<<<<<<< HEAD
-		if(recipeCache != null) {
-			ChargingRecipe recipe = recipeCache.value();
-			int chargeRate = Util.min(CommonConfig.TESLA_COIL_RECIPE_CHARGE_RATE.get(), recipe.getEnergy() - chargeAccumulator, recipe.getMaxChargeRate());
-			if (chargeRate == 0) return;
-			timeRemaining = (recipe.getEnergy() - chargeAccumulator) / chargeRate;
-=======
 		if(recipeCache.isPresent() && chargeRateSamples > 0) {
 			ChargingRecipe recipe = recipeCache.get().value();
 			int totalRate = 0;
@@ -314,7 +307,6 @@ public class TeslaCoilBlockEntity extends AbstractElectricBlockEntity implements
 				return;
 			}
 			timeRemaining = (recipe.getEnergy() - chargeAccumulator) / avgChargeRate;
->>>>>>> upstream/1.21.1
 		}
 		TimeRemainingPacketPayload.send(timeRemaining, player);
 	}
