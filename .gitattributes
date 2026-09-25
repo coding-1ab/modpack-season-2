@@ -3,5 +3,6 @@
 *.sh text eol=lf
 gradlew text eol=lf
 *.bat text eol=crlf
+mods/**/*.bat -text
 
 *.jar binary
