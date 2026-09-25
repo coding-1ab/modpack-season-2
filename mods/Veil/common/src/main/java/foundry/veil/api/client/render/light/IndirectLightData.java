@@ -11,7 +11,7 @@ import org.joml.Vector3dc;
 public interface IndirectLightData extends InstancedLightData {
 
     /**
-     * @return The position of this light
+     * @return The XYZ position of this light in the world
      */
     Vector3dc getPosition();
 

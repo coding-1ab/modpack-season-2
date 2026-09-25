@@ -26,7 +26,10 @@ public abstract class LightData {
 
     /**
      * Marks this light as changed so renderer-side buffers can be refreshed lazily.
+     *
+     * @deprecated Use mutable versions of JOML getters instead
      */
+    @Deprecated
     public void markDirty() {
         this.revision++;
     }
@@ -40,8 +43,20 @@ public abstract class LightData {
 
     /**
      * @return The color of this light
+     * @apiNote The return type will change to {@link Colorc} in 5.0.0. Use {@link #getColorMutable()} to mutate this
      */
     public Color getColor() {
+        return this.color;
+    }
+
+    /**
+     * Allows the value to be safely modified.
+     *
+     * @return The color of this light
+     * @since 4.3.0
+     */
+    public Color getColorMutable() {
+        this.markDirty();
         return this.color;
     }
 

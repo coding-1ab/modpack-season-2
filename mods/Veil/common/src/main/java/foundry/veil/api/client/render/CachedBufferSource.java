@@ -23,7 +23,7 @@ public class CachedBufferSource implements MultiBufferSource, NativeResource {
     private RenderType lastSharedType;
 
     private void clearBuffers() {
-        this.buffers.values().forEach(ByteBufferBuilder::clear);
+        this.buffers.values().forEach(ByteBufferBuilder::close);
         this.buffers.clear();
     }
 
@@ -32,6 +32,7 @@ public class CachedBufferSource implements MultiBufferSource, NativeResource {
         BufferBuilder last = this.startedBuilders.get(renderType);
         if (last != null && !renderType.canConsolidateConsecutiveGeometry()) {
             this.endBatch(renderType, last);
+            last = null;
         }
 
         if (last != null) {

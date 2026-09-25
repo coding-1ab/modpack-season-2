@@ -1,1 +1,1 @@
-- Fix ImGuiMC, Light Buffer Startup, NVIDIA Shader Issues, and Sodium 0.8.13 Issues ([#142](https://github.com/FoundryMC/Veil/pull/142))
+- Fix crash on yarn mappings

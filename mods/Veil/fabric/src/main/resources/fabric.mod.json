@@ -51,8 +51,10 @@
     "${mod_id}.registry.mixins.json",
     "${mod_id}.rendertype.mixins.json",
     "${mod_id}.resource.mixins.json",
-    "${mod_id}.shader.mixins.json",
     "${mod_id}.scheduler.mixins.json",
+    "${mod_id}.screenshake.mixins.json",
+    "${mod_id}.shader.mixins.json",
+    "${mod_id}.shader_recompile.mixins.json",
     "${mod_id}.fabric.mixins.json"
   ],
   "depends": {
@@ -68,8 +70,14 @@
     "minecraft": "~${minecraft_version}",
     "java": ">=${java_version}"
   },
+  "suggests": {
+    "imguimc": ">=${imguimc_version}"
+  },
   "breaks": {
-    "sodium": "<${sodium_version}"
+    "sodium": "<${sodium_version}",
+    "embeddium": "*",
+    "celeritas": "*",
+    "imguimc": ["<${imguimc_version}", ">=3.0.0"]
   },
   "accessWidener": "veil.accesswidener"
 }

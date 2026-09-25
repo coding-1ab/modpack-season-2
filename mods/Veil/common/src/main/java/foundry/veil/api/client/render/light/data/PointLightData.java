@@ -1,14 +1,19 @@
 package foundry.veil.api.client.render.light.data;
 
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import foundry.veil.api.client.color.Colorc;
 import foundry.veil.api.client.editor.EditorAttributeProvider;
 import foundry.veil.api.client.registry.LightTypeRegistry;
 import foundry.veil.api.client.render.CullFrustum;
+import foundry.veil.api.client.render.MatrixStack;
 import foundry.veil.api.client.render.light.DDALightData;
 import foundry.veil.api.client.render.light.IndirectLightData;
+import foundry.veil.api.client.render.light.LightGuideProvider;
 import imgui.ImGui;
 import net.minecraft.client.Camera;
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix4f;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
 import org.joml.Vector3fc;
@@ -20,16 +25,18 @@ import java.nio.ByteBuffer;
  *
  * @since 2.0.0
  */
-public class PointLightData extends LightData implements IndirectLightData, DDALightData, EditorAttributeProvider {
+public class PointLightData extends LightData implements IndirectLightData, DDALightData, EditorAttributeProvider, LightGuideProvider {
 
     protected final Vector3d position;
     protected float radius;
     protected boolean occlusionEnabled;
+    protected float inscattering;
 
     public PointLightData() {
         this.position = new Vector3d();
         this.radius = 1.0F;
         this.occlusionEnabled = false;
+        this.inscattering = 0.0F;
     }
 
     @Override
@@ -42,9 +49,28 @@ public class PointLightData extends LightData implements IndirectLightData, DDAL
         return this.position;
     }
 
+    /**
+     * Allows the value to be safely modified.
+     *
+     * @return The XYZ position of this light in the world
+     * @since 4.3.0
+     */
+    public Vector3d getPositionMutable() {
+        this.markDirty();
+        return this.position;
+    }
+
     @Override
     public boolean isOcclusionEnabled() {
         return this.occlusionEnabled;
+    }
+
+    /**
+     * @return The strength of the light's in-scattering effect.
+     * @since 4.4.0
+     */
+    public float getInscatteringStrength() {
+        return this.inscattering;
     }
 
     public PointLightData setPosition(Vector3dc pos) {
@@ -67,6 +93,15 @@ public class PointLightData extends LightData implements IndirectLightData, DDAL
 
     public PointLightData setOcclusionEnabled(boolean occlusionEnabled) {
         this.occlusionEnabled = occlusionEnabled;
+        this.markDirty();
+        return this;
+    }
+
+    /**
+     * @since 4.4.0
+     */
+    public PointLightData setInscatteringStrength(float inscattering) {
+        this.inscattering = inscattering;
         this.markDirty();
         return this;
     }
@@ -115,6 +150,7 @@ public class PointLightData extends LightData implements IndirectLightData, DDAL
         buffer.putFloat(this.color.blue() * this.brightness);
         buffer.putFloat(this.radius);
         buffer.putFloat(this.occlusionEnabled ? 1.0F : 0.0F);
+        buffer.putFloat(this.inscattering);
     }
 
     @Override
@@ -137,6 +173,8 @@ public class PointLightData extends LightData implements IndirectLightData, DDAL
         double[] editZ = new double[]{this.position.z()};
 
         float[] editRadius = new float[]{this.radius};
+
+        float[] editInscattering = new float[]{this.inscattering};
 
         float totalWidth = ImGui.calcItemWidth();
         ImGui.pushItemWidth(totalWidth / 3.0F - (ImGui.getStyle().getItemInnerSpacingX() * 0.58F));
@@ -164,8 +202,38 @@ public class PointLightData extends LightData implements IndirectLightData, DDAL
         }
 
         if (ImGui.checkbox("Occluded", this.occlusionEnabled)) {
-            this.occlusionEnabled = !this.occlusionEnabled;
-            this.markDirty();
+            this.setOcclusionEnabled(!this.occlusionEnabled);
         }
+
+        if (ImGui.dragScalar("In-scattering", editInscattering, 0.01F, 0.0F)) {
+            this.setInscatteringStrength(editInscattering[0]);
+        }
+    }
+
+    @Override
+    public void renderLightGuide(MatrixStack stack, VertexConsumer consumer) {
+        stack.matrixPush();
+
+        stack.translate(this.position.x, this.position.y, this.position.z);
+
+        Matrix4f pose = stack.position();
+
+        for (int i = -8; i < 25; i++) {
+            consumer.addVertex(pose, (float) Math.sin(i / 32.0f * Mth.TWO_PI) * this.radius, 0, (float) Math.cos(i / 32.0f * Mth.TWO_PI) * this.radius).setColor(this.color.red(), this.color.green(), this.color.blue(), this.color.alpha());
+        }
+
+        for (int i = -8; i < 25; i++) {
+            consumer.addVertex(pose, (float) Math.sin(i / 32.0f * Mth.TWO_PI) * this.radius, (float) Math.cos(i / 32.0f * Mth.TWO_PI) * this.radius, 0).setColor(this.color.red(), this.color.green(), this.color.blue(), this.color.alpha());
+        }
+
+        for (int i = 25; i >= 16; i--) {
+            consumer.addVertex(pose, (float) Math.sin(i / 32.0f * Mth.TWO_PI) * this.radius, (float) Math.cos(i / 32.0f * Mth.TWO_PI) * this.radius, 0).setColor(this.color.red(), this.color.green(), this.color.blue(), this.color.alpha());
+        }
+
+        for (int i = -8; i < 25; i++) {
+            consumer.addVertex(pose, 0, (float) Math.sin(i / 32.0f * Mth.TWO_PI) * this.radius, (float) Math.cos(i / 32.0f * Mth.TWO_PI) * this.radius).setColor(this.color.red(), this.color.green(), this.color.blue(), this.color.alpha());
+        }
+
+        stack.matrixPop();
     }
 }

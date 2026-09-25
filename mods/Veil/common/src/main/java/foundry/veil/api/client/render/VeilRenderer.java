@@ -3,9 +3,7 @@ package foundry.veil.api.client.render;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import foundry.veil.Veil;
-import foundry.veil.VeilClient;
 import foundry.veil.api.client.editor.EditorManager;
-import foundry.veil.api.client.editor.Inspector;
 import foundry.veil.api.client.render.dynamicbuffer.DynamicBufferType;
 import foundry.veil.api.client.render.framebuffer.FramebufferManager;
 import foundry.veil.api.client.render.light.renderer.LightRenderer;
@@ -14,14 +12,15 @@ import foundry.veil.api.client.render.post.PostProcessingManager;
 import foundry.veil.api.client.render.shader.ShaderManager;
 import foundry.veil.api.client.render.shader.ShaderModificationManager;
 import foundry.veil.api.client.render.shader.ShaderPreDefinitions;
-import foundry.veil.api.event.VeilRegisterInspectorsEvent;
 import foundry.veil.api.flare.FlareEffectManager;
 import foundry.veil.api.quasar.particle.ParticleSystemManager;
+import foundry.veil.api.screenshake.ScreenShakeManager;
 import foundry.veil.impl.client.render.dynamicbuffer.DynamicBufferManager;
 import foundry.veil.impl.client.render.dynamicbuffer.VanillaShaderCompiler;
 import foundry.veil.impl.client.render.pipeline.VeilBloomRenderer;
 import foundry.veil.impl.client.render.pipeline.VeilFirstPersonRenderer;
 import foundry.veil.impl.client.render.rendertype.DynamicRenderTypeManager;
+import foundry.veil.impl.client.render.shader.injection.ShaderInjectionManager;
 import foundry.veil.mixin.pipeline.accessor.PipelineReloadableResourceManagerAccessor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.resources.ResourceLocation;
@@ -55,6 +54,7 @@ public class VeilRenderer implements ResourceManagerReloadListener {
     private final VanillaShaderCompiler vanillaShaderCompiler;
     private final DynamicBufferManager dynamicBufferManager;
     private final ShaderModificationManager shaderModificationManager;
+    private final ShaderInjectionManager shaderInjectionManager;
     private final ShaderPreDefinitions shaderPreDefinitions;
     private final ShaderManager shaderManager;
     private final FramebufferManager framebufferManager;
@@ -65,6 +65,7 @@ public class VeilRenderer implements ResourceManagerReloadListener {
     private final EditorManager editorManager;
     private final CameraMatrices cameraMatrices;
     private final LightRenderer lightRenderer;
+    private final ScreenShakeManager screenShakeManager;
     private final GuiInfo guiInfo;
 
     @ApiStatus.Internal
@@ -73,6 +74,7 @@ public class VeilRenderer implements ResourceManagerReloadListener {
         this.dynamicBufferManager = new DynamicBufferManager(window.getWidth(), window.getHeight());
         this.shaderPreDefinitions = new ShaderPreDefinitions();
         this.shaderModificationManager = new ShaderModificationManager();
+        this.shaderInjectionManager = new ShaderInjectionManager();
         this.shaderManager = new ShaderManager(ShaderManager.PROGRAM_SET, this.shaderPreDefinitions, this.dynamicBufferManager);
         this.framebufferManager = new FramebufferManager();
         this.postProcessingManager = new PostProcessingManager();
@@ -82,12 +84,13 @@ public class VeilRenderer implements ResourceManagerReloadListener {
         this.editorManager = new EditorManager(resourceManager);
         this.cameraMatrices = new CameraMatrices();
         this.lightRenderer = new LightRenderer();
+        this.screenShakeManager = new ScreenShakeManager();
         this.guiInfo = new GuiInfo();
 
         List<PreparableReloadListener> listeners = ((PipelineReloadableResourceManagerAccessor) resourceManager).getListeners();
 
         // This must finish loading before the game renderer so modifications can apply on load
-        listeners.add(0, this.shaderModificationManager);
+        listeners.add(0, this.shaderInjectionManager);
         // This must be before vanilla shaders so vanilla shaders can be replaced
         listeners.add(1, this.shaderManager);
         resourceManager.registerReloadListener(this.framebufferManager);
@@ -183,8 +186,18 @@ public class VeilRenderer implements ResourceManagerReloadListener {
     /**
      * @return The manager for all custom shader modifications
      */
+    @ApiStatus.ScheduledForRemoval(inVersion = "5.0.0")
+    @Deprecated(forRemoval = true)
     public ShaderModificationManager getShaderModificationManager() {
         return this.shaderModificationManager;
+    }
+
+    /**
+     * @return The manager for all shader injections
+     */
+    @ApiStatus.Internal
+    public ShaderInjectionManager getShaderInjectionManager() {
+        return this.shaderInjectionManager;
     }
 
     /**
@@ -257,6 +270,14 @@ public class VeilRenderer implements ResourceManagerReloadListener {
      */
     public LightRenderer getLightRenderer() {
         return this.lightRenderer;
+    }
+
+    /**
+     * @return The manager for screen shaking
+     * @since 4.5.0
+     */
+    public ScreenShakeManager getScreenShakeManager() {
+        return this.screenShakeManager;
     }
 
     /**

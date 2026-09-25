@@ -4,6 +4,7 @@ import foundry.veil.api.client.color.Colorc;
 import foundry.veil.api.client.editor.EditorAttributeProvider;
 import foundry.veil.api.client.registry.LightTypeRegistry;
 import foundry.veil.api.client.render.CullFrustum;
+import foundry.veil.api.client.render.light.DDALightData;
 import imgui.ImGui;
 import net.minecraft.client.Camera;
 import org.joml.Vector3f;
@@ -14,18 +15,31 @@ import org.joml.Vector3fc;
  *
  * @since 2.0.0
  */
-public class DirectionalLightData extends LightData implements EditorAttributeProvider {
+public class DirectionalLightData extends LightData implements EditorAttributeProvider, DDALightData {
 
     protected final Vector3f direction;
+    protected boolean occlusionEnabled;
 
     public DirectionalLightData() {
         this.direction = new Vector3f(0.0F, -1.0F, 0.0F);
+        this.occlusionEnabled = false;
     }
 
     /**
      * @return The direction this light is facing
+     * @apiNote The return type will change to {@link Vector3fc} in 5.0.0. Use {@link #getDirectionMutable()} to mutate this
      */
     public Vector3f getDirection() {
+        return this.direction;
+    }
+
+    /**
+     * Allows the value to be safely modified.
+     *
+     * @return The direction this light is facing
+     * @since 4.3.0
+     */
+    public Vector3f getDirectionMutable() {
         return this.direction;
     }
 
@@ -81,6 +95,15 @@ public class DirectionalLightData extends LightData implements EditorAttributePr
         return this;
     }
 
+    /**
+     * @since 4.4.0
+     */
+    public DirectionalLightData setOcclusionEnabled(boolean occlusionEnabled) {
+        this.occlusionEnabled = occlusionEnabled;
+        this.markDirty();
+        return this;
+    }
+
     @Override
     public boolean isVisible(CullFrustum frustum) {
         return true;
@@ -106,5 +129,14 @@ public class DirectionalLightData extends LightData implements EditorAttributePr
         }
         ImGui.sameLine(0, ImGui.getStyle().getItemInnerSpacingX());
         ImGui.text("direction");
+
+        if (ImGui.checkbox("Occluded", this.occlusionEnabled)) {
+            this.setOcclusionEnabled(!this.occlusionEnabled);
+        }
+    }
+
+    @Override
+    public boolean isOcclusionEnabled() {
+        return this.occlusionEnabled;
     }
 }

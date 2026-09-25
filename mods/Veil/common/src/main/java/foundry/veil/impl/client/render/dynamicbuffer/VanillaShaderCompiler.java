@@ -102,7 +102,10 @@ public class VanillaShaderCompiler {
         int shaderCount = shaders.size();
         Map<String, ShaderInstance> shaderMap = new ConcurrentHashMap<>(shaderCount);
         for (ShaderInstance shader : shaders) {
-            shaderMap.put(shader.getName(), shader);
+            // Don't try to recompile wrappers here
+            if (!(shader instanceof ShaderProgramImpl.Wrapper)) {
+                shaderMap.put(shader.getName(), shader);
+            }
         }
 
         int activeBuffers = VeilRenderSystem.renderer().getDynamicBufferManger().getActiveBuffers();

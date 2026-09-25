@@ -1,12 +1,12 @@
 package foundry.veil.api.client.render.shader.processor;
 
 import foundry.veil.api.client.render.VeilRenderSystem;
-import foundry.veil.api.client.render.shader.ShaderModificationManager;
-import foundry.veil.impl.client.render.shader.modifier.VeilJobParameters;
+import foundry.veil.impl.client.render.shader.injection.ShaderInjectionManager;
 import io.github.ocelot.glslprocessor.api.GlslSyntaxException;
 import io.github.ocelot.glslprocessor.api.node.GlslTree;
 import io.github.ocelot.glslprocessor.lib.anarres.cpp.LexerException;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -16,14 +16,17 @@ import java.util.Set;
  * Modifies shader sources with the shader modification system.
  *
  * @author Ocelot
+ * @deprecated Use {@link ShaderInjectProcessor} instead.
  */
+@ApiStatus.ScheduledForRemoval(inVersion = "5.0.0")
+@Deprecated(forRemoval = true)
 public class ShaderModifyProcessor implements ShaderPreProcessor {
 
-    private final ShaderModificationManager shaderModificationManager;
+    private final ShaderInjectionManager shaderInjectionManager;
     private final Set<ResourceLocation> appliedModifications;
 
     public ShaderModifyProcessor() {
-        this.shaderModificationManager = VeilRenderSystem.renderer().getShaderModificationManager();
+        this.shaderInjectionManager = VeilRenderSystem.renderer().getShaderInjectionManager();
         this.appliedModifications = new HashSet<>();
     }
 
@@ -38,10 +41,10 @@ public class ShaderModifyProcessor implements ShaderPreProcessor {
         if (name == null || !this.appliedModifications.add(name)) {
             return;
         }
-        int flags = ctx.isSourceFile() ? VeilJobParameters.APPLY_VERSION | VeilJobParameters.ALLOW_OUT : 0;
-        for (ResourceLocation include : ctx.shaderImporter().addedImports()) { // Run include modifiers first
-            this.shaderModificationManager.applyModifiers(include, tree, flags);
+        boolean applyVersion = ctx.isSourceFile();
+        for (ResourceLocation include : ctx.shaderImporter().addedImports()) {
+            this.shaderInjectionManager.applyModifiers(include, tree, applyVersion);
         }
-        this.shaderModificationManager.applyModifiers(name, tree, flags);
+        this.shaderInjectionManager.applyModifiers(name, tree, applyVersion);
     }
 }

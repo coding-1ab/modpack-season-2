@@ -6,10 +6,7 @@
   "plugin": "foundry.veil.VeilMixinPluginImpl",
   "client": [
     "accessor.DynamicBufferGameRendererAccessor",
-    "accessor.DynamicBufferProgramAccessor",
-    "client.DynamicBufferGameRendererMixin",
-    "client.DynamicBufferLevelRendererMixin",
-    "client.DynamicBufferShaderInstanceMixin"
+    "client.DynamicBufferLevelRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

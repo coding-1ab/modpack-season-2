@@ -4,9 +4,12 @@ import com.mojang.blaze3d.platform.InputConstants;
 import foundry.imgui.api.ImGuiMCEvents;
 import foundry.veil.Veil;
 import foundry.veil.api.client.render.VeilRenderSystem;
-import foundry.veil.api.client.render.VeilRenderer;
 import foundry.veil.impl.client.editor.*;
 import foundry.veil.platform.VeilEventPlatform;
+import imgui.ImGui;
+import imgui.ImGuiViewport;
+import imgui.flag.ImGuiConfigFlags;
+import imgui.flag.ImGuiDockNodeFlags;
 import net.minecraft.client.KeyMapping;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -19,12 +22,13 @@ public final class VeilImGuiCompat {
     }
 
     public static void load() {
-        ImGuiMCEvents.INSTANCE.preRenderImGuiEvents(() -> {
+        ImGuiMCEvents.INSTANCE.imGuiLoadPre(() -> ImGui.getIO().addConfigFlags(ImGuiConfigFlags.DockingEnable | ImGuiConfigFlags.ViewportsEnable));
+        ImGuiMCEvents.INSTANCE.preRenderImGuiEvent(() -> {
             VeilImGuiStylesheet.initStyles();
             AdvancedFboImGuiAreaImpl.begin();
             VeilRenderSystem.renderer().getEditorManager().render();
         });
-        ImGuiMCEvents.INSTANCE.postRenderImGuiEvents(() -> {
+        ImGuiMCEvents.INSTANCE.postRenderImGuiEvent(() -> {
             VeilImGuiStylesheet.initStyles();
             VeilRenderSystem.renderer().getEditorManager().renderLast();
             AdvancedFboImGuiAreaImpl.end();
@@ -37,13 +41,15 @@ public final class VeilImGuiCompat {
 
             // Debug editors
             registry.registerInspector(new DeviceInfoViewer());
-            registry.registerInspector(new PipelineStatisticsViewer());
+            // TODO fix
+//            registry.registerInspector(new PipelineStatisticsViewer());
             registry.registerInspector(new PostInspector());
             registry.registerInspector(new ShaderInspector());
             registry.registerInspector(new TextureInspector());
             registry.registerInspector(new LightInspector());
             registry.registerInspector(new FramebufferInspector());
             registry.registerInspector(new ResourceManagerInspector());
+            registry.registerInspector(new ParticleEditorInspector());
         });
     }
 }

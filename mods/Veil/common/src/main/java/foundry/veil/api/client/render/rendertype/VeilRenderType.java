@@ -12,6 +12,7 @@ import foundry.veil.api.client.render.VeilRenderSystem;
 import foundry.veil.api.client.render.vertex.VeilVertexFormat;
 import foundry.veil.api.event.VeilRegisterFixedBuffersEvent;
 import foundry.veil.impl.client.render.pipeline.CullFaceShard;
+import foundry.veil.impl.client.render.rendertype.WhiteTextureStateShard;
 import foundry.veil.mixin.rendertype.accessor.RenderStateShardAccessor;
 import foundry.veil.mixin.rendertype.accessor.RenderTypeAccessor;
 import net.minecraft.Util;
@@ -24,10 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -48,6 +46,7 @@ public final class VeilRenderType extends RenderType {
     public static final RenderStateShard CULL_BACK = new CullFaceShard(GL_BACK);
     public static final RenderStateShard CULL_FRONT_AND_BACK = new CullFaceShard(GL_FRONT_AND_BACK);
     public static final RenderStateShard.WriteMaskStateShard NO_WRITE = new RenderStateShard.WriteMaskStateShard(false, false);
+    public static final RenderStateShard.EmptyTextureStateShard WHITE_TEXTURE = new WhiteTextureStateShard();
 
     private static final EnumMap<GlStateManager.LogicOp, ColorLogicStateShard> COLOR_LOGIC_SHARDS = new EnumMap<>(GlStateManager.LogicOp.class);
 
@@ -61,35 +60,48 @@ public final class VeilRenderType extends RenderType {
     }
 
     private static final ShaderStateShard PARTICLE = VeilRenderBridge.shaderState(Veil.veilPath("quasar/particle"));
-    private static final ShaderStateShard PARTICLE_ADDITIVE = VeilRenderBridge.shaderState(Veil.veilPath("quasar/particle_additive"));
 
     private static final BiFunction<ResourceLocation, Boolean, RenderType> QUASAR_PARTICLE = Util.memoize((texture, additive) -> {
         CompositeState state = RenderType.CompositeState.builder()
-                .setShaderState(additive ? PARTICLE_ADDITIVE : PARTICLE)
+                .setShaderState(PARTICLE)
                 .setTextureState(new TextureStateShard(texture, false, false))
                 .setTransparencyState(additive ? ADDITIVE_TRANSPARENCY : TRANSLUCENT_TRANSPARENCY)
                 .setLightmapState(LIGHTMAP)
-                .setWriteMaskState(COLOR_WRITE)
+                .setWriteMaskState(COLOR_DEPTH_WRITE)
                 .createCompositeState(false);
-        return create(Veil.MODID + ":quasar_particle", VeilVertexFormat.QUASAR_PARTICLE, VertexFormat.Mode.QUADS, SMALL_BUFFER_SIZE, false, !additive, state);
+        return create(Veil.MODID + ":quasar_particle", VeilVertexFormat.QUASAR_PARTICLE, VertexFormat.Mode.QUADS, SMALL_BUFFER_SIZE, false, true, state);
     });
-    private static final Function<ResourceLocation, RenderType> QUASAR_TRAIL = Util.memoize((texture) -> {
+    private static final BiFunction<ResourceLocation, Boolean, RenderType> QUASAR_TRAIL = Util.memoize((texture, additive) -> {
         CompositeState state = CompositeState.builder()
                 .setShaderState(RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER)
                 .setTextureState(new TextureStateShard(texture, false, false))
-                .setTransparencyState(ADDITIVE_TRANSPARENCY)
-                .setWriteMaskState(COLOR_WRITE)
+                .setTransparencyState(additive ? ADDITIVE_TRANSPARENCY : TRANSLUCENT_TRANSPARENCY)
+                .setWriteMaskState(COLOR_DEPTH_WRITE)
                 .setCullState(NO_CULL)
                 .createCompositeState(false);
         return RenderType.create(Veil.MODID + ":quasar_trail", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.TRIANGLE_STRIP, TRANSIENT_BUFFER_SIZE, false, false, state);
     });
+    private static final Function<Boolean, RenderType> NO_TEXTURE_QUASAR_TRAIL = Util.memoize((additive) -> {
+        CompositeState state = CompositeState.builder()
+                .setShaderState(RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER)
+                .setTextureState(WHITE_TEXTURE)
+                .setTransparencyState(additive ? ADDITIVE_TRANSPARENCY : TRANSLUCENT_TRANSPARENCY)
+                .setWriteMaskState(COLOR_DEPTH_WRITE)
+                .setCullState(NO_CULL)
+                .createCompositeState(false);
+        return RenderType.create(Veil.MODID + ":quasar_trail", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.TRIANGLE_STRIP, TRANSIENT_BUFFER_SIZE, false, false, state);
+    }) ;
 
     public static RenderType quasarParticle(ResourceLocation texture, boolean additive) {
         return QUASAR_PARTICLE.apply(texture, additive);
     }
 
-    public static RenderType quasarTrail(ResourceLocation texture) {
-        return QUASAR_TRAIL.apply(texture);
+    public static RenderType quasarTrail(@Nullable ResourceLocation texture) {
+        return quasarTrail(texture, true);
+    }
+
+    public static RenderType quasarTrail(@Nullable ResourceLocation texture, boolean additive) {
+        return texture != null ? QUASAR_TRAIL.apply(texture, additive) : NO_TEXTURE_QUASAR_TRAIL.apply(additive);
     }
 
     public static TransparencyStateShard noTransparencyShard() {

@@ -83,8 +83,9 @@ publishMods {
         optional "sodium"
         optional "imguimc"
 
+        incompatible "embeddium"
+
         if (isNeoforge) {
-            incompatible "embeddium"
             incompatible "rubidium"
         }
 
@@ -97,7 +98,7 @@ publishMods {
         repository = "FoundryMC/Veil"
         accessToken = providers.environmentVariable("GITHUB_TOKEN")
         tagName = "mc$minecraft_version-$project.version-$project.name"
-        commitish = "main"
+        commitish = "1.21"
 
         file.unset()
         file.unsetConvention()
@@ -115,8 +116,9 @@ publishMods {
         optional "sodium"
         optional "imguimc"
 
+        incompatible "embeddium"
+
         if (isNeoforge) {
-            incompatible "embeddium"
             incompatible "rubidium"
         }
 

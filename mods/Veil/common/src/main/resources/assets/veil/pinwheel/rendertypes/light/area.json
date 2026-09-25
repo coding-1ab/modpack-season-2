@@ -19,10 +19,6 @@
       "mode": "greater"
     },
     {
-      "type": "minecraft:cull",
-      "face": "back"
-    },
-    {
       "type": "minecraft:transparency",
       "mode": "additive"
     }

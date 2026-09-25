@@ -12,6 +12,7 @@ import foundry.veil.api.client.render.light.renderer.InstancedLightRenderer;
 import foundry.veil.api.client.render.light.renderer.LightRenderHandle;
 import foundry.veil.api.client.render.light.renderer.LightTypeRenderer;
 import foundry.veil.api.client.render.rendertype.VeilRenderType;
+import foundry.veil.api.client.render.vertex.VertexArray;
 import foundry.veil.api.client.render.vertex.VertexArrayBuilder;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
@@ -25,9 +26,10 @@ import java.util.List;
 public class AreaLightRenderer extends InstancedLightRenderer<AreaLightData> implements DDALightRenderer<AreaLightData> {
 
     private static final ResourceLocation RENDER_TYPE = Veil.veilPath("light/area");
+    private static final ResourceLocation INSCATTERING_RENDER_TYPE = Veil.veilPath("light/inscattering/area");
 
     public AreaLightRenderer() {
-        super(Float.BYTES * 23 + 2);
+        super(Float.BYTES * 24 + 4);
     }
 
     @Override
@@ -39,20 +41,24 @@ public class AreaLightRenderer extends InstancedLightRenderer<AreaLightData> imp
 
     @Override
     protected void setupBufferState(VertexArrayBuilder builder) {
-        builder.setVertexAttribute(1, 2, 4, VertexArrayBuilder.DataType.FLOAT, false, 0);
-        builder.setVertexAttribute(2, 2, 4, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 4);
-        builder.setVertexAttribute(3, 2, 4, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 8);
-        builder.setVertexAttribute(4, 2, 4, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 12); // matrix !
-        builder.setVertexAttribute(5, 2, 3, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 16); // color
-        builder.setVertexAttribute(6, 2, 2, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 19); // size
-        builder.setVertexAttribute(7, 2, 1, VertexArrayBuilder.DataType.UNSIGNED_SHORT, true, Float.BYTES * 21); // angle
-        builder.setVertexAttribute(8, 2, 1, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 21 + 2); // distance
-        builder.setVertexAttribute(9, 2, 1, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 21 + 2 + Float.BYTES);
+        builder.setVertexAttribute(1, VertexArray.INSTANCE_BUFFER, 4, VertexArrayBuilder.DataType.FLOAT, false, 0);
+        builder.setVertexAttribute(2, VertexArray.INSTANCE_BUFFER, 4, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 4);
+        builder.setVertexAttribute(3, VertexArray.INSTANCE_BUFFER, 4, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 8);
+        builder.setVertexAttribute(4, VertexArray.INSTANCE_BUFFER, 4, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 12); // matrix !
+        builder.setVertexAttribute(5, VertexArray.INSTANCE_BUFFER, 3, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 16); // color
+        builder.setVertexAttribute(6, VertexArray.INSTANCE_BUFFER, 2, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 19); // size
+        builder.setVertexAttribute(7, VertexArray.INSTANCE_BUFFER, 1, VertexArrayBuilder.DataType.UNSIGNED_SHORT, true, Float.BYTES * 21); // angle
+        builder.setVertexAttribute(8, VertexArray.INSTANCE_BUFFER, 3, VertexArrayBuilder.DataType.FLOAT, false, Float.BYTES * 21 + 4); // distance/occlusion/in-scatting
     }
 
     @Override
     protected @Nullable RenderType getRenderType(List<? extends LightRenderHandle<AreaLightData>> lights) {
         return VeilRenderType.get(RENDER_TYPE);
+    }
+
+    @Override
+    protected @Nullable RenderType getInscatteringRenderType(List<? extends LightRenderHandle<AreaLightData>> lights) {
+        return VeilRenderType.get(INSCATTERING_RENDER_TYPE);
     }
 
     @Override
