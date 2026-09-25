@@ -22,12 +22,19 @@ import static com.simibubi.create.infrastructure.ponder.AllCreatePonderTags.ARM_
 import static com.simibubi.create.infrastructure.ponder.AllCreatePonderTags.CONTRAPTION_ACTOR;
 
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllItems;
 import com.tterrag.registrate.util.entry.RegistryEntry;
+import java.util.List;
 import net.createmod.ponder.api.registration.PonderTagRegistrationHelper;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.data.loading.DatagenModLoader;
+import plus.dragons.createdragonsplus.client.ponder.PonderTagGroups;
 import plus.dragons.createdragonsplus.common.registry.CDPBlockEntities;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.registry.CEIBlocks;
+import plus.dragons.createenchantmentindustry.common.registry.CEIItems;
+import plus.dragons.createenchantmentindustry.config.CEIConfig;
+import plus.dragons.createenchantmentindustry.util.CEILang;
 
 public class CEIPonderTags {
     public static final ResourceLocation EXPERIENCE_APPLIANCES = CEICommon.asResource("experience_appliances");
@@ -50,6 +57,13 @@ public class CEIPonderTags {
                 .description("Components which will be used when processing and applying Super Experience")
                 .register();
 
+        var experienceGroup = CEICommon.asResource("experience");
+        for (var tag : List.of(EXPERIENCE_APPLIANCES, SUPER_EXPERIENCE_APPLIANCES)) {
+            PonderTagGroups.registerGroup(tag, experienceGroup, CEILang.translate("ponder.group.experience").component());
+            PonderTagGroups.addToGroup(helper, tag, experienceGroup)
+                    .add(AllItems.EXP_NUGGET.getId(), CEIItems.EXPERIENCE_BUCKET.getId(), AllBlocks.EXPERIENCE_BLOCK.getId());
+        }
+
         entryHelper.addToTag(EXPERIENCE_APPLIANCES)
                 .add(AllBlocks.ITEM_DRAIN)
                 .add(AllBlocks.SPOUT)
@@ -68,6 +82,15 @@ public class CEIPonderTags {
         entryHelper.addToTag(ARM_TARGETS)
                 .add(CEIBlocks.BLAZE_ENCHANTER)
                 .add(CEIBlocks.BLAZE_FORGER);
+
+        if (DatagenModLoader.isRunningDataGen() || CEIConfig.features().classicBlazeEnchanter.get()) {
+            entryHelper.addToTag(EXPERIENCE_APPLIANCES)
+                    .add(CEIBlocks.CLASSIC_BLAZE_ENCHANTER);
+            entryHelper.addToTag(SUPER_EXPERIENCE_APPLIANCES)
+                    .add(CEIBlocks.CLASSIC_BLAZE_ENCHANTER);
+            entryHelper.addToTag(ARM_TARGETS)
+                    .add(CEIBlocks.CLASSIC_BLAZE_ENCHANTER);
+        }
 
         entryHelper.addToTag(CONTRAPTION_ACTOR)
                 .add(CEIBlocks.EXPERIENCE_LANTERN);

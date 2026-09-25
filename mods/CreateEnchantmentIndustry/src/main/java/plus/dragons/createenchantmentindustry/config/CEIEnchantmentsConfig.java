@@ -27,15 +27,27 @@ public class CEIEnchantmentsConfig extends ConfigBase {
     public final ConfigInt blazeEnchanterMaxSuperEnchantLevel = i(60, 0,
             "blazeEnchanterMaxSuperEnchantLevel",
             Comments.blazeEnchanterMaxSuperEnchantLevel);
-    public final ConfigInt enchantmentMaxLevelExtension = i(1, 0, 255,
-            "enchantmentMaxLevelExtension",
-            Comments.enchantmentMaxLevelExtension);
+    public final ConfigFloat blazeEnchanterBlockedLightningCurseChance = f(0.5f, 0.0f, 1.0f,
+            "blazeEnchanterBlockedLightningCurseChance",
+            Comments.blazeEnchanterBlockedLightningCurseChance);
+    public final ConfigInt blazeEnchanterBlockedLightningCurseCount = i(1, 0, 16,
+            "blazeEnchanterBlockedLightningCurseCount",
+            Comments.blazeEnchanterBlockedLightningCurseCount);
+    public final ConfigInt blazeEnchanterBlockedLightningCurseMaxLevel = i(1, 1, 255,
+            "blazeEnchanterBlockedLightningCurseMaxLevel",
+            Comments.blazeEnchanterBlockedLightningCurseMaxLevel);
+    public final ConfigInt blazeEnchanterMaxLevelExtension = i(1, 0, 255,
+            "blazeEnchanterMaxLevelExtension",
+            Comments.blazeEnchanterMaxLevelExtension);
+    public final ConfigInt blazeForgerMaxLevelExtension = i(1, 0, 255,
+            "blazeForgerMaxLevelExtension",
+            Comments.blazeForgerMaxLevelExtension);
     public final ConfigBool ignoreEnchantmentCompatibility = b(true,
             "ignoreEnchantmentCompatibility",
             Comments.ignoreEnchantmentCompatibility);
-    public final ConfigBool splitEnchantmentRespectLevelExtension = b(false,
-            "splitEnchantmentRespectLevelExtension",
-            Comments.splitEnchantmentRespectLevelExtension);
+    public final ConfigBool extractEnchantmentRespectLevelExtension = b(false,
+            "extractEnchantmentRespectLevelExtension",
+            Comments.extractEnchantmentRespectLevelExtension);
 
     @Override
     public String getName() {
@@ -45,8 +57,12 @@ public class CEIEnchantmentsConfig extends ConfigBase {
     static class Comments {
         static final String blazeEnchanterMaxEnchantLevel = "The max experience level a Blaze Enchanter can use in Regular Enchanting";
         static final String blazeEnchanterMaxSuperEnchantLevel = "The max experience level a Blaze Enchanter can use in Super Enchanting";
-        static final String enchantmentMaxLevelExtension = "Max enchantment level in Super Enchanting will be extended by this value";
+        static final String blazeEnchanterBlockedLightningCurseChance = "Chance per curse roll for blocked-lightning Super Enchanting to add an applicable curse to the result";
+        static final String blazeEnchanterBlockedLightningCurseCount = "Maximum curse rolls for blocked-lightning Super Enchanting";
+        static final String blazeEnchanterBlockedLightningCurseMaxLevel = "Maximum curse level blocked-lightning Super Enchanting can add";
+        static final String blazeEnchanterMaxLevelExtension = "Max enchantment level in Super Enchanting will be extended by this value when no per-enchantment processing rule exists";
+        static final String blazeForgerMaxLevelExtension = "Max enchantment level in Super Forging will be extended by this value when no per-enchantment processing rule exists";
         static final String ignoreEnchantmentCompatibility = "If Super Enchanting and Super Forging ignores enchantment compatibility";
-        static final String splitEnchantmentRespectLevelExtension = "If Enchantment splitting respects over-capped level";
+        static final String extractEnchantmentRespectLevelExtension = "If Enchantment extraction respects over-capped level";
     }
 }

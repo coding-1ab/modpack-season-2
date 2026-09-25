@@ -36,6 +36,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import plus.dragons.createdragonsplus.common.fluids.tank.FluidTankBehaviour;
+import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceFluidDropContext;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceHelper;
 
 @Mixin(SmartBlockEntity.class)
@@ -66,9 +67,7 @@ public abstract class SmartBlockEntityMixin extends CachedRenderBBBlockEntity {
             for (int tank = 0; tank < tanks; tank++) {
                 var fluid = handler.getFluidInTank(tank);
                 int experience = ExperienceHelper.getExperienceFromFluid(fluid);
-                if (experience > 0) {
-                    state.getBlock().popExperience(serverLevel, this.worldPosition, experience);
-                }
+                ExperienceFluidDropContext.dropExperience(serverLevel, state, this.worldPosition, experience);
             }
         }
     }

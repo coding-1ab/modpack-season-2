@@ -31,8 +31,6 @@ import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollVa
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import java.util.List;
-
-import dev.engine_room.flywheel.api.visualization.VisualizationLevel;
 import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
@@ -41,11 +39,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.phys.BlockHitResult;
 import plus.dragons.createenchantmentindustry.common.processing.enchanter.behaviour.EnchantingBehaviour;
 import plus.dragons.createenchantmentindustry.common.processing.enchanter.behaviour.TemplateEnchantingBehaviour;
@@ -79,7 +80,7 @@ public class EnchanterBehaviour extends ScrollValueBehaviour implements IHaveGog
     }
 
     public void update(ItemStack stack) {
-        enchanting.update(getWorld(), stack, value, enchanter.special, enchanter.cursed);
+        enchanting.update(getWorld(), stack, value, enchanter.special, enchanter.cursed, enchanter.getRandom());
     }
 
     public ItemStack getResult(ItemStack stack) {
@@ -87,14 +88,29 @@ public class EnchanterBehaviour extends ScrollValueBehaviour implements IHaveGog
     }
 
     public int getExperienceCost() {
-        return enchanting.getExperienceCost();
+        return enchanting.getExperienceCost(enchanter.special, isTemplateMode());
     }
 
     public ItemStack getTemplate() {
         return template;
     }
 
+    public boolean isTemplateMode() {
+        return !template.isEmpty();
+    }
+
     public boolean setTemplate(ItemStack stack) {
+        if (!loadTemplate(stack))
+            return false;
+        update(enchanter.heldItem);
+        if (!(getWorld().isClientSide)) {
+            blockEntity.setChanged();
+            blockEntity.sendData();
+        }
+        return true;
+    }
+
+    private boolean loadTemplate(ItemStack stack) {
         if (stack.isEmpty()) {
             template = ItemStack.EMPTY;
             enchanting = new EnchantingBehaviour();
@@ -102,12 +118,6 @@ public class EnchanterBehaviour extends ScrollValueBehaviour implements IHaveGog
             template = stack;
             enchanting = new TemplateEnchantingBehaviour(template);
         } else return false;
-        update(enchanter.heldItem);
-        var level = getWorld();
-        if(!(level instanceof VisualizationLevel)){
-            blockEntity.setChanged();
-            blockEntity.sendData();
-        }
         return true;
     }
 
@@ -174,54 +184,105 @@ public class EnchanterBehaviour extends ScrollValueBehaviour implements IHaveGog
     @Override
     public void read(CompoundTag nbt, Provider registries, boolean clientPacket) {
         value = Math.clamp(nbt.getInt(LEVEL), 0, enchanter.getMaxEnchantLevel());
-        template = ItemStack.parseOptional(registries, nbt.getCompound(TEMPLATE));
-        var level = getWorld();
-        if (level != null)
-            setTemplate(template);
+        loadTemplate(ItemStack.parseOptional(registries, nbt.getCompound(TEMPLATE)));
     }
 
     @Override
     public void initialize() {
-        setTemplate(template);
+        loadTemplate(template);
     }
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        boolean added = false;
-        if (!template.isEmpty()) {
-            CEILang.translate("gui.goggles.enchanting.template").forGoggles(tooltip);
-            CEILang.item(template).style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
-            added = true;
-        }
+        boolean added = true;
         var style = enchanter.special
                 ? (enchanter.cursed ? ChatFormatting.RED : ChatFormatting.BLUE)
                 : ChatFormatting.GOLD;
+        CEILang.translate(
+                "gui.goggles.enchanting.blaze_mode",
+                CEILang.translate("gui.blaze_enchanter.blaze_mode." + (enchanter.special ? "super" : "normal")).style(style))
+                .forGoggles(tooltip);
+        CEILang.translate(
+                "gui.goggles.enchanting.mode",
+                CEILang.translate("gui.blaze_enchanter.mode." + (isTemplateMode() ? "template" : "direct")).style(ChatFormatting.AQUA))
+                .forGoggles(tooltip);
+        if (!template.isEmpty()) {
+            CEILang.translate("gui.goggles.enchanting.template").forGoggles(tooltip);
+            CEILang.item(template).style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
+        }
         if (value > 0) {
             CEILang.translate("gui.goggles.enchanting.level", CEILang.number(value).style(style))
                     .forGoggles(tooltip);
-            added = true;
         } else {
             CEILang.translate("gui.goggles.enchanting.level.not_set").style(ChatFormatting.RED).forGoggles(tooltip);
         }
-        int cost = getExperienceCost();
-        if (cost > 0) {
+        if (enchanter.special && enchanter.cursed) {
+            CEILang.translate("gui.goggles.enchanting.blocked_super_penalty")
+                    .style(ChatFormatting.RED)
+                    .forGoggles(tooltip);
+        }
+        if (enchanter.heldItem.isEmpty()) {
+            addModeHelp(tooltip);
+            return true;
+        }
+        if (enchanter.processingTime == -1 && !EnchantmentHelper.getEnchantmentsForCrafting(enchanter.heldItem).isEmpty()) {
+            CEILang.translate("gui.goggles.enchanting.completed").style(ChatFormatting.GREEN).forGoggles(tooltip);
+            return true;
+        }
+        boolean canProcess = canProcess(enchanter.heldItem);
+        int cost = canProcess ? getExperienceCost() : 0;
+        if (canProcess && cost > 0) {
             LangBuilder mb = CreateLang.translate("generic.unit.millibuckets");
             CEILang.translate("gui.goggles.enchanting.cost", CEILang.number(cost).add(mb).style(style))
                     .forGoggles(tooltip);
-            added = true;
-        }
-        if (!enchanter.heldItem.isEmpty() && enchanter.processingTime == -1) {
-            if (!EnchantmentHelper.getEnchantmentsForCrafting(enchanter.heldItem).isEmpty()) {
-                CEILang.translate("gui.goggles.enchanting.completed").style(ChatFormatting.GREEN).forGoggles(tooltip);
-            } else if (cost > 0) {
-                int experience = enchanter.special ? enchanter.getSpecialExperience() : enchanter.getNormalExperience();
-                if (experience < cost) {
-                    CEILang.translate("gui.goggles.enchanting.insufficient_experience").style(ChatFormatting.RED).forGoggles(tooltip);
-                }
-            } else {
-                CEILang.translate("gui.goggles.enchanting.invalid_item").style(ChatFormatting.RED).forGoggles(tooltip);
+            addAvailableEnchantments(tooltip, isPlayerSneaking);
+            int experience = enchanter.special ? enchanter.getSpecialExperience() : enchanter.getTotalExperience();
+            if (experience < cost) {
+                CEILang.translate(
+                        enchanter.special ? "gui.goggles.enchanting.insufficient_super_experience" : "gui.goggles.enchanting.insufficient_experience",
+                        CEILang.number(experience).add(mb).style(style),
+                        CEILang.number(cost).add(mb).style(style))
+                        .style(ChatFormatting.RED)
+                        .forGoggles(tooltip);
             }
+        } else {
+            CEILang.translate("gui.goggles.enchanting.invalid_item").style(ChatFormatting.RED).forGoggles(tooltip);
         }
         return added;
+    }
+
+    private void addModeHelp(List<Component> tooltip) {
+        String mode = isTemplateMode() ? "template" : "direct";
+        CEILang.translate("gui.goggles.enchanting.mode_help." + mode)
+                .style(ChatFormatting.GRAY)
+                .forGoggles(tooltip, 1);
+        CEILang.translate("gui.goggles.enchanting.requires").forGoggles(tooltip);
+        CEILang.translate("gui.goggles.enchanting.requires." + mode)
+                .style(ChatFormatting.GRAY)
+                .forGoggles(tooltip, 1);
+    }
+
+    private void addAvailableEnchantments(List<Component> tooltip, boolean isPlayerSneaking) {
+        List<EnchantmentInstance> available = enchanting.getPreviewEnchantments();
+        if (available.isEmpty())
+            return;
+        CEILang.translate("gui.goggles.enchanting.available_targets").forGoggles(tooltip);
+        int limit = isPlayerSneaking ? available.size() : Math.min(available.size(), 6);
+        for (int i = 0; i < limit; i++) {
+            EnchantmentInstance instance = available.get(i);
+            var name = Enchantment.getFullname(instance.enchantment, instance.level).copy();
+            if (instance.enchantment.is(EnchantmentTags.CURSE)) {
+                name.append(" ?");
+            }
+            ChatFormatting style = instance.enchantment.is(EnchantmentTags.CURSE)
+                    ? ChatFormatting.RED
+                    : ChatFormatting.GRAY;
+            CEILang.builder().add(name).style(style).forGoggles(tooltip, 1);
+        }
+        if (!isPlayerSneaking && available.size() > limit) {
+            CEILang.translate("gui.goggles.enchanting.available_targets.more", available.size() - limit)
+                    .style(ChatFormatting.DARK_GRAY)
+                    .forGoggles(tooltip, 1);
+        }
     }
 }

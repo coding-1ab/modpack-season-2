@@ -50,6 +50,8 @@ import plus.dragons.createdragonsplus.common.registry.CDPFluids;
 import plus.dragons.createdragonsplus.util.Pairs;
 import plus.dragons.createenchantmentindustry.common.CEICommon;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceFuel;
+import plus.dragons.createenchantmentindustry.common.processing.EnchantmentProcessingRule;
+import plus.dragons.createenchantmentindustry.util.CEIDyeFluids;
 import plus.dragons.createenchantmentindustry.util.CEIIntIntPair;
 
 public class CEIDataMaps {
@@ -105,6 +107,10 @@ public class CEIDataMaps {
             .builder(CEICommon.asResource("super_enchanting/custom_level_extension"), Registries.ENCHANTMENT, ExtraCodecs.NON_NEGATIVE_INT)
             .synced(Codec.INT, true)
             .build();
+    public static final DataMapType<Enchantment, EnchantmentProcessingRule> ENCHANTMENT_PROCESSING_RULES = DataMapType
+            .builder(CEICommon.asResource("enchantment_processing/rules"), Registries.ENCHANTMENT, EnchantmentProcessingRule.CODEC)
+            .synced(EnchantmentProcessingRule.CODEC, true)
+            .build();
 
     public static void register(IEventBus modBus) {
         modBus.register(CEIDataMaps.class);
@@ -126,6 +132,7 @@ public class CEIDataMaps {
         event.register(FORGING_COST_MULTIPLIER);
         event.register(SPLITTING_COST_MULTIPLIER);
         event.register(SUPER_ENCHANTING_LEVEL_EXTENSION);
+        event.register(ENCHANTMENT_PROCESSING_RULES);
     }
 
     public static <T> Stream<Pair<Fluid, T>> getSourceFluidEntries(DataMapType<Fluid, T> type) {
@@ -138,7 +145,7 @@ public class CEIDataMaps {
 
     public static void generate(RegistrateDataMapProvider provider) {
         provider.builder(EXPERIENCE_FUEL)
-                .add(CEIItems.EXPERIENCE_BUCKET, ExperienceFuel.normal(1000, Items.BUCKET.getDefaultInstance()), false) // TODO Temporary solution for Create's bug, See https://github.com/Creators-of-Create/Create/pull/8304
+                .add(CEIItems.EXPERIENCE_BUCKET, ExperienceFuel.normal(1000, Items.BUCKET.getDefaultInstance()), false) // Workaround solution, See https://github.com/Creators-of-Create/Create/pull/8304
                 .add(CEIItems.EXPERIENCE_CAKE, ExperienceFuel.special(1000), false)
                 .add(CEIItems.EXPERIENCE_CAKE_SLICE, ExperienceFuel.special(250), false)
                 .add(CEIBlocks.SUPER_EXPERIENCE_BLOCK.getId(), ExperienceFuel.special(27), false)
@@ -173,9 +180,6 @@ public class CEIDataMaps {
                 .add(ResourceLocation.fromNamespaceAndPath("mob_grinding_utils", "fluid_xp"),
                         20, false,
                         new ModLoadedCondition("mob_grinding_utils"))
-                .add(ResourceLocation.fromNamespaceAndPath("industrialforegoing", "essence"),
-                        20, false,
-                        new ModLoadedCondition("industrialforegoing"))
                 .add(ResourceLocation.fromNamespaceAndPath("pneumaticcraft", "memory_essence"),
                         20, false,
                         new ModLoadedCondition("pneumaticcraft"))
@@ -188,7 +192,7 @@ public class CEIDataMaps {
                 .add(ResourceLocation.fromNamespaceAndPath("justdirethings", "xp_fluid_source"),
                         20, false,
                         new ModLoadedCondition("justdirethings"));
-        var blackDye = CDPFluids.COMMON_TAGS.dyesByColor.get(DyeColor.BLACK);
+        var blackDye = CEIDyeFluids.tag(DyeColor.BLACK);
         provider.builder(PRINTING_ADDRESS_INGREDIENT)
                 .add(blackDye, 10, false);
         provider.builder(PRINTING_PATTERN_INGREDIENT)
@@ -203,14 +207,17 @@ public class CEIDataMaps {
         provider.builder(PRINTING_BANNER_PATTERN_INGREDIENT)
                 .add(CDPFluids.COMMON_TAGS.dyes, 100, false);
         var customNameStyles = provider.builder(PRINTING_CUSTOM_NAME_STYLE);
-        CDPFluids.COMMON_TAGS.dyesByColor.forEach((color, tag) -> customNameStyles
-                .add(tag, Style.EMPTY.withColor(color.getTextColor()), false));
+        for (var color : DyeColor.values()) {
+            if (color.getId() > DyeColor.BLACK.getId())
+                continue;
+            customNameStyles.add(CEIDyeFluids.tag(color), Style.EMPTY.withColor(color.getTextColor()), false);
+        }
         provider.builder(PRINTING_ENCHANTED_BOOK_COST);
         provider.builder(FORGING_COST_MULTIPLIER);
         provider.builder(SPLITTING_COST_MULTIPLIER);
-        provider.builder(SUPER_ENCHANTING_LEVEL_EXTENSION)
-                .add(MENDING, 0, false)
-                .add(INFINITY, 0, false);
-        ;
+        provider.builder(SUPER_ENCHANTING_LEVEL_EXTENSION);
+        provider.builder(ENCHANTMENT_PROCESSING_RULES)
+                .add(MENDING, EnchantmentProcessingRule.enchanterAndForgerExtension(0, 0), false)
+                .add(INFINITY, EnchantmentProcessingRule.enchanterAndForgerExtension(0, 0), false);
     }
 }

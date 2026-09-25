@@ -30,6 +30,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceFluidDropContext;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceHelper;
 
 @Mixin(ConnectivityHandler.class)
@@ -44,11 +45,7 @@ public class ConnectivityHandlerMixin {
             return;
         var dropped = fluidContainer.getFluid(0);
         int experience = ExperienceHelper.getExperienceFromFluid(dropped);
-        if (experience > 0) {
-            var state = be.getBlockState();
-            var pos = be.getBlockPos();
-            state.getBlock().popExperience(level, pos, experience);
-        }
+        ExperienceFluidDropContext.dropExperience(level, be.getBlockState(), be.getBlockPos(), experience);
     }
 
     @Inject(method = "splitMultiAndInvalidate", at = @At("TAIL"))
@@ -60,10 +57,6 @@ public class ConnectivityHandlerMixin {
         if (!fluidContainer.hasTank() || fluidContainer.getTank(0) instanceof CreativeFluidTankBlockEntity.CreativeSmartFluidTank)
             return;
         int experience = ExperienceHelper.getExperienceFromFluid(dropped);
-        if (experience > 0) {
-            var state = be.getBlockState();
-            var pos = be.getBlockPos();
-            state.getBlock().popExperience(level, pos, experience);
-        }
+        ExperienceFluidDropContext.dropExperience(level, be.getBlockState(), be.getBlockPos(), experience);
     }
 }

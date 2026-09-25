@@ -33,7 +33,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import plus.dragons.createenchantmentindustry.common.fluids.experience.ExperienceHelper;
-import plus.dragons.createenchantmentindustry.common.registry.CEIDataMaps;
+import plus.dragons.createenchantmentindustry.common.processing.EnchantmentProcessingRules;
 import plus.dragons.createenchantmentindustry.config.CEIConfig;
 
 public class CEIEnchantmentHelper {
@@ -68,6 +68,8 @@ public class CEIEnchantmentHelper {
         possibleEnchantments.forEach(holder -> {
             Enchantment enchantment = holder.value();
             int maxLevel = maxLevel(holder);
+            if (special)
+                maxLevel += EnchantmentProcessingRules.blazeEnchanterLevelExtension(holder);
             for (int i = maxLevel; i >= enchantment.getMinLevel(); i--) {
                 if (level >= enchantment.getMinCost(i) && level <= enchantment.getMaxCost(i)) {
                     list.add(new EnchantmentInstance(holder, i));
@@ -78,7 +80,21 @@ public class CEIEnchantmentHelper {
         return list;
     }
 
+    public static List<EnchantmentInstance> getAvailablePenaltyCurseResults(Stream<Holder<Enchantment>> possibleEnchantments, int maxPenaltyLevel) {
+        List<EnchantmentInstance> list = Lists.newArrayList();
+        if (maxPenaltyLevel <= 0)
+            return list;
+        possibleEnchantments.forEach(holder -> {
+            Enchantment enchantment = holder.value();
+            int level = Math.min(maxLevel(holder), maxPenaltyLevel);
+            if (level >= enchantment.getMinLevel())
+                list.add(new EnchantmentInstance(holder, level));
+        });
+        return list;
+    }
+
     public static List<EnchantmentInstance> selectEnchantments(RandomSource random, int adjustedLevel, List<EnchantmentInstance> available, boolean special) {
+        available = Lists.newArrayList(available);
         List<EnchantmentInstance> list = Lists.newArrayList();
         WeightedRandom.getRandomItem(random, available).ifPresent(list::add);
         while (random.nextInt(50) <= adjustedLevel) {
@@ -101,8 +117,9 @@ public class CEIEnchantmentHelper {
         return alternativeMaxLevel.apply(enchantment);
     }
 
+    @Deprecated(forRemoval = false)
     public static int levelExtension(Holder<Enchantment> enchantment) {
-        var result = enchantment.getData(CEIDataMaps.SUPER_ENCHANTING_LEVEL_EXTENSION);
-        return result != null ? result.intValue() : CEIConfig.enchantments().enchantmentMaxLevelExtension.get();
+        // Legacy ABI entry point. New code should call the machine-specific rule helpers directly.
+        return EnchantmentProcessingRules.blazeForgerLevelExtension(enchantment);
     }
 }

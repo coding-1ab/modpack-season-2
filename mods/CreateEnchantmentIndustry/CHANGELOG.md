@@ -1,11 +1,10 @@
-## Create: Enchantment Industry 2.3.1
+> **Requires Create: Dragons Plus 1.11.9 or newer.**
 
-Update for Create 6.0.10.
+## Create: Enchantment Industry 2.5.4
 
-If you cannot install mechanical grindstone when sable is installed, please wait for new version of sable releasing (which contains a fix to it)
+### Added
+* Grouped Experience Nuggets, Experience Buckets, and Blocks of Experience into a single Ponder card, with the full experience tutorials available from each item.
 
-### Update
-* Support copying schematic
-
-### Fix
-* Fix item duplication with Sable.
+### Fixed
+* Fixed the Experience Hatch failing to deposit experience at very high player levels ([#509](https://github.com/DragonsPlusMinecraft/CreateEnchantmentIndustry/issues/509)).
+* Fixed Ponder language data generation crashing when Apothic Enchanting or Apotheosis is not installed ([#508](https://github.com/DragonsPlusMinecraft/CreateEnchantmentIndustry/issues/508)).
