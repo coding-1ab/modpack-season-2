@@ -1,0 +1,51 @@
+------------------------------------------------------
+Version 1.2.1
+------------------------------------------------------
+#### Additions
+- Added heat casing
+#### Improvements
+- Improve Reactor Statistics
+- Cache wire networks and lazily reset wire connections - [!71 Thank you Superintendent](https://gitlab.com/antarcticgardens/create-new-age/-/merge_requests/71)
+- Scale reactor heat vent extraction cap by overheatingMultiplier - [!72 Thank you Guk kis](https://gitlab.com/antarcticgardens/create-new-age/-/merge_requests/72)
+
+------------------------------------------------------
+Version 1.2.0
+------------------------------------------------------
+#### Additions
+- Added Street Lights and Lamp Posts
+- Added radiation effect & Geiger counter ticking - [!60 Thank you Auralyn](https://gitlab.com/antarcticgardens/create-new-age/-/merge_requests/60)
+- Reactors now explode upon overheating
+- Added CC:Tweaked compatibility (This is a work in progress feature please send us feedback)
+- New Simplified Chinese translations from abandon0320
+#### Improvements
+- Improve wire rendering and stop crashes with Create Aeronautics - [!68 Thank you tmvkrpxl0](https://gitlab.com/antarcticgardens/create-new-age/-/merge_requests/68)
+
+------------------------------------------------------
+Version 1.1.7c
+------------------------------------------------------
+#### Bug Fixes
+- Hopefully fix release
+
+------------------------------------------------------
+Version 1.1.7b
+------------------------------------------------------
+#### Bug Fixes
+- Fix crash when removing CNA blocks from Electrodynamics' networks
+
+------------------------------------------------------
+Version 1.1.7a
+------------------------------------------------------
+Bug Fixes
+- Fix compatibility with Mekanism
+
+------------------------------------------------------
+Version 0.0.0
+------------------------------------------------------
+Additions
+- None
+
+Changes
+- None
+
+Bug Fixes
+- None

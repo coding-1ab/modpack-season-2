@@ -1,0 +1,36 @@
+# SPDX-FileCopyrightText: 2017 The CC: Tweaked Developers
+#
+# SPDX-License-Identifier: CC0-1.0
+
+# Build directories
+/build
+/build-logic/*/build
+/build-logic/build
+/projects/*/build
+
+# Temporary directory for jars in CI
+/jars
+
+# Generated files
+/projects/*/src/generated/resources/.cache
+/projects/*/src/test/generated_tests/
+.jqwik-database
+
+# Runtime files
+/projects/*/run
+/projects/*/logs
+
+*.ipr
+*.iws
+*.iml
+.idea
+.gradle
+.kotlin
+*.DS_Store
+
+/.classpath
+/.project
+/.settings
+/.vscode
+*.launch
+/node_modules

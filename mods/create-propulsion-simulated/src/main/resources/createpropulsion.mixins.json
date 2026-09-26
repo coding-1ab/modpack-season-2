@@ -1,0 +1,23 @@
+{
+    "required": true,
+    "minVersion": "0.8.5",
+    "package": "dev.propulsionteam.propulsionsimulated.mixin",
+    "compatibilityLevel": "JAVA_17",
+    "refmap": "createpropulsion.refmap.json",
+    "plugin": "dev.propulsionteam.propulsionsimulated.mixin.plugin.PropulsionMixinPlugin",
+    "mixins": [
+        "BasinBlockEntityMixin",
+        "BearingContraptionMixin",
+        "CreativeModeTabMixin",
+        "FluidShellProjectileMixin",
+        "SchematicPlacePacketMixin"
+    ],
+    "client": [
+        "client.CreativeModeInventoryScreenMixin",
+        "client.SimulatedCreativeTabMixin"
+    ],
+    "server": [],
+    "injectors": {
+      "defaultRequire": 1
+    }
+  }

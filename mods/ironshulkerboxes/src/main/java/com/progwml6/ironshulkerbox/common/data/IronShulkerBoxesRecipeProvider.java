@@ -1,0 +1,256 @@
+package com.progwml6.ironshulkerbox.common.data;
+
+import com.progwml6.ironshulkerbox.IronShulkerBoxes;
+import com.progwml6.ironshulkerbox.common.item.IronShulkerBoxesUpgradeType;
+import com.progwml6.ironshulkerbox.common.recipes.IronShulkerBoxesColoringRecipe;
+import com.progwml6.ironshulkerbox.common.registraton.IronShulkerBoxesBlocks;
+import com.progwml6.ironshulkerbox.common.registraton.IronShulkerBoxesItems;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.PackOutput;
+import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.SpecialRecipeBuilder;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Blocks;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.conditions.IConditionBuilder;
+
+import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
+
+public class IronShulkerBoxesRecipeProvider extends RecipeProvider implements IConditionBuilder {
+
+  public IronShulkerBoxesRecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> provider) {
+    super(output, provider);
+  }
+
+  @Override
+  protected void buildRecipes(RecipeOutput recipeOutput) {
+    this.addDefaultShulkerBoxRecipes(recipeOutput);
+    this.addColoredShulkerBoxRecipes(recipeOutput);
+
+    this.addUpgradesRecipes(recipeOutput);
+
+    SpecialRecipeBuilder.special(IronShulkerBoxesColoringRecipe::new).save(recipeOutput, location("shulker_box_coloring").toString());
+  }
+
+  private void addDefaultShulkerBoxRecipes(RecipeOutput recipeOutput) {
+    String color = "default/";
+    String group = "ironshulkerbox:shulker_box";
+
+    this.registerCopperBoxRecipe(recipeOutput, IronShulkerBoxesBlocks.COPPER_SHULKER_BOX.get(), Items.SHULKER_BOX, color, group);
+    this.registerIronBoxRecipe(recipeOutput, IronShulkerBoxesBlocks.IRON_SHULKER_BOX.get(), IronShulkerBoxesBlocks.COPPER_SHULKER_BOX.get(), Items.SHULKER_BOX, color, group);
+    this.registerGoldBoxRecipe(recipeOutput, IronShulkerBoxesBlocks.GOLD_SHULKER_BOX.get(), IronShulkerBoxesBlocks.IRON_SHULKER_BOX.get(), color, group);
+    this.registerDiamondBoxRecipe(recipeOutput, IronShulkerBoxesBlocks.DIAMOND_SHULKER_BOX.get(), IronShulkerBoxesBlocks.GOLD_SHULKER_BOX.get(), color, group);
+    this.registerCrystalBoxRecipe(recipeOutput, IronShulkerBoxesBlocks.CRYSTAL_SHULKER_BOX.get(), IronShulkerBoxesBlocks.DIAMOND_SHULKER_BOX.get(), color, group);
+    this.registerObsidianBoxRecipe(recipeOutput, IronShulkerBoxesBlocks.OBSIDIAN_SHULKER_BOX.get(), IronShulkerBoxesBlocks.DIAMOND_SHULKER_BOX.get(), color, group);
+  }
+
+  private void addColoredShulkerBoxRecipes(RecipeOutput recipeOutput) {
+    for (DyeColor color : DyeColor.values()) {
+      String colorName = color.name().toLowerCase(Locale.ROOT);
+      String folder = colorName + "/";
+      String group = "ironshulkerbox:" + colorName + "_shulker_box";
+
+      this.registerCopperBoxRecipe(recipeOutput, IronShulkerBoxesBlocks.COPPER_SHULKER_BOXES.get(color).get(), getShulkerBoxItem(color), folder, group);
+      this.registerIronBoxRecipe(recipeOutput, IronShulkerBoxesBlocks.IRON_SHULKER_BOXES.get(color).get(), IronShulkerBoxesBlocks.COPPER_SHULKER_BOXES.get(color).get(), getShulkerBoxItem(color), folder, group);
+      this.registerGoldBoxRecipe(recipeOutput, IronShulkerBoxesBlocks.GOLD_SHULKER_BOXES.get(color).get(), IronShulkerBoxesBlocks.IRON_SHULKER_BOXES.get(color).get(), folder, group);
+      this.registerDiamondBoxRecipe(recipeOutput, IronShulkerBoxesBlocks.DIAMOND_SHULKER_BOXES.get(color).get(), IronShulkerBoxesBlocks.GOLD_SHULKER_BOXES.get(color).get(), folder, group);
+      this.registerCrystalBoxRecipe(recipeOutput, IronShulkerBoxesBlocks.CRYSTAL_SHULKER_BOXES.get(color).get(), IronShulkerBoxesBlocks.DIAMOND_SHULKER_BOXES.get(color).get(), folder, group);
+      this.registerObsidianBoxRecipe(recipeOutput, IronShulkerBoxesBlocks.OBSIDIAN_SHULKER_BOXES.get(color).get(), IronShulkerBoxesBlocks.DIAMOND_SHULKER_BOXES.get(color).get(), folder, group);
+    }
+  }
+
+  private void addUpgradesRecipes(RecipeOutput recipeOutput) {
+    String folder = "upgrades/";
+
+    ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IronShulkerBoxesItems.UPGRADES.get(IronShulkerBoxesUpgradeType.VANILLA_TO_COPPER).get())
+      .define('M', Tags.Items.INGOTS_COPPER)
+      .define('S', Items.SHULKER_SHELL)
+      .pattern("MMM")
+      .pattern("MSM")
+      .pattern("MMM")
+      .unlockedBy("has_copper_ingot", has(Tags.Items.INGOTS_COPPER))
+      .save(recipeOutput, prefix(IronShulkerBoxesItems.UPGRADES.get(IronShulkerBoxesUpgradeType.VANILLA_TO_COPPER).get(), folder));
+
+    ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IronShulkerBoxesItems.UPGRADES.get(IronShulkerBoxesUpgradeType.VANILLA_TO_IRON).get())
+      .define('M', Tags.Items.INGOTS_IRON)
+      .define('S', Items.SHULKER_SHELL)
+      .pattern("MMM")
+      .pattern("MSM")
+      .pattern("MMM")
+      .unlockedBy("has_iron_ingot", has(Tags.Items.INGOTS_IRON))
+      .save(recipeOutput, prefix(IronShulkerBoxesItems.UPGRADES.get(IronShulkerBoxesUpgradeType.VANILLA_TO_IRON).get(), folder));
+
+    ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IronShulkerBoxesItems.UPGRADES.get(IronShulkerBoxesUpgradeType.COPPER_TO_IRON).get())
+      .define('I', Tags.Items.INGOTS_IRON)
+      .define('C', Tags.Items.INGOTS_COPPER)
+      .define('G', Tags.Items.GLASS_BLOCKS)
+      .pattern("IGI")
+      .pattern("GCG")
+      .pattern("IGI")
+      .unlockedBy("has_iron_ingot", has(Tags.Items.INGOTS_IRON))
+      .save(recipeOutput, prefix(IronShulkerBoxesItems.UPGRADES.get(IronShulkerBoxesUpgradeType.COPPER_TO_IRON).get(), folder));
+
+    ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IronShulkerBoxesItems.UPGRADES.get(IronShulkerBoxesUpgradeType.IRON_TO_GOLD).get())
+      .define('S', Tags.Items.INGOTS_IRON)
+      .define('M', Tags.Items.INGOTS_GOLD)
+      .pattern("MSM")
+      .pattern("MMM")
+      .pattern("MMM")
+      .unlockedBy("has_iron_ingot", has(Tags.Items.INGOTS_IRON))
+      .save(recipeOutput, prefix(IronShulkerBoxesItems.UPGRADES.get(IronShulkerBoxesUpgradeType.IRON_TO_GOLD).get(), folder));
+
+    ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IronShulkerBoxesItems.UPGRADES.get(IronShulkerBoxesUpgradeType.GOLD_TO_DIAMOND).get())
+      .define('M', Tags.Items.GEMS_DIAMOND)
+      .define('S', Tags.Items.INGOTS_GOLD)
+      .define('G', Tags.Items.GLASS_BLOCKS)
+      .pattern("GMG")
+      .pattern("GSG")
+      .pattern("GMG")
+      .unlockedBy("has_glass", has(Tags.Items.GLASS_BLOCKS))
+      .save(recipeOutput, prefix(IronShulkerBoxesItems.UPGRADES.get(IronShulkerBoxesUpgradeType.GOLD_TO_DIAMOND).get(), folder));
+
+    ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IronShulkerBoxesItems.UPGRADES.get(IronShulkerBoxesUpgradeType.DIAMOND_TO_OBSIDIAN).get())
+      .define('M', Blocks.OBSIDIAN)
+      .define('G', Tags.Items.GLASS_BLOCKS)
+      .pattern("MGM")
+      .pattern("MMM")
+      .pattern("MMM")
+      .unlockedBy("has_glass", has(Tags.Items.GLASS_BLOCKS))
+      .save(recipeOutput, prefix(IronShulkerBoxesItems.UPGRADES.get(IronShulkerBoxesUpgradeType.DIAMOND_TO_OBSIDIAN).get(), folder));
+
+    ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, IronShulkerBoxesItems.UPGRADES.get(IronShulkerBoxesUpgradeType.DIAMOND_TO_CRYSTAL).get())
+      .define('S', Blocks.OBSIDIAN)
+      .define('G', Tags.Items.GLASS_BLOCKS)
+      .pattern("GSG")
+      .pattern("GGG")
+      .pattern("GGG")
+      .unlockedBy("has_glass", has(Tags.Items.GLASS_BLOCKS))
+      .save(recipeOutput, prefix(IronShulkerBoxesItems.UPGRADES.get(IronShulkerBoxesUpgradeType.DIAMOND_TO_CRYSTAL).get(), folder));
+  }
+
+  protected static ResourceLocation prefix(ItemLike item, String prefix) {
+    ResourceLocation registryName = BuiltInRegistries.ITEM.getResourceKey(item.asItem())
+      .map(ResourceKey::location)
+      .orElseThrow(() -> new IllegalStateException("Could not retrieve registry name for output."));
+    return location(prefix + registryName.getPath());
+  }
+
+  private static ResourceLocation location(String id) {
+    return ResourceLocation.fromNamespaceAndPath(IronShulkerBoxes.MODID, id);
+  }
+
+  private void registerCopperBoxRecipe(RecipeOutput recipeOutput, ItemLike result, ItemLike input, String color, String group) {
+    ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, result)
+      .group(group)
+      .define('M', Tags.Items.INGOTS_COPPER)
+      .define('S', input)
+      .pattern("MMM")
+      .pattern("MSM")
+      .pattern("MMM")
+      .unlockedBy("has_copper", has(Tags.Items.INGOTS_COPPER))
+      .save(recipeOutput, location("shulkerboxes/" + color + "copper/vanilla_copper_shulker_box"));
+  }
+
+  private void registerIronBoxRecipe(RecipeOutput recipeOutput, ItemLike result, ItemLike input, ItemLike inputTwo, String color, String group) {
+    ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, result)
+      .group(group)
+      .define('G', Tags.Items.GLASS_BLOCKS)
+      .define('S', input)
+      .define('M', Tags.Items.INGOTS_IRON)
+      .pattern("MGM")
+      .pattern("GSG")
+      .pattern("MGM")
+      .unlockedBy("has_gold", has(Tags.Items.INGOTS_IRON))
+      .save(recipeOutput, location("shulkerboxes/" + color + "iron/copper_iron_shulker_box"));
+
+    ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, result)
+      .group(group)
+      .define('S', inputTwo)
+      .define('M', Tags.Items.INGOTS_IRON)
+      .pattern("MMM")
+      .pattern("MSM")
+      .pattern("MMM")
+      .unlockedBy("has_gold", has(Tags.Items.INGOTS_GOLD))
+      .save(recipeOutput, location("shulkerboxes/" + color + "iron/vanilla_iron_shulker_box"));
+  }
+
+  private void registerGoldBoxRecipe(RecipeOutput recipeOutput, ItemLike result, ItemLike input, String color, String group) {
+    ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, result)
+      .group(group)
+      .define('S', input)
+      .define('M', Tags.Items.INGOTS_GOLD)
+      .pattern("MMM")
+      .pattern("MSM")
+      .pattern("MMM")
+      .unlockedBy("has_gold", has(Tags.Items.INGOTS_GOLD))
+      .save(recipeOutput, location("shulkerboxes/" + color + "gold/iron_gold_shulker_box"));
+  }
+
+  private void registerDiamondBoxRecipe(RecipeOutput recipeOutput, ItemLike result, ItemLike input, String color, String group) {
+    ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, result)
+      .group(group)
+      .define('G', Tags.Items.GLASS_BLOCKS)
+      .define('S', input)
+      .define('M', Tags.Items.GEMS_DIAMOND)
+      .pattern("GGG")
+      .pattern("MSM")
+      .pattern("GGG")
+      .unlockedBy("has_diamonds", has(Tags.Items.GEMS_DIAMOND))
+      .save(recipeOutput, location("shulkerboxes/" + color + "diamond/gold_diamond_shulker_box"));
+  }
+
+  private void registerCrystalBoxRecipe(RecipeOutput recipeOutput, ItemLike result, ItemLike input, String color, String group) {
+    ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, result)
+      .group(group)
+      .define('G', Tags.Items.GLASS_BLOCKS)
+      .define('S', input)
+      .pattern("GGG")
+      .pattern("GSG")
+      .pattern("GGG")
+      .unlockedBy("has_glass", has(Tags.Items.GLASS_BLOCKS))
+      .save(recipeOutput, location("shulkerboxes/" + color + "crystal/diamond_crystal_shulker_box"));
+  }
+
+  private void registerObsidianBoxRecipe(RecipeOutput recipeOutput, ItemLike result, ItemLike input, String color, String group) {
+    ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, result)
+      .group(group)
+      .define('M', Items.OBSIDIAN)
+      .define('S', input)
+      .pattern("MMM")
+      .pattern("MSM")
+      .pattern("MMM")
+      .unlockedBy("has_obsidian", has(Items.OBSIDIAN))
+      .save(recipeOutput, location("shulkerboxes/" + color + "obsidian/diamond_obsidian_shulker_box"));
+  }
+
+
+  private ItemLike getShulkerBoxItem(DyeColor color) {
+    return switch (color) {
+      case WHITE -> Items.WHITE_SHULKER_BOX;
+      case ORANGE -> Items.ORANGE_SHULKER_BOX;
+      case MAGENTA -> Items.MAGENTA_SHULKER_BOX;
+      case LIGHT_BLUE -> Items.LIGHT_BLUE_SHULKER_BOX;
+      case YELLOW -> Items.YELLOW_SHULKER_BOX;
+      case LIME -> Items.LIME_SHULKER_BOX;
+      case PINK -> Items.PINK_SHULKER_BOX;
+      case GRAY -> Items.GRAY_SHULKER_BOX;
+      case LIGHT_GRAY -> Items.LIGHT_GRAY_SHULKER_BOX;
+      case CYAN -> Items.CYAN_SHULKER_BOX;
+      case PURPLE -> Items.PURPLE_SHULKER_BOX;
+      case BLUE -> Items.BLUE_SHULKER_BOX;
+      case BROWN -> Items.BROWN_SHULKER_BOX;
+      case GREEN -> Items.GREEN_SHULKER_BOX;
+      case RED -> Items.RED_SHULKER_BOX;
+      case BLACK -> Items.BLACK_SHULKER_BOX;
+    };
+  }
+}

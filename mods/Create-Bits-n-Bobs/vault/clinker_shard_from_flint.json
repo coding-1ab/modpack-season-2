@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "cookingtime": 100,
+  "ingredient": {
+    "item": "minecraft:flint"
+  },
+  "result": {
+    "id": "bits_n_bobs:clinker_shard"
+  }
+}

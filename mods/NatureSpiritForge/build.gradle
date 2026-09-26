@@ -1,0 +1,104 @@
+buildscript {
+    repositories {
+        gradlePluginPortal()
+        maven {
+            name = "Forge"
+            url = "https://maven.minecraftforge.net"
+        }
+    }
+    dependencies {
+        classpath 'gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:1.1.7'
+    }
+}
+
+plugins {
+    id 'java-library'
+    id 'idea'
+    id 'maven-publish'
+    id 'net.neoforged.gradle.userdev' version '7.1.21'
+}
+
+group = mod_group_id
+version = mod_version
+
+base {
+    archivesName = mod_id
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+minecraft {
+    mappings {
+        channel = official()
+        version.put "minecraft", minecraft_version
+    }
+    accessTransformers.file('src/main/resources/META-INF/accesstransformer.cfg')
+}
+
+runs {
+    configureEach {
+        systemProperty 'forge.logging.markers', 'REGISTRIES'
+        systemProperty 'forge.logging.console.level', 'debug'
+        modSource project.sourceSets.main
+    }
+
+    client {
+        workingDirectory.set(project.file('run'))
+        systemProperty 'neoforge.enabledGameTestNamespaces', mod_id
+    }
+
+    server {
+        workingDirectory.set(project.file('run'))
+        systemProperty 'neoforge.enabledGameTestNamespaces', mod_id
+        argument '--nogui'
+    }
+
+    data {
+        arguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+    }
+}
+
+repositories {
+    maven {
+        name = "Forge"
+        url = "https://maven.minecraftforge.net"
+    }
+}
+
+dependencies {
+    implementation "net.neoforged:neoforge:${neo_version}"
+    implementation 'com.github.glitchfiend:TerraBlender-neoforge:' + minecraft_version + '-' + terrablender_version
+
+}
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [            minecraft_version      : minecraft_version,
+                                         minecraft_version_range: minecraft_version_range,
+                                         neo_version            : neo_version,
+                                         neo_version_range      : neo_version_range,
+                                         loader_version_range   : loader_version_range,
+                                         mod_id                 : mod_id,
+                                         mod_version            : mod_version
+            ]
+
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/neoforge.mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties
+    }
+}
+
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes(["Specification-Title"     : mod_id,
+                    "Specification-Vendor"    : "Team Hibiscus",
+                    "Specification-Version"   : "1", // We are version 1 of ourselves
+                    "Implementation-Title"    : project.name,
+                    "Implementation-Version"  : project.jar.archiveVersion,
+                    "Implementation-Vendor"   : "Team Hibiscus",
+                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")])
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}

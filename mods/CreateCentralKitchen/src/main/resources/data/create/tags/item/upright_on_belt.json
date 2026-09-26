@@ -1,0 +1,22 @@
+{
+  "values": [
+    "#c:foods/edible_when_placed",
+    "minecraft:pumpkin_pie",
+    {
+      "id": "brewinandchewin:tankard",
+      "required": false
+    },
+    {
+      "id": "#brewinandchewin:cheese_wheels/unripe",
+      "required": false
+    },
+    {
+      "id": "trailsandtails_delight:pottery_bowl",
+      "required": false
+    },
+    {
+      "id": "trailsandtails_delight:sniffer_eggshell",
+      "required": false
+    }
+  ]
+}

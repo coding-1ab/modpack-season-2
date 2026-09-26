@@ -1,0 +1,245 @@
+buildscript {
+    dependencies {
+        classpath 'org.semver4j:semver4j:6.0.0'
+    }
+}
+
+import org.semver4j.Semver
+
+plugins {
+    id 'java-library'
+    id 'idea'
+    id 'net.neoforged.moddev' version '2.0.141'
+    id 'me.modmuss50.mod-publish-plugin' version '2.1.1'
+    id 'net.azmod.release' version '0.2.1'
+}
+
+def isSnapshotVersioning = project.hasProperty('snapshot_versioning') && project.property('snapshot_versioning').toString().toBoolean()
+version = isSnapshotVersioning ? "${mod_version}-SNAPSHOT" : mod_version
+group = mod_group_id
+
+base {
+    archivesName = mod_id
+}
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+repositories {
+    maven { url 'https://maven.neoforged.net/releases' }
+    maven { url 'https://maven.createmod.net' }
+    maven {
+        name = 'azmod-maven'
+        url = "https://maven.azmod.net/releases"
+    }
+
+    maven {
+        name = 'azmod-maven-snapshots'
+        url = "https://maven.azmod.net/snapshots"
+    }
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'azmod-modmaven-mirror'
+                url = "https://maven.azmod.net/modmaven"
+
+                if (findProperty('azmodMavenUser') != null) {
+                    //Credentials purely required for adding new mods to cache, you will still be able to get stuff from modmaven itself / existing cache.
+                    credentials {
+                        username = findProperty('azmodMavenUser') ?: System.getenv('AZMOD_MAVEN_USER')
+                        password = findProperty('azmodMavenToken') ?: System.getenv('AZMOD_MAVEN_PASSWORD')
+                    }
+                }
+            }
+        }
+        filter {
+            includeGroup "maven.modrinth"
+        }
+    }
+    // Add your extra repos from broken build
+    maven { url = 'https://maven.squiddev.cc' } // CC: Tweaked
+    maven { url = 'https://mvn.devos.one/snapshots' }
+    maven { url = 'https://raw.githubusercontent.com/Fuzss/modresources/main/maven/' }
+    maven {
+        name = 'BlameJared Maven (CrT / Bookshelf)'
+        url = 'https://maven.blamejared.com'
+    }
+    maven {
+        name = 'Kotlin for Forge'
+        url = 'https://thedarkcolour.github.io/KotlinForForge/'
+    }
+    exclusiveContent {
+        forRepository {
+            maven {
+                url = "https://maven.ryanhcode.dev/releases"
+                name = "RyanHCode Maven"
+            }
+        }
+        filter {
+            includeGroup("dev.ryanhcode.sable")
+            includeGroup("dev.ryanhcode.sable-companion")
+        }
+    }
+}
+neoForge {
+    version = neo_version
+
+    runs {
+        client {
+            client()
+        }
+        server {
+            server()
+            programArgument '--nogui'
+        }
+        data {
+            data()
+            programArguments.addAll '--existing-mod', 'create'
+            programArguments.addAll '--mod', mod_id as String,
+                    '--all',
+                    '--output', file('src/generated/resources/').getAbsolutePath(),
+                    '--existing', file('src/main/resources/').getAbsolutePath()
+
+            systemProperty 'net.minecraft.data.Main.parallel', 'false'
+        }
+    }
+    mods {
+        bits_n_bobs {
+            sourceSet project.sourceSets.main
+        }
+    }
+}
+
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+}
+
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
+
+dependencies {
+    implementation "net.neoforged:neoforge:${neo_version}"
+    implementation("com.cake.azimuth:azimuth:${azimuth_version}")
+    implementation("com.cake.struts:struts:${struts_version}")
+
+    compileOnly("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
+    implementation("net.createmod.ponder:ponder-neoforge:${ponder_version}+mc${minecraft_version}")
+    runtimeOnly("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
+    compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
+    runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
+    implementation("com.tterrag.registrate:Registrate:${registrate_version}")
+
+    // Dev dependency: wonderful veil hotswap
+    implementation("foundry.veil:veil-neoforge-${project.minecraft_version}:${project.veil_version}") {
+        exclude group: "maven.modrinth"
+        exclude group: "me.fallenbreath"
+    }
+
+    //implementation("com.cake.autoload:autoload-neoforge-1.21.1:1.+")
+
+    // Actual compats here:
+//    implementation("maven.modrinth:create-connected:${create_connected_version}")
+//    implementation("maven.modrinth:slice-and-dice:${create_slice_and_dice_version}")
+//    implementation("maven.modrinth:hypertube:${create_hypertube_version}")
+//    implementation("maven.modrinth:create-additional-logistics:${createadditionallogistics_version}")
+//    implementation("maven.modrinth:create-encased:${create_encased_version}")
+//    implementation("maven.modrinth:create-design-n-decor:${dndecor_version}")
+//    implementation("thedarkcolour:kotlinforforge-neoforge:${kotlin_for_forge_version}")
+
+    compileOnly("maven.modrinth:create-connected:${create_connected_version}")
+    compileOnly("maven.modrinth:slice-and-dice:${create_slice_and_dice_version}")
+    compileOnly("maven.modrinth:hypertube:${create_hypertube_version}")
+    compileOnly("maven.modrinth:create-additional-logistics:${createadditionallogistics_version}")
+    compileOnly("maven.modrinth:create-encased:${create_encased_version}")
+    compileOnly("maven.modrinth:create-design-n-decor:${dndecor_version}")
+    compileOnly("thedarkcolour:kotlinforforge-neoforge:${kotlin_for_forge_version}")
+
+    jarJar(api("dev.ryanhcode.sable-companion:sable-companion-common-${project.minecraft_version}:[${project.sable_companion_version},)")) {
+        version {
+            prefer project.sable_companion_version
+        }
+    }
+
+    if (enable_cc_tweaked.toBoolean()) {
+        compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-core-api:$cc_tweaked_version")
+        compileOnly("cc.tweaked:cc-tweaked-$minecraft_version-forge-api:$cc_tweaked_version")
+        localRuntime("cc.tweaked:cc-tweaked-$minecraft_version-forge:$cc_tweaked_version")
+    }
+
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+tasks.withType(ProcessResources).configureEach {
+    def replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            neo_version_range      : neo_version_range,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : project.version,
+            mod_authors            : mod_authors,
+            mod_description        : mod_description
+    ]
+
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/neoforge.mods.toml', '*.mixins.json']) {
+        expand replaceProperties
+    }
+}
+tasks.register('sourcesJar', Jar) {
+    archiveClassifier = 'sources'
+    from sourceSets.main.allJava
+}
+
+jar {
+    manifest {
+        attributes('FMLModType': 'GAMELIBRARY')
+    }
+}
+
+publishMods {
+    file = jar.archiveFile
+    type = STABLE
+    modLoaders.add("neoforge")
+    displayName = "${mod_name} ${mod_version} NeoForge ${minecraft_version}"
+
+    curseforge {
+        projectId = "1398383"
+        projectSlug = "create-bits-n-bobs"
+        accessToken = findProperty('curseforgePublishToken')
+        minecraftVersions.add("1.21.1")
+        requires("create")
+        requires("azimuth-api")
+        requires("strut-your-stuff")
+        client = true
+        server = true
+    }
+
+    modrinth {
+        projectId = "T8bvmqVZ"
+        accessToken = findProperty('modrinthPublishToken')
+        minecraftVersions.add("1.21.1")
+        requires("create")
+        requires("azimuth-api")
+        requires("strut-your-stuff")
+    }
+
+    discord {
+        webhookUrl = findProperty('aztechDiscordPublishWebhook')
+        username = "bits n bober version bot"
+        avatarUrl = "https://cataas.com/cat?width=500&height=500"
+        style { look = "CLASSIC" }
+    }
+}
+

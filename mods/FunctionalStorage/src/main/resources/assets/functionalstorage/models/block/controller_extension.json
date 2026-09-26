@@ -1,0 +1,18 @@
+{
+	"parent": "minecraft:block/block",
+	"loader": "neoforge:composite",
+	"textures": {
+		"particle": "functionalstorage:block/controller_extension"
+	},
+	"children": {
+		"front": {
+			"parent": "functionalstorage:block/front",
+			"textures": {
+				"front": "functionalstorage:block/controller_extension"
+			}
+		},
+		"side": {
+			"parent": "functionalstorage:block/side_machine"
+		}
+	}
+}

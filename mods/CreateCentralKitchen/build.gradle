@@ -1,0 +1,441 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'net.neoforged.moddev' version '2.0.143'
+    id "me.modmuss50.mod-publish-plugin" version "2.2.0"
+    id "com.diffplug.spotless" version "8.9.0"
+    id 'idea'
+}
+
+tasks.named('wrapper', Wrapper).configure {
+    distributionType = Wrapper.DistributionType.BIN
+}
+
+version = mod_version
+group = mod_group_id
+
+base {
+    archivesName = mod_artifact_id
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    withSourcesJar()
+}
+
+def allIntegrationSourceSets = [
+        farmersdelight      : [],
+        brewinandchewin     : ["farmersdelight"],
+        mynethersdelight    : ["farmersdelight"],
+        endsdelight         : ["farmersdelight"],
+        twilightdelight     : ["farmersdelight"],
+        trailandtalesdelight: ["farmersdelight"],
+        extradelight        : ["farmersdelight"],
+        minersdelight       : ["farmersdelight"],
+        dungeonsdelight     : ["farmersdelight"],
+        culturaldelights    : ["farmersdelight"],
+        rusticdelight       : ["farmersdelight"],
+        festivedelight      : ["farmersdelight"],
+        hearthandharvest    : ["farmersdelight"]
+]
+
+def isIntegrationRequested = { name ->
+    providers.gradleProperty("enable_${name}_integration")
+            .map { it.toBoolean() }
+            .orElse(true)
+            .get()
+}
+
+def requestedIntegrationSourceSets = allIntegrationSourceSets.keySet().findAll { name ->
+    isIntegrationRequested(name)
+}
+
+def enabledIntegrationSourceSets = requestedIntegrationSourceSets.findAll { name ->
+    allIntegrationSourceSets[name].every { dependencyName ->
+        requestedIntegrationSourceSets.contains(dependencyName)
+    }
+}
+
+def hasIntegration = { name ->
+    enabledIntegrationSourceSets.contains(name)
+}
+
+sourceSets {
+    enabledIntegrationSourceSets.each { name ->
+        create(name) {
+            java {
+                srcDir "src/integration/${name}/java"
+            }
+            resources {
+                srcDir "src/integration/${name}/resources"
+            }
+            compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+            allIntegrationSourceSets[name].each { dependencyName ->
+                compileClasspath += sourceSets[dependencyName].output + sourceSets[dependencyName].compileClasspath
+            }
+        }
+    }
+    main {
+        enabledIntegrationSourceSets.each { name ->
+            runtimeClasspath += sourceSets[name].output
+        }
+    }
+}
+
+tasks.named("classes") {
+    enabledIntegrationSourceSets.each { name ->
+        finalizedBy(tasks.named("${name}Classes"))
+    }
+}
+
+tasks.named("jar", Jar) {
+    enabledIntegrationSourceSets.each { name ->
+        from sourceSets[name].output
+    }
+}
+
+tasks.named("sourcesJar", Jar) {
+    enabledIntegrationSourceSets.each { name ->
+        from sourceSets[name].allJava
+    }
+}
+
+neoForge {
+    version = project.neo_version
+
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
+    }
+
+    //accessTransformers = project.files('src/main/resources/META-INF/accesstransformer.cfg')
+
+    runs {
+        client {
+            client()
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        server {
+            server()
+            programArgument '--nogui'
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        gameTestServer {
+            type = "gameTestServer"
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        data {
+            data()
+            def dataArgs = [
+                    '--mod', project.mod_id,
+                    '--all',
+                    '--output', file('src/generated/resources/').getAbsolutePath(),
+                    '--existing', file('src/main/resources/').getAbsolutePath(),
+                    '--existing', file('src/main/translations/').getAbsolutePath(),
+                    '--existing-mod', 'create',
+                    '--existing-mod', 'create_dragons_plus'
+            ]
+            enabledIntegrationSourceSets.each { name ->
+                dataArgs.addAll('--existing', file("src/integration/${name}/resources/").getAbsolutePath())
+            }
+            programArguments.addAll dataArgs
+        }
+
+        configureEach {
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+
+            logLevel = org.slf4j.event.Level.DEBUG
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+            enabledIntegrationSourceSets.each { name ->
+                sourceSet(sourceSets[name])
+            }
+        }
+    }
+}
+
+configurations {
+    localImplementation
+    compileClasspath.extendsFrom localImplementation
+    runtimeClasspath.extendsFrom localImplementation
+    runtimeClasspath.extendsFrom localRuntime
+}
+
+enabledIntegrationSourceSets.each { name ->
+    def localConfig = configurations.create("${name}LocalImplementation") {
+        canBeConsumed = false
+        canBeResolved = false
+    }
+
+    configurations.named("${name}CompileClasspath") {
+        extendsFrom localConfig
+    }
+
+    configurations.named("${name}RuntimeClasspath") {
+        extendsFrom localConfig
+    }
+
+    configurations.named("runtimeClasspath") {
+        extendsFrom localConfig
+    }
+}
+
+repositories {
+    maven { url = "https://maven.dragons.plus/releases" } // Ponder, Flywheel
+    maven { url = "https://maven.createmod.net" } // Ponder, Flywheel
+    maven { url = "https://mvn.devos.one/snapshots" } // Registrate
+    maven { url = "https://maven.blamejared.com" } // JEI
+    maven { url = "https://maven.theillusivec4.top/" } // Curios API
+    maven { url = 'https://maven.fallenbreath.me/releases' } // Conditional Mixin
+    maven { url = "https://www.cursemaven.com" }
+    maven { url = "https://api.modrinth.com/maven" }
+    maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven" } // NeoForge config api port, needed by ponder
+}
+
+dependencies {
+    compileOnly("me.fallenbreath:conditional-mixin-neoforge:${conditional_mixin_version}")
+    implementation("plus.dragons.createdragonsplus:create-dragons-plus-${minecraft_version}:${create_dragons_plus_version}")
+
+    compileOnly("mezz.jei:jei-${jei_minecraft_version}-common-api:${jei_version}")
+    compileOnly("mezz.jei:jei-${jei_minecraft_version}-neoforge-api:${jei_version}")
+    localRuntime("mezz.jei:jei-${jei_minecraft_version}-neoforge:${jei_version}")
+
+    compileOnly("top.theillusivec4.curios:curios-neoforge:${curios_version}+${curios_minecraft_version}:api")
+    localRuntime("top.theillusivec4.curios:curios-neoforge:${curios_version}+${curios_minecraft_version}")
+
+    if (hasIntegration("farmersdelight")) {
+        farmersdelightLocalImplementation("maven.modrinth:farmers-delight:${farmers_delight_version}")
+    }
+
+    if (hasIntegration("brewinandchewin")) {
+        brewinandchewinLocalImplementation("maven.modrinth:brewin-and-chewin:${brewin_and_chewin_version}")
+    }
+
+    if (hasIntegration("mynethersdelight")) {
+        mynethersdelightLocalImplementation("maven.modrinth:my-nethers-delight:${my_nethers_delight_version}")
+    }
+
+    if (hasIntegration("endsdelight")) {
+        endsdelightLocalImplementation("maven.modrinth:ends-delight:${ends_delight_version}")
+    }
+
+    if (hasIntegration("trailandtalesdelight")) {
+        localRuntime("maven.modrinth:trailtales-delight:${trailtales_delight_version}") // Stove only
+    }
+
+    if (hasIntegration("extradelight")) {
+        extradelightLocalImplementation("xyz.brassgoggledcoders:PatchouliProvider:1.21.1-1.0.11-Snapshot.5") // NoClassDefFoundError at extradelight@2.6.1/com.lance5057.extradelight.data.DataGen.gatherData(DataGen.java:49)
+        extradelightLocalImplementation("maven.modrinth:extradelight:${extra_delight_version}")
+    }
+
+    if (hasIntegration("minersdelight")) {
+        minersdelightLocalImplementation("maven.modrinth:lodestonelib:1.8.2") // Requirement of Miner's Delight
+        minersdelightLocalImplementation("maven.modrinth:miners-delight:${miners_delight_version}")
+    }
+
+    if (hasIntegration("twilightdelight")) {
+        twilightdelightLocalImplementation("curse.maven:the-twilight-forest-227639:7797302") //4.8.3345
+        twilightdelightLocalImplementation("maven.modrinth:twilight-delight:${twilight_delight_version}")
+        localRuntime("maven.modrinth:cuisine-delight:1.2.10") // Runtime requirement of Twilight's Delight
+    }
+
+    if (hasIntegration("dungeonsdelight")) {
+        dungeonsdelightLocalImplementation("maven.modrinth:runiclib:tk5EQpUG") // Requirement of Dungeon's Delight, 5.0.7
+        dungeonsdelightLocalImplementation("maven.modrinth:dungeons_delight:${dungeons_delight_version}")
+    }
+
+    if (hasIntegration("culturaldelights")) {
+        culturaldelightsLocalImplementation("maven.modrinth:cultural-delights:${cultural_delights_version}")
+    }
+
+    if (hasIntegration("rusticdelight")) {
+        rusticdelightLocalImplementation("maven.modrinth:rustic-delight:${rustic_delight_version}")
+    }
+
+    if (hasIntegration("festivedelight")) {
+        festivedelightLocalImplementation("maven.modrinth:festive-delight:${festive_delight_version}")
+    }
+
+    if (hasIntegration("hearthandharvest")) {
+        hearthandharvestLocalImplementation("maven.modrinth:hearth-and-harvest:${hearth_and_harvest_version}")
+    }
+}
+
+def integrationMixinConfigs = [
+        brewinandchewin     : "${mod_id}.brewinandchewin.mixins.json",
+        farmersdelight      : "${mod_id}.farmersdelight.mixins.json",
+        extradelight        : "${mod_id}.extradelight.mixins.json",
+        minersdelight       : "${mod_id}.minersdelight.mixins.json",
+        dungeonsdelight     : "${mod_id}.dungeonsdelight.mixins.json"
+]
+
+def integrationMixinBlocks = enabledIntegrationSourceSets
+        .collect { name -> integrationMixinConfigs[name] }
+        .findAll { it != null }
+        .collect { config ->
+            "[[mixins]]\n    config=\"${config}\""
+        }
+        .join("\n")
+
+def integrationDependencyBlocks = [
+        farmersdelight: """[[dependencies."${mod_id}"]]
+    modId="farmersdelight"
+    type="optional"
+    versionRange="${farmers_delight_version_range}"
+    ordering="AFTER"
+    side="BOTH"
+""",
+        culturaldelights: """[[dependencies."${mod_id}"]]
+    modId="culturaldelights"
+    type="optional"
+    versionRange="${cultural_delights_version_range}"
+    ordering="AFTER"
+    side="BOTH"
+""",
+        rusticdelight: """[[dependencies."${mod_id}"]]
+    modId="rusticdelight"
+    type="optional"
+    versionRange="${rustic_delight_version_range}"
+    ordering="AFTER"
+    side="BOTH"
+""",
+        festivedelight: """[[dependencies."${mod_id}"]]
+    modId="festive_delight"
+    type="optional"
+    versionRange="${festive_delight_version_range}"
+    ordering="AFTER"
+    side="BOTH"
+""",
+        hearthandharvest: """[[dependencies."${mod_id}"]]
+    modId="hearthandharvest"
+    type="optional"
+    versionRange="${hearth_and_harvest_version_range}"
+    ordering="AFTER"
+    side="BOTH"
+"""
+]
+
+def enabledIntegrationDependencyBlocks = enabledIntegrationSourceSets
+        .collect { name -> integrationDependencyBlocks[name] }
+        .findAll { it != null }
+        .join("\n\n")
+
+var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
+    var replaceProperties = [
+            minecraft_version                   : minecraft_version,
+            minecraft_version_range             : minecraft_version_range,
+            neo_version                         : neo_version,
+            neo_version_range                   : neo_version_range,
+            loader_version_range                : loader_version_range,
+            mod_id                              : mod_id,
+            mod_name                            : mod_name,
+            mod_license                         : mod_license,
+            mod_version                         : mod_version,
+            mod_authors                         : mod_authors,
+            mod_description                     : mod_description,
+            mod_github                          : mod_github,
+            mod_logo                            : mod_logo,
+            create_version_range                : create_version_range,
+            create_dragons_plus_version_range   : create_dragons_plus_version_range,
+            integration_mixin_blocks            : integrationMixinBlocks,
+            integration_dependency_blocks        : enabledIntegrationDependencyBlocks
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from "src/main/templates"
+    into "build/generated/sources/modMetadata"
+}
+
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+    srcDir generateModMetadata
+}
+neoForge.ideSyncTask generateModMetadata
+
+tasks.withType(Jar) {
+    from "LICENSE.txt"
+    exclude ".cache"
+}
+
+spotless {
+    java {
+        endWithNewline()
+        leadingTabsToSpaces()
+        removeUnusedImports()
+        toggleOffOn()
+        importOrder()
+        eclipse().configFile "codeformat/formatter-config.xml"
+        licenseHeaderFile "codeformat/HEADER.txt"
+    }
+}
+
+build.dependsOn(spotlessApply)
+
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            artifactId = mod_artifact_id + "-" + minecraft_version
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            name = "DragonsPlus"
+            url = "https://maven.dragons.plus/releases"
+            credentials(PasswordCredentials)
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+    }
+}
+
+publishMods {
+    file = jar.archiveFile
+    additionalFiles.from sourcesJar.archiveFile
+    changelog = project.file("CHANGELOG.md").text
+    version = mod_version
+    type = STABLE
+    displayName = "Create: Central Kitchen ${mod_version} for Create ${minecraft_version}-${create_version_production}"
+    modLoaders.add("neoforge")
+    dryRun = providers.gradleProperty("modPublishDryRun").map { it.toBoolean() }.getOrElse(false)
+
+    curseforge {
+        projectId = "820977"
+        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+        minecraftVersions.add(minecraft_version)
+        requires("create")
+        requires("create-dragons-plus")
+        optional("cultural-delights", "rustic-delight", "festive-delight", "hearth-and-harvest")
+        client = true
+        server = true
+    }
+
+    modrinth {
+        projectId = "btq68HMO"
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        minecraftVersions.add(minecraft_version)
+        environment = CLIENT_AND_SERVER
+        requires("create")
+        requires("create-dragons-plus")
+        optional("cultural-delights", "rustic-delight", "festive-delight", "hearth-and-harvest")
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}

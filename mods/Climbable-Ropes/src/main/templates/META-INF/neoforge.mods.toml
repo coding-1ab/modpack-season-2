@@ -1,0 +1,74 @@
+modLoader="javafml"
+loaderVersion="${loader_version_range}"
+license="${mod_license}"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+authors="saunhardy"
+displayURL="https://github.com/matejhozlar/Create-Aeronautics-Climbable-Ropes"
+issueTrackerURL="https://github.com/matejhozlar/Create-Aeronautics-Climbable-Ropes/issues"
+description='''
+Addon for Create: Aeronautics (Simulated module). Adds empty-hand climb modes for hanging rope strands and plunger ropes, plus a wrench-zipline mode for plunger ropes. The original Simulated zipline on hanging ropes is left untouched. The mod runs on both client and dedicated server: the server owns climbing config (auto-synced to clients) and tracks rope-riding state; per-tick climb input is handled client-side.
+'''
+
+[[mixins]]
+config="${mod_id}.mixins.json"
+
+[[dependencies.${mod_id}]]
+    modId="neoforge"
+    type="required"
+    versionRange="[${neo_version},)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="minecraft"
+    type="required"
+    versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="simulated"
+    type="required"
+    versionRange="${simulated_version_range}"
+    ordering="AFTER"
+    side="BOTH"
+    reason="Uses Simulated's ZiplineClientManager and RopeRidingPacket to drive the climb mode; these internals can move between Simulated versions, so the range is bounded to an untested-stack-safe window."
+
+[[dependencies.${mod_id}]]
+    modId="sable"
+    type="required"
+    versionRange="${sable_version_range}"
+    ordering="AFTER"
+    side="BOTH"
+    reason="Transitive dependency of Simulated's rope strand system."
+
+[[dependencies.${mod_id}]]
+    modId="create"
+    type="required"
+    versionRange="[${create_mod_version},)"
+    ordering="AFTER"
+    side="BOTH"
+    reason="CHAIN_RIDEABLE tag and rope holder behaviour come from Create."
+
+[[dependencies.${mod_id}]]
+    modId="playeranimator"
+    type="required"
+    versionRange="[${player_anim_mod_version},)"
+    ordering="AFTER"
+    side="CLIENT"
+    reason="Drives the climb animation playback layer."
+
+[[dependencies.${mod_id}]]
+    modId="entity_model_features"
+    type="optional"
+    versionRange="[1,)"
+    ordering="AFTER"
+    side="CLIENT"
+    reason="Pauses EMF custom player animations (such as Fresh Animations: Player Extension) while a climb animation plays so they do not override it."
+    [dependencies.${mod_id}.mc-publish]
+        curseforge="entity-model-features"
+        modrinth="entity-model-features"

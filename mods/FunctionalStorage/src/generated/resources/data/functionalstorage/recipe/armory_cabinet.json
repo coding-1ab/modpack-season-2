@@ -1,0 +1,34 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:item_exists",
+      "item": "functionalstorage:armory_cabinet"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "tag": "c:ingots/netherite"
+    },
+    "C": {
+      "type": "functionalstorage:tag_without_component",
+      "tag": "functionalstorage:drawer"
+    },
+    "D": {
+      "item": "minecraft:comparator"
+    },
+    "I": {
+      "tag": "c:stones"
+    }
+  },
+  "pattern": [
+    "ICI",
+    "CDC",
+    "IBI"
+  ],
+  "result": {
+    "count": 1,
+    "id": "functionalstorage:armory_cabinet"
+  }
+}

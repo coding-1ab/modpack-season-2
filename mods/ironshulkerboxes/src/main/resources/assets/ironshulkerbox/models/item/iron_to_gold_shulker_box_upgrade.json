@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "ironshulkerbox:item/iron_gold_upgrade"
+  }
+}

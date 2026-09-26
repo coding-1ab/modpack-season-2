@@ -1,0 +1,90 @@
+// SPDX-FileCopyrightText: 2023 The CC: Tweaked Developers
+//
+// SPDX-License-Identifier: MPL-2.0
+
+package dan200.computercraft.client.gui;
+
+import dan200.computercraft.api.ComputerCraftAPI;
+import dan200.computercraft.client.render.ComputerBorderRenderer;
+import dan200.computercraft.shared.computer.core.ComputerFamily;
+import net.minecraft.resources.ResourceLocation;
+import org.jspecify.annotations.Nullable;
+
+import java.util.Objects;
+import java.util.stream.Stream;
+
+/**
+ * Sprite sheet for all GUI textures in the mod.
+ */
+public final class GuiSprites {
+    public static final ButtonTextures TURNED_OFF = button("turned_off");
+    public static final ButtonTextures TURNED_ON = button("turned_on");
+    public static final ButtonTextures TERMINATE = button("terminate");
+
+    public static final ComputerTextures COMPUTER_NORMAL = computer("normal", true, true);
+    public static final ComputerTextures COMPUTER_ADVANCED = computer("advanced", true, true);
+    public static final ComputerTextures COMPUTER_COMMAND = computer("command", false, true);
+    public static final ComputerTextures COMPUTER_COLOUR = computer("colour", true, false);
+
+    private GuiSprites() {
+    }
+
+    private static ButtonTextures button(String name) {
+        return new ButtonTextures(
+            ResourceLocation.fromNamespaceAndPath(ComputerCraftAPI.MOD_ID, "buttons/" + name),
+            ResourceLocation.fromNamespaceAndPath(ComputerCraftAPI.MOD_ID, "buttons/" + name + "_hover")
+        );
+    }
+
+    private static ComputerTextures computer(String name, boolean pocket, boolean sidebar) {
+        return new ComputerTextures(
+            ResourceLocation.fromNamespaceAndPath(ComputerCraftAPI.MOD_ID, "gui/border_" + name),
+            pocket ? ResourceLocation.fromNamespaceAndPath(ComputerCraftAPI.MOD_ID, "gui/pocket_bottom_" + name) : null,
+            sidebar ? ResourceLocation.fromNamespaceAndPath(ComputerCraftAPI.MOD_ID, "gui/sidebar_" + name) : null
+        );
+    }
+
+    /**
+     * Get the appropriate textures to use for a particular computer family.
+     *
+     * @param family The computer family.
+     * @return The family-specific textures.
+     */
+    public static ComputerTextures getComputerTextures(ComputerFamily family) {
+        return switch (family) {
+            case NORMAL -> COMPUTER_NORMAL;
+            case ADVANCED -> COMPUTER_ADVANCED;
+            case COMMAND -> COMPUTER_COMMAND;
+        };
+    }
+
+    /**
+     * A set of sprites for a button, with both a normal and "active" state.
+     *
+     * @param normal The normal texture for the button.
+     * @param active The texture for the button when it is active (hovered or focused).
+     */
+    public record ButtonTextures(ResourceLocation normal, ResourceLocation active) {
+        public ResourceLocation get(boolean isActive) {
+            return isActive ? active : normal;
+        }
+    }
+
+    /**
+     * Set the set of sprites for a computer family.
+     *
+     * @param border       The texture for the computer's border.
+     * @param pocketBottom The texture for the bottom of a pocket computer.
+     * @param sidebar      The texture for the computer sidebar.
+     * @see ComputerBorderRenderer
+     */
+    public record ComputerTextures(
+        ResourceLocation border,
+        @Nullable ResourceLocation pocketBottom,
+        @Nullable ResourceLocation sidebar
+    ) {
+        public Stream<ResourceLocation> textures() {
+            return Stream.of(border, pocketBottom, sidebar).filter(Objects::nonNull);
+        }
+    }
+}
