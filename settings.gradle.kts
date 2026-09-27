@@ -13,9 +13,11 @@ plugins {
 rootProject.name = "codinglab-modpack-1.21.1"
 
 include("updater")
+include("mods/Create")
+include("mods/sable")
 
 addMods {
-    addMod(
+    /*addMod(
         filePath = "./mods/Create",
         includeTransitive = false,
         assetSource = modrinth("UjX6dr61"),
@@ -26,7 +28,7 @@ addMods {
                 shouldUnpack = true
             )
         )
-    )
+    )*/
     addMod(
         filePath = "./mods/create_connected",
         includeTransitive = false,
