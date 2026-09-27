@@ -49,3 +49,5 @@ bin/
 
 src/generated/resources/.cache
 createdModJars/
+add_remotes
+fetch

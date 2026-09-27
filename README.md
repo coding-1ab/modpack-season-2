@@ -14,6 +14,10 @@
 cargo install josh-cli --locked --git https://github.com/josh-project/josh.git # josh 설치
 josh clone https://github.com/coding-1ab/modpack-season-2.git :/ ./modpack-season2 # 리포지토리 내려받기
 cd modpack-season-2
+rustc add_remotes.rs # 스크립트 컴파일
+rustc fetch.rs # 스크립트 컴파일
+./add_remotes # 업스트림 리모트 추가
+./fetch # 업스트림에서 커밋 데이터 가져오기
 ```
 
 Gradle 데몬에는 Java 25가 필요합니다. Gradle 데몬을 실행하기 전 먼저 `JAVA_HOME`을 JDK 25 설치 경로로 지정해야 합니다.
