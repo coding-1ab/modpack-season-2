@@ -1,0 +1,17 @@
+:[
+  ::mods/:exclude[
+    ::**/build.gradle
+    ::**/build.gradle.kts
+    ::**/settings.gradle
+    ::**/settings.gradle.kts
+  ]
+  mods=:[
+    :/mods:[
+      ::**/build.gradle
+      ::**/build.gradle.kts
+      ::**/settings.gradle
+      ::**/settings.gradle.kts
+    ]
+    :/overlay/mods
+  ]
+]
